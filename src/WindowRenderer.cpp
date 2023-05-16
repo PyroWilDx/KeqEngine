@@ -30,8 +30,14 @@ void WindowRenderer::render(Entity *entity) {
     if (renderW == 0) dst.w = src.w;
     if (renderH == 0) dst.h = src.h;
 
-    SDL_RenderCopy(renderer, entity->getTexture(),
-                   &src, &dst);
+    if (entity->getXDirection() >= 0) {
+        SDL_RenderCopy(renderer, entity->getTexture(),
+                       &src, &dst);
+    } else {
+        SDL_RenderCopyEx(renderer, entity->getTexture(),
+                         &src, &dst,
+                         0, nullptr, SDL_FLIP_HORIZONTAL);
+    }
 }
 
 void WindowRenderer::display() {

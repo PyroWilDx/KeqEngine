@@ -8,10 +8,6 @@
 #include "Player.hpp"
 #include "Text.hpp"
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
-
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
 const SDL_Color FPSTextColor = {255, 255, 255};
@@ -27,8 +23,8 @@ int main() {
 
     WindowRenderer window = WindowRenderer("FirstSDL2", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    Player player = Player(0, SCREEN_HEIGHT - 160, 0, 80, 80, window);
-    player.setRenderWH(160, 160);
+    Player player = Player(0, PLAYER_DEFAULT_Y, 0, 80, 80, window);
+    player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
 
     Uint32 dt;
     Uint32 lastTime = SDL_GetTicks();
@@ -64,7 +60,7 @@ int main() {
                             player.updateDirection(key, keyPressed);
                             break;
                         case SDLK_SPACE:
-                            player.jump();
+                            player.setTextureAnimated(JUMP_SPRITE, true);
                             break;
                         default:
                             break;
@@ -80,9 +76,6 @@ int main() {
                             keyPressed[key % 4] = false;
                             player.clearDirection(key, keyPressed);
                             break;
-                        case SDLK_SPACE:
-                            player.jump();
-                            break;
                         default:
                             break;
                     }
@@ -94,6 +87,7 @@ int main() {
 
         // Move Player
         if (player.isMoving()) player.move((int) dt);
+        if (player.isJumping()) player.jump((int) dt);
 
         // Time Handling
         currentTime = SDL_GetTicks();

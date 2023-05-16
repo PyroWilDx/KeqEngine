@@ -14,7 +14,7 @@ public:
 
     Entity(int x, int y, int z, int w, int h, SDL_Texture *texture);
 
-    void move(int dt);
+    virtual void move(int dt);
 
     void moveTo(int x_, int y_, int z_);
 
@@ -40,6 +40,8 @@ public:
     inline int getY() { return y; }
 
     inline int getZ() { return z; }
+
+    inline int getXDirection() { return xDirection; }
 
     inline SDL_Rect getFrame() { return frame; }
 

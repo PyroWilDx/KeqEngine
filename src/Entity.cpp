@@ -3,6 +3,7 @@
 //
 
 #include "Entity.hpp"
+#include "Utils.hpp"
 
 Entity::Entity(int x, int y, int z) {
     this->x = x;
