@@ -5,63 +5,50 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "Entity.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils.hpp"
-
-typedef struct SpriteTexture {
-    bool animated;
-    SDL_Texture *texture;
-    int totalWidth;
-    int timeBetweenFrames;
-} SpriteTexture;
+#include "AnimatedEntity.hpp"
 
 enum {
-    IDLE_SPRITE = 0,
-    RUN_SPRITE = 1,
-    JUMP_SPRITE = 2,
-    ATTACK_SPRITE = 3,
-    HURT_SPRITE = 4,
-    TURN_SPRITE = 5,
-    END_SPRITE_ENUM
+    PLAYER_IDLE_SPRITE = 0,
+    PLAYER_RUN_SPRITE = 1,
+    PLAYER_JUMP_SPRITE = 2,
+    PLAYER_ATTACK_SPRITE = 3,
+    PLAYER_HURT_SPRITE = 4,
+    PLAYER_TURN_SPRITE = 5,
+    PLAYER_END_SPRITE_ENUM
 };
 
-const int PLAYER_WIDTH = 160;
-const int PLAYER_HEIGHT = 160;
+const int PLAYER_WIDTH = 200;
+const int PLAYER_HEIGHT = 200;
 const int PLAYER_DEFAULT_Y = SCREEN_HEIGHT - PLAYER_HEIGHT;
-const int PLAYER_MIN_Y = PLAYER_DEFAULT_Y - 100;
-const float PLAYER_SPEED = 0.4;
+const float PLAYER_SPEED = 0.4f;
+const float PLAYER_BASE_JUMP_VELOCITY = 1.0f;
 
-class Player : public Entity {
+class Player : public AnimatedEntity {
 
 public:
-    Player(int x, int y, int z, int w, int h, WindowRenderer window);
-
-    void setTextureAnimated(int code, bool animated);
-
-    void updateTexture();
+    Player(int w, int h, WindowRenderer window);
 
     void updateDirection(int key, const bool *keyPressed);
 
     void clearDirection(int key, const bool *keyPressed);
 
-    void move(int dt) override;
+    void move(int dt);
 
     void jump(int dt);
 
-    void animate(Uint32 *accumulatedAnimationTime);
+    void attack();
 
     void destroy() override;
 
-    inline bool isMoving() { return (currentSprite == RUN_SPRITE || isJumping()); }
+    inline bool isMoving() { return spriteArray[PLAYER_RUN_SPRITE].animated; }
 
-    inline bool isJumping() { return (currentSprite == JUMP_SPRITE); }
+    inline bool isJumping() { return spriteArray[PLAYER_JUMP_SPRITE].animated ; }
 
 private:
     int hp;
     float jumpVelocity;
-    SpriteTexture spriteArray[6];
-    int currentSprite;
 };
 
 #endif

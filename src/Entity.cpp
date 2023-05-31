@@ -29,11 +29,6 @@ Entity::Entity(int x, int y, int z, int w, int h, SDL_Texture *texture)
     renderH = h;
 }
 
-void Entity::move(int dt) {
-    x += xDirection * dt;
-    z += zDirection * dt;
-}
-
 void Entity::moveTo(int x_, int y_, int z_) {
     x = x_;
     y = y_;
@@ -42,4 +37,8 @@ void Entity::moveTo(int x_, int y_, int z_) {
 
 void Entity::clearTexture() {
     SDL_DestroyTexture(texture);
+}
+
+void Entity::destroy() {
+    clearTexture();
 }

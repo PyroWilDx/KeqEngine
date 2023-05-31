@@ -7,6 +7,7 @@
 #include "WindowRenderer.hpp"
 #include "Player.hpp"
 #include "Text.hpp"
+#include "Monster.hpp"
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -23,14 +24,18 @@ int main() {
 
     WindowRenderer window = WindowRenderer("FirstSDL2", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    Player player = Player(0, PLAYER_DEFAULT_Y, 0, 80, 80, window);
+    Player player = Player(80, 80, window);
+    player.moveTo(0, PLAYER_DEFAULT_Y, 0);
     player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
+
+    Monster zombie0 = Monster(96, 96, window);
+    zombie0.moveTo(100, MONSTER_DEFAULT_Y, 0);
+    zombie0.setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
+    zombie0.setTextureAnimated(ZOMBIE_RUN_SPRITE, true);
 
     Uint32 dt;
     Uint32 lastTime = SDL_GetTicks();
     Uint32 currentTime;
-
-    Uint32 accumulatedAnimationTime = 10000;
 
     Text FPSText = Text();
     Uint32 accumulatedFPSTime = 10000;
@@ -60,7 +65,7 @@ int main() {
                             player.updateDirection(key, keyPressed);
                             break;
                         case SDLK_SPACE:
-                            player.setTextureAnimated(JUMP_SPRITE, true);
+                            player.setTextureAnimated(PLAYER_JUMP_SPRITE, true);
                             break;
                         default:
                             break;
@@ -80,24 +85,28 @@ int main() {
                             break;
                     }
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    player.attack();
+                    break;
                 default:
                     break;
             }
         }
-
-        // Move Player
-        if (player.isMoving()) player.move((int) dt);
-        if (player.isJumping()) player.jump((int) dt);
 
         // Time Handling
         currentTime = SDL_GetTicks();
         dt = currentTime - lastTime;
         lastTime = currentTime;
 
-        // Player Animation
-        player.updateTexture();
-        player.animate(&accumulatedAnimationTime);
-        accumulatedAnimationTime += dt;
+        // Player
+        if (player.isMoving()) player.move((int) dt);
+        if (player.isJumping()) player.jump((int) dt);
+        player.animate((int) dt);
+
+        // Monster
+        zombie0.move((int) dt);
+        if (rand() % 1000 < 10) zombie0.attack();
+        zombie0.animate((int) dt);
 
         // FPS Text
         if (accumulatedFPSTime > 1000) {
@@ -113,6 +122,7 @@ int main() {
 
         window.clear();
         window.render(&player);
+        window.render(&zombie0);
         window.render(&FPSText);
         window.display();
     }

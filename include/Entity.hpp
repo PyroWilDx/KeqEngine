@@ -14,13 +14,11 @@ public:
 
     Entity(int x, int y, int z, int w, int h, SDL_Texture *texture);
 
-    virtual void move(int dt);
-
     void moveTo(int x_, int y_, int z_);
 
     void clearTexture();
 
-    virtual void destroy() = 0;
+    virtual void destroy();
 
     inline void setFrameX(int x_) { frame.x = x_; }
 

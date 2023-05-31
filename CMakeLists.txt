@@ -25,9 +25,12 @@ include_directories(${HEADER_DIRS})
 # target main
 
 set(EXECUTABLE_OUTPUT_PATH "${ROOT_DIR}/bin")
-add_executable(main ${SRC_DIR}/main.cpp include/Player.hpp src/Player.cpp include/Text.hpp src/Text.cpp)
+add_executable(main ${SRC_DIR}/main.cpp include/AnimatedEntity.hpp src/AnimatedEntity.cpp)
 target_sources(main PRIVATE
         ${SRC_DIR}/Utils.cpp
         ${SRC_DIR}/WindowRenderer.cpp
-        ${SRC_DIR}/Entity.cpp)
+        ${SRC_DIR}/Text.cpp
+        ${SRC_DIR}/Entity.cpp
+        ${SRC_DIR}/Player.cpp
+        ${SRC_DIR}/Monster.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

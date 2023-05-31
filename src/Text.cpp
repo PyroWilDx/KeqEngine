@@ -25,5 +25,5 @@ void Text::loadTextTexture(int x, int y, const char *text, const SDL_Color *colo
 }
 
 void Text::destroy() {
-    clearTexture();
+    Entity::destroy();
 }
