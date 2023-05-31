@@ -21,7 +21,7 @@ typedef struct SpriteTexture {
 class AnimatedEntity : public Entity {
 
 public:
-    AnimatedEntity(int w, int h, int n);
+    AnimatedEntity(int w, int h, bool hasShadow, int n);
 
     void setTextureAnimated(int code, bool animated);
 

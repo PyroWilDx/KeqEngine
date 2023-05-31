@@ -24,6 +24,9 @@ int main() {
 
     WindowRenderer window = WindowRenderer("FirstSDL2", SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    SDL_Texture *backgroundTexture = window.loadTexture("res/gfx/background.png");
+    Entity background = Entity(0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, false, backgroundTexture);
+
     Player player = Player(80, 80, window);
     player.moveTo(0, PLAYER_DEFAULT_Y, 0);
     player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -121,6 +124,7 @@ int main() {
         accumulatedFrames++;
 
         window.clear();
+        window.render(&background);
         window.render(&player);
         window.render(&zombie0);
         window.render(&FPSText);
@@ -129,7 +133,9 @@ int main() {
 
     // Free
     FPSText.destroy();
+    background.destroy();
     player.destroy();
+    zombie0.destroy();
     window.cleanUp();
     SDL_Quit();
 

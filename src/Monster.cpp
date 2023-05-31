@@ -5,7 +5,7 @@
 #include "Monster.hpp"
 
 Monster::Monster(int w, int h, WindowRenderer window)
-        : AnimatedEntity(w, h, ZOMBIE_END_SPRITE_ENUM) {
+        : AnimatedEntity(w, h, true, ZOMBIE_END_SPRITE_ENUM) {
     xDirection = 1;
     hp = 1;
 

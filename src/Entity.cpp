@@ -3,7 +3,6 @@
 //
 
 #include "Entity.hpp"
-#include "Utils.hpp"
 
 Entity::Entity(int x, int y, int z) {
     this->x = x;
@@ -13,17 +12,19 @@ Entity::Entity(int x, int y, int z) {
     yDirection = 0;
     zDirection = 0;
     frame = {0, 0, 0, 0};
+    hasShadow = false;
     texture = nullptr;
     renderW = 0;
     renderH = 0;
 }
 
-Entity::Entity(int x, int y, int z, int w, int h, SDL_Texture *texture)
+Entity::Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture)
         : Entity(x, y, z) {
     frame.x = 0;
     frame.y = 0;
     frame.w = w;
     frame.h = h;
+    this->hasShadow = hasShadow;
     this->texture = texture;
     renderW = w;
     renderH = h;

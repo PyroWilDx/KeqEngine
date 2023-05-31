@@ -3,8 +3,8 @@
 //
 #include "AnimatedEntity.hpp"
 
-AnimatedEntity::AnimatedEntity(int w, int h, int n)
-        : Entity(0, 0, 0, w, h, nullptr) {
+AnimatedEntity::AnimatedEntity(int w, int h, bool hasShadow, int n)
+        : Entity(0, 0, 0, w, h, hasShadow, nullptr) {
     this->n = n;
     spriteArray = new SpriteTexture[n];
 }

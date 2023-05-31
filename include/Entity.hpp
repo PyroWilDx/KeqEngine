@@ -12,7 +12,7 @@ class Entity {
 public:
     Entity(int x, int y, int z);
 
-    Entity(int x, int y, int z, int w, int h, SDL_Texture *texture);
+    Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture);
 
     void moveTo(int x_, int y_, int z_);
 
@@ -43,6 +43,8 @@ public:
 
     inline SDL_Rect getFrame() { return frame; }
 
+    inline bool getHasShadow() { return hasShadow; }
+
     inline SDL_Texture *getTexture() { return texture; }
 
     inline int getRenderW() { return renderW; }
@@ -53,6 +55,7 @@ protected:
     int x, y, z;
     int xDirection, yDirection, zDirection;
     SDL_Rect frame;
+    bool hasShadow;
     SDL_Texture *texture;
     int renderW, renderH;
 
