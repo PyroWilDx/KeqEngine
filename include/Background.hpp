@@ -8,7 +8,7 @@
 #include "Entity.hpp"
 #include "Player.hpp"
 
-const float BACKGROUND_SPEED = 0.46f;
+const float BACKGROUND_SPEED = 0.4f;
 
 class Background : public Entity {
 

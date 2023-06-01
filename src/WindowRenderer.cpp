@@ -31,19 +31,20 @@ void WindowRenderer::render(Entity *entity) {
     int renderH = entity->getRenderH();
     int x = entity->getX();
     int z = entity->getZ();
-    int y = entity->getY() + z;
-    SDL_Rect dst = {x, y,
+    int yz = entity->getY() + z;
+    SDL_Rect dst = {x, yz,
                     renderW, renderH};
     if (renderW == 0) dst.w = src.w;
     if (renderH == 0) dst.h = src.h;
 
     if (entity->getHasShadow()) {
-        int shadowRenderW = shadow->getRenderW();
-        int shadowRenderH = shadow->getRenderH();
+        // TODO Ombre en fonction du Y. (foncé si Y proche du DEFAULT_Y! Sinon plus clair!)
         SDL_Rect srcShadow = shadow->getFrame();
-        SDL_Rect dstShadow = {x + renderW / 2 - shadowRenderW - 40,
-                              PLAYER_DEFAULT_Y + z + renderH - 70,
-                              shadowRenderW + 60, shadowRenderH};
+        SDL_Rect collRect = entity->getCollisionRect();
+        SDL_Rect dstShadow = {x + collRect.x - collRect.w / 4,
+                              DEFAULT_Y + z + collRect.y + collRect.h - collRect.h / 8,
+                              collRect.w + collRect.w / 2,
+                              collRect.h / 4};
         SDL_RenderCopy(renderer, shadow->getTexture(),
                        &srcShadow, &dstShadow);
     }
@@ -61,8 +62,10 @@ void WindowRenderer::render(Entity *entity) {
                    &src, &dst);
     SDL_Rect collRect = entity->getCollisionRect();
     collRect.x += x;
-    collRect.y += y;
+    collRect.y += yz;
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &collRect);
+    SDL_RenderDrawRect(renderer, &dst);
 }
 
 void WindowRenderer::display() {

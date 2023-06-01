@@ -14,6 +14,8 @@ public:
 
     Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture);
 
+    void addX(int x_);
+
     void move(int dt, float speed);
 
     void moveTo(int x_, int y_, int z_);

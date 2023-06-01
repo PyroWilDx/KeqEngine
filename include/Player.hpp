@@ -21,7 +21,6 @@ enum {
 
 const int PLAYER_WIDTH = 200;
 const int PLAYER_HEIGHT = 200;
-const int PLAYER_DEFAULT_Y = SCREEN_HEIGHT - PLAYER_HEIGHT;
 const float PLAYER_SPEED = 0.4f;
 const float PLAYER_BASE_JUMP_VELOCITY = 1.0f;
 

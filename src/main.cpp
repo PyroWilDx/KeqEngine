@@ -30,12 +30,13 @@ int main() {
                                        3000, backgroundTexture);
 
     Player player = Player(80, 80, window);
-    player.moveTo(0, PLAYER_DEFAULT_Y, 0);
-    player.setCollisionRect({40, 60, 60, 100});
+    player.moveTo(0, DEFAULT_Y, 0);
+    player.setCollisionRect({40, 60, 60, 90});
     player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
 
     Monster zombie0 = Monster(96, 96, window);
-    zombie0.moveTo(100, MONSTER_DEFAULT_Y, 0);
+    zombie0.moveTo(100, DEFAULT_Y, -100);
+    zombie0.setCollisionRect({70, 76, 76, 120});
     zombie0.setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
     zombie0.setTextureAnimated(ZOMBIE_RUN_SPRITE, true);
 
@@ -107,13 +108,24 @@ int main() {
         // Player
         if (player.isMoving()) {
             player.move((int) dt);
-            background.move((int) dt, player.getXDirection());
+            int playerX = player.getX() + player.getCollisionRect().x;
+            int playerW = player.getCollisionRect().w;
+            int halfX = SCREEN_WIDTH / 2 - playerW / 2;
+            int playerXDirection = player.getXDirection();
+            if ((playerXDirection == 1 && playerX > halfX) ||
+                    (playerXDirection == -1 && playerX < halfX)) {
+                int lastX = background.getFrame().x;
+                background.move((int) dt, player.getXDirection());
+                int translateX = lastX - background.getFrame().x;
+                player.addX(translateX);
+                zombie0.addX(translateX);
+            }
         }
         if (player.isJumping()) player.jump((int) dt);
         player.animate((int) dt);
 
         // Monster
-        zombie0.move((int) dt);
+//        zombie0.move((int) dt);
         if (rand() % 1000 < 10) zombie0.attack();
         zombie0.animate((int) dt);
 
@@ -131,9 +143,9 @@ int main() {
 
         window.clear();
         window.render(&background);
-        window.render(&player);
         window.render(&zombie0);
         window.render(&FPSText);
+        window.render(&player);
         window.display();
     }
 

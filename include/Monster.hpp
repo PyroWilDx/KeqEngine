@@ -20,7 +20,6 @@ enum {
 
 const int MONSTER_WIDTH = 200;
 const int MONSTER_HEIGHT = 200;
-const int MONSTER_DEFAULT_Y = SCREEN_HEIGHT - MONSTER_HEIGHT - 54;
 const float MONSTER_SPEED = 0.8f;
 
 class Monster : public AnimatedEntity {

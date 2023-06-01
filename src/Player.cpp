@@ -99,8 +99,8 @@ void Player::jump(int dt) {
 
     jumpVelocity -= (float) dt * 0.0016f;
 
-    if (y > PLAYER_DEFAULT_Y) {
-        y = PLAYER_DEFAULT_Y;
+    if (y > DEFAULT_Y) {
+        y = DEFAULT_Y;
         jumpVelocity = PLAYER_BASE_JUMP_VELOCITY;
         setTextureAnimated(PLAYER_JUMP_SPRITE, false);
     }
