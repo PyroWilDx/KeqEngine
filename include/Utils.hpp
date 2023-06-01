@@ -9,6 +9,8 @@
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
+const int MIN_X = -40;
+const int MAX_X = SCREEN_WIDTH + 90;
 const float Z_MULTIPLIER = 0.6f;
 const int MIN_Z = -102;
 const int MAX_Z = 54;

@@ -8,6 +8,7 @@
 #include "Player.hpp"
 #include "Text.hpp"
 #include "Monster.hpp"
+#include "Background.hpp"
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -25,10 +26,12 @@ int main() {
     WindowRenderer window = WindowRenderer("FirstSDL2", SCREEN_WIDTH, SCREEN_HEIGHT);
 
     SDL_Texture *backgroundTexture = window.loadTexture("res/gfx/background.png");
-    Entity background = Entity(0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, false, backgroundTexture);
+    Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT,
+                                       3000, backgroundTexture);
 
     Player player = Player(80, 80, window);
     player.moveTo(0, PLAYER_DEFAULT_Y, 0);
+    player.setCollisionRect({40, 60, 60, 100});
     player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
 
     Monster zombie0 = Monster(96, 96, window);
@@ -102,7 +105,10 @@ int main() {
         lastTime = currentTime;
 
         // Player
-        if (player.isMoving()) player.move((int) dt);
+        if (player.isMoving()) {
+            player.move((int) dt);
+            background.move((int) dt, player.getXDirection());
+        }
         if (player.isJumping()) player.jump((int) dt);
         player.animate((int) dt);
 

@@ -38,14 +38,13 @@ Monster::Monster(int w, int h, WindowRenderer window)
 }
 
 void Monster::move(int dt) {
+    Entity::move(dt, MONSTER_SPEED);
+
     if (x + renderW > SCREEN_WIDTH && xDirection == 1) {
         xDirection = -1;
     } else if (x < 0 && xDirection == -1) {
         xDirection = 1;
     }
-    int tmp = (int) ((float) dt * MONSTER_SPEED);
-    x += xDirection * tmp;
-    z += zDirection * tmp;
 }
 
 void Monster::attack() {

@@ -14,19 +14,19 @@ public:
 
     Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture);
 
+    void move(int dt, float speed);
+
     void moveTo(int x_, int y_, int z_);
+
+    bool collides(Entity *entity);
 
     void clearTexture();
 
     virtual void destroy();
 
-    inline void setFrameX(int x_) { frame.x = x_; }
+    inline void setFrame(SDL_Rect frame_) { frame = frame_; }
 
-    inline void setFrameY(int y_) { frame.y = y_; }
-
-    inline void setFrameW(int w_) { frame.w = w_; }
-
-    inline void setFrameH(int h_) { frame.h = h_; }
+    inline void setCollisionRect(SDL_Rect collisionRect_) { collisionRect = collisionRect_; }
 
     inline void setRenderWH(int w_, int h_) {
         renderW = w_;
@@ -43,6 +43,8 @@ public:
 
     inline SDL_Rect getFrame() { return frame; }
 
+    inline SDL_Rect getCollisionRect() { return collisionRect; }
+
     inline bool getHasShadow() { return hasShadow; }
 
     inline SDL_Texture *getTexture() { return texture; }
@@ -55,6 +57,7 @@ protected:
     int x, y, z;
     int xDirection, yDirection, zDirection;
     SDL_Rect frame;
+    SDL_Rect collisionRect;
     bool hasShadow;
     SDL_Texture *texture;
     int renderW, renderH;

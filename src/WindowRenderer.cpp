@@ -59,6 +59,10 @@ void WindowRenderer::render(Entity *entity) {
 
     SDL_RenderCopy(renderer, entity->getTexture(),
                    &src, &dst);
+    SDL_Rect collRect = entity->getCollisionRect();
+    collRect.x += x;
+    collRect.y += y;
+    SDL_RenderDrawRect(renderer, &collRect);
 }
 
 void WindowRenderer::display() {

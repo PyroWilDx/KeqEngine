@@ -77,18 +77,16 @@ void Player::clearDirection(int key, const bool *keyPressed) {
 }
 
 void Player::move(int dt) {
-    int tmp = (int) ((float) dt * PLAYER_SPEED);
+    Entity::move(dt, PLAYER_SPEED);
 
-    x += xDirection * tmp;
-    int minX = -40;
-    int maxX = SCREEN_WIDTH - renderW + 90;
+    int minX = MIN_X;
+    int maxX = MAX_X - renderW;
     if (x < minX) {
         x = minX;
     } else if (x > maxX) {
         x = maxX;
     }
 
-    z += (int) ((float) zDirection * (float) tmp * Z_MULTIPLIER);
     if (z < MIN_Z) {
         z = MIN_Z;
     } else if (z > MAX_Z) {
