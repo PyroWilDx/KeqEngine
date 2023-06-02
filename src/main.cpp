@@ -39,6 +39,7 @@ int main() {
     zombie0.setCollisionRect({70, 76, 76, 120});
     zombie0.setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
     zombie0.setTextureAnimated(ZOMBIE_RUN_SPRITE, true);
+    zombie0.walk();
 
     Uint32 dt;
     Uint32 lastTime = SDL_GetTicks();
@@ -117,6 +118,7 @@ int main() {
                 int lastX = background.getFrame().x;
                 background.move((int) dt, player.getXDirection());
                 int translateX = lastX - background.getFrame().x;
+                // Translate all Entities
                 player.addX(translateX);
                 zombie0.addX(translateX);
             }
@@ -124,10 +126,19 @@ int main() {
         if (player.isJumping()) player.jump((int) dt);
         player.animate((int) dt);
 
-        // Monster
-//        zombie0.move((int) dt);
+        // Monster(s)
+        zombie0.move((int) dt);
         if (rand() % 1000 < 10) zombie0.attack();
         zombie0.animate((int) dt);
+
+        // Handling Player Collisions
+        if (player.collides(&zombie0)) {
+            if (player.isAttacking()) {
+                zombie0.destroy();
+            } else {
+                printf("Noob\n");
+            }
+        }
 
         // FPS Text
         if (accumulatedFPSTime > 1000) {
@@ -143,8 +154,8 @@ int main() {
 
         window.clear();
         window.render(&background);
-        window.render(&zombie0);
         window.render(&FPSText);
+        window.render(&zombie0);
         window.render(&player);
         window.display();
     }

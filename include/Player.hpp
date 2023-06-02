@@ -33,7 +33,7 @@ public:
 
     void clearDirection(int key, const bool *keyPressed);
 
-    void move(int dt);
+    void move(int dt) override;
 
     void jump(int dt);
 
@@ -43,7 +43,9 @@ public:
 
     inline bool isMoving() { return spriteArray[PLAYER_RUN_SPRITE].animated; }
 
-    inline bool isJumping() { return spriteArray[PLAYER_JUMP_SPRITE].animated ; }
+    inline bool isJumping() { return spriteArray[PLAYER_JUMP_SPRITE].animated; }
+
+    inline bool isAttacking() { return spriteArray[PLAYER_ATTACK_SPRITE].animated; }
 
 private:
     int hp;

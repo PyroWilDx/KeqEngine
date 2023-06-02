@@ -12,6 +12,7 @@ Entity::Entity(int x, int y, int z) {
     xDirection = 0;
     yDirection = 0;
     zDirection = 0;
+    speed = 0;
     frame = {0, 0, 0, 0};
     collisionRect = frame;
     hasShadow = false;
@@ -37,7 +38,7 @@ void Entity::addX(int x_) {
     x += x_;
 }
 
-void Entity::move(int dt, float speed) {
+void Entity::move(int dt) {
     int tmp = (int) ((float) dt * speed);
     x += xDirection * tmp;
     z += (int) ((float) zDirection * (float) tmp * Z_MULTIPLIER);
@@ -73,6 +74,7 @@ bool Entity::collides(Entity *entity) {
 
 void Entity::clearTexture() {
     SDL_DestroyTexture(texture);
+    texture = nullptr;
 }
 
 void Entity::destroy() {

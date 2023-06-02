@@ -16,7 +16,7 @@ public:
 
     void addX(int x_);
 
-    void move(int dt, float speed);
+    virtual void move(int dt);
 
     void moveTo(int x_, int y_, int z_);
 
@@ -58,6 +58,7 @@ public:
 protected:
     int x, y, z;
     int xDirection, yDirection, zDirection;
+    float speed;
     SDL_Rect frame;
     SDL_Rect collisionRect;
     bool hasShadow;

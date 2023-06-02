@@ -20,18 +20,30 @@ enum {
 
 const int MONSTER_WIDTH = 200;
 const int MONSTER_HEIGHT = 200;
-const float MONSTER_SPEED = 0.8f;
+const float MONSTER_WALK_SPEED = 0.4f;
+const float MONSTER_RUN_SPEED = 0.8f;
 
 class Monster : public AnimatedEntity {
 
 public:
     Monster(int w, int h, WindowRenderer window);
 
-    void move(int dt);
+    void move(int dt) override;
+
+    void walk();
+
+    void run();
 
     void attack();
 
     void destroy() override;
+
+    inline bool isMoving() {
+        return (spriteArray[ZOMBIE_WALK_SPRITE].animated ||
+                spriteArray[ZOMBIE_RUN_SPRITE].animated);
+    }
+
+    inline bool isAttacking() { return spriteArray[ZOMBIE_ATTACK_SPRITE].animated; }
 
 private:
     int hp;

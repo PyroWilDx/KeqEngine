@@ -6,6 +6,7 @@
 
 Player::Player(int w, int h, WindowRenderer window)
         : AnimatedEntity(w, h, true, PLAYER_END_SPRITE_ENUM) {
+    speed = PLAYER_SPEED;
     hp = 1;
     jumpVelocity = PLAYER_BASE_JUMP_VELOCITY;
 
@@ -77,7 +78,7 @@ void Player::clearDirection(int key, const bool *keyPressed) {
 }
 
 void Player::move(int dt) {
-    Entity::move(dt, PLAYER_SPEED);
+    Entity::move(dt);
 
     int minX = MIN_X;
     int maxX = MAX_X - renderW;

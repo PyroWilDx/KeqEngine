@@ -7,6 +7,7 @@
 Monster::Monster(int w, int h, WindowRenderer window)
         : AnimatedEntity(w, h, true, ZOMBIE_END_SPRITE_ENUM) {
     xDirection = 1;
+    speed = MONSTER_WALK_SPEED;
     hp = 1;
 
     SDL_Texture *idleTexture = window.loadTexture("res/gfx/zombie/zombie_idle.png");
@@ -38,13 +39,23 @@ Monster::Monster(int w, int h, WindowRenderer window)
 }
 
 void Monster::move(int dt) {
-    Entity::move(dt, MONSTER_SPEED);
+    Entity::move(dt);
 
     if (x + renderW > SCREEN_WIDTH && xDirection == 1) {
         xDirection = -1;
     } else if (x < 0 && xDirection == -1) {
         xDirection = 1;
     }
+}
+
+void Monster::walk() {
+    setTextureAnimated(ZOMBIE_WALK_SPRITE, true);
+    speed = MONSTER_WALK_SPEED;
+}
+
+void Monster::run() {
+    setTextureAnimated(ZOMBIE_RUN_SPRITE, true);
+    speed = MONSTER_RUN_SPEED;
 }
 
 void Monster::attack() {
