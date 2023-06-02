@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include "Utils.hpp"
 
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {

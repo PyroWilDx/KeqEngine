@@ -5,6 +5,9 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <SDL2/SDL.h>
+#include "Entity.hpp"
+
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
