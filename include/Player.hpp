@@ -27,7 +27,7 @@ const float PLAYER_BASE_JUMP_VELOCITY = 1.0f;
 class Player : public AnimatedEntity {
 
 public:
-    Player(int w, int h, WindowRenderer window);
+    Player(int w, int h, WindowRenderer *window);
 
     void updateDirection(int key, const bool *keyPressed);
 
@@ -39,6 +39,8 @@ public:
 
     void attack();
 
+    void damage();
+
     void destroy() override;
 
     inline bool isMoving() { return spriteArray[PLAYER_RUN_SPRITE].animated; }
@@ -46,6 +48,8 @@ public:
     inline bool isJumping() { return spriteArray[PLAYER_JUMP_SPRITE].animated; }
 
     inline bool isAttacking() { return spriteArray[PLAYER_ATTACK_SPRITE].animated; }
+
+    inline int getHp() { return hp; }
 
 private:
     int hp;

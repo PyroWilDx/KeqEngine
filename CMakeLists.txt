@@ -34,5 +34,6 @@ target_sources(main PRIVATE
         ${SRC_DIR}/AnimatedEntity.cpp
         ${SRC_DIR}/Player.cpp
         ${SRC_DIR}/Monster.cpp
-        ${SRC_DIR}/Background.cpp)
+        ${SRC_DIR}/Background.cpp
+        ${SRC_DIR}/MonsterLinkedList.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

@@ -1,6 +1,7 @@
 //
 // Created by pyrowildx on 30/05/23.
 //
+
 #include "AnimatedEntity.hpp"
 
 AnimatedEntity::AnimatedEntity(int w, int h, bool hasShadow, int n)

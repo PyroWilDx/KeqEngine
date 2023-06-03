@@ -4,38 +4,38 @@
 
 #include "Player.hpp"
 
-Player::Player(int w, int h, WindowRenderer window)
+Player::Player(int w, int h, WindowRenderer *window)
         : AnimatedEntity(w, h, true, PLAYER_END_SPRITE_ENUM) {
     speed = PLAYER_SPEED;
     hp = 1;
     jumpVelocity = PLAYER_BASE_JUMP_VELOCITY;
 
-    SDL_Texture *idleTexture = window.loadTexture("res/gfx/player/player_idle.png");
+    SDL_Texture *idleTexture = window->loadTexture("res/gfx/player/player_idle.png");
     spriteArray[PLAYER_IDLE_SPRITE] = {true, false, idleTexture,
                                        18 * w, 0,
                                        60, 0};
 
-    SDL_Texture *runTexture = window.loadTexture("res/gfx/player/player_run.png");
+    SDL_Texture *runTexture = window->loadTexture("res/gfx/player/player_run.png");
     spriteArray[PLAYER_RUN_SPRITE] = {false, false, runTexture,
                                       24 * w, 0,
                                       60, 0};
 
-    SDL_Texture *jumpTexture = window.loadTexture("res/gfx/player/player_jump.png");
+    SDL_Texture *jumpTexture = window->loadTexture("res/gfx/player/player_jump.png");
     spriteArray[PLAYER_JUMP_SPRITE] = {false, true, jumpTexture,
                                        19 * w, 0,
                                        90, 0};
 
-    SDL_Texture *attackTexture = window.loadTexture("res/gfx/player/player_attack.png");
+    SDL_Texture *attackTexture = window->loadTexture("res/gfx/player/player_attack.png");
     spriteArray[PLAYER_ATTACK_SPRITE] = {false, true, attackTexture,
                                          26 * w, 0,
                                          60, 0};
 
-    SDL_Texture *hurtTexture = window.loadTexture("res/gfx/player/player_hurt.png");
+    SDL_Texture *hurtTexture = window->loadTexture("res/gfx/player/player_hurt.png");
     spriteArray[PLAYER_HURT_SPRITE] = {false, true, hurtTexture,
                                        7 * w, 0,
                                        60, 0};
 
-    SDL_Texture *turnTexture = window.loadTexture("res/gfx/player/player_turn.png");
+    SDL_Texture *turnTexture = window->loadTexture("res/gfx/player/player_turn.png");
     spriteArray[PLAYER_TURN_SPRITE] = {false, true, turnTexture,
                                        5 * w, 0,
                                        120, 0};
@@ -109,6 +109,10 @@ void Player::jump(int dt) {
 
 void Player::attack() {
     setTextureAnimated(PLAYER_ATTACK_SPRITE, true);
+}
+
+void Player::damage() {
+    hp--;
 }
 
 void Player::destroy() {

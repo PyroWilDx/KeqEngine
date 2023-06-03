@@ -9,6 +9,7 @@
 #include "Text.hpp"
 #include "Monster.hpp"
 #include "Background.hpp"
+#include "MonsterLinkedList.hpp"
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -29,17 +30,32 @@ int main() {
     Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT,
                                        3000, backgroundTexture);
 
-    Player player = Player(80, 80, window);
+    Player player = Player(80, 80, &window);
     player.moveTo(0, DEFAULT_Y, 0);
     player.setCollisionRect({40, 60, 60, 90});
     player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
 
-    Monster zombie0 = Monster(96, 96, window);
-    zombie0.moveTo(100, DEFAULT_Y, -100);
-    zombie0.setCollisionRect({70, 76, 76, 120});
-    zombie0.setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
-    zombie0.setTextureAnimated(ZOMBIE_RUN_SPRITE, true);
-    zombie0.walk();
+    auto *monsterLL = new MonsterLinkedList();
+    auto *zombie0 = new Monster(96, 96, &window);
+    zombie0->moveTo(100, DEFAULT_Y, -100);
+    zombie0->setCollisionRect({70, 76, 76, 120});
+    zombie0->setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
+    zombie0->walk();
+    monsterLL->insert(zombie0);
+    auto *zombie1 = new Monster(96, 96, &window);
+    zombie1->moveTo(200, DEFAULT_Y, -70);
+    zombie1->setCollisionRect({70, 76, 76, 120});
+    zombie1->setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
+    zombie1->run();
+    monsterLL->insert(zombie1);
+    Monster *zombie2 = zombie0->copy(&window);
+    zombie2->moveTo(300, DEFAULT_Y, -50);
+    zombie2->run();
+    monsterLL->insert(zombie2);
+    Monster *zombie3 = zombie0->copy(&window);
+    zombie3->moveTo(400, DEFAULT_Y, -25);
+    zombie3->walk();
+    monsterLL->insert(zombie3);
 
     Uint32 dt;
     Uint32 lastTime = SDL_GetTicks();
@@ -114,30 +130,31 @@ int main() {
             int halfX = SCREEN_WIDTH / 2 - playerW / 2;
             int playerXDirection = player.getXDirection();
             if ((playerXDirection == 1 && playerX > halfX) ||
-                    (playerXDirection == -1 && playerX < halfX)) {
+                (playerXDirection == -1 && playerX < halfX)) {
                 int lastX = background.getFrame().x;
                 background.move((int) dt, player.getXDirection());
                 int translateX = lastX - background.getFrame().x;
                 // Translate all Entities
                 player.addX(translateX);
-                zombie0.addX(translateX);
+                monsterLL->operateAllCells(&Monster::addX, &translateX, nullptr);
             }
         }
         if (player.isJumping()) player.jump((int) dt);
         player.animate((int) dt);
 
         // Monster(s)
-        zombie0.move((int) dt);
-        if (rand() % 1000 < 10) zombie0.attack();
-        zombie0.animate((int) dt);
+        monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
+        if (rand() % 1000 < 10) {
+            monsterLL->operateAllCells(&Monster::attack, nullptr, nullptr);
+        }
+        monsterLL->operateAllCells(&Monster::animate, &dt, nullptr);
 
         // Handling Player Collisions
-        if (player.collides(&zombie0)) {
-            if (player.isAttacking()) {
-                zombie0.destroy();
-            } else {
-                printf("Noob\n");
-            }
+        bool playerDamaged = false;
+        monsterLL->operateAllCells(&Monster::collides, &player, &playerDamaged);
+        if (playerDamaged) {
+            player.damage();
+            printf("Noob %d\n", player.getHp());
         }
 
         // FPS Text
@@ -155,16 +172,17 @@ int main() {
         window.clear();
         window.render(&background);
         window.render(&FPSText);
-        window.render(&zombie0);
+        monsterLL->operateAllCells(&Monster::render, &window, nullptr);
         window.render(&player);
         window.display();
     }
 
     // Free
-    FPSText.destroy();
     background.destroy();
+    FPSText.destroy();
+    monsterLL->deleteAllCells();
+    delete monsterLL;
     player.destroy();
-    zombie0.destroy();
     window.cleanUp();
     SDL_Quit();
 
