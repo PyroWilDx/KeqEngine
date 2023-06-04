@@ -18,7 +18,7 @@ void AnimatedEntity::setTextureAnimated(int code, bool animated) {
     }
 }
 
-void AnimatedEntity::animate(int dt) {
+bool AnimatedEntity::animate(int dt) {
     SpriteTexture *lastAnimatedSprite;
     for (int i = 0; i < n; i++) {
         SpriteTexture *currentSprite = &spriteArray[i];
@@ -40,6 +40,7 @@ void AnimatedEntity::animate(int dt) {
     }
     frame.x = lastAnimatedSprite->currentFrameX;
     texture = lastAnimatedSprite->texture;
+    return (lastAnimatedSprite->accumulatedTime == 0);
 }
 
 void AnimatedEntity::destroy() {

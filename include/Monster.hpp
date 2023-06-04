@@ -24,6 +24,8 @@ const int MONSTER_HEIGHT = 200;
 const float MONSTER_WALK_SPEED = 0.2f;
 const float MONSTER_RUN_SPEED = 0.6f;
 
+const int PLAYER_REACH = 50;
+
 class Monster : public AnimatedEntity {
 
 public:
@@ -63,7 +65,10 @@ public:
 
     inline static bool collides(Monster *monster, void *params, void *retVal) {
         auto *player = (Player *) params;
-        bool collided = player->collides(monster);
+        SDL_Rect addRect;
+        if (player->isAttacking()) addRect = {0, 0, PLAYER_REACH, 0};
+        else addRect = {0, 0, 0, 0};
+        bool collided = player->collides(monster, addRect);
         bool res = false;
         if (collided) {
             if (player->isAttacking()) {
@@ -71,7 +76,7 @@ public:
             }
         }
         bool *tmpRetVal = (bool *) retVal;
-        *tmpRetVal = *tmpRetVal || collided;
+        *tmpRetVal = *tmpRetVal || (collided && !res);
         return res;
     }
 

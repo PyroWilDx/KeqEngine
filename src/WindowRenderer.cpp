@@ -39,13 +39,12 @@ void WindowRenderer::render(Entity *entity) {
     if (renderH == 0) dst.h = src.h;
 
     if (entity->getHasShadow()) {
-        // TODO Ombre en fonction du Y. (foncé si Y proche du DEFAULT_Y! Sinon plus clair! )
         SDL_Rect srcShadow = shadow->getFrame();
         SDL_Rect collRect = entity->getCollisionRect();
         SDL_Rect dstShadow = {x + collRect.x - collRect.w / 4,
                               DEFAULT_Y + z + collRect.y + collRect.h - collRect.h / 8,
                               collRect.w + collRect.w / 2,
-                              collRect.h / 4};
+                              collRect.h / 6};
         SDL_Texture *shadowTexture = shadow->getTexture();
         int color = (int) ((float) (DEFAULT_Y - y) / 2.4f);
         SDL_SetTextureColorMod(shadowTexture, color, color, color);

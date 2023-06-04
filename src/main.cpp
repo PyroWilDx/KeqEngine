@@ -140,7 +140,8 @@ int main() {
             }
         }
         if (player.isJumping()) player.jump((int) dt);
-        player.animate((int) dt);
+        if (player.isDamaged()) player.damage((int) dt);
+        bool animated = player.animate((int) dt);
 
         // Monster(s)
         monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
@@ -153,7 +154,7 @@ int main() {
         bool playerDamaged = false;
         monsterLL->operateAllCells(&Monster::collides, &player, &playerDamaged);
         if (playerDamaged) {
-            player.damage();
+            player.damage((int) dt);
             printf("Noob %d\n", player.getHp());
         }
 

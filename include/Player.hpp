@@ -23,6 +23,7 @@ const int PLAYER_WIDTH = 200;
 const int PLAYER_HEIGHT = 200;
 const float PLAYER_SPEED = 0.4f;
 const float PLAYER_BASE_JUMP_VELOCITY = 1.0f;
+const float PLAYER_KNOCKBACK_SDEED = 0.6f;
 
 class Player : public AnimatedEntity {
 
@@ -39,7 +40,7 @@ public:
 
     void attack();
 
-    void damage();
+    void damage(int dt);
 
     void destroy() override;
 
@@ -48,6 +49,8 @@ public:
     inline bool isJumping() { return spriteArray[PLAYER_JUMP_SPRITE].animated; }
 
     inline bool isAttacking() { return spriteArray[PLAYER_ATTACK_SPRITE].animated; }
+
+    inline bool isDamaged() { return spriteArray[PLAYER_HURT_SPRITE].animated; }
 
     inline int getHp() { return hp; }
 

@@ -7,6 +7,8 @@
 
 #include <SDL2/SDL.h>
 
+const int DEFAULT_ENTITY_LENGTH = 4;
+
 class Entity {
 
 public:
@@ -20,7 +22,7 @@ public:
 
     void moveTo(int x_, int y_, int z_);
 
-    bool collides(Entity *entity);
+    bool collides(Entity *entity, SDL_Rect addRect);
 
     void clearTexture();
 

@@ -111,8 +111,14 @@ void Player::attack() {
     setTextureAnimated(PLAYER_ATTACK_SPRITE, true);
 }
 
-void Player::damage() {
-    hp--;
+void Player::damage(int dt) {
+    if (!isDamaged()) {
+        setTextureAnimated(PLAYER_HURT_SPRITE, true);
+        x -= 10;
+        hp--;
+    } else {
+        x -= (int) (PLAYER_KNOCKBACK_SDEED * (float) dt);
+    }
 }
 
 void Player::destroy() {

@@ -50,20 +50,19 @@ void Entity::moveTo(int x_, int y_, int z_) {
     z = z_;
 }
 
-bool Entity::collides(Entity *entity) {
-    int zW = 6;
-    int x1 = x + collisionRect.x;
-    int y1 = y + collisionRect.y;
-    int z1 = z + y1 + collisionRect.h - zW;
-    int maxX1 = x1 + collisionRect.w;
-    int maxY1 = y1 + collisionRect.h;
-    int maxZ1 = z1 + 2 * zW;
+bool Entity::collides(Entity *entity, SDL_Rect addRect) {
+    int x1 = x + collisionRect.x + addRect.x;
+    int y1 = y + collisionRect.y + addRect.y;
+    int z1 = z + y1 + collisionRect.h - DEFAULT_ENTITY_LENGTH;
+    int maxX1 = x1 + collisionRect.w + addRect.w;
+    int maxY1 = y1 + collisionRect.h + addRect.h;
+    int maxZ1 = z1 + 2 * DEFAULT_ENTITY_LENGTH;
     int x2 = entity->x + entity->collisionRect.x;
     int y2 = entity->y + entity->collisionRect.y;
-    int z2 = entity->z + y2 + entity->collisionRect.h - zW;
+    int z2 = entity->z + y2 + entity->collisionRect.h - DEFAULT_ENTITY_LENGTH;
     int maxX2 = x2 + entity->collisionRect.w;
     int maxY2 = y2 + entity->collisionRect.h;
-    int maxZ2 = z2 + 2 * zW;
+    int maxZ2 = z2 + 2 * DEFAULT_ENTITY_LENGTH;
 
     if (maxX1 < x2 || x1 > maxX2) return false;
     if (maxY1 < y2 || y1 > maxY2) return false;

@@ -25,7 +25,7 @@ public:
 
     void setTextureAnimated(int code, bool animated);
 
-    void animate(int dt);
+    bool animate(int dt);
 
     void destroy() override;
 
