@@ -17,8 +17,10 @@ Entity::Entity(int x, int y, int z) {
     collisionRect = frame;
     hasShadow = false;
     texture = nullptr;
-    renderW = 0;
-    renderH = 0;
+    renderWMultiplier = 1.0f;
+    renderHMultiplier = 1.0f;
+    xShift = 0;
+    yShift = 0;
 }
 
 Entity::Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture)
@@ -30,8 +32,6 @@ Entity::Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *t
     collisionRect = frame;
     this->hasShadow = hasShadow;
     this->texture = texture;
-    renderW = w;
-    renderH = h;
 }
 
 void Entity::addX(int x_) {

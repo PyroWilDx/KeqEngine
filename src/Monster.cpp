@@ -17,13 +17,13 @@ Monster::Monster(int w, int h, WindowRenderer *window)
 
     SDL_Texture *walkTexture = window->loadTexture("res/gfx/zombie/zombie_walk.png");
     spriteArray[ZOMBIE_WALK_SPRITE] = {false, false, walkTexture,
-                                      10 * w, 0,
-                                      60, 0};
+                                       10 * w, 0,
+                                       60, 0};
 
     SDL_Texture *runTexture = window->loadTexture("res/gfx/zombie/zombie_run.png");
     spriteArray[ZOMBIE_RUN_SPRITE] = {false, false, runTexture,
-                                       8 * w, 0,
-                                       90, 0};
+                                      8 * w, 0,
+                                      90, 0};
 
     SDL_Texture *attackTexture = window->loadTexture("res/gfx/zombie/zombie_attack.png");
     spriteArray[ZOMBIE_ATTACK_SPRITE] = {false, true, attackTexture,
@@ -41,7 +41,8 @@ Monster::Monster(int w, int h, WindowRenderer *window)
 void Monster::move(int dt) {
     Entity::move(dt);
 
-    if (x + renderW > SCREEN_WIDTH && xDirection == 1) {
+//    if (x + renderW > SCREEN_WIDTH && xDirection == 1) {
+    if (x > SCREEN_WIDTH && xDirection == 1) {
         xDirection = -1;
     } else if (x < 0 && xDirection == -1) {
         xDirection = 1;
@@ -74,8 +75,8 @@ Monster *Monster::copy(WindowRenderer *window) {
     copyMonster->frame = frame;
     copyMonster->collisionRect = collisionRect;
     copyMonster->hasShadow = hasShadow;
-    copyMonster->renderW = renderW;
-    copyMonster->renderH = renderH;
+    copyMonster->renderWMultiplier = renderWMultiplier;
+    copyMonster->renderHMultiplier = renderHMultiplier;
     copyMonster->hp = hp;
 
     return copyMonster;

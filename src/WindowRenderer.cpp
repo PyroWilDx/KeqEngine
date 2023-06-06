@@ -5,7 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include "Utils.hpp"
 #include "WindowRenderer.hpp"
-#include "Player.hpp"
+#include "Keqing.hpp"
 
 WindowRenderer::WindowRenderer(const char *title, int w, int h) {
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -26,17 +26,19 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
 }
 
 void WindowRenderer::render(Entity *entity) {
-    SDL_Rect src = entity->getFrame();
-    int renderW = entity->getRenderW();
-    int renderH = entity->getRenderH();
+    SDL_Rect entityFrame = entity->getFrame();
+    SDL_Rect src = {entityFrame.x, 0,
+                    entityFrame.w, entityFrame.h};
+    float renderWMultiplier = entity->getRenderWMultiplier();
+    float renderHMultiplier = entity->getRenderHMultiplier();
     int x = entity->getX();
     int z = entity->getZ();
     int y = entity->getY();
     int yz = y + z;
-    SDL_Rect dst = {x, yz,
-                    renderW, renderH};
-    if (renderW == 0) dst.w = src.w;
-    if (renderH == 0) dst.h = src.h;
+    SDL_Rect dst = {(int) (x + entity->getXShift() * renderWMultiplier),
+                        (int) (yz + entity->getYShift() * renderHMultiplier),
+                        (int) ((float) entityFrame.w * renderWMultiplier),
+                        (int) ((float) entityFrame.h * renderHMultiplier)};
 
     if (entity->getHasShadow()) {
         SDL_Rect srcShadow = shadow->getFrame();
@@ -67,9 +69,10 @@ void WindowRenderer::render(Entity *entity) {
     SDL_Rect collRect = entity->getCollisionRect();
     collRect.x += x;
     collRect.y += yz;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(renderer, &dst);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &collRect);
-    SDL_RenderDrawRect(renderer, &dst);
 }
 
 void WindowRenderer::display() {

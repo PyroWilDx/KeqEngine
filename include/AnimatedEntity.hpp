@@ -12,7 +12,11 @@ typedef struct SpriteTexture {
     bool animated;
     bool oneTime;
     SDL_Texture *texture;
-    int totalWidth;
+    int xShift;
+    int yShift;
+    int width;
+    int height;
+    int maxWidth;
     int currentFrameX;
     int timeBetweenFrames;
     int accumulatedTime;

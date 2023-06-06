@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Utils.hpp"
 #include "WindowRenderer.hpp"
-#include "Player.hpp"
+#include "Keqing.hpp"
 #include "Text.hpp"
 #include "Monster.hpp"
 #include "Background.hpp"
@@ -24,38 +24,42 @@ int main() {
     myAssert(IMG_Init(IMG_INIT_PNG) != 0, "IMG_Init FAILED.", SDL_GetError());
     myAssert(TTF_Init() != -1, "TTF_Init FAILED.", SDL_GetError());
 
-    WindowRenderer window = WindowRenderer("FirstSDL2", SCREEN_WIDTH, SCREEN_HEIGHT);
+    WindowRenderer window = WindowRenderer("Keqing", SCREEN_WIDTH, SCREEN_HEIGHT);
 
     SDL_Texture *backgroundTexture = window.loadTexture("res/gfx/background.png");
     Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT,
                                        3000, backgroundTexture);
 
-    Player player = Player(80, 80, &window);
-    player.moveTo(0, DEFAULT_Y, 0);
-    player.setCollisionRect({40, 60, 60, 90});
-    player.setRenderWH(PLAYER_WIDTH, PLAYER_HEIGHT);
+    Keqing::initKeqing(&window);
+    Keqing *kq = Keqing::getInstance();
+    kq->moveTo(0, DEFAULT_Y, 0);
+    kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
+    kq->setCollisionRect({(int) (0.0f * KQ_WIDTH_MULTIPLIER),
+                          (int) (12.0f * KQ_HEIGHT_MULTIPLIER),
+                          (int) (60.0f * KQ_WIDTH_MULTIPLIER),
+                          (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
 
     auto *monsterLL = new MonsterLinkedList();
-    auto *zombie0 = new Monster(96, 96, &window);
-    zombie0->moveTo(100, DEFAULT_Y, -100);
-    zombie0->setCollisionRect({70, 76, 76, 120});
-    zombie0->setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
-    zombie0->walk();
-    monsterLL->insert(zombie0);
-    auto *zombie1 = new Monster(96, 96, &window);
-    zombie1->moveTo(200, DEFAULT_Y, -70);
-    zombie1->setCollisionRect({70, 76, 76, 120});
-    zombie1->setRenderWH(MONSTER_WIDTH, MONSTER_HEIGHT);
-    zombie1->run();
-    monsterLL->insert(zombie1);
-    Monster *zombie2 = zombie0->copy(&window);
-    zombie2->moveTo(300, DEFAULT_Y, -50);
-    zombie2->run();
-    monsterLL->insert(zombie2);
-    Monster *zombie3 = zombie0->copy(&window);
-    zombie3->moveTo(400, DEFAULT_Y, -25);
-    zombie3->walk();
-    monsterLL->insert(zombie3);
+//    auto *zombie0 = new Monster(96, 96, &window);
+//    zombie0->moveTo(100, DEFAULT_Y, -100);
+//    zombie0->setCollisionRect({70, 76, 76, 120});
+//    zombie0->setRenderWHMultiplier(MONSTER_WIDTH, MONSTER_HEIGHT);
+//    zombie0->walk();
+//    monsterLL->insert(zombie0);
+//    auto *zombie1 = new Monster(96, 96, &window);
+//    zombie1->moveTo(200, DEFAULT_Y, -70);
+//    zombie1->setCollisionRect({70, 76, 76, 120});
+//    zombie1->setRenderWHMultiplier(MONSTER_WIDTH, MONSTER_HEIGHT);
+//    zombie1->run();
+//    monsterLL->insert(zombie1);
+//    Monster *zombie2 = zombie0->copy(&window);
+//    zombie2->moveTo(300, DEFAULT_Y, -50);
+//    zombie2->run();
+//    monsterLL->insert(zombie2);
+//    Monster *zombie3 = zombie0->copy(&window);
+//    zombie3->moveTo(400, DEFAULT_Y, -25);
+//    zombie3->walk();
+//    monsterLL->insert(zombie3);
 
     Uint32 dt;
     Uint32 lastTime = SDL_GetTicks();
@@ -86,10 +90,10 @@ int main() {
                         case SDLK_s:
                         case SDLK_z:
                             keyPressed[key % 4] = true;
-                            player.updateDirection(key, keyPressed);
+                            kq->updateDirection(key, keyPressed);
                             break;
                         case SDLK_SPACE:
-                            player.setTextureAnimated(PLAYER_JUMP_SPRITE, true);
+                            kq->setTextureAnimated(KQ_JUMP_SPRITE, true);
                             break;
                         default:
                             break;
@@ -103,14 +107,14 @@ int main() {
                         case SDLK_s:
                         case SDLK_z:
                             keyPressed[key % 4] = false;
-                            player.clearDirection(key, keyPressed);
+                            kq->clearDirection(key, keyPressed);
                             break;
                         default:
                             break;
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    player.attack();
+                    kq->attack();
                     break;
                 default:
                     break;
@@ -122,26 +126,26 @@ int main() {
         dt = currentTime - lastTime;
         lastTime = currentTime;
 
-        // Player
-        if (player.isMoving()) {
-            player.move((int) dt);
-            int playerX = player.getX() + player.getCollisionRect().x;
-            int playerW = player.getCollisionRect().w;
-            int halfX = SCREEN_WIDTH / 2 - playerW / 2;
-            int playerXDirection = player.getXDirection();
-            if ((playerXDirection == 1 && playerX > halfX) ||
-                (playerXDirection == -1 && playerX < halfX)) {
+        // Keqing
+        if (kq->isMoving()) {
+            kq->move((int) dt);
+            int kqX = kq->getX() + kq->getCollisionRect().x;
+            int kqW = kq->getCollisionRect().w;
+            int halfX = SCREEN_WIDTH / 2 - kqW / 2;
+            int kqXDirection = kq->getXDirection();
+            if ((kqXDirection == 1 && kqX > halfX) ||
+                (kqXDirection == -1 && kqX < halfX)) {
                 int lastX = background.getFrame().x;
-                background.move((int) dt, player.getXDirection());
+                background.move((int) dt, kq->getXDirection());
                 int translateX = lastX - background.getFrame().x;
                 // Translate all Entities
-                player.addX(translateX);
+                kq->addX(translateX);
                 monsterLL->operateAllCells(&Monster::addX, &translateX, nullptr);
             }
         }
-        if (player.isJumping()) player.jump((int) dt);
-        if (player.isDamaged()) player.damage((int) dt);
-        bool animated = player.animate((int) dt);
+        if (kq->isJumping()) kq->jump((int) dt);
+        if (kq->isDamaged()) kq->damage((int) dt);
+        bool animated = kq->animate((int) dt);
 
         // Monster(s)
         monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
@@ -150,12 +154,12 @@ int main() {
         }
         monsterLL->operateAllCells(&Monster::animate, &dt, nullptr);
 
-        // Handling Player Collisions
-        bool playerDamaged = false;
-        monsterLL->operateAllCells(&Monster::collides, &player, &playerDamaged);
-        if (playerDamaged) {
-            player.damage((int) dt);
-            printf("Noob %d\n", player.getHp());
+        // Handling Keqing Collisions
+        bool kqDamaged = false;
+        monsterLL->operateAllCells(&Monster::collides, &kq, &kqDamaged);
+        if (kqDamaged) {
+            kq->damage((int) dt);
+            printf("Noob %d\n", kq->getHp());
         }
 
         // FPS Text
@@ -174,7 +178,7 @@ int main() {
         window.render(&background);
         window.render(&FPSText);
         monsterLL->operateAllCells(&Monster::render, &window, nullptr);
-        window.render(&player);
+        window.render(kq);
         window.display();
     }
 
@@ -183,7 +187,7 @@ int main() {
     FPSText.destroy();
     monsterLL->deleteAllCells();
     delete monsterLL;
-    player.destroy();
+    kq->destroy();
     window.cleanUp();
     SDL_Quit();
 

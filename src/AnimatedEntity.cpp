@@ -25,8 +25,8 @@ bool AnimatedEntity::animate(int dt) {
         if (currentSprite->animated) {
             currentSprite->accumulatedTime += dt;
             if (currentSprite->accumulatedTime > currentSprite->timeBetweenFrames) {
-                currentSprite->currentFrameX += frame.w;
-                if (currentSprite->currentFrameX >= currentSprite->totalWidth) {
+                currentSprite->currentFrameX += currentSprite->width;
+                if (currentSprite->currentFrameX >= currentSprite->maxWidth) {
                     if (!currentSprite->oneTime) {
                         currentSprite->currentFrameX = 0;
                     } else {
@@ -39,6 +39,10 @@ bool AnimatedEntity::animate(int dt) {
         }
     }
     frame.x = lastAnimatedSprite->currentFrameX;
+    xShift = lastAnimatedSprite->xShift;
+    yShift = lastAnimatedSprite->yShift;
+    frame.w = lastAnimatedSprite->width;
+    frame.h = lastAnimatedSprite->height;
     texture = lastAnimatedSprite->texture;
     return (lastAnimatedSprite->accumulatedTime == 0);
 }

@@ -32,9 +32,9 @@ public:
 
     inline void setCollisionRect(SDL_Rect collisionRect_) { collisionRect = collisionRect_; }
 
-    inline void setRenderWH(int w_, int h_) {
-        renderW = w_;
-        renderH = h_;
+    inline void setRenderWHMultiplier(float wMultiplier, float hMultiplier) {
+        renderWMultiplier = wMultiplier;
+        renderHMultiplier = hMultiplier;
     }
 
     inline int getX() { return x; }
@@ -53,9 +53,13 @@ public:
 
     inline SDL_Texture *getTexture() { return texture; }
 
-    inline int getRenderW() { return renderW; }
+    inline float getRenderWMultiplier() { return renderWMultiplier; }
 
-    inline int getRenderH() { return renderH; }
+    inline float getRenderHMultiplier() { return renderHMultiplier; }
+
+    inline int getXShift() { return xShift; }
+
+    inline int getYShift() { return yShift; }
 
 protected:
     int x, y, z;
@@ -65,7 +69,8 @@ protected:
     SDL_Rect collisionRect;
     bool hasShadow;
     SDL_Texture *texture;
-    int renderW, renderH;
+    float renderWMultiplier, renderHMultiplier;
+    int xShift, yShift;
 
 private:
 
