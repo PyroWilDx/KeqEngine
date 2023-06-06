@@ -6,7 +6,7 @@
 #define BACKGROUND_HPP
 
 #include "Entity.hpp"
-#include "Player.hpp"
+#include "Keqing.hpp"
 
 const float BACKGROUND_SPEED = 0.4f;
 

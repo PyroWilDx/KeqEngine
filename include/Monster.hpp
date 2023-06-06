@@ -8,7 +8,7 @@
 #include "WindowRenderer.hpp"
 #include "Utils.hpp"
 #include "AnimatedEntity.hpp"
-#include "Player.hpp"
+#include "Keqing.hpp"
 
 enum {
     ZOMBIE_IDLE_SPRITE = 0,
@@ -64,14 +64,14 @@ public:
     }
 
     inline static bool collides(Monster *monster, void *params, void *retVal) {
-        auto *player = (Player *) params;
+        Keqing *kq = Keqing::getInstance();
         SDL_Rect addRect;
-        if (player->isAttacking()) addRect = {0, 0, PLAYER_REACH, 0};
+        if (kq->isAttacking()) addRect = {0, 0, PLAYER_REACH, 0};
         else addRect = {0, 0, 0, 0};
-        bool collided = player->collides(monster, addRect);
+        bool collided = kq->collides(monster, addRect);
         bool res = false;
         if (collided) {
-            if (player->isAttacking()) {
+            if (kq->isAttacking()) {
                 res = true;
             }
         }

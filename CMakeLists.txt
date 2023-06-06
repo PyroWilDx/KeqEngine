@@ -32,7 +32,7 @@ target_sources(main PRIVATE
         ${SRC_DIR}/Text.cpp
         ${SRC_DIR}/Entity.cpp
         ${SRC_DIR}/AnimatedEntity.cpp
-        ${SRC_DIR}/Player.cpp
+        ${SRC_DIR}/Keqing.cpp
         ${SRC_DIR}/Monster.cpp
         ${SRC_DIR}/Background.cpp
         ${SRC_DIR}/MonsterLinkedList.cpp)
