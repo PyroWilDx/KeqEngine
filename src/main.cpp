@@ -101,8 +101,13 @@ int main() {
                             kq->setTextureAnimated(KQ_JUMP_SPRITE, true);
                             break;
                         case SDLK_LSHIFT:
-                            if (!kq->isDashing())
-                                kq->setTextureAnimated(KQ_DASH_START_SPRITE, true);
+                            if (!kq->isDashing()) {
+                                if (!kq->isJumping()) {
+                                    kq->setTextureAnimated(KQ_DASH_START_SPRITE, true);
+                                } else {
+                                    kq->setTextureAnimated(KQ_JUMP_DASH_SPRITE, true);
+                                }
+                            }
                             break;
                         default:
                             break;
@@ -155,6 +160,7 @@ int main() {
         if (kq->isJumping()) kq->jump((int) dt);
         if (kq->isNAttacking()) kq->nattack((int) dt, (int) currentTime);
         if (kq->isDashing()) kq->dash((int) dt);
+        if (kq->isJumpDashing()) kq->jumpDash((int) dt);
         if (kq->isDamaged()) kq->damage((int) dt);
         kq->animate((int) dt);
 
