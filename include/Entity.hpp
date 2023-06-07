@@ -45,6 +45,8 @@ public:
 
     inline int getXDirection() { return xDirection; }
 
+    inline bool isFacingEast() { return facingEast; }
+
     inline SDL_Rect getFrame() { return frame; }
 
     inline SDL_Rect getCollisionRect() { return collisionRect; }
@@ -61,16 +63,19 @@ public:
 
     inline int getYShift() { return yShift; }
 
+    inline int getXShiftR() { return xShiftR; }
+
 protected:
     int x, y, z;
     int xDirection, yDirection, zDirection;
+    bool facingEast;
     float speed;
     SDL_Rect frame;
     SDL_Rect collisionRect;
     bool hasShadow;
     SDL_Texture *texture;
     float renderWMultiplier, renderHMultiplier;
-    int xShift, yShift;
+    int xShift, yShift, xShiftR;
 
 private:
 

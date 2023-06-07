@@ -11,19 +11,23 @@
 
 enum {
     KQ_IDLE_SPRITE = 0,
-    KQ_WALK_SPRITE = 1,
-    KQ_JUMP_SPRITE = 2,
-    KQ_ATTACK_SPRITE = 3,
-    KQ_HURT_SPRITE = 4,
-    KQ_TURN_SPRITE = 5,
+    KQ_DASH_STOP_SPRITE,
+    KQ_WALK_SPRITE,
+    KQ_TURN_SPRITE,
+    KQ_JUMP_SPRITE,
+    KQ_NATTACKS_SPRITE, // Normal Attacks
+    KQ_DASH_START_SPRITE,
+    KQ_DASH_SPRITE,
+    KQ_HURT_SPRITE,
     KQ_END_SPRITE_ENUM
 };
 
-#define KQ_WIDTH_MULTIPLIER 2.0f
-#define KQ_HEIGHT_MULTIPLIER 2.0f
+#define KQ_WIDTH_MULTIPLIER 1.4f
+#define KQ_HEIGHT_MULTIPLIER 1.4f
 #define KQ_SPEED 0.4f
 #define KQ_BASE_JUMP_VELOCITY 1.0f
-#define KQ_KNOCKBACK_SDEED 0.6f
+#define KQ_DASH_SPEED 1.0f
+#define KQ_KNOCKBACK_SPEED 0.6f
 
 class Keqing : public AnimatedEntity {
 
@@ -40,9 +44,13 @@ public:
 
     void jump(int dt);
 
-    void attack(int dt, int currenTime);
+    void nattack(int dt, int currenTime);
+
+    void dash(int dt);
 
     void damage(int dt);
+
+    void setFacingEast(bool value);
 
     void destroy() override;
 
@@ -50,7 +58,13 @@ public:
 
     inline bool isJumping() { return spriteArray[KQ_JUMP_SPRITE].animated; }
 
-    inline bool isAttacking() { return spriteArray[KQ_ATTACK_SPRITE].animated; }
+    inline bool isNAttacking() { return spriteArray[KQ_NATTACKS_SPRITE].animated; }
+
+    inline bool isDashing() {
+        return (spriteArray[KQ_DASH_START_SPRITE].animated ||
+                spriteArray[KQ_DASH_SPRITE].animated ||
+                spriteArray[KQ_DASH_STOP_SPRITE].animated);
+    }
 
     inline bool isDamaged() { return spriteArray[KQ_HURT_SPRITE].animated; }
 
@@ -62,7 +76,8 @@ private:
     static Keqing *instance;
     int hp;
     float jumpVelocity;
-    int attackEndTime;
+    int lastNAttackTime;
+    float dashXToAdd;
 };
 
 #endif

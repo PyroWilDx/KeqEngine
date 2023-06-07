@@ -14,12 +14,14 @@ typedef struct SpriteTexture {
     SDL_Texture *texture;
     int xShift;
     int yShift;
+    int xShiftR;
     int width;
     int height;
     int maxWidth;
+    int frameDuration;
     int currentFrameX;
-    int timeBetweenFrames;
     int accumulatedTime;
+    SpriteTexture *next;
 } SpriteTexture;
 
 class AnimatedEntity : public Entity {
@@ -29,7 +31,7 @@ public:
 
     void setTextureAnimated(int code, bool animated, bool reset = true);
 
-    bool animate(int dt);
+    void animate(int dt);
 
     void destroy() override;
 

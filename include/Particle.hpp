@@ -10,7 +10,7 @@
 #define MAX_ACTIVE_PARTICLES 64
 
 enum {
-    PARTICLE_KQ_ATTACK_5,
+    PARTICLE_KQ_NATTACK_4,
     PARTICLE_END_ENUM
 };
 
@@ -23,7 +23,7 @@ class Particle : public AnimatedEntity {
 public:
     static void initParticle(WindowRenderer *window);
 
-    static void push(int code, int xShift, int yShift,
+    static void push(int code, int xShift, int yShift, int xShiftR,
                      float wMultiplier, float hMultiplier, Entity *entity_);
 
     static void remove(int i);
@@ -39,7 +39,7 @@ public:
     inline bool isFinished() { return !spriteArray[0].animated; }
 
 private:
-    explicit Particle(int code, int xShift, int yShift,
+    explicit Particle(int code, int xShift, int yShift, int xShiftR,
                       float wMultiplier, float hMultiplier, Entity *entity_);
 
     static SpriteTexture allParticleTextures[PARTICLE_END_ENUM];

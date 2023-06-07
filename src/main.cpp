@@ -100,6 +100,10 @@ int main() {
                         case SDLK_SPACE:
                             kq->setTextureAnimated(KQ_JUMP_SPRITE, true);
                             break;
+                        case SDLK_LSHIFT:
+                            if (!kq->isDashing())
+                                kq->setTextureAnimated(KQ_DASH_START_SPRITE, true);
+                            break;
                         default:
                             break;
                     }
@@ -119,7 +123,7 @@ int main() {
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    kq->setTextureAnimated(KQ_ATTACK_SPRITE, true);
+                    kq->setTextureAnimated(KQ_NATTACKS_SPRITE, true);
                     break;
                 default:
                     break;
@@ -132,7 +136,7 @@ int main() {
         lastTime = currentTime;
 
         // Keqing
-        if (kq->isMoving()) {
+        if (kq->isMoving()) { // TODO Need to handle other movements too
             kq->move((int) dt);
             int kqX = kq->getX() + kq->getCollisionRect().x;
             int kqW = kq->getCollisionRect().w;
@@ -149,9 +153,10 @@ int main() {
             }
         }
         if (kq->isJumping()) kq->jump((int) dt);
+        if (kq->isNAttacking()) kq->nattack((int) dt, (int) currentTime);
+        if (kq->isDashing()) kq->dash((int) dt);
         if (kq->isDamaged()) kq->damage((int) dt);
-        if (kq->isAttacking()) kq->attack((int) dt, (int) currentTime);
-        bool animated = kq->animate((int) dt);
+        kq->animate((int) dt);
 
         // Monster(s)
         monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
@@ -164,7 +169,7 @@ int main() {
         bool kqDamaged = false;
         monsterLL->operateAllCells(&Monster::collides, nullptr, &kqDamaged);
         if (kqDamaged) {
-            kq->damage((int) dt);
+            kq->damage((int) dt); // TODO change
             printf("Noob %d\n", kq->getHp());
         }
 
@@ -201,8 +206,8 @@ int main() {
 
             window.renderParticle(particules[i]);
         }
-        printf("%d\n", Particle::getCount());
         window.display();
+        printf("%d\n", kq->getX());
     }
 
     // Free
