@@ -17,6 +17,8 @@ public:
 
     void render(Entity *entity);
 
+    void renderParticle(Entity *particle);
+
     void display();
 
     void clear();

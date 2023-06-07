@@ -4,11 +4,13 @@
 
 #include "Monster.hpp"
 
-Monster::Monster(int w, int h, WindowRenderer *window)
-        : AnimatedEntity(w, h, true, ZOMBIE_END_SPRITE_ENUM) {
+Monster::Monster(WindowRenderer *window)
+        : AnimatedEntity(true, ZOMBIE_END_SPRITE_ENUM) {
     xDirection = 1;
     speed = MONSTER_WALK_SPEED;
     hp = 1;
+
+    int w = 0;
 
     SDL_Texture *idleTexture = window->loadTexture("res/gfx/zombie/zombie_idle.png");
     spriteArray[ZOMBIE_IDLE_SPRITE] = {true, false, idleTexture,
@@ -64,7 +66,7 @@ void Monster::attack() {
 }
 
 Monster *Monster::copy(WindowRenderer *window) {
-    auto *copyMonster = new Monster(frame.w, frame.h, window);
+    auto *copyMonster = new Monster(window);
     copyMonster->x = x;
     copyMonster->y = y;
     copyMonster->z = z;

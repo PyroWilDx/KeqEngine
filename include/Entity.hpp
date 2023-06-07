@@ -7,7 +7,7 @@
 
 #include <SDL2/SDL.h>
 
-const int DEFAULT_ENTITY_LENGTH = 4;
+#define DEFAULT_ENTITY_LENGTH 4
 
 class Entity {
 

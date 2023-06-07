@@ -35,5 +35,6 @@ target_sources(main PRIVATE
         ${SRC_DIR}/Keqing.cpp
         ${SRC_DIR}/Monster.cpp
         ${SRC_DIR}/Background.cpp
-        ${SRC_DIR}/MonsterLinkedList.cpp)
+        ${SRC_DIR}/MonsterLinkedList.cpp
+        ${SRC_DIR}/Particle.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

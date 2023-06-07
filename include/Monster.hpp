@@ -24,12 +24,10 @@ const int MONSTER_HEIGHT = 200;
 const float MONSTER_WALK_SPEED = 0.2f;
 const float MONSTER_RUN_SPEED = 0.6f;
 
-const int PLAYER_REACH = 50;
-
 class Monster : public AnimatedEntity {
 
 public:
-    Monster(int w, int h, WindowRenderer *window);
+    Monster(WindowRenderer *window);
 
     void move(int dt) override;
 
@@ -66,7 +64,7 @@ public:
     inline static bool collides(Monster *monster, void *params, void *retVal) {
         Keqing *kq = Keqing::getInstance();
         SDL_Rect addRect;
-        if (kq->isAttacking()) addRect = {0, 0, PLAYER_REACH, 0};
+        if (kq->isAttacking()) addRect = {0, 0, 60, 0}; // TODO CHANGE REACH CURRENT
         else addRect = {0, 0, 0, 0};
         bool collided = kq->collides(monster, addRect);
         bool res = false;
