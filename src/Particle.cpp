@@ -8,35 +8,37 @@ SpriteTexture Particle::allParticleTextures[PARTICLE_END_ENUM];
 Particle *Particle::activeParticles[MAX_ACTIVE_PARTICLES];
 int Particle::count = 0;
 
-Particle::Particle(int code, int xShift, int yShift,
+Particle::Particle(int code, int xShift, int yShift, int xShiftR,
                    float wMultiplier, float hMultiplier, Entity *entity)
         : AnimatedEntity(false, 1) {
     spriteArray[0] = allParticleTextures[code];
     spriteArray[0].xShift = xShift;
     spriteArray[0].yShift = yShift;
+    spriteArray[0].xShiftR = xShiftR;
     renderWMultiplier = wMultiplier;
     renderHMultiplier = hMultiplier;
     this->entity = entity;
 }
 
 void Particle::initParticle(WindowRenderer *window) {
-    allParticleTextures[PARTICLE_KQ_ATTACK_5] =
+    allParticleTextures[PARTICLE_KQ_NATTACK_4] =
             {true, true,
-             window->loadTexture(imgPaths[PARTICLE_KQ_ATTACK_5]),
-             0, 0,
+             window->loadTexture(imgPaths[PARTICLE_KQ_NATTACK_4]),
+             0, 0, 0,
              80, 32,
-             6 * 80, 0,
-             60, 0};
+             6 * 80, 60,
+             0, 0,
+             nullptr};
 
     for (int i = 0; i < MAX_ACTIVE_PARTICLES; i++) {
         activeParticles[i] = nullptr;
     }
 }
 
-void Particle::push(int code, int xShift, int yShift,
+void Particle::push(int code, int xShift, int yShift, int xShiftR,
                     float wMultiplier, float hMultiplier, Entity *entity_) {
     if (count < MAX_ACTIVE_PARTICLES) {
-        activeParticles[count] = new Particle(code, xShift, yShift,
+        activeParticles[count] = new Particle(code, xShift, yShift, xShiftR,
                                               wMultiplier, hMultiplier, entity_);
         count++;
     } else {

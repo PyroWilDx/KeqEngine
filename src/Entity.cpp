@@ -12,6 +12,7 @@ Entity::Entity(int x, int y, int z) {
     xDirection = 0;
     yDirection = 0;
     zDirection = 0;
+    facingEast = true;
     speed = 0;
     frame = {0, 0, 0, 0};
     collisionRect = frame;
@@ -21,6 +22,7 @@ Entity::Entity(int x, int y, int z) {
     renderHMultiplier = 1.0f;
     xShift = 0;
     yShift = 0;
+    xShiftR = 0;
 }
 
 Entity::Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture)

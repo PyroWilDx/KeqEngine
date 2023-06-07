@@ -20,19 +20,22 @@ void AnimatedEntity::setTextureAnimated(int code, bool animated, bool reset) {
     }
 }
 
-bool AnimatedEntity::animate(int dt) {
+void AnimatedEntity::animate(int dt) {
     SpriteTexture *lastAnimatedSprite;
     for (int i = 0; i < n; i++) {
         SpriteTexture *currentSprite = &spriteArray[i];
         if (currentSprite->animated) {
             currentSprite->accumulatedTime += dt;
-            if (currentSprite->accumulatedTime > currentSprite->timeBetweenFrames) {
+            if (currentSprite->accumulatedTime > currentSprite->frameDuration) {
                 currentSprite->currentFrameX += currentSprite->width;
                 if (currentSprite->currentFrameX >= currentSprite->maxWidth) {
                     if (!currentSprite->oneTime) {
                         currentSprite->currentFrameX = 0;
                     } else {
                         setTextureAnimated(i, false);
+                        if (currentSprite->next != nullptr) {
+                            currentSprite->next->animated = true;
+                        }
                     }
                 }
                 currentSprite->accumulatedTime = 0;
@@ -40,13 +43,13 @@ bool AnimatedEntity::animate(int dt) {
             lastAnimatedSprite = currentSprite;
         }
     }
+    texture = lastAnimatedSprite->texture;
     frame.x = lastAnimatedSprite->currentFrameX;
-    xShift = lastAnimatedSprite->xShift;
-    yShift = lastAnimatedSprite->yShift;
     frame.w = lastAnimatedSprite->width;
     frame.h = lastAnimatedSprite->height;
-    texture = lastAnimatedSprite->texture;
-    return (lastAnimatedSprite->accumulatedTime == 0);
+    xShift = lastAnimatedSprite->xShift;
+    yShift = lastAnimatedSprite->yShift;
+    xShiftR = lastAnimatedSprite->xShiftR;
 }
 
 void AnimatedEntity::destroy() {
