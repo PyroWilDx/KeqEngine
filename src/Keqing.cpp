@@ -30,7 +30,7 @@ Keqing::Keqing(WindowRenderer *window)
     spriteArray[KQ_DASH_STOP_SPRITE] = {false, true, dashStopTexture,
                                         0, 0, -36,
                                         96, 96,
-                                        5 * 96, 2000,
+                                        5 * 96, 90,
                                         0, 0,
                                         nullptr};
 
@@ -44,9 +44,9 @@ Keqing::Keqing(WindowRenderer *window)
 
     SDL_Texture *turnTexture = window->loadTexture("res/gfx/keqing/turn.png");
     spriteArray[KQ_TURN_SPRITE] = {false, true, turnTexture,
-                                   0, 0, 0,
+                                   -16, 0, -20,
                                    96, 96,
-                                   3 * 96, 120,
+                                   3 * 96, 30,
                                    0, 0,
                                    nullptr};
 
@@ -78,9 +78,17 @@ Keqing::Keqing(WindowRenderer *window)
     spriteArray[KQ_DASH_SPRITE] = {false, true, dashTexture,
                                    -32, 0, -36,
                                    128, 96,
-                                   8 * 128, 10,
+                                   8 * 128, 20,
                                    0, 0,
                                    nullptr};
+
+    SDL_Texture *turnDashTexture = window->loadTexture("res/gfx/keqing/turn_dash.png");
+    spriteArray[KQ_TURN_DASH_SPRITE] = {false, true, turnDashTexture,
+                                        -20, 0, -16,
+                                        96, 96,
+                                        3 * 96, 40,
+                                        0, 0,
+                                        nullptr};
 
     SDL_Texture *hurtTexture = window->loadTexture("res/gfx/keqing/hurt.png");
     spriteArray[KQ_HURT_SPRITE] = {false, true, hurtTexture,
@@ -242,6 +250,13 @@ void Keqing::damage(int dt) { // TODO change
 }
 
 void Keqing::setFacingEast(bool value) {
+    if (facingEast != value) {
+        if (spriteArray[KQ_DASH_START_SPRITE].animated ||
+            spriteArray[KQ_DASH_SPRITE].animated)
+            setTextureAnimated(KQ_TURN_DASH_SPRITE, true);
+        else
+            setTextureAnimated(KQ_TURN_SPRITE, true);
+    }
     facingEast = value;
 }
 
