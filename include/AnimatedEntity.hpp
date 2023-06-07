@@ -25,13 +25,15 @@ typedef struct SpriteTexture {
 class AnimatedEntity : public Entity {
 
 public:
-    AnimatedEntity(int w, int h, bool hasShadow, int n);
+    AnimatedEntity(bool hasShadow, int n);
 
-    void setTextureAnimated(int code, bool animated);
+    void setTextureAnimated(int code, bool animated, bool reset = true);
 
     bool animate(int dt);
 
     void destroy() override;
+
+    inline SpriteTexture *getSpriteArray() { return spriteArray; }
 
 protected:
     int n;

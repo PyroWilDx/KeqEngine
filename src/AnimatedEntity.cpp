@@ -4,16 +4,18 @@
 
 #include "AnimatedEntity.hpp"
 
-AnimatedEntity::AnimatedEntity(int w, int h, bool hasShadow, int n)
-        : Entity(0, 0, 0, w, h, hasShadow, nullptr) {
+AnimatedEntity::AnimatedEntity(bool hasShadow, int n)
+        : Entity(0, 0, 0, 0, 0, hasShadow, nullptr) {
     this->n = n;
     spriteArray = new SpriteTexture[n];
 }
 
-void AnimatedEntity::setTextureAnimated(int code, bool animated) {
+void AnimatedEntity::setTextureAnimated(int code, bool animated, bool reset) {
     spriteArray[code].animated = animated;
     if (!animated) {
-        spriteArray[code].currentFrameX = 0;
+        if (reset) {
+            spriteArray[code].currentFrameX = 0;
+        }
         spriteArray[code].accumulatedTime = 0;
     }
 }
@@ -53,4 +55,3 @@ void AnimatedEntity::destroy() {
     }
     delete[] spriteArray;
 }
-

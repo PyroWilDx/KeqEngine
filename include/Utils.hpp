@@ -17,8 +17,8 @@ const int DEFAULT_Y = SCREEN_HEIGHT - 200;
 const int MIN_X = -40;
 const int MAX_X = SCREEN_WIDTH + 90;
 const float Z_MULTIPLIER = 0.6f;
-const int MIN_Z = -102;
-const int MAX_Z = 54;
+const int MIN_Z = -140;
+const int MAX_Z = 0;
 
 void myAssert(bool expr, const char *msg, const char *err);
 

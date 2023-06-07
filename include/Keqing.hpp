@@ -2,8 +2,8 @@
 // Created by pyrowildx on 13/05/23.
 //
 
-#ifndef PLAYER_HPP
-#define PLAYER_HPP
+#ifndef KEQING_HPP
+#define KEQING_HPP
 
 #include "WindowRenderer.hpp"
 #include "Utils.hpp"
@@ -19,8 +19,6 @@ enum {
     KQ_END_SPRITE_ENUM
 };
 
-#define KQ_SPRITE_WIDTH 96
-#define KQ_SPRITE_HEIGHT 96
 #define KQ_WIDTH_MULTIPLIER 2.0f
 #define KQ_HEIGHT_MULTIPLIER 2.0f
 #define KQ_SPEED 0.4f
@@ -42,7 +40,7 @@ public:
 
     void jump(int dt);
 
-    void attack();
+    void attack(int dt, int currenTime);
 
     void damage(int dt);
 
@@ -64,6 +62,7 @@ private:
     static Keqing *instance;
     int hp;
     float jumpVelocity;
+    int attackEndTime;
 };
 
 #endif

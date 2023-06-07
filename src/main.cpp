@@ -10,6 +10,7 @@
 #include "Monster.hpp"
 #include "Background.hpp"
 #include "MonsterLinkedList.hpp"
+#include "Particle.hpp"
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -30,6 +31,8 @@ int main() {
     Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT,
                                        3000, backgroundTexture);
 
+    Particle::initParticle(&window);
+
     Keqing::initKeqing(&window);
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, DEFAULT_Y, 0);
@@ -38,6 +41,8 @@ int main() {
                           (int) (12.0f * KQ_HEIGHT_MULTIPLIER),
                           (int) (60.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
+
+    Particle **particules;
 
     auto *monsterLL = new MonsterLinkedList();
 //    auto *zombie0 = new Monster(96, 96, &window);
@@ -114,7 +119,7 @@ int main() {
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    kq->attack();
+                    kq->setTextureAnimated(KQ_ATTACK_SPRITE, true);
                     break;
                 default:
                     break;
@@ -145,6 +150,7 @@ int main() {
         }
         if (kq->isJumping()) kq->jump((int) dt);
         if (kq->isDamaged()) kq->damage((int) dt);
+        if (kq->isAttacking()) kq->attack((int) dt, (int) currentTime);
         bool animated = kq->animate((int) dt);
 
         // Monster(s)
@@ -156,10 +162,21 @@ int main() {
 
         // Handling Keqing Collisions
         bool kqDamaged = false;
-        monsterLL->operateAllCells(&Monster::collides, &kq, &kqDamaged);
+        monsterLL->operateAllCells(&Monster::collides, nullptr, &kqDamaged);
         if (kqDamaged) {
             kq->damage((int) dt);
             printf("Noob %d\n", kq->getHp());
+        }
+
+        // Particles
+        particules = Particle::getActiveParticles();
+        for (int i = 0; i < Particle::getCount(); i++) {
+            if (particules[i] == nullptr) continue;
+
+            particules[i]->animate((int) dt);
+            if (particules[i]->isFinished()) {
+                Particle::remove(i);
+            }
         }
 
         // FPS Text
@@ -179,6 +196,12 @@ int main() {
         window.render(&FPSText);
         monsterLL->operateAllCells(&Monster::render, &window, nullptr);
         window.render(kq);
+        for (int i = 0; i < Particle::getCount(); i++) {
+            if (particules[i] == nullptr) continue;
+
+            window.renderParticle(particules[i]);
+        }
+        printf("%d\n", Particle::getCount());
         window.display();
     }
 
@@ -188,6 +211,7 @@ int main() {
     monsterLL->deleteAllCells();
     delete monsterLL;
     kq->destroy();
+    Particle::cleanUp();
     window.cleanUp();
     SDL_Quit();
 

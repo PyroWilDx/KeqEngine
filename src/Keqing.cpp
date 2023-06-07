@@ -3,58 +3,57 @@
 //
 
 #include "Keqing.hpp"
+#include "Particle.hpp"
 
 Keqing *Keqing::instance = nullptr;
 
 Keqing::Keqing(WindowRenderer *window)
-        : AnimatedEntity(KQ_SPRITE_WIDTH, KQ_SPRITE_HEIGHT,
-                         true, KQ_END_SPRITE_ENUM) {
+        : AnimatedEntity(true, KQ_END_SPRITE_ENUM) {
     speed = KQ_SPEED;
     hp = 1;
     jumpVelocity = KQ_BASE_JUMP_VELOCITY;
-
-    int w = frame.w;
+    attackEndTime = 0;
 
     SDL_Texture *idleTexture = window->loadTexture("res/gfx/keqing/idle.png");
     spriteArray[KQ_IDLE_SPRITE] = {true, false, idleTexture,
                                    0, 0,
                                    96, 96,
-                                   18 * w, 0,
-                                   60, 0};
+                                   18 * 96, 0,
+                                   60, 10000};
 
     SDL_Texture *walkTexture = window->loadTexture("res/gfx/keqing/walk.png");
     spriteArray[KQ_WALK_SPRITE] = {false, false, walkTexture,
                                    -10, 0,
                                    96, 96,
-                                   8 * w, 0,
+                                   8 * 96, 0,
                                    60, 0};
 
     SDL_Texture *jumpTexture = window->loadTexture("res/gfx/keqing/jump.png");
     spriteArray[KQ_JUMP_SPRITE] = {false, true, jumpTexture,
                                    0, -34,
                                    96, 128,
-                                   7 * w, 0,
+                                   7 * 96, 0,
                                    200, 0};
 
     SDL_Texture *attackTexture = window->loadTexture("res/gfx/keqing/attack.png");
     spriteArray[KQ_ATTACK_SPRITE] = {false, true, attackTexture,
                                      -38, -32,
                                      192, 160,
-                                     68 * w, 0,
+                                     34 * 192, 0,
                                      60, 0};
 
     SDL_Texture *hurtTexture = window->loadTexture("res/gfx/keqing/hurt.png");
     spriteArray[KQ_HURT_SPRITE] = {false, true, hurtTexture,
                                    0, 0,
                                    96, 96,
-                                   6 * w, 0,
+                                   6 * 96, 0,
                                    60, 0};
 
     SDL_Texture *turnTexture = window->loadTexture("res/gfx/keqing/turn.png");
     spriteArray[KQ_TURN_SPRITE] = {false, true, turnTexture,
                                    0, 0,
                                    96, 96,
-                                   3 * w, 0,
+                                   3 * 96, 0,
                                    120, 0};
 
     texture = idleTexture;
@@ -128,8 +127,39 @@ void Keqing::jump(int dt) {
     }
 }
 
-void Keqing::attack() {
-    setTextureAnimated(KQ_ATTACK_SPRITE, true);
+void Keqing::attack(int dt, int currentTime) {
+    SpriteTexture *attackSprite = &spriteArray[KQ_ATTACK_SPRITE];
+    const int numberOfAttacks = 5;
+    int widthArray[numberOfAttacks] = {0,
+                                       5 * attackSprite->width,
+                                       11 * attackSprite->width,
+                                       19 * attackSprite->width,
+                                       27 * attackSprite->width};
+    int dashLengthArray[numberOfAttacks] = {1, 0, 2, 0, 4};
+    if (currentTime - attackEndTime < 2000) {
+        int i;
+        for (i = 1; i < numberOfAttacks; i++) {
+            if (attackSprite->currentFrameX == widthArray[i]) {
+                setTextureAnimated(KQ_ATTACK_SPRITE, false, false);
+                attackEndTime = currentTime;
+                attackSprite->currentFrameX += attackSprite->width;
+                return;
+            }
+            if (attackSprite->currentFrameX < widthArray[i]) break;
+        }
+        i--;
+        if (attackSprite->accumulatedTime += dt > attackSprite->timeBetweenFrames) {
+            x += dashLengthArray[i];
+        }
+        if (i == 4) // TODO ONLY DO ONE
+            Particle::push(PARTICLE_KQ_ATTACK_5, 0, 20,
+                           4.0f, 4.0f, this);
+    } else {
+        setTextureAnimated(KQ_ATTACK_SPRITE, false);
+        setTextureAnimated(KQ_ATTACK_SPRITE, true);
+        attackEndTime = currentTime;
+        return;
+    }
 }
 
 void Keqing::damage(int dt) {

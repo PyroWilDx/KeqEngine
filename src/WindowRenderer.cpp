@@ -6,6 +6,7 @@
 #include "Utils.hpp"
 #include "WindowRenderer.hpp"
 #include "Keqing.hpp"
+#include "Particle.hpp"
 
 WindowRenderer::WindowRenderer(const char *title, int w, int h) {
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -27,16 +28,17 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
 
 void WindowRenderer::render(Entity *entity) {
     SDL_Rect entityFrame = entity->getFrame();
-    SDL_Rect src = {entityFrame.x, 0,
-                    entityFrame.w, entityFrame.h};
+    SDL_Rect src = entityFrame;
     float renderWMultiplier = entity->getRenderWMultiplier();
     float renderHMultiplier = entity->getRenderHMultiplier();
     int x = entity->getX();
     int z = entity->getZ();
     int y = entity->getY();
     int yz = y + z;
-    SDL_Rect dst = {(int) (x + entity->getXShift() * renderWMultiplier),
-                        (int) (yz + entity->getYShift() * renderHMultiplier),
+    int xShift = entity->getXShift();
+    int yShift = entity->getYShift();
+    SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
+                        (int) ((float) yz + (float) yShift * renderHMultiplier),
                         (int) ((float) entityFrame.w * renderWMultiplier),
                         (int) ((float) entityFrame.h * renderHMultiplier)};
 
@@ -63,6 +65,8 @@ void WindowRenderer::render(Entity *entity) {
 //                         0, nullptr, SDL_FLIP_HORIZONTAL);
 //    }
 
+//    SDL_Texture *entityTexture = entity->getTexture();
+//    SDL_SetTextureColorMod(entityTexture, 255, 60, 255);
     SDL_RenderCopy(renderer, entity->getTexture(),
                    &src, &dst);
 
@@ -73,6 +77,28 @@ void WindowRenderer::render(Entity *entity) {
     SDL_RenderDrawRect(renderer, &dst);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &collRect);
+}
+
+void WindowRenderer::renderParticle(Entity *particle_) {
+    auto *particle = (Particle *) particle_;
+    SDL_Rect particleFrame = particle->getFrame();
+    SDL_Rect src = particleFrame;
+    float renderWMultiplier = particle->getRenderWMultiplier();
+    float renderHMultiplier = particle->getRenderHMultiplier();
+    Entity *entity = particle->getEntity();
+    int x = entity->getX();
+    int z = entity->getZ();
+    int y = entity->getY();
+    int yz = y + z;
+    int xShift = particle->getXShift();
+    int yShift = particle->getYShift();
+    SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
+                    (int) ((float) yz + (float) yShift * renderHMultiplier),
+                    (int) ((float) particleFrame.w * renderWMultiplier),
+                    (int) ((float) particleFrame.h * renderHMultiplier)};
+
+    SDL_RenderCopy(renderer, particle->getTexture(),
+                   &src, &dst);
 }
 
 void WindowRenderer::display() {
