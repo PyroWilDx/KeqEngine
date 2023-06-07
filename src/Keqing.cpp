@@ -5,7 +5,7 @@
 #include "Keqing.hpp"
 #include "Particle.hpp"
 
-#define MAX_TIME_BETWEEN_NATTACKS 1000
+#define MAX_TIME_BETWEEN_NATTACKS 400
 #define NATTACKS_SPRITE_WIDTH 192
 
 Keqing *Keqing::instance = nullptr;
@@ -23,80 +23,84 @@ Keqing::Keqing(WindowRenderer *window)
                                    0, 0, -36,
                                    96, 96,
                                    18 * 96, 60,
-                                   0, 10000,
-                                   nullptr};
+                                   0, 10000, nullptr};
 
     SDL_Texture *dashStopTexture = window->loadTexture("res/gfx/keqing/dash_stop.png");
     spriteArray[KQ_DASH_STOP_SPRITE] = {false, true, dashStopTexture,
                                         0, 0, -36,
                                         96, 96,
                                         5 * 96, 90,
-                                        0, 0,
-                                        nullptr};
+                                        0, 0, nullptr};
+
+    SDL_Texture *jumpLandTexture = window->loadTexture("res/gfx/keqing/jump_land.png");
+    spriteArray[KQ_JUMP_LAND_SPRITE] = {false, true, jumpLandTexture,
+                                        0, 0, -34,
+                                        96, 96,
+                                        2 * 96, 100,
+                                        0, 0, nullptr};
 
     SDL_Texture *walkTexture = window->loadTexture("res/gfx/keqing/walk.png");
     spriteArray[KQ_WALK_SPRITE] = {false, false, walkTexture,
                                    -10, 0, -24,
                                    96, 96,
                                    8 * 96, 60,
-                                   0, 0,
-                                   nullptr};
+                                   0, 0, nullptr};
 
     SDL_Texture *turnTexture = window->loadTexture("res/gfx/keqing/turn.png");
     spriteArray[KQ_TURN_SPRITE] = {false, true, turnTexture,
                                    -16, 0, -20,
                                    96, 96,
                                    3 * 96, 30,
-                                   0, 0,
-                                   nullptr};
+                                   0, 0, nullptr};
 
     SDL_Texture *jumpTexture = window->loadTexture("res/gfx/keqing/jump.png");
     spriteArray[KQ_JUMP_SPRITE] = {false, true, jumpTexture,
                                    0, -34, -34,
                                    96, 128,
                                    7 * 96, 200,
-                                   0, 0,
-                                   nullptr};
+                                   0, 0, nullptr};
 
     SDL_Texture *nattacksTexture = window->loadTexture("res/gfx/keqing/nattacks.png");
     spriteArray[KQ_NATTACKS_SPRITE] = {false, true, nattacksTexture,
                                        -38, -32, -92,
                                        NATTACKS_SPRITE_WIDTH, 160,
                                        34 * NATTACKS_SPRITE_WIDTH, 60,
-                                       0, 0,
-                                       nullptr};
+                                       0, 0, nullptr};
 
     SDL_Texture *dashStartTexture = window->loadTexture("res/gfx/keqing/dash_start.png");
     spriteArray[KQ_DASH_START_SPRITE] = {false, true, dashStartTexture,
                                          -4, 0, -32,
                                          96, 96,
                                          3 * 96, 20,
-                                         0, 0,
-                                         nullptr};
+                                         0, 0, nullptr};
 
     SDL_Texture *dashTexture = window->loadTexture("res/gfx/keqing/dash.png");
     spriteArray[KQ_DASH_SPRITE] = {false, true, dashTexture,
                                    -32, 0, -36,
                                    128, 96,
                                    8 * 128, 20,
-                                   0, 0,
-                                   nullptr};
+                                   0, 0, nullptr};
 
     SDL_Texture *turnDashTexture = window->loadTexture("res/gfx/keqing/turn_dash.png");
     spriteArray[KQ_TURN_DASH_SPRITE] = {false, true, turnDashTexture,
                                         -20, 0, -16,
                                         96, 96,
                                         3 * 96, 40,
-                                        0, 0,
-                                        nullptr};
+                                        0, 0, nullptr};
+
+    SDL_Texture *jumpDashTexture = window->loadTexture("res/gfx/keqing/jump_dash.png");
+    spriteArray[KQ_JUMP_DASH_SPRITE] = {false, true, jumpDashTexture,
+                                        -10, 0, -26,
+                                        96, 96,
+                                        6 * 96, 40,
+                                        0, 0, nullptr};
 
     SDL_Texture *hurtTexture = window->loadTexture("res/gfx/keqing/hurt.png");
     spriteArray[KQ_HURT_SPRITE] = {false, true, hurtTexture,
                                    0, 0, 0,
                                    96, 96,
                                    6 * 96, 60,
-                                   0, 0,
-                                   nullptr};
+                                   0, 0, nullptr};
 
     spriteArray[KQ_DASH_START_SPRITE].next = &spriteArray[KQ_DASH_SPRITE];
     spriteArray[KQ_DASH_SPRITE].next = &spriteArray[KQ_DASH_STOP_SPRITE];
@@ -181,6 +185,7 @@ void Keqing::jump(int dt) {
         y = DEFAULT_Y;
         jumpVelocity = KQ_BASE_JUMP_VELOCITY;
         setTextureAnimated(KQ_JUMP_SPRITE, false);
+        setTextureAnimated(KQ_JUMP_LAND_SPRITE, true);
     }
 }
 
@@ -235,6 +240,12 @@ void Keqing::dash(int dt) {
     else if (spriteArray[KQ_DASH_STOP_SPRITE].animated) coeff = 0.2f;
 
     int toAdd = (int) (KQ_DASH_SPEED * (float) dt * coeff);
+    if (!facingEast) toAdd = -toAdd;
+    x += toAdd;
+}
+
+void Keqing::jumpDash(int dt) {
+    int toAdd = (int) (KQ_JUMP_DASH_SPEED * (float) dt);
     if (!facingEast) toAdd = -toAdd;
     x += toAdd;
 }
