@@ -8,9 +8,9 @@
 #include "Entity.hpp"
 #include "WindowRenderer.hpp"
 
-typedef struct SpriteTexture {
+typedef struct Sprite {
+    int code;
     bool animated;
-    bool oneTime;
     SDL_Texture *texture;
     int xShift;
     int yShift;
@@ -21,7 +21,7 @@ typedef struct SpriteTexture {
     int frameDuration;
     int currentFrameX;
     int accumulatedTime;
-    SpriteTexture *next;
+    Sprite *next;
 } SpriteTexture;
 
 class AnimatedEntity : public Entity {
@@ -29,17 +29,22 @@ class AnimatedEntity : public Entity {
 public:
     AnimatedEntity(bool hasShadow, int n);
 
-    void setTextureAnimated(int code, bool animated, bool reset = true);
+    void setTextureAnimated(int spriteCode, bool animated, bool reset = true);
 
     void animate(int dt);
 
+    void forceSprite(int spriteCode, int newMaxWidth,
+                     int newFrameDuration, int startX);
+
+    void removeForcedSprite();
+
     void destroy() override;
 
-    inline SpriteTexture *getSpriteArray() { return spriteArray; }
+    inline Sprite *getSpriteArray() { return spriteArray; }
 
 protected:
     int n;
-    SpriteTexture *spriteArray;
+    Sprite *spriteArray;
 
 private:
 

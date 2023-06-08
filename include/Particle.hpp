@@ -10,12 +10,14 @@
 #define MAX_ACTIVE_PARTICLES 64
 
 enum {
-    PARTICLE_KQ_NATTACK_4,
+    PARTICLE_KQ_NATTACK_4 = 0,
+    PARTICLE_KQ_AIR_NATTACK,
+    PARTICLE_KQ_SS_AOE,
+    PARTICLE_KQ_SS_AOE_WAVES,
+    PARTICLE_KQ_SS_CLONES,
+    PARTICLE_KQ_SS_SLASHES,
+    PARTICLE_KQ_SS_FINAL_SLASH,
     PARTICLE_END_ENUM
-};
-
-static const char *imgPaths[PARTICLE_END_ENUM] = {
-        "res/particles/kq_attack_5.png",
 };
 
 class Particle : public AnimatedEntity {
@@ -23,8 +25,8 @@ class Particle : public AnimatedEntity {
 public:
     static void initParticle(WindowRenderer *window);
 
-    static void push(int code, int xShift, int yShift, int xShiftR,
-                     float wMultiplier, float hMultiplier, Entity *entity_);
+    static void push(int spriteCode, int xShift, int yShift, int xShiftR, int frameDuration,
+                     float wMultiplier, float hMultiplier, Entity *entity);
 
     static void remove(int i);
 
@@ -39,10 +41,10 @@ public:
     inline bool isFinished() { return !spriteArray[0].animated; }
 
 private:
-    explicit Particle(int code, int xShift, int yShift, int xShiftR,
-                      float wMultiplier, float hMultiplier, Entity *entity_);
+    explicit Particle(int spriteCode, int xShift, int yShift, int xShiftR, int frameDuration,
+                      float wMultiplier, float hMultiplier, Entity *entity);
 
-    static SpriteTexture allParticleTextures[PARTICLE_END_ENUM];
+    static Sprite allParticleTextures[PARTICLE_END_ENUM];
 
     static Particle *activeParticles[MAX_ACTIVE_PARTICLES];
     static int count;

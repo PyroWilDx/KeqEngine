@@ -13,3 +13,7 @@ void myAssert(bool expr, const char *msg, const char *err) {
         assert(expr);
     }
 }
+
+bool isNewestFrame(Sprite *sprite, int wantedFrameX) {
+    return (sprite->currentFrameX == wantedFrameX && sprite->accumulatedTime == 0);
+}
