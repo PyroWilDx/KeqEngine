@@ -7,6 +7,7 @@
 
 #include <SDL2/SDL.h>
 #include "Entity.hpp"
+#include "AnimatedEntity.hpp"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1280;
@@ -21,5 +22,7 @@ const int MIN_Z = -10000;
 const int MAX_Z = 10000;
 
 void myAssert(bool expr, const char *msg, const char *err);
+
+bool isNewestFrame(Sprite *sprite, int wantedFrameX);
 
 #endif

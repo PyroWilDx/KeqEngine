@@ -98,7 +98,7 @@ int main() {
                             kq->updateDirection(key, keyPressed);
                             break;
                         case SDLK_SPACE:
-                            kq->setTextureAnimated(KQ_JUMP_SPRITE, true);
+                            kq->setTextureAnimated(KQ_JUMP_START_SPRITE, true);
                             break;
                         case SDLK_LSHIFT:
                             if (!kq->isDashing()) {
@@ -108,6 +108,12 @@ int main() {
                                     kq->setTextureAnimated(KQ_JUMP_DASH_SPRITE, true);
                                 }
                             }
+                            break;
+                        case SDLK_e:
+                            // TODO
+                            break;
+                        case SDLK_r:
+                            kq->setTextureAnimated(KQ_STARWARD_SWORD_SPRITE, true);
                             break;
                         default:
                             break;
@@ -128,7 +134,11 @@ int main() {
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    kq->setTextureAnimated(KQ_NATTACKS_SPRITE, true);
+                    if (!kq->isJumping()) {
+                        kq->setTextureAnimated(KQ_NATTACKS_SPRITE, true);
+                    } else {
+                        kq->setTextureAnimated(KQ_AIR_NATTACK_SPRITE, true);
+                    }
                     break;
                 default:
                     break;
@@ -141,6 +151,7 @@ int main() {
         lastTime = currentTime;
 
         // Keqing
+        // TODO Hitlag
         if (kq->isMoving()) { // TODO Need to handle other movements too
             kq->move((int) dt);
             int kqX = kq->getX() + kq->getCollisionRect().x;
@@ -159,8 +170,11 @@ int main() {
         }
         if (kq->isJumping()) kq->jump((int) dt);
         if (kq->isNAttacking()) kq->nattack((int) dt, (int) currentTime);
+        if (kq->isESkilling()) kq->stellarRestoration();
+        if (kq->isRBursting()) kq->starwardSword();
         if (kq->isDashing()) kq->dash((int) dt);
         if (kq->isJumpDashing()) kq->jumpDash((int) dt);
+        if (kq->isAirNAttacking()) kq->airNAttack((int) dt);
         if (kq->isDamaged()) kq->damage((int) dt);
         kq->animate((int) dt);
 
@@ -213,7 +227,8 @@ int main() {
             window.renderParticle(particules[i]);
         }
         window.display();
-        printf("%d\n", kq->getX());
+        printf("Keqing X : %d\n", kq->getX());
+        printf("Number of Active Particle(s) : %d\n", Particle::getCount());
     }
 
     // Free
