@@ -78,6 +78,22 @@ void AnimatedEntity::removeForcedSprite() {
     spriteArray[n].animated = false;
 }
 
+void AnimatedEntity::delay(int spriteCode, int ms) {
+    Sprite *sprite = &spriteArray[spriteCode];
+    sprite->currentFrameX -= (ms / sprite->frameDuration) * sprite->width;
+}
+
+void AnimatedEntity::reset(int spriteCode) {
+    Sprite *sprite = &spriteArray[spriteCode];
+    sprite->currentFrameX = 0;
+    sprite->accumulatedTime = 0;
+}
+
+int AnimatedEntity::getTotalDuration(int spriteCode) {
+    Sprite *sprite = &spriteArray[spriteCode];
+    return (sprite->frameDuration * (sprite->maxWidth / sprite->width));
+}
+
 void AnimatedEntity::destroy() {
     for (int i = 0; i < n; i++) {
         SDL_DestroyTexture(spriteArray[i].texture);

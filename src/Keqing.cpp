@@ -284,74 +284,126 @@ void Keqing::stellarRestoration() {
     // TODO
 }
 
-const int numberOfSlashes = 6;
-const int cloneSlashDuration = 400;
-const int cloneSlashRotations[numberOfSlashes] = {50, 270, 40,
-                                                  180, 320, 90};
-const int cloneSlashXShift[numberOfSlashes] = {0, 0, 0,
-                                               0, 0, 0};
-const int cloneSlashYShift[numberOfSlashes] = {0, 0, 0,
-                                               0, 0, 0};
-const int cloneSlashXShiftR[numberOfSlashes] = {0, 0, 0,
-                                                0, 0, 0};
-const float cloneSlashWM[numberOfSlashes] = {1.2f, 1.2f, 1.2f,
-                                             1.2f, 1.2f, 1.2f};
-const float cloneSlashHM[numberOfSlashes] = {1.2f, 1.2f, 1.2f,
-                                             1.2f, 1.2f, 1.2f};
-int cloneSlashCount = 0;
+const int cSlashFrameDuration = 20;
+
+const int cSlashRotations[KQ_SS_NUMBER_OF_CLONE_SLASH] =
+        {10, 200, 354, 152, 306, 90};
+
+const int cSlashXShift[KQ_SS_NUMBER_OF_CLONE_SLASH] =
+        {0, -86, -80, -110, -132, -70};
+
+const int cSlashYShift[KQ_SS_NUMBER_OF_CLONE_SLASH] =
+        {34, 6, -46, 12, -36, 0};
+
+const int cSlashXShiftR[KQ_SS_NUMBER_OF_CLONE_SLASH] =
+        {0, 0, 0, 0, 0, 0};
+
+const float cSlashWM[KQ_SS_NUMBER_OF_CLONE_SLASH] =
+        {0.88f, 1.6f, 1.2f, 1.52f, 1.32f, 1.0f};
+
+const float cSlashHM[KQ_SS_NUMBER_OF_CLONE_SLASH] =
+        {1.0f, 1.2f, 1.2f, 1.2f, 1.2f, 1.2f};
 
 static void pushCloneSlashParticle(Entity *keqing) {
-    Particle *cloneSlashParticle =
+    Particle *cSlashParticle =
             Particle::push(PARTICLE_KQ_SS_CLONE_SLASH,
-                           cloneSlashXShift[cloneSlashCount],
-                           cloneSlashYShift[cloneSlashCount],
-                           cloneSlashXShiftR[cloneSlashCount],
-                           cloneSlashDuration,
-                           cloneSlashWM[cloneSlashCount],
-                           cloneSlashHM[cloneSlashCount],
+                           cSlashXShift[0],
+                           cSlashYShift[0],
+                           cSlashXShiftR[0],
+                           cSlashFrameDuration,
+                           cSlashWM[0],
+                           cSlashHM[0],
                            keqing);
-    cloneSlashParticle->setRotation(cloneSlashRotations[cloneSlashCount]);
-    cloneSlashCount++;
+    cSlashParticle->setRotation(cSlashRotations[0]);
+
+    Particle *lastParticle = cSlashParticle;
+    for (int i = 1; i < KQ_SS_NUMBER_OF_CLONE_SLASH; i++) {
+        auto *nextCSlashParticle = new Particle(PARTICLE_KQ_SS_CLONE_SLASH,
+                                                cSlashXShift[i],
+                                                cSlashYShift[i],
+                                                cSlashXShiftR[i],
+                                                cSlashFrameDuration,
+                                                cSlashWM[i],
+                                                cSlashHM[i],
+                                                keqing);
+        nextCSlashParticle->setRotation(cSlashRotations[i]);
+        lastParticle->setNextParticle(nextCSlashParticle);
+        lastParticle = nextCSlashParticle;
+    }
+}
+
+const int slashDuration = 20;
+const int slashRotations[KQ_SS_NUMBER_OF_SLASH] =
+        {0, 20, 40, 60, 80, 100, 120, 140};
+
+static void pushSlashParticle(Entity *keqing) {
+    for (int i = 0; i < KQ_SS_NUMBER_OF_SLASH; i++) {
+        Particle *slashParticle =
+                Particle::push(PARTICLE_KQ_SS_SLASH,
+                               -196, 30, 0,
+                               slashDuration,
+                               1.2f, 1.2f, keqing);
+        slashParticle->setRotation(slashRotations[i]);
+        slashParticle->delay(0, 3 * slashDuration * i);
+    }
 }
 
 void Keqing::starwardSword() {
-    // TODO
     Sprite *ssSprite = &spriteArray[KQ_STARWARD_SWORD_SPRITE];
-    if (isNewestFrame(ssSprite, 0)) {
-        int pXShift = -86;
-        int pYShift = -74;
-        int pXShiftR = -86;
-        Particle::push(PARTICLE_KQ_SS_AOE,
-                       pXShift, pYShift, pXShiftR, 400,
-                       2.0f, 2.0f, this);
-        Particle::push(PARTICLE_KQ_SS_AOE_WAVES,
-                       pXShift, pYShift, pXShiftR, 200,
-                       2.0f, 2.0f, this);
-    } else if (isNewestFrame(ssSprite, 13 * ssSprite->width)) {
+    if (isNewestFrame(ssSprite, 0)) { // Burst Start
+        int pXShift = -84;
+        int pYShift = -34;
+        int pXShiftR = -84;
+        Particle *aoeParticle =
+                Particle::push(PARTICLE_KQ_SS_AOE,
+                               pXShift, pYShift, pXShiftR,
+                               80, 2.0f, 2.0f,
+                               this);
+        aoeParticle->setNextParticle(aoeParticle);
+        Particle *aoeWaveParticle =
+                Particle::push(PARTICLE_KQ_SS_AOE_WAVE,
+                               pXShift, pYShift, pXShiftR,
+                               60, 1.0f, 1.0f,
+                               this);
+        aoeWaveParticle->setRGBAMod(255, 255, 255, 128);
+        aoeWaveParticle->setNextParticle(aoeWaveParticle);
+
+    } else if (isNewestFrame(ssSprite, 12 * ssSprite->width)) { // Vanish
+        Particle::push(PARTICLE_KQ_SS_VANISH,
+                       -22, 6, -14,
+                       60, 1.0f, 1.0f,
+                       this);
+
+    } else if (isNewestFrame(ssSprite, 13 * ssSprite->width)) { // Clone Slash Start
         pushCloneSlashParticle(this);
+        Particle *cloneParticle =
+                Particle::push(PARTICLE_KQ_SS_CLONE,
+                               -86, -66, -86,
+                               cSlashFrameDuration * 1.4f,
+                               2.0f, 2.0f, this);
+        cloneParticle->delay(0, cSlashFrameDuration);
+        cloneParticle->setStopOnLastFrame(true);
         ssSprite->frameDuration = INT32_MAX;
-    } else if (isNewestFrame(ssSprite, 28 * ssSprite->width)) {
+
+    } else if (isNewestFrame(ssSprite, 28 * ssSprite->width)) { // Final Slash
+        Particle *tmpParticle = Particle::getParticle(PARTICLE_KQ_SS_AOE, 0);
+        tmpParticle->fadeAway();
+        tmpParticle = Particle::getParticle(PARTICLE_KQ_SS_AOE_WAVE, 0);
+        tmpParticle->fadeAway();
+        Particle::remove(PARTICLE_KQ_SS_CLONE, 0);
         Particle::push(PARTICLE_KQ_SS_FINAL_SLASH,
-                       -356, -112, -356, 60,
-                       1.0f, 1.0f, this);
+                       -356, -112, -356,
+                       60, 1.0f, 1.0f,
+                       this);
     }
 
-    if (cloneSlashCount == 2) {
-        Particle::push(PARTICLE_KQ_SS_CLONES,
-                       -86, -66, -86, cloneSlashDuration,
-                       2.0f, 2.0f, this);
+    if (ssSprite->currentFrameX == 13 * ssSprite->width &&
+        !Particle::isActive(PARTICLE_KQ_SS_CLONE_SLASH, 0)) { // Clone Slash End
+        ssSprite->frameDuration = STARWARD_SWORD_FRAME_DURATION;
+        ssSprite->currentFrameX += ssSprite->width;
+        pushSlashParticle(this);
     }
-    if (ssSprite->currentFrameX == 13 * ssSprite->width) {
-        if (!Particle::isActive(PARTICLE_KQ_SS_CLONES, 0) &&
-            cloneSlashCount == numberOfSlashes) {
-            ssSprite->frameDuration = STARWARD_SWORD_FRAME_DURATION;
-            cloneSlashCount = 0;
-        } else {
-            if (!Particle::isActive(PARTICLE_KQ_SS_CLONE_SLASH, 0)) {
-                pushCloneSlashParticle(this);
-            }
-        }
-    }
+
 }
 
 void Keqing::jump(int dt) {
@@ -448,11 +500,20 @@ bool Keqing::canDoAction(int spriteCode) {
 
     if (spriteArray[spriteCode].animated) return false;
 
+    bool res = true;
+    if (spriteCode == KQ_JUMP_START_SPRITE) {
+        res = !spriteArray[KQ_STARWARD_SWORD_SPRITE].animated;
+        if (!res) return res;
+    }
+
     // By Default
     for (int i = spriteCode + 1; i < KQ_END_SPRITE_ENUM; i++) {
-        if (spriteArray[i].animated) return false;
+        if (spriteArray[i].animated) {
+            res = false;
+            break;
+        }
     }
-    return true;
+    return res;
 }
 
 void Keqing::preAction(int spriteCode) {

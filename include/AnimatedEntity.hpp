@@ -42,7 +42,15 @@ public:
 
     void removeForcedSprite();
 
+    void delay(int spriteCode, int ms);
+
+    void reset(int spriteCode);
+
+    int getTotalDuration(int spriteCode);
+
     void destroy() override;
+
+    inline Sprite *getSpriteArray() { return spriteArray; }
 
 protected:
     int n;
