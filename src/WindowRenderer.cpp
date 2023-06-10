@@ -26,12 +26,13 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
     return texture;
 }
 
-void WindowRenderer::render(Entity *entity) {
+void WindowRenderer::render(Entity *entity, Entity *background) {
     SDL_Rect entityFrame = entity->getFrame();
     SDL_Rect src = entityFrame;
     float renderWMultiplier = entity->getRenderWMultiplier();
     float renderHMultiplier = entity->getRenderHMultiplier();
-    int x = entity->getX();
+    int x = entity->getX() - background->getFrame().x;
+    if (entity == background) x += background->getFrame().x;
     int z = entity->getZ();
     int y = entity->getY();
     int yz = y + z;
@@ -39,6 +40,7 @@ void WindowRenderer::render(Entity *entity) {
     int xShift = entity->getXShift();
     if (!facingEast) xShift = entity->getXShiftR();
     int yShift = entity->getYShift();
+    double rotation = entity->getRotation();
     SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
                     (int) ((float) yz + (float) yShift * renderHMultiplier),
                     (int) ((float) entityFrame.w * renderWMultiplier),
@@ -58,15 +60,15 @@ void WindowRenderer::render(Entity *entity) {
                        &srcShadow, &dstShadow);
     }
 
-    //    SDL_Texture *entityTexture = entity->getTexture();
-    //    SDL_SetTextureColorMod(entityTexture, 255, 60, 255);
-    if (facingEast) {
+    if (facingEast && rotation == 0) {
         SDL_RenderCopy(renderer, entity->getTexture(),
                        &src, &dst);
     } else {
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        if (!facingEast) flip = SDL_FLIP_HORIZONTAL;
         SDL_RenderCopyEx(renderer, entity->getTexture(),
                          &src, &dst,
-                         0, nullptr, SDL_FLIP_HORIZONTAL);
+                         rotation, nullptr, flip);
     }
 
     SDL_Rect collRect = entity->getCollisionRect();
@@ -78,14 +80,14 @@ void WindowRenderer::render(Entity *entity) {
     SDL_RenderDrawRect(renderer, &collRect);
 }
 
-void WindowRenderer::renderParticle(Entity *particle_) {
+void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
     auto *particle = (Particle *) particle_;
     SDL_Rect particleFrame = particle->getFrame();
     SDL_Rect src = particleFrame;
     float renderWMultiplier = particle->getRenderWMultiplier();
     float renderHMultiplier = particle->getRenderHMultiplier();
     Entity *entity = particle->getEntity();
-    int x = entity->getX();
+    int x = entity->getX() - background->getFrame().x;
     int z = entity->getZ();
     int y = entity->getY();
     int yz = y + z;
@@ -93,18 +95,21 @@ void WindowRenderer::renderParticle(Entity *particle_) {
     int xShift = particle->getXShift();
     if (!facingEast) xShift = particle->getXShiftR();
     int yShift = particle->getYShift();
+    double rotation = particle->getRotation(); // + entity->getRotation() ?
     SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
                     (int) ((float) yz + (float) yShift * renderHMultiplier),
                     (int) ((float) particleFrame.w * renderWMultiplier),
                     (int) ((float) particleFrame.h * renderHMultiplier)};
 
-    if (facingEast) {
+    if (facingEast && rotation == 0) {
         SDL_RenderCopy(renderer, particle->getTexture(),
                        &src, &dst);
     } else {
+        SDL_RendererFlip flip = SDL_FLIP_NONE;
+        if (!facingEast) flip = SDL_FLIP_HORIZONTAL;
         SDL_RenderCopyEx(renderer, particle->getTexture(),
                          &src, &dst,
-                         0, nullptr, SDL_FLIP_HORIZONTAL);
+                         rotation, nullptr, flip);
     }
 }
 

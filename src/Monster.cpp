@@ -6,8 +6,7 @@
 
 Monster::Monster(WindowRenderer *window)
         : AnimatedEntity(true, ZOMBIE_END_SPRITE_ENUM) {
-    xDirection = 1;
-    speed = MONSTER_WALK_SPEED;
+    xVelocity = MONSTER_WALK_SPEED;
     hp = 1;
 
     int w = 0;
@@ -44,25 +43,25 @@ void Monster::move(int dt) {
     Entity::move(dt);
 
 //    if (x + renderW > SCREEN_WIDTH && xDirection == 1) {
-    if (x > SCREEN_WIDTH && xDirection == 1) {
-        xDirection = -1;
-    } else if (x < 0 && xDirection == -1) {
-        xDirection = 1;
+    if (x > SCREEN_WIDTH && xVelocity > 0) {
+        xVelocity = -MONSTER_WALK_SPEED;
+    } else if (x < 0 && xVelocity < 0) {
+        xVelocity = MONSTER_WALK_SPEED;
     }
 }
 
 void Monster::walk() {
-    setTextureAnimated(ZOMBIE_WALK_SPRITE, true);
-    speed = MONSTER_WALK_SPEED;
+    setSpriteAnimated(ZOMBIE_WALK_SPRITE, true);
+    xVelocity = MONSTER_WALK_SPEED;
 }
 
 void Monster::run() {
-    setTextureAnimated(ZOMBIE_RUN_SPRITE, true);
-    speed = MONSTER_RUN_SPEED;
+    setSpriteAnimated(ZOMBIE_RUN_SPRITE, true);
+    xVelocity = MONSTER_RUN_SPEED;
 }
 
 void Monster::attack() {
-    setTextureAnimated(ZOMBIE_ATTACK_SPRITE, true);
+    setSpriteAnimated(ZOMBIE_ATTACK_SPRITE, true);
 }
 
 Monster *Monster::copy(WindowRenderer *window) {
@@ -70,10 +69,10 @@ Monster *Monster::copy(WindowRenderer *window) {
     copyMonster->x = x;
     copyMonster->y = y;
     copyMonster->z = z;
-    copyMonster->xDirection = xDirection;
-    copyMonster->yDirection = yDirection;
-    copyMonster->zDirection = zDirection;
-    copyMonster->speed = speed;
+    copyMonster->xVelocity = xVelocity;
+    copyMonster->yVelocity = yVelocity;
+    copyMonster->zVelocity = zVelocity;
+    copyMonster->xVelocity = xVelocity;
     copyMonster->frame = frame;
     copyMonster->collisionRect = collisionRect;
     copyMonster->hasShadow = hasShadow;

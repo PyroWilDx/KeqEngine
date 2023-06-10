@@ -22,16 +22,20 @@ typedef struct Sprite {
     int currentFrameX;
     int accumulatedTime;
     Sprite *next;
-} SpriteTexture;
+} Sprite;
 
 class AnimatedEntity : public Entity {
 
 public:
     AnimatedEntity(bool hasShadow, int n);
 
-    void setTextureAnimated(int spriteCode, bool animated, bool reset = true);
+    void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
+
+    void setSpriteAnimated(int spriteCode, bool animated, bool reset = true);
 
     void animate(int dt);
+
+    void moveSpriteFrameX(int spriteCode, int x);
 
     void forceSprite(int spriteCode, int newMaxWidth,
                      int newFrameDuration, int startX);
@@ -39,8 +43,6 @@ public:
     void removeForcedSprite();
 
     void destroy() override;
-
-    inline Sprite *getSpriteArray() { return spriteArray; }
 
 protected:
     int n;

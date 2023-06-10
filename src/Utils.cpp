@@ -14,6 +14,10 @@ void myAssert(bool expr, const char *msg, const char *err) {
     }
 }
 
-bool isNewestFrame(Sprite *sprite, int wantedFrameX) {
-    return (sprite->currentFrameX == wantedFrameX && sprite->accumulatedTime == 0);
+bool isNewestFrame(Sprite *sprite, int x) {
+    return (sprite->currentFrameX == x && sprite->accumulatedTime == 0);
+}
+
+bool isSameSpriteCode(Sprite *sprite, int spriteCode) {
+    return (sprite->code == spriteCode);
 }

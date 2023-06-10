@@ -15,9 +15,9 @@ public:
 
     SDL_Texture *loadTexture(const char *imgPath);
 
-    void render(Entity *entity);
+    void render(Entity *entity, Entity *background);
 
-    void renderParticle(Entity *particle);
+    void renderParticle(Entity *particle, Entity *background);
 
     void display();
 

@@ -16,19 +16,17 @@ public:
 
     Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture);
 
-    void addX(int x_);
+    virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
     virtual void move(int dt);
 
     void moveTo(int x_, int y_, int z_);
 
-    bool collides(Entity *entity, SDL_Rect addRect);
+    bool collides(Entity *entity, SDL_Rect addRect) const;
 
     void clearTexture();
 
     virtual void destroy();
-
-    inline void setFrame(SDL_Rect frame_) { frame = frame_; }
 
     inline void setCollisionRect(SDL_Rect collisionRect_) { collisionRect = collisionRect_; }
 
@@ -37,45 +35,49 @@ public:
         renderHMultiplier = hMultiplier;
     }
 
-    inline int getX() { return x; }
+    inline void setRotation(double rotation_) { rotation = rotation_; }
 
-    inline int getY() { return y; }
+    [[nodiscard]] inline int getX() const { return x; }
 
-    inline int getZ() { return z; }
+    [[nodiscard]] inline int getY() const { return y; }
 
-    inline int getXDirection() { return xDirection; }
+    [[nodiscard]] inline int getZ() const { return z; }
 
-    inline bool isFacingEast() { return facingEast; }
+    [[nodiscard]] inline float getXVelocity() const { return xVelocity; }
 
-    inline SDL_Rect getFrame() { return frame; }
+    [[nodiscard]] inline bool isFacingEast() const { return facingEast; }
 
-    inline SDL_Rect getCollisionRect() { return collisionRect; }
+    [[nodiscard]] inline SDL_Rect getFrame() const { return frame; }
 
-    inline bool getHasShadow() { return hasShadow; }
+    [[nodiscard]] inline SDL_Rect getCollisionRect() const { return collisionRect; }
 
-    inline SDL_Texture *getTexture() { return texture; }
+    [[nodiscard]] inline bool getHasShadow() const { return hasShadow; }
 
-    inline float getRenderWMultiplier() { return renderWMultiplier; }
+    [[nodiscard]] inline SDL_Texture *getTexture() const { return texture; }
 
-    inline float getRenderHMultiplier() { return renderHMultiplier; }
+    [[nodiscard]] inline float getRenderWMultiplier() const { return renderWMultiplier; }
 
-    inline int getXShift() { return xShift; }
+    [[nodiscard]] inline float getRenderHMultiplier() const { return renderHMultiplier; }
 
-    inline int getYShift() { return yShift; }
+    [[nodiscard]] inline int getXShift() const { return xShift; }
 
-    inline int getXShiftR() { return xShiftR; }
+    [[nodiscard]] inline int getYShift() const { return yShift; }
+
+    [[nodiscard]] inline int getXShiftR() const { return xShiftR; }
+
+    [[nodiscard]] inline double getRotation() const { return rotation; }
 
 protected:
     int x, y, z;
-    int xDirection, yDirection, zDirection;
     bool facingEast;
-    float speed;
+    float xVelocity, yVelocity, zVelocity;
     SDL_Rect frame;
     SDL_Rect collisionRect;
     bool hasShadow;
     SDL_Texture *texture;
     float renderWMultiplier, renderHMultiplier;
     int xShift, yShift, xShiftR;
+    double rotation;
 
 private:
 
