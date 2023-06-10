@@ -60,7 +60,7 @@ public:
 
     void stellarRestoration();
 
-    void starwardSword();
+    void starwardSword(int dt);
 
     void jump(int dt);
 

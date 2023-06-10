@@ -42,7 +42,9 @@ void AnimatedEntity::animate(int dt) {
                     setSpriteAnimated(i, false);
                     if (currentSprite->next != nullptr) {
                         setSpriteAnimated(currentSprite->next->code, true);
+                        lastAnimatedSprite = currentSprite->next;
                     }
+                    continue;
                 }
                 currentSprite->accumulatedTime = 0;
             }

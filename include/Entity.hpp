@@ -35,6 +35,13 @@ public:
         renderHMultiplier = hMultiplier;
     }
 
+    inline void addRenderWHMultiplier(float addW, float addH, float maxW, float maxH) {
+        renderWMultiplier += addW;
+        if (renderWMultiplier > maxW) renderWMultiplier = maxW;
+        renderHMultiplier += addH;
+        if (renderHMultiplier > maxH) renderHMultiplier = maxH;
+    }
+
     inline void setRotation(double rotation_) { rotation = rotation_; }
 
     [[nodiscard]] inline int getX() const { return x; }

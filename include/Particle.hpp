@@ -21,20 +21,23 @@ enum {
     PARTICLE_END_ENUM
 };
 
+typedef struct FadeAwayParams {
+    int baseAlpha;
+    float speed;
+} FadeAwayParams;
+
 class Particle : public AnimatedEntity {
 
 public:
-    Particle(int spriteCode, int xShift, int yShift, int xShiftR,
-             int frameDuration, float wMultiplier, float hMultiplier,
-             Entity *entity);
+    Particle(int spriteCode, int xShift, int yShift, int frameDuration,
+             float wMultiplier, float hMultiplier, Entity *entity);
 
     static void initParticle(WindowRenderer *window);
 
-    static Particle *push(int spriteCode, int xShift, int yShift, int xShiftR,
-                          int frameDuration, float wMultiplier, float hMultiplier,
-                          Entity *entity);
+    static Particle *push(int spriteCode, int xShift, int yShift, int frameDuration,
+                          float wMultiplier, float hMultiplier, Entity *entity);
 
-    static Particle *pushFast(Particle *particle);
+    static void pushFast(Particle *particle);
 
     static void remove(int spriteCode, int i);
 
@@ -58,7 +61,7 @@ public:
 
     bool isFinished();
 
-    void fadeAway();
+    void fadeAway(float speed = 1.0f);
 
     inline void setStopOnLastFrame(bool stop) { stopOnLastFrame = stop; }
 
@@ -76,7 +79,7 @@ private:
     Entity *entity;
     bool stopOnLastFrame;
     Particle *nextParticle;
-    int fadeAwayAlpha;
+    FadeAwayParams fadeParams;
 };
 
 #endif

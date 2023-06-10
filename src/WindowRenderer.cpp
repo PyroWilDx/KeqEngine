@@ -28,7 +28,9 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
 
 void WindowRenderer::render(Entity *entity, Entity *background) {
     SDL_Rect entityFrame = entity->getFrame();
+
     if (entityFrame.x < 0 || entityFrame.y < 0) return;
+
     SDL_Rect src = entityFrame;
     float renderWMultiplier = entity->getRenderWMultiplier();
     float renderHMultiplier = entity->getRenderHMultiplier();
@@ -39,9 +41,14 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
     int yz = y + z;
     bool facingEast = entity->isFacingEast();
     int xShift = entity->getXShift();
-    if (!facingEast) xShift = entity->getXShiftR();
     int yShift = entity->getYShift();
     double rotation = entity->getRotation();
+
+    if (!facingEast) {
+        xShift = entity->getXShiftR();
+        rotation = -rotation;
+    }
+
     SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
                     (int) ((float) yz + (float) yShift * renderHMultiplier),
                     (int) ((float) entityFrame.w * renderWMultiplier),
@@ -84,25 +91,36 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
 void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
     auto *particle = (Particle *) particle_;
     SDL_Rect particleFrame = particle->getFrame();
+
     if (particleFrame.x < 0 || particleFrame.y < 0) return;
+
     SDL_Rect src = particleFrame;
     float renderWMultiplier = particle->getRenderWMultiplier();
     float renderHMultiplier = particle->getRenderHMultiplier();
     Entity *entity = particle->getEntity();
     SDL_Rect collRect = entity->getCollisionRect();
-    int x = entity->getX() + collRect.x - background->getFrame().x;
-    int z = entity->getZ();
-    int y = entity->getY() + collRect.y;
-    int yz = y + z;
+    int entityX = entity->getX() + collRect.x - background->getFrame().x;
+    int entityZ = entity->getZ();
+    int entityY = entity->getY() + collRect.y;
+    int entityYZ = entityY + entityZ;
+    float realW = (float) particleFrame.w * renderWMultiplier;
+    float realH = (float) particleFrame.h * renderHMultiplier;
+    float x = (float) entityX + (float) collRect.w / 2.0f - realW / 2.0f;
+    float y = (float) entityYZ + (float) collRect.h / 2.0f - realH / 2.0f;
     bool facingEast = entity->isFacingEast();
     int xShift = particle->getXShift();
-    if (!facingEast) xShift = particle->getXShiftR();
     int yShift = particle->getYShift();
     double rotation = particle->getRotation(); // + entity->getRotation() ?
-    SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier / 2),
-                    (int) ((float) yz + (float) yShift * renderHMultiplier / 2),
-                    (int) ((float) particleFrame.w * renderWMultiplier),
-                    (int) ((float) particleFrame.h * renderHMultiplier)};
+
+    if (!facingEast) {
+        xShift = particle->getXShiftR();
+        rotation = -rotation;
+    }
+
+    SDL_Rect dst = {(int) (x + (float) xShift * entity->getRenderWMultiplier()),
+                    (int) (y + (float) yShift * entity->getRenderHMultiplier()),
+                    (int) realW,
+                    (int) realH};
 
     if (facingEast && rotation == 0) {
         SDL_RenderCopy(renderer, particle->getTexture(),
