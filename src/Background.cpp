@@ -9,9 +9,8 @@ Background::Background(int w, int h, int totalImgWidth, SDL_Texture *texture) :
     this->totalImgWidth = totalImgWidth;
 }
 
-void Background::move(int dt, int xDirection) {
-    int tmp = (int) ((float) dt * BACKGROUND_SPEED);
-    frame.x += xDirection * tmp;
+void Background::addFrameX(int x) {
+    frame.x += x;
 
     if (frame.x < 0) {
         frame.x = 0;

@@ -10,19 +10,25 @@
 #include "AnimatedEntity.hpp"
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
-const int DEFAULT_Y = SCREEN_HEIGHT - 200;
+#define DEFAULT_Y 520
 
-const int MIN_X = -40;
-const int MAX_X = SCREEN_WIDTH + 90;
-const float Z_MULTIPLIER = 0.6f;
-const int MIN_Z = -10000;
-const int MAX_Z = 10000;
+#define BACKGROUND_WIDTH 3000
+
+#define MIN_X (-40)
+#define MIN_Z (-10000)
+#define MAX_Z 10000
+
+#define Z_VELOCITY 0.24f
+
+const int MAX_X = BACKGROUND_WIDTH - 20;
 
 void myAssert(bool expr, const char *msg, const char *err);
 
-bool isNewestFrame(Sprite *sprite, int wantedFrameX);
+bool isNewestFrame(Sprite *sprite, int x);
+
+bool isSameSpriteCode(Sprite *sprite, int spriteCode);
 
 #endif

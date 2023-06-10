@@ -11,7 +11,15 @@ AnimatedEntity::AnimatedEntity(bool hasShadow, int n)
     spriteArray[n].animated = false;
 }
 
-void AnimatedEntity::setTextureAnimated(int spriteCode, bool animated, bool reset) {
+void AnimatedEntity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+    for (int i = 0; i < n; i++) {
+        SDL_Texture *currTexture = spriteArray[i].texture;
+        SDL_SetTextureColorMod(currTexture, r, g, b);
+        SDL_SetTextureAlphaMod(currTexture, a);
+    }
+}
+
+void AnimatedEntity::setSpriteAnimated(int spriteCode, bool animated, bool reset) {
     spriteArray[spriteCode].animated = animated;
     if (!animated) {
         if (reset) {
@@ -31,9 +39,9 @@ void AnimatedEntity::animate(int dt) {
                 currentSprite->currentFrameX += currentSprite->width;
                 // if (currentSprite->currentFrameX >= currentSprite->maxWidth) {
                 if (currentSprite->currentFrameX == currentSprite->maxWidth) {
-                    setTextureAnimated(i, false);
+                    setSpriteAnimated(i, false);
                     if (currentSprite->next != nullptr) {
-                        currentSprite->next->animated = true;
+                        setSpriteAnimated(currentSprite->next->code, true);
                     }
                 }
                 currentSprite->accumulatedTime = 0;
@@ -50,6 +58,10 @@ void AnimatedEntity::animate(int dt) {
         yShift = lastAnimatedSprite->yShift;
         xShiftR = lastAnimatedSprite->xShiftR;
     }
+}
+
+void AnimatedEntity::moveSpriteFrameX(int spriteCode, int x) {
+    spriteArray[spriteCode].currentFrameX = x;
 }
 
 void AnimatedEntity::forceSprite(int spriteCode, int newMaxWidth,

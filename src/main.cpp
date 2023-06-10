@@ -29,7 +29,7 @@ int main() {
 
     SDL_Texture *backgroundTexture = window.loadTexture("res/gfx/background.png");
     Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT,
-                                       3000, backgroundTexture);
+                                       BACKGROUND_WIDTH, backgroundTexture);
 
     Particle::initParticle(&window);
 
@@ -41,8 +41,6 @@ int main() {
                           (int) (12.0f * KQ_HEIGHT_MULTIPLIER),
                           (int) (60.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
-
-    Particle **particules;
 
     auto *monsterLL = new MonsterLinkedList();
 //    auto *zombie0 = new Monster(96, 96, &window);
@@ -66,7 +64,8 @@ int main() {
 //    zombie3->walk();
 //    monsterLL->insert(zombie3);
 
-    Uint32 dt;
+    Uint32 dtU;
+    int dt;
     Uint32 lastTime = SDL_GetTicks();
     Uint32 currentTime;
 
@@ -75,13 +74,14 @@ int main() {
     Uint32 accumulatedFrames = 0;
 
     SDL_Event event;
-    int key;
-    bool keyPressed[4] = {false, false, false, false};
+    bool pressedKeys[4] = {false, false, false, false};
 
     bool gameRunning = true;
     while (gameRunning) {
 
         // Events
+        int spriteCode = -1;
+        int key = -1;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
@@ -94,26 +94,20 @@ int main() {
                         case SDLK_d:
                         case SDLK_s:
                         case SDLK_z:
-                            keyPressed[key % 4] = true;
-                            kq->updateDirection(key, keyPressed);
+                            pressedKeys[key % 4] = true;
                             break;
                         case SDLK_SPACE:
-                            kq->setTextureAnimated(KQ_JUMP_START_SPRITE, true);
+                            spriteCode = KQ_JUMP_START_SPRITE;
                             break;
                         case SDLK_LSHIFT:
-                            if (!kq->isDashing()) {
-                                if (!kq->isJumping()) {
-                                    kq->setTextureAnimated(KQ_DASH_START_SPRITE, true);
-                                } else {
-                                    kq->setTextureAnimated(KQ_JUMP_DASH_SPRITE, true);
-                                }
-                            }
+                            if (!kq->isJumping()) spriteCode = KQ_DASH_START_SPRITE;
+                            else spriteCode = KQ_AIR_DASH_SPRITE;
                             break;
                         case SDLK_e:
                             // TODO
                             break;
                         case SDLK_r:
-                            kq->setTextureAnimated(KQ_STARWARD_SWORD_SPRITE, true);
+                            spriteCode = KQ_STARWARD_SWORD_SPRITE;
                             break;
                         default:
                             break;
@@ -126,57 +120,60 @@ int main() {
                         case SDLK_d:
                         case SDLK_s:
                         case SDLK_z:
-                            keyPressed[key % 4] = false;
-                            kq->clearDirection(key, keyPressed);
+                            pressedKeys[key % 4] = false;
                             break;
                         default:
                             break;
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    if (!kq->isJumping()) {
-                        kq->setTextureAnimated(KQ_NATTACKS_SPRITE, true);
-                    } else {
-                        kq->setTextureAnimated(KQ_AIR_NATTACK_SPRITE, true);
-                    }
+                    if (!kq->isJumping()) spriteCode = KQ_NATTACKS_SPRITE;
+                    else spriteCode = KQ_AIR_NATTACK_SPRITE;
                     break;
                 default:
                     break;
             }
         }
 
+        if (spriteCode != -1) {
+            if (kq->canDoAction(spriteCode)) {
+                kq->preAction(spriteCode);
+                kq->setSpriteAnimated(spriteCode, true);
+            }
+        }
+
         // Time Handling
         currentTime = SDL_GetTicks();
-        dt = currentTime - lastTime;
+        dtU = currentTime - lastTime;
+        dt = (int) dtU;
         lastTime = currentTime;
 
         // Keqing
         // TODO Hitlag
-        if (kq->isMoving()) { // TODO Need to handle other movements too
-            kq->move((int) dt);
-            int kqX = kq->getX() + kq->getCollisionRect().x;
-            int kqW = kq->getCollisionRect().w;
-            int halfX = SCREEN_WIDTH / 2 - kqW / 2;
-            int kqXDirection = kq->getXDirection();
-            if ((kqXDirection == 1 && kqX > halfX) ||
-                (kqXDirection == -1 && kqX < halfX)) {
-                int lastX = background.getFrame().x;
-                background.move((int) dt, kq->getXDirection());
-                int translateX = lastX - background.getFrame().x;
-                // Translate all Entities
-                kq->addX(translateX);
-                monsterLL->operateAllCells(&Monster::addX, &translateX, nullptr);
-            }
-        }
-        if (kq->isJumping()) kq->jump((int) dt);
-        if (kq->isNAttacking()) kq->nattack((int) dt, (int) currentTime);
+        if (kq->canDoAction(KQ_WALK_SPRITE)) kq->updateDirection(pressedKeys, key);
+        if (kq->isNAttacking()) kq->nattack(dt, (int) currentTime);
+        if (kq->isDashing()) kq->dash();
         if (kq->isESkilling()) kq->stellarRestoration();
         if (kq->isRBursting()) kq->starwardSword();
-        if (kq->isDashing()) kq->dash((int) dt);
-        if (kq->isJumpDashing()) kq->jumpDash((int) dt);
-        if (kq->isAirNAttacking()) kq->airNAttack((int) dt);
-        if (kq->isDamaged()) kq->damage((int) dt);
-        kq->animate((int) dt);
+        if (kq->isJumping()) kq->jump(dt);
+        if (kq->isAirNAttacking()) kq->airNAttack(dt);
+        if (kq->isAirDashing()) kq->airDash();
+        if (kq->isDamaged()) kq->damage(dt);
+
+        if (kq->canMove()) {
+            int kqLastX = kq->getX();
+            kq->move(dt);
+            int kqNewX = kq->getX();
+            int kqW = kq->getCollisionRect().w;
+            int halfX = SCREEN_WIDTH / 2 + background.getFrame().x;
+            float kqXVelocity = kq->getXVelocity();
+            if ((kqXVelocity > 0 && kqNewX + kqW > halfX) ||
+                (kqXVelocity < 0 && kqNewX + kqW < halfX)) {
+                background.addFrameX(kqNewX - kqLastX);
+            }
+        }
+
+        kq->animate(dt);
 
         // Monster(s)
         monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
@@ -189,20 +186,12 @@ int main() {
         bool kqDamaged = false;
         monsterLL->operateAllCells(&Monster::collides, nullptr, &kqDamaged);
         if (kqDamaged) {
-            kq->damage((int) dt); // TODO change
+            kq->damage(dt); // TODO change
             printf("Noob %d\n", kq->getHp());
         }
 
         // Particles
-        particules = Particle::getActiveParticles();
-        for (int i = 0; i < Particle::getCount(); i++) {
-            if (particules[i] == nullptr) continue;
-
-            particules[i]->animate((int) dt);
-            if (particules[i]->isFinished()) {
-                Particle::remove(i);
-            }
-        }
+        Particle::animateAll(dt);
 
         // FPS Text
         if (accumulatedFPSTime > 1000) {
@@ -216,17 +205,28 @@ int main() {
         accumulatedFPSTime += dt;
         accumulatedFrames++;
 
+        // Window Rendering
         window.clear();
-        window.render(&background);
-        window.render(&FPSText);
-        monsterLL->operateAllCells(&Monster::render, &window, nullptr);
-        window.render(kq);
-        for (int i = 0; i < Particle::getCount(); i++) {
-            if (particules[i] == nullptr) continue;
 
-            window.renderParticle(particules[i]);
+        window.render(&background, &background);
+        window.render(&FPSText, &background);
+
+        if (sizeof(WindowRenderer) < sizeof(Background)) {
+            auto *windowCastBackground = (Background *) &window;
+            Background params[2] = {*windowCastBackground, background};
+            monsterLL->operateAllCells(&Monster::render, params, nullptr);
+        } else {
+            auto *backgroundCastWindow = (WindowRenderer *) &background;
+            WindowRenderer params[2] = {window, *backgroundCastWindow};
+            monsterLL->operateAllCells(&Monster::render, params, nullptr);
         }
+
+        window.render(kq, &background);
+
+        Particle::renderAll(&window, &background);
+
         window.display();
+
         printf("Keqing X : %d\n", kq->getX());
         printf("Number of Active Particle(s) : %d\n", Particle::getCount());
     }

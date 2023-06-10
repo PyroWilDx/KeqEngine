@@ -9,6 +9,7 @@
 #include "Utils.hpp"
 #include "AnimatedEntity.hpp"
 #include "Keqing.hpp"
+#include "Background.hpp"
 
 enum {
     ZOMBIE_IDLE_SPRITE = 0,
@@ -49,15 +50,18 @@ public:
     inline bool isAttacking() { return spriteArray[ZOMBIE_ATTACK_SPRITE].animated; }
 
     inline static bool render(Monster *monster, void *params, void *retVal) {
-        auto *window = (WindowRenderer *) params;
-        window->render(monster);
-        return false;
-    }
-
-    inline static bool addX(Monster *monster, void *params, void *retVal) {
-        int *x_ = (int *) params;
-        auto *tmp = (Entity *) monster;
-        tmp->addX(*x_);
+        WindowRenderer *window;
+        Background *background;
+        if (sizeof(WindowRenderer) < sizeof(Background)) {
+            auto *bParams = (Background *) params;
+            window = (WindowRenderer *) &bParams[0];
+            background = &bParams[1];
+        } else {
+            auto *wParams = (WindowRenderer *) params;
+            window = &wParams[0];
+            background = (Background *) &wParams[1];
+        }
+        window->render(monster, background);
         return false;
     }
 

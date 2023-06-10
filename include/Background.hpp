@@ -8,14 +8,12 @@
 #include "Entity.hpp"
 #include "Keqing.hpp"
 
-const float BACKGROUND_SPEED = 0.4f;
-
 class Background : public Entity {
 
 public:
     Background(int w, int h, int totalImgWidth, SDL_Texture *texture);
 
-    void move(int dt, int xDirection);
+    void addFrameX(int x);
 
     void destroy() override;
 
