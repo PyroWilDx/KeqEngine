@@ -140,7 +140,7 @@ Keqing::Keqing(WindowRenderer *window)
     spriteArray[KQ_AIR_NATTACK_SPRITE] =
             {KQ_AIR_NATTACK_SPRITE, false,
              window->loadTexture("res/gfx/keqing/air_nattack.png"),
-             -30, -32, -36,
+             -30, -32, -38,
              128, 128,
              14 * 128, 60,
              0, 0,
@@ -253,8 +253,8 @@ void Keqing::nattack(int dt, int currentTime) {
         if (isNewestFrame(nattacksSprite,
                           nattacksWidths[4] + nattacksSprite->width)) {
             Particle::push(PARTICLE_KQ_NATTACK_4,
-                           -6, 20, -40, 60,
-                           2.0f, 2.0f, this);
+                           32, 20, 60,
+                           2.4f, 2.6f, this);
         }
     } else {
         nattacksSprite->currentFrameX = 0;
@@ -290,13 +290,10 @@ const int cSlashRotations[KQ_SS_NUMBER_OF_CLONE_SLASH] =
         {10, 200, 354, 152, 306, 90};
 
 const int cSlashXShift[KQ_SS_NUMBER_OF_CLONE_SLASH] =
-        {0, -86, -80, -110, -132, -70};
+        {72, 0, -4, -10, -74, 0};
 
 const int cSlashYShift[KQ_SS_NUMBER_OF_CLONE_SLASH] =
-        {34, 6, -46, 12, -36, 0};
-
-const int cSlashXShiftR[KQ_SS_NUMBER_OF_CLONE_SLASH] =
-        {0, 0, 0, 0, 0, 0};
+        {26, 0, -56, 0, -30, -14};
 
 const float cSlashWM[KQ_SS_NUMBER_OF_CLONE_SLASH] =
         {0.88f, 1.6f, 1.2f, 1.52f, 1.32f, 1.0f};
@@ -309,7 +306,6 @@ static void pushCloneSlashParticle(Entity *keqing) {
             Particle::push(PARTICLE_KQ_SS_CLONE_SLASH,
                            cSlashXShift[0],
                            cSlashYShift[0],
-                           cSlashXShiftR[0],
                            cSlashFrameDuration,
                            cSlashWM[0],
                            cSlashHM[0],
@@ -321,7 +317,6 @@ static void pushCloneSlashParticle(Entity *keqing) {
         auto *nextCSlashParticle = new Particle(PARTICLE_KQ_SS_CLONE_SLASH,
                                                 cSlashXShift[i],
                                                 cSlashYShift[i],
-                                                cSlashXShiftR[i],
                                                 cSlashFrameDuration,
                                                 cSlashWM[i],
                                                 cSlashHM[i],
@@ -340,45 +335,38 @@ static void pushSlashParticle(Entity *keqing) {
     for (int i = 0; i < KQ_SS_NUMBER_OF_SLASH; i++) {
         Particle *slashParticle =
                 Particle::push(PARTICLE_KQ_SS_SLASH,
-                               -196, 30, 0,
-                               slashDuration,
+                               0, 0, slashDuration,
                                1.2f, 1.2f, keqing);
         slashParticle->setRotation(slashRotations[i]);
         slashParticle->delay(0, 3 * slashDuration * i);
     }
 }
 
-void Keqing::starwardSword() {
+void Keqing::starwardSword(int dt) {
     Sprite *ssSprite = &spriteArray[KQ_STARWARD_SWORD_SPRITE];
     if (isNewestFrame(ssSprite, 0)) { // Burst Start
-        int pXShift = -84;
-        int pYShift = -34;
-        int pXShiftR = -84;
         Particle *aoeParticle =
                 Particle::push(PARTICLE_KQ_SS_AOE,
-                               pXShift, pYShift, pXShiftR,
-                               80, 2.0f, 2.0f,
-                               this);
+                               0, 0, 80,
+                               1.0f, 1.0f, this);
         aoeParticle->setNextParticle(aoeParticle);
         Particle *aoeWaveParticle =
                 Particle::push(PARTICLE_KQ_SS_AOE_WAVE,
-                               pXShift, pYShift, pXShiftR,
-                               60, 1.0f, 1.0f,
-                               this);
+                               0, 0, 60,
+                               1.0f, 1.0f, this);
         aoeWaveParticle->setRGBAMod(255, 255, 255, 128);
         aoeWaveParticle->setNextParticle(aoeWaveParticle);
 
     } else if (isNewestFrame(ssSprite, 12 * ssSprite->width)) { // Vanish
         Particle::push(PARTICLE_KQ_SS_VANISH,
-                       -22, 6, -14,
-                       60, 1.0f, 1.0f,
-                       this);
+                       0, 0, 60,
+                       1.0f, 1.0f, this);
 
     } else if (isNewestFrame(ssSprite, 13 * ssSprite->width)) { // Clone Slash Start
         pushCloneSlashParticle(this);
         Particle *cloneParticle =
                 Particle::push(PARTICLE_KQ_SS_CLONE,
-                               -86, -66, -86,
+                               0, -46,
                                cSlashFrameDuration * 1.4f,
                                2.0f, 2.0f, this);
         cloneParticle->delay(0, cSlashFrameDuration);
@@ -386,15 +374,24 @@ void Keqing::starwardSword() {
         ssSprite->frameDuration = INT32_MAX;
 
     } else if (isNewestFrame(ssSprite, 28 * ssSprite->width)) { // Final Slash
-        Particle *tmpParticle = Particle::getParticle(PARTICLE_KQ_SS_AOE, 0);
-        tmpParticle->fadeAway();
-        tmpParticle = Particle::getParticle(PARTICLE_KQ_SS_AOE_WAVE, 0);
-        tmpParticle->fadeAway();
+        Particle::getParticle(PARTICLE_KQ_SS_AOE, 0)->fadeAway();
+        Particle::getParticle(PARTICLE_KQ_SS_AOE_WAVE, 0)->fadeAway();
         Particle::remove(PARTICLE_KQ_SS_CLONE, 0);
+
         Particle::push(PARTICLE_KQ_SS_FINAL_SLASH,
-                       -356, -112, -356,
-                       60, 1.0f, 1.0f,
-                       this);
+                       0, 0, 60,
+                       1.0f, 1.0f, this);
+    }
+
+    // Enlarge Circle
+    Particle *aoeParticle = Particle::getParticle(PARTICLE_KQ_SS_AOE, 0);
+    if (aoeParticle->getRenderWMultiplier() < 2.0f) {
+        float addWHValue = 0.004f * (float) dt;
+        float maxWH = 2.0f;
+        aoeParticle->addRenderWHMultiplier(addWHValue, addWHValue,
+                                           maxWH, maxWH);
+        Particle::getParticle(PARTICLE_KQ_SS_AOE_WAVE, 0)->addRenderWHMultiplier(
+                addWHValue, addWHValue, maxWH, maxWH);
     }
 
     if (ssSprite->currentFrameX == 13 * ssSprite->width &&
@@ -430,9 +427,9 @@ void Keqing::airNAttack(int dt) { // Plunge Attack in Genshin
     } else if (isNewestFrame(airNAttackSprite, 1 * airNAttackSprite->width)) {
         yVelocity = 0.4f;
     } else if (isNewestFrame(airNAttackSprite, 6 * airNAttackSprite->width)) {
-        Particle::push(PARTICLE_KQ_AIR_NATTACK, // TODO
-                       8, -28, -12, 100,
-                       2.2f, 2.0f, this);
+        Particle::push(PARTICLE_KQ_AIR_NATTACK, // TODO Infinite
+                       24, -24, 100,
+                       3.2f, 2.0f, this);
     }
 
     if (airNAttackSprite->currentFrameX < 9 * airNAttackSprite->width) {
@@ -446,7 +443,7 @@ void Keqing::airNAttack(int dt) { // Plunge Attack in Genshin
             moveSpriteFrameX(KQ_AIR_NATTACK_SPRITE, 9 * airNAttackSprite->width);
             Particle::remove(PARTICLE_KQ_AIR_NATTACK, 0);
             Particle::push(PARTICLE_KQ_AIR_NATTACK_GROUND,
-                           -38, 0, -92, 60,
+                           20, -6, 60,
                            1.0f, 1.0f, this);
         }
     }

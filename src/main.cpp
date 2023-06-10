@@ -77,6 +77,7 @@ int main() {
     bool pressedKeys[4] = {false, false, false, false};
 
     bool gameRunning = true;
+    bool gamePaused = false;
     while (gameRunning) {
 
         // Events
@@ -90,6 +91,10 @@ int main() {
                 case SDL_KEYDOWN:
                     key = event.key.keysym.sym;
                     switch (key) {
+                        case SDLK_ESCAPE:
+                            gamePaused = !gamePaused;
+                            if (!gamePaused) lastTime = SDL_GetTicks();
+                            break;
                         case SDLK_q:
                         case SDLK_d:
                         case SDLK_s:
@@ -134,6 +139,7 @@ int main() {
                     break;
             }
         }
+        if (gamePaused) continue;
 
         if (spriteCode != -1) {
             if (kq->canDoAction(spriteCode)) {
@@ -157,7 +163,7 @@ int main() {
         if (kq->isNAttacking()) kq->nattack(dt, (int) currentTime);
         if (kq->isDashing()) kq->dash();
         if (kq->isESkilling()) kq->stellarRestoration();
-        if (kq->isRBursting()) kq->starwardSword();
+        if (kq->isRBursting()) kq->starwardSword(dt);
         if (kq->isJumping()) kq->jump(dt);
         if (kq->isAirNAttacking()) kq->airNAttack(dt);
         if (kq->isAirDashing()) kq->airDash();

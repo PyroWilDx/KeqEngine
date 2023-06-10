@@ -11,28 +11,27 @@ int Particle::activeParticleMaxes[PARTICLE_END_ENUM];
 Particle **Particle::activeParticles[PARTICLE_END_ENUM];
 int Particle::counts[PARTICLE_END_ENUM];
 
-Particle::Particle(int spriteCode, int xShift, int yShift, int xShiftR, int frameDuration,
+Particle::Particle(int spriteCode, int xShift, int yShift, int frameDuration,
                    float wMultiplier, float hMultiplier, Entity *entity)
-        : AnimatedEntity(false, 1) {
+        : AnimatedEntity(false, 1), fadeParams({-1, 1.0f}) {
     spriteArray[0] = allParticleTextures[spriteCode];
     Sprite *sprite = &spriteArray[0];
     sprite->animated = true;
     sprite->xShift = xShift;
     sprite->yShift = yShift;
-    sprite->xShiftR = xShiftR;
+    sprite->xShiftR = -xShift;
     sprite->frameDuration = frameDuration;
     renderWMultiplier = wMultiplier * entity->getRenderWMultiplier();
     renderHMultiplier = hMultiplier * entity->getRenderHMultiplier();
     this->entity = entity;
     stopOnLastFrame = false;
     nextParticle = nullptr;
-    fadeAwayAlpha = -1;
 }
 
 void Particle::initParticle(WindowRenderer *window) {
     allParticleTextures[PARTICLE_KQ_NATTACK_4] =
             {PARTICLE_KQ_NATTACK_4, false,
-             window->loadTexture("res/particles/kq_attack_4.png"),
+             window->loadTexture("res/particles/kq_nattack_4.png"),
              0, 0, 0,
              80, 32,
              6 * 80, 0,
@@ -127,34 +126,26 @@ void Particle::initParticle(WindowRenderer *window) {
     }
 }
 
-Particle *Particle::push(int spriteCode, int xShift, int yShift, int xShiftR,
-                         int frameDuration, float wMultiplier, float hMultiplier,
-                         Entity *entity_) {
-    int count = counts[spriteCode];
-    if (count < activeParticleMaxes[spriteCode]) {
-        auto *particle = new Particle(spriteCode, xShift, yShift, xShiftR,
-                                      frameDuration, wMultiplier, hMultiplier,
-                                      entity_);
-        activeParticles[spriteCode][count] = particle;
-        counts[spriteCode]++;
-        return particle;
-    } else {
-        printf("Maximum number of Particles Reached!\n");
-    }
-    return nullptr;
+Particle *Particle::push(int spriteCode, int xShift, int yShift, int frameDuration,
+                         float wMultiplier, float hMultiplier, Entity *entity_) {
+    auto *particle = new Particle(spriteCode, xShift, yShift, frameDuration,
+                                  wMultiplier, hMultiplier, entity_);
+    pushFast(particle);
+    return particle;
 }
 
-Particle *Particle::pushFast(Particle *particle) {
+void Particle::pushFast(Particle *particle) {
     int spriteCode = particle->spriteArray[0].code;
     int count = counts[spriteCode];
+    int i;
     if (count < activeParticleMaxes[spriteCode]) {
-        activeParticles[spriteCode][count] = particle;
-        counts[spriteCode]++;
-        return particle;
-    } else {
-        printf("Maximum number of Particles Reached!\n");
+        i = count;
+    } else { // Replace existing Particle (last one)
+        i = count - 1;
+        remove(spriteCode, i);
     }
-    return nullptr;
+    activeParticles[spriteCode][i] = particle;
+    counts[spriteCode]++;
 }
 
 void Particle::remove(int spriteCode, int i) {
@@ -162,10 +153,12 @@ void Particle::remove(int spriteCode, int i) {
         printf("WARNING, invalid index for particle remove!\n");
         return;
     }
-    if (activeParticles[spriteCode][i] == nullptr) return;
+    Particle *particle = activeParticles[spriteCode][i];
+    if (particle == nullptr) return;
 
     int lastIndex = counts[spriteCode] - 1;
-    delete activeParticles[spriteCode][i];
+    particle->setRGBAMod(255, 255, 255, 255);
+    delete particle;
     counts[spriteCode]--;
     activeParticles[spriteCode][i] = activeParticles[spriteCode][lastIndex];
     activeParticles[spriteCode][lastIndex] = nullptr;
@@ -180,13 +173,12 @@ void Particle::animateAll(int dt) {
 
             currParticle->animate(dt);
 
-            if (currParticle->fadeAwayAlpha != -1) {
+            if (currParticle->fadeParams.baseAlpha != -1) {
                 Uint8 alpha;
                 SDL_GetTextureAlphaMod(currParticle->texture, &alpha);
-                alpha -= (int) ((float) dt *
-                                ((float) currParticle->fadeAwayAlpha / 255.0f));
+                alpha -= (int) ((float) dt * currParticle->fadeParams.speed *
+                                ((float) currParticle->fadeParams.baseAlpha / 255.0f));
                 if (alpha < 20) {
-                    currParticle->setRGBAMod(255, 255, 255, 255);
                     remove(spriteCode, i);
                     continue;
                 }
@@ -258,8 +250,9 @@ bool Particle::isFinished() {
 //    return true;
 }
 
-void Particle::fadeAway() {
+void Particle::fadeAway(float speed) {
     Uint8 alpha;
     SDL_GetTextureAlphaMod(texture, &alpha);
-    fadeAwayAlpha = alpha;
+    fadeParams.baseAlpha = alpha;
+    fadeParams.speed = speed;
 }
