@@ -12,8 +12,9 @@ enum {
     PARTICLE_KQ_AIR_NATTACK,
     PARTICLE_KQ_AIR_NATTACK_GROUND,
     PARTICLE_KQ_SS_AOE,
-    PARTICLE_KQ_SS_AOE_WAVES,
-    PARTICLE_KQ_SS_CLONES,
+    PARTICLE_KQ_SS_AOE_WAVE,
+    PARTICLE_KQ_SS_VANISH,
+    PARTICLE_KQ_SS_CLONE,
     PARTICLE_KQ_SS_CLONE_SLASH,
     PARTICLE_KQ_SS_SLASH,
     PARTICLE_KQ_SS_FINAL_SLASH,
@@ -23,11 +24,17 @@ enum {
 class Particle : public AnimatedEntity {
 
 public:
+    Particle(int spriteCode, int xShift, int yShift, int xShiftR,
+             int frameDuration, float wMultiplier, float hMultiplier,
+             Entity *entity);
+
     static void initParticle(WindowRenderer *window);
 
     static Particle *push(int spriteCode, int xShift, int yShift, int xShiftR,
                           int frameDuration, float wMultiplier, float hMultiplier,
                           Entity *entity);
+
+    static Particle *pushFast(Particle *particle);
 
     static void remove(int spriteCode, int i);
 
@@ -35,17 +42,11 @@ public:
 
     static void renderAll(WindowRenderer *window, Entity *background);
 
+    static Particle *getParticle(int spriteCode, int i);
+
     static bool isActive(int spriteCode, int i);
 
-//    void removeSelf();
-
-//    static void removeParticleByCode(int spriteCode);
-
     static void cleanUp();
-
-    inline Entity *getEntity() { return entity; }
-
-    inline bool isFinished() { return !spriteArray[0].animated; }
 
     static inline int getCount() {
         int total = 0;
@@ -55,10 +56,17 @@ public:
         return total;
     }
 
-private:
-    explicit Particle(int spriteCode, int xShift, int yShift, int xShiftR, int frameDuration,
-                      float wMultiplier, float hMultiplier, Entity *entity);
+    bool isFinished();
 
+    void fadeAway();
+
+    inline void setStopOnLastFrame(bool stop) { stopOnLastFrame = stop; }
+
+    inline void setNextParticle(Particle *particle) { nextParticle = particle; }
+
+    inline Entity *getEntity() { return entity; }
+
+private:
     static Sprite allParticleTextures[PARTICLE_END_ENUM];
 
     static int activeParticleMaxes[PARTICLE_END_ENUM];
@@ -66,7 +74,9 @@ private:
     static int counts[PARTICLE_END_ENUM];
 
     Entity *entity;
-//    int index;
+    bool stopOnLastFrame;
+    Particle *nextParticle;
+    int fadeAwayAlpha;
 };
 
 #endif

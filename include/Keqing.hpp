@@ -39,6 +39,9 @@ enum {
 
 #define KQ_KNOCKBACK_SPEED 0.6f
 
+#define KQ_SS_NUMBER_OF_CLONE_SLASH 6
+#define KQ_SS_NUMBER_OF_SLASH 8
+
 class Keqing : public AnimatedEntity {
 
 public:
@@ -53,6 +56,7 @@ public:
     void nattack(int dt, int currentTime);
 
     void dash();
+    // TODO BUG Dash + R
 
     void stellarRestoration();
 
@@ -105,7 +109,6 @@ private:
 
     static Keqing *instance;
     int hp;
-    float yVelocity;
     int lastNAttackTime;
     float dashXToAdd;
 };

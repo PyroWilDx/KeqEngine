@@ -148,6 +148,9 @@ int main() {
         dt = (int) dtU;
         lastTime = currentTime;
 
+        // Particles
+        Particle::animateAll(dt);
+
         // Keqing
         // TODO Hitlag
         if (kq->canDoAction(KQ_WALK_SPRITE)) kq->updateDirection(pressedKeys, key);
@@ -190,9 +193,6 @@ int main() {
             printf("Noob %d\n", kq->getHp());
         }
 
-        // Particles
-        Particle::animateAll(dt);
-
         // FPS Text
         if (accumulatedFPSTime > 1000) {
             char text[16];
@@ -227,8 +227,8 @@ int main() {
 
         window.display();
 
-        printf("Keqing X : %d\n", kq->getX());
-        printf("Number of Active Particle(s) : %d\n", Particle::getCount());
+//        printf("Keqing X : %d\n", kq->getX());
+//        printf("Number of Active Particle(s) : %d\n", Particle::getCount());
     }
 
     // Free

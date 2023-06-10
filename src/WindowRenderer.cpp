@@ -28,6 +28,7 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
 
 void WindowRenderer::render(Entity *entity, Entity *background) {
     SDL_Rect entityFrame = entity->getFrame();
+    if (entityFrame.x < 0 || entityFrame.y < 0) return;
     SDL_Rect src = entityFrame;
     float renderWMultiplier = entity->getRenderWMultiplier();
     float renderHMultiplier = entity->getRenderHMultiplier();
@@ -74,8 +75,8 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
     SDL_Rect collRect = entity->getCollisionRect();
     collRect.x += x;
     collRect.y += yz;
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(renderer, &dst);
+//    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+//    SDL_RenderDrawRect(renderer, &dst);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &collRect);
 }
@@ -83,21 +84,23 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
 void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
     auto *particle = (Particle *) particle_;
     SDL_Rect particleFrame = particle->getFrame();
+    if (particleFrame.x < 0 || particleFrame.y < 0) return;
     SDL_Rect src = particleFrame;
     float renderWMultiplier = particle->getRenderWMultiplier();
     float renderHMultiplier = particle->getRenderHMultiplier();
     Entity *entity = particle->getEntity();
-    int x = entity->getX() - background->getFrame().x;
+    SDL_Rect collRect = entity->getCollisionRect();
+    int x = entity->getX() + collRect.x - background->getFrame().x;
     int z = entity->getZ();
-    int y = entity->getY();
+    int y = entity->getY() + collRect.y;
     int yz = y + z;
     bool facingEast = entity->isFacingEast();
     int xShift = particle->getXShift();
     if (!facingEast) xShift = particle->getXShiftR();
     int yShift = particle->getYShift();
     double rotation = particle->getRotation(); // + entity->getRotation() ?
-    SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
-                    (int) ((float) yz + (float) yShift * renderHMultiplier),
+    SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier / 2),
+                    (int) ((float) yz + (float) yShift * renderHMultiplier / 2),
                     (int) ((float) particleFrame.w * renderWMultiplier),
                     (int) ((float) particleFrame.h * renderHMultiplier)};
 
