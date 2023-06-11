@@ -15,6 +15,8 @@ public:
 
     void addFrameX(int x);
 
+    void translate(Entity *entity, int xDiff);
+
     void destroy() override;
 
 private:

@@ -22,6 +22,10 @@ public:
 
     void moveTo(int x_, int y_, int z_);
 
+    void moveTo(Entity *entity);
+
+    void moveTo(Entity *entity, int addX, int addY, int addZ);
+
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
     void clearTexture();

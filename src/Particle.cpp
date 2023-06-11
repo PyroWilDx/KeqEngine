@@ -21,9 +21,10 @@ Particle::Particle(int spriteCode, int xShift, int yShift, int frameDuration,
     sprite->yShift = yShift;
     sprite->xShiftR = -xShift;
     sprite->frameDuration = frameDuration;
-    renderWMultiplier = wMultiplier * entity->getRenderWMultiplier();
-    renderHMultiplier = hMultiplier * entity->getRenderHMultiplier();
+    renderWMultiplier = wMultiplier;
+    renderHMultiplier = hMultiplier;
     this->entity = entity;
+    entityDependant = true;
     stopOnLastFrame = false;
     nextParticle = nullptr;
 }
@@ -55,6 +56,51 @@ void Particle::initParticle(WindowRenderer *window) {
              6 * 192, 0,
              0, 0, nullptr};
     activeParticleMaxes[PARTICLE_KQ_AIR_NATTACK_GROUND] = 1;
+
+    allParticleTextures[PARTICLE_KQ_SR_SPAWN] =
+            {PARTICLE_KQ_SR_SPAWN, false,
+             window->loadTexture("res/particles/kq_sr_spawn.png"),
+             0, 0, 0,
+             96, 96,
+             8 * 96, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_SR_SPAWN] = 1;
+
+    allParticleTextures[PARTICLE_KQ_SR_IDLE] =
+            {PARTICLE_KQ_SR_IDLE, false,
+             window->loadTexture("res/particles/kq_sr_idle.png"),
+             0, 0, 0,
+             32, 32,
+             4 * 32, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_SR_IDLE] = 1;
+
+    allParticleTextures[PARTICLE_KQ_SR_TP_START] =
+            {PARTICLE_KQ_SR_TP_START, false,
+             window->loadTexture("res/particles/kq_sr_tp_start.png"),
+             0, 0, 0,
+             192, 160,
+             8 * 192, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_SR_TP_START] = 1;
+
+    allParticleTextures[PARTICLE_KQ_SR_TP_END] =
+            {PARTICLE_KQ_SR_TP_END, false,
+             window->loadTexture("res/particles/kq_sr_tp_end.png"),
+             0, 0, 0,
+             192, 160,
+             7 * 192, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_SR_TP_END] = 1;
+
+    allParticleTextures[PARTICLE_KQ_SR_EXPLOSION] =
+            {PARTICLE_KQ_SR_EXPLOSION, false,
+             window->loadTexture("res/particles/kq_sr_explosion.png"),
+             0, 0, 0,
+             192, 160,
+             14 * 192, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_SR_EXPLOSION] = 1;
 
     allParticleTextures[PARTICLE_KQ_SS_AOE] =
             {PARTICLE_KQ_SS_AOE, false,
@@ -119,10 +165,10 @@ void Particle::initParticle(WindowRenderer *window) {
              0, 0, nullptr};
     activeParticleMaxes[PARTICLE_KQ_SS_FINAL_SLASH] = 1;
 
-    for (int i = 0; i < PARTICLE_END_ENUM; i++) {
-        activeParticles[i] = (Particle **)
-                malloc(activeParticleMaxes[i] * sizeof(Particle *));
-        counts[i] = 0;
+    for (int spriteCode = 0; spriteCode < PARTICLE_END_ENUM; spriteCode++) {
+        activeParticles[spriteCode] = (Particle **)
+                calloc(activeParticleMaxes[spriteCode], sizeof(Particle *));
+        counts[spriteCode] = 0;
     }
 }
 

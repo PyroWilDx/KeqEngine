@@ -19,6 +19,16 @@ void Background::addFrameX(int x) {
     }
 }
 
+void Background::translate(Entity *entity, int xDiff) {
+    int xMid = entity->getX() + entity->getCollisionRect().w / 2;
+    int halfX = SCREEN_WIDTH / 2 + frame.x;
+    bool isFacingEast = entity->isFacingEast();
+    if ((isFacingEast && xMid > halfX) ||
+        (!isFacingEast && xMid < halfX)) {
+        this->addFrameX(xDiff);
+    }
+}
+
 void Background::destroy() {
     Entity::destroy();
 }

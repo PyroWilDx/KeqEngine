@@ -41,7 +41,6 @@ void Entity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 }
 
 void Entity::move(int dt) {
-    // Z is not affected by velocity
     x += (int) ((float) dt * xVelocity);
     z += (int) ((float) dt * zVelocity);
 }
@@ -50,6 +49,17 @@ void Entity::moveTo(int x_, int y_, int z_) {
     x = x_;
     y = y_;
     z = z_;
+}
+
+void Entity::moveTo(Entity *entity) {
+    moveTo(entity->x, entity->y, entity->z);
+}
+
+void Entity::moveTo(Entity *entity, int addX, int addY, int addZ) {
+    moveTo(entity);
+    x += addX;
+    y += addY;
+    z += addZ;
 }
 
 bool Entity::collides(Entity *entity, SDL_Rect addRect) const {

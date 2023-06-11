@@ -64,17 +64,20 @@ int main() {
 //    zombie3->walk();
 //    monsterLL->insert(zombie3);
 
+    SDL_Event event;
+    bool pressedKeys[4] = {false, false, false, false};
+
     Uint32 dtU;
     int dt;
     Uint32 lastTime = SDL_GetTicks();
     Uint32 currentTime;
 
+    int kqLastX = kq->getX();
+    int kqX;
+
     Text FPSText = Text();
     Uint32 accumulatedFPSTime = 10000;
     Uint32 accumulatedFrames = 0;
-
-    SDL_Event event;
-    bool pressedKeys[4] = {false, false, false, false};
 
     bool gameRunning = true;
     bool gamePaused = false;
@@ -108,8 +111,11 @@ int main() {
                             if (!kq->isJumping()) spriteCode = KQ_DASH_START_SPRITE;
                             else spriteCode = KQ_AIR_DASH_SPRITE;
                             break;
-                        case SDLK_e:
-                            // TODO
+                        case SDLK_e: {
+                            Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SR_IDLE, 0);
+                            if (idleParticle == nullptr) spriteCode = KQ_STELLAR_RESTORATION_SPRITE;
+                            else spriteCode = KQ_STELLAR_RESTORATION_SLASH_SPRITE;
+                        }
                             break;
                         case SDLK_r:
                             spriteCode = KQ_STARWARD_SWORD_SPRITE;
@@ -163,24 +169,18 @@ int main() {
         if (kq->isNAttacking()) kq->nattack(dt, (int) currentTime);
         if (kq->isDashing()) kq->dash();
         if (kq->isESkilling()) kq->stellarRestoration();
+        if (kq->isESlashing()) kq->stellarRestorationSlash();
         if (kq->isRBursting()) kq->starwardSword(dt);
         if (kq->isJumping()) kq->jump(dt);
         if (kq->isAirNAttacking()) kq->airNAttack(dt);
         if (kq->isAirDashing()) kq->airDash();
         if (kq->isDamaged()) kq->damage(dt);
+        if (kq->isMoving() && !kq->shouldNotMove()) kq->move(dt);
 
-        if (kq->canMove()) {
-            int kqLastX = kq->getX();
-            kq->move(dt);
-            int kqNewX = kq->getX();
-            int kqW = kq->getCollisionRect().w;
-            int halfX = SCREEN_WIDTH / 2 + background.getFrame().x;
-            float kqXVelocity = kq->getXVelocity();
-            if ((kqXVelocity > 0 && kqNewX + kqW > halfX) ||
-                (kqXVelocity < 0 && kqNewX + kqW < halfX)) {
-                background.addFrameX(kqNewX - kqLastX);
-            }
-        }
+        kqX = kq->getX();
+        int xDiff = kqX - kqLastX;
+        if (xDiff != 0) background.translate(kq, xDiff);
+        kqLastX = kqX;
 
         kq->animate(dt);
 
