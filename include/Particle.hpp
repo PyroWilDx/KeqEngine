@@ -11,6 +11,11 @@ enum {
     PARTICLE_KQ_NATTACK_4 = 0,
     PARTICLE_KQ_AIR_NATTACK,
     PARTICLE_KQ_AIR_NATTACK_GROUND,
+    PARTICLE_KQ_SR_SPAWN,
+    PARTICLE_KQ_SR_IDLE,
+    PARTICLE_KQ_SR_TP_START,
+    PARTICLE_KQ_SR_TP_END,
+    PARTICLE_KQ_SR_EXPLOSION,
     PARTICLE_KQ_SS_AOE,
     PARTICLE_KQ_SS_AOE_WAVE,
     PARTICLE_KQ_SS_VANISH,
@@ -63,11 +68,15 @@ public:
 
     void fadeAway(float speed = 1.0f);
 
+    inline void setEntityDependant(bool dependant) { entityDependant = dependant; }
+
     inline void setStopOnLastFrame(bool stop) { stopOnLastFrame = stop; }
 
     inline void setNextParticle(Particle *particle) { nextParticle = particle; }
 
     inline Entity *getEntity() { return entity; }
+
+    inline bool isEntityDependant() { return entityDependant; }
 
 private:
     static Sprite allParticleTextures[PARTICLE_END_ENUM];
@@ -77,6 +86,7 @@ private:
     static int counts[PARTICLE_END_ENUM];
 
     Entity *entity;
+    bool entityDependant;
     bool stopOnLastFrame;
     Particle *nextParticle;
     FadeAwayParams fadeParams;

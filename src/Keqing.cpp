@@ -9,7 +9,9 @@
 
 #define NATTACKS_SPRITE_WIDTH 192
 
-#define STARWARD_SWORD_FRAME_DURATION 70
+#define SR_TP_DISTANCE 400;
+
+#define SS_FRAME_DURATION 70
 
 Keqing *Keqing::instance = nullptr;
 
@@ -101,12 +103,30 @@ Keqing::Keqing(WindowRenderer *window)
              0, 0,
              nullptr};
 
+    spriteArray[KQ_STELLAR_RESTORATION_SPRITE] =
+            {KQ_STELLAR_RESTORATION_SPRITE, false,
+             window->loadTexture("res/gfx/keqing/stellar_restoration.png"),
+             -26, 0, -40,
+             128, 96,
+             13 * 128, 60,
+             0, 0,
+             nullptr};
+
+    spriteArray[KQ_STELLAR_RESTORATION_SLASH_SPRITE] =
+            {KQ_STELLAR_RESTORATION_SLASH_SPRITE, false,
+             window->loadTexture("res/gfx/keqing/stellar_restoration_slash.png"),
+             -48, -16, -84,
+             192, 128,
+             14 * 192, 60,
+             0, 0,
+             nullptr};
+
     spriteArray[KQ_STARWARD_SWORD_SPRITE] =
             {KQ_STARWARD_SWORD_SPRITE, false,
              window->loadTexture("res/gfx/keqing/starward_sword.png"),
              -24, 0, -44,
              128, 96,
-             30 * 128, STARWARD_SWORD_FRAME_DURATION,
+             30 * 128, SS_FRAME_DURATION,
              0, 0,
              nullptr};
 
@@ -169,20 +189,20 @@ void Keqing::updateDirection(const bool *pressedKeys, int lastKey) {
             if (lastKey == SDLK_q) setFacingEast(false);
             else if (lastKey == SDLK_d) setFacingEast(true);
         } else {
-            xVelocity = -KQ_WALK_SPEED;
+            xVelocity = -KQ_WALK_VELOCITY;
             setFacingEast(false);
         }
     } else if (pressedKeys[SDLK_d % 4]) {
-        xVelocity = KQ_WALK_SPEED;
+        xVelocity = KQ_WALK_VELOCITY;
         setFacingEast(true);
     } else {
         xVelocity = 0;
     }
     if (pressedKeys[SDLK_z % 4]) {
         if (pressedKeys[SDLK_s % 4]) zVelocity = 0;
-        else zVelocity = -Z_VELOCITY;
+        else zVelocity = -KQ_Z_VELOCITY;
     } else if (pressedKeys[SDLK_s % 4]) {
-        zVelocity = Z_VELOCITY;
+        zVelocity = KQ_Z_VELOCITY;
     } else {
         zVelocity = 0;
     }
@@ -218,6 +238,14 @@ void Keqing::move(int dt) {
     } else if (z > MAX_Z) {
         z = MAX_Z;
     }
+}
+
+bool Keqing::shouldNotMove() {
+    return (spriteArray[KQ_NATTACKS_SPRITE].animated ||
+            spriteArray[KQ_STELLAR_RESTORATION_SPRITE].animated ||
+            spriteArray[KQ_STELLAR_RESTORATION_SLASH_SPRITE].animated ||
+            spriteArray[KQ_STARWARD_SWORD_SPRITE].animated ||
+            spriteArray[KQ_AIR_NATTACK_SPRITE].animated);
 }
 
 const int numberOfNAttacks = 5;
@@ -270,7 +298,7 @@ void Keqing::dash() {
     if (spriteArray[KQ_DASH_SPRITE].animated) coeff = 1.0f;
 
     float lastXVelocity = xVelocity;
-    xVelocity = KQ_DASH_SPEED * coeff;
+    xVelocity = KQ_DASH_VELOCITY * coeff;
     if (!facingEast) {
         xVelocity = -xVelocity;
         if (xVelocity > lastXVelocity) xVelocity = lastXVelocity;
@@ -279,9 +307,60 @@ void Keqing::dash() {
     }
 }
 
-
 void Keqing::stellarRestoration() {
-    // TODO
+    Sprite *srSprite = &spriteArray[KQ_STELLAR_RESTORATION_SPRITE];
+    if (isNewestFrame(srSprite, 6 * srSprite->width)) {
+        Particle *spawnParticle =
+                Particle::push(PARTICLE_KQ_SR_SPAWN,
+                               0, 0, 60,
+                               1.0f, 1.0f, this);
+        spawnParticle->setEntityDependant(false);
+        int distance = SR_TP_DISTANCE;
+        if (!facingEast) distance = -distance;
+        spawnParticle->moveTo(this, distance, 0, 0);
+    }
+
+    Particle *spawnParticle = Particle::getParticle(PARTICLE_KQ_SR_SPAWN, 0);
+    if (spawnParticle != nullptr) {
+        Sprite *spawnParticleSprite = &spawnParticle->getSpriteArray()[0];
+        if (isNewestFrame(spawnParticleSprite, 6 * spawnParticleSprite->width)) {
+            Particle *idleParticle =
+                    Particle::push(PARTICLE_KQ_SR_IDLE,
+                                   0, 0, 200,
+                                   2.0f, 2.0f, this);
+            idleParticle->setNextParticle(idleParticle);
+            idleParticle->setEntityDependant(false);
+            idleParticle->moveTo(spawnParticle);
+        }
+    }
+
+}
+
+void Keqing::stellarRestorationSlash() {
+    Sprite *srSlashSprite = &spriteArray[KQ_STELLAR_RESTORATION_SLASH_SPRITE];
+    if (isNewestFrame(srSlashSprite, 0)) {
+        Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SR_IDLE, 0);
+        if (x < idleParticle->getX()) setFacingEast(true);
+        else setFacingEast(false);
+
+    } else if (isNewestFrame(srSlashSprite, 5 * srSlashSprite->width)) {
+        Particle *tpStartParticle =
+                Particle::push(PARTICLE_KQ_SS_VANISH,
+                               0, 12, 60,
+                               1.0f, 1.0f, this);
+        tpStartParticle->setEntityDependant(false);
+        tpStartParticle->moveTo(this);
+
+        Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SR_IDLE, 0);
+        this->moveTo(idleParticle);
+
+        Particle::push(PARTICLE_KQ_SR_TP_END,
+                       0, 0, 60,
+                       1.0f, 1.0f, this);
+
+        Particle::remove(PARTICLE_KQ_SR_IDLE, 0);
+    }
+
 }
 
 const int cSlashFrameDuration = 20;
@@ -396,7 +475,7 @@ void Keqing::starwardSword(int dt) {
 
     if (ssSprite->currentFrameX == 13 * ssSprite->width &&
         !Particle::isActive(PARTICLE_KQ_SS_CLONE_SLASH, 0)) { // Clone Slash End
-        ssSprite->frameDuration = STARWARD_SWORD_FRAME_DURATION;
+        ssSprite->frameDuration = SS_FRAME_DURATION;
         ssSprite->currentFrameX += ssSprite->width;
         pushSlashParticle(this);
     }
@@ -454,7 +533,7 @@ void Keqing::airNAttack(int dt) { // Plunge Attack in Genshin
 }
 
 void Keqing::airDash() {
-    xVelocity = KQ_AIR_DASH_SPEED;
+    xVelocity = KQ_AIR_DASH_VELOCITY;
     if (!facingEast) xVelocity = -xVelocity;
 }
 
@@ -464,7 +543,7 @@ void Keqing::damage(int dt) { // TODO change
         x -= 10;
         hp--;
     } else {
-        x -= (int) (KQ_KNOCKBACK_SPEED * (float) dt);
+        x -= (int) (KQ_KNOCKBACK_VELOCITY * (float) dt);
     }
 }
 
@@ -480,10 +559,13 @@ void Keqing::setFacingEast(bool value) {
     }
 }
 
-bool Keqing::canMove() {
-    return (canDoAction(KQ_WALK_SPRITE) ||
-            isDashing() ||
-            isAirDashing());
+static bool checkNextSprites(int spriteCode, Sprite *spriteArray) {
+    for (int i = spriteCode + 1; i < KQ_END_SPRITE_ENUM; i++) {
+        if (spriteArray[i].animated) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool Keqing::canDoAction(int spriteCode) {
@@ -497,20 +579,27 @@ bool Keqing::canDoAction(int spriteCode) {
 
     if (spriteArray[spriteCode].animated) return false;
 
-    bool res = true;
-    if (spriteCode == KQ_JUMP_START_SPRITE) {
-        res = !spriteArray[KQ_STARWARD_SWORD_SPRITE].animated;
-        if (!res) return res;
+    if (spriteCode == KQ_STELLAR_RESTORATION_SPRITE ||
+        spriteCode == KQ_STELLAR_RESTORATION_SLASH_SPRITE) {
+        if (isNAttacking()) return false;
+
+    } else if (spriteCode == KQ_STARWARD_SWORD_SPRITE) {
+        if (isNAttacking()) return false;
+        if (isESkilling()) {
+            Sprite srSprite = spriteArray[KQ_STELLAR_RESTORATION_SPRITE];
+            if (srSprite.currentFrameX < 11 * srSprite.width) return false;
+        }
+        if (isESlashing()) {
+            Sprite srSlashSprite = spriteArray[KQ_STELLAR_RESTORATION_SLASH_SPRITE];
+            if (srSlashSprite.currentFrameX < 12 * srSlashSprite.width) return false;
+        }
+
+    } else if (spriteCode == KQ_JUMP_START_SPRITE) {
+        if (spriteArray[KQ_STARWARD_SWORD_SPRITE].animated) return false;
     }
 
     // By Default
-    for (int i = spriteCode + 1; i < KQ_END_SPRITE_ENUM; i++) {
-        if (spriteArray[i].animated) {
-            res = false;
-            break;
-        }
-    }
-    return res;
+    return checkNextSprites(spriteCode, spriteArray);
 }
 
 void Keqing::preAction(int spriteCode) {

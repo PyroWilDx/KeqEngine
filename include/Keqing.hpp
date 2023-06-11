@@ -19,6 +19,8 @@ enum {
     KQ_DASH_START_SPRITE,
     KQ_DASH_SPRITE,
     KQ_TURN_DASH_SPRITE,
+    KQ_STELLAR_RESTORATION_SPRITE,
+    KQ_STELLAR_RESTORATION_SLASH_SPRITE,
     KQ_STARWARD_SWORD_SPRITE,
     KQ_JUMP_START_SPRITE,
     KQ_JUMP_SPRITE,
@@ -31,13 +33,14 @@ enum {
 #define KQ_WIDTH_MULTIPLIER 1.4f
 #define KQ_HEIGHT_MULTIPLIER 1.4f
 
-#define KQ_WALK_SPEED 0.4f
-#define KQ_DASH_SPEED 1.0f
+#define KQ_WALK_VELOCITY 0.4f
+#define KQ_DASH_VELOCITY 1.0f
+#define KQ_Z_VELOCITY 0.24f
 
 #define KQ_BASE_JUMP_VELOCITY 1.0f
-#define KQ_AIR_DASH_SPEED 0.8f
+#define KQ_AIR_DASH_VELOCITY 0.8f
 
-#define KQ_KNOCKBACK_SPEED 0.6f
+#define KQ_KNOCKBACK_VELOCITY 0.6f
 
 #define KQ_SS_NUMBER_OF_CLONE_SLASH 6
 #define KQ_SS_NUMBER_OF_SLASH 8
@@ -56,9 +59,10 @@ public:
     void nattack(int dt, int currentTime);
 
     void dash();
-    // TODO BUG Dash + R
 
     void stellarRestoration();
+
+    void stellarRestorationSlash();
 
     void starwardSword(int dt);
 
@@ -72,9 +76,9 @@ public:
 
     void setFacingEast(bool value);
 
-    bool canMove();
-
     bool canDoAction(int spriteCode);
+
+    bool shouldNotMove();
 
     void preAction(int spriteCode);
 
@@ -82,13 +86,15 @@ public:
 
     inline bool isNAttacking() { return spriteArray[KQ_NATTACKS_SPRITE].animated; }
 
-    inline bool isESkilling() { return false; } // TODO
-
     inline bool isDashing() {
         return (spriteArray[KQ_DASH_START_SPRITE].animated ||
                 spriteArray[KQ_DASH_SPRITE].animated ||
                 spriteArray[KQ_DASH_STOP_SPRITE].animated);
     }
+
+    inline bool isESkilling() { return spriteArray[KQ_STELLAR_RESTORATION_SPRITE].animated; }
+
+    inline bool isESlashing() { return spriteArray[KQ_STELLAR_RESTORATION_SLASH_SPRITE].animated; }
 
     inline bool isRBursting() { return spriteArray[KQ_STARWARD_SWORD_SPRITE].animated; }
 
@@ -99,6 +105,8 @@ public:
     inline bool isAirDashing() { return spriteArray[KQ_AIR_DASH_SPRITE].animated; }
 
     inline bool isDamaged() { return spriteArray[KQ_HURT_SPRITE].animated; }
+
+    inline bool isMoving() { return (xVelocity != 0 || zVelocity != 0); }
 
     // TODO may need isInvincible
 

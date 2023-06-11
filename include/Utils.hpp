@@ -21,8 +21,6 @@
 #define MIN_Z (-10000)
 #define MAX_Z 10000
 
-#define Z_VELOCITY 0.24f
-
 const int MAX_X = BACKGROUND_WIDTH - 20;
 
 void myAssert(bool expr, const char *msg, const char *err);
