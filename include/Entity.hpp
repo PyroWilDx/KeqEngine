@@ -48,6 +48,12 @@ public:
 
     inline void setRotation(double rotation_) { rotation = rotation_; }
 
+    inline void setXYShift(int xShift_, int yShift_, int xShiftR_) {
+        xShift = xShift_;
+        yShift = yShift_;
+        xShiftR = xShiftR_;
+    }
+
     [[nodiscard]] inline int getX() const { return x; }
 
     [[nodiscard]] inline int getY() const { return y; }

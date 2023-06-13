@@ -25,7 +25,7 @@ include_directories(${HEADER_DIRS})
 # target main
 
 set(EXECUTABLE_OUTPUT_PATH "${ROOT_DIR}/bin")
-add_executable(main ${SRC_DIR}/main.cpp)
+add_executable(main ${SRC_DIR}/Main.cpp)
 target_sources(main PRIVATE
         ${SRC_DIR}/Utils.cpp
         ${SRC_DIR}/WindowRenderer.cpp

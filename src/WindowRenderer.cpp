@@ -5,7 +5,6 @@
 #include <SDL2/SDL_image.h>
 #include "Utils.hpp"
 #include "WindowRenderer.hpp"
-#include "Keqing.hpp"
 #include "Particle.hpp"
 
 WindowRenderer::WindowRenderer(const char *title, int w, int h) {
@@ -16,7 +15,7 @@ WindowRenderer::WindowRenderer(const char *title, int w, int h) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     myAssert(renderer != nullptr, "Error Creating Renderer.", SDL_GetError());
 
-    SDL_Texture *shadowTexture = loadTexture("res/gfx/shadow.png");
+    SDL_Texture *shadowTexture = loadTexture("res/gfx/Shadow.png");
     shadow = new Entity(0, 0, 0, 32, 32, false, shadowTexture);
 }
 
@@ -67,8 +66,8 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
                               collRect.w + collRect.w / 2,
                               collRect.h / 6};
         SDL_Texture *shadowTexture = shadow->getTexture();
-        int color = (int) ((float) (DEFAULT_Y - y) / 2.4f);
-        SDL_SetTextureColorMod(shadowTexture, color, color, color);
+        int colorV = (int) ((float) (DEFAULT_Y - y) / 2.4f);
+        SDL_SetTextureColorMod(shadowTexture, colorV, colorV, colorV);
         SDL_RenderCopy(renderer, shadowTexture,
                        &srcShadow, &dstShadow);
         // TODO Rect of CollisionRect + Z Length ?
@@ -109,49 +108,45 @@ void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
     float realW = (float) particleFrame.w * renderWMultiplier;
     float realH = (float) particleFrame.h * renderHMultiplier;
 
-    SDL_Rect collRect = entity->getCollisionRect();
-
-    float x = (float) collRect.w / 2.0f - realW / 2.0f;
-    float y = (float) collRect.h / 2.0f - realH / 2.0f;
-
+    int x, y;
+    int xShift, yShift, xShiftR;
+    Entity *checkFaceEastEntity;
     if (particle->isEntityDependant()) {
-        int entityX = entity->getX() + collRect.x;
-        int entityYZ = entity->getY() + collRect.y + entity->getZ();
-        x += (float) entityX;
-        y += (float) entityYZ;
+        checkFaceEastEntity = entity;
+
+        particle->getToEntityCenterXY(nullptr, &x, &y,
+                                      &xShift, &yShift, &xShiftR);
     } else {
-        x += (float) particle->getX();
-        y += (float) particle->getY() + (float) particle->getZ();
+        checkFaceEastEntity = particle_;
+
+        x = particle->getX();
+        y = particle->getY() + particle->getZ();
+        xShift = particle->getXShift();
+        yShift = particle->getYShift();
+        xShiftR = particle->getXShiftR();
     }
 
-    x -=  (float) background->getFrame().x;
-
-    int xShift = particle->getXShift();
-    int yShift = particle->getYShift();
-
-    bool facingEast = entity->isFacingEast();
-    double rotation = particle->getRotation(); // + entity->getRotation() ?
-
-    if (!facingEast) {
-        xShift = particle->getXShiftR();
+    int vXShift = xShift;
+    double rotation = particle->getRotation();
+    SDL_RendererFlip rendererFlip = SDL_FLIP_NONE;
+    bool faceEast = checkFaceEastEntity->isFacingEast();
+    if (!faceEast) {
+        vXShift = xShiftR;
         rotation = -rotation;
+        rendererFlip = SDL_FLIP_HORIZONTAL;
     }
 
-    SDL_Rect dst = {(int) (x + (float) xShift * entity->getRenderWMultiplier()),
-                    (int) (y + (float) yShift * entity->getRenderHMultiplier()),
-                    (int) realW,
-                    (int) realH};
+    x += vXShift;
+    y += particle->getYShift();
 
-    if (facingEast && rotation == 0) {
-        SDL_RenderCopy(renderer, particle->getTexture(),
-                       &src, &dst);
-    } else {
-        SDL_RendererFlip flip = SDL_FLIP_NONE;
-        if (!facingEast) flip = SDL_FLIP_HORIZONTAL;
-        SDL_RenderCopyEx(renderer, particle->getTexture(),
-                         &src, &dst,
-                         rotation, nullptr, flip);
-    }
+    x -= background->getFrame().x;
+
+    SDL_Rect dst = {x, y, (int) realW, (int) realH};
+
+    SDL_RenderCopyEx(renderer, particle->getTexture(),
+                     &src, &dst,
+                     rotation, nullptr,
+                     rendererFlip);
 }
 
 void WindowRenderer::display() {

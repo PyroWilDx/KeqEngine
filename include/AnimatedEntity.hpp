@@ -19,7 +19,7 @@ typedef struct Sprite {
     int height;
     int maxWidth;
     int frameDuration;
-    int currentFrameX;
+    int frameX;
     int accumulatedTime;
     Sprite *next;
 } Sprite;

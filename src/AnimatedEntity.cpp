@@ -3,6 +3,7 @@
 //
 
 #include "AnimatedEntity.hpp"
+#include "Keqing.hpp"
 
 AnimatedEntity::AnimatedEntity(bool hasShadow, int n)
         : Entity(0, 0, 0, 0, 0, hasShadow, nullptr) {
@@ -23,7 +24,7 @@ void AnimatedEntity::setSpriteAnimated(int spriteCode, bool animated, bool reset
     spriteArray[spriteCode].animated = animated;
     if (!animated) {
         if (reset) {
-            spriteArray[spriteCode].currentFrameX = 0;
+            spriteArray[spriteCode].frameX = 0;
         }
         spriteArray[spriteCode].accumulatedTime = 0;
     }
@@ -36,9 +37,8 @@ void AnimatedEntity::animate(int dt) {
         if (currentSprite->animated) {
             currentSprite->accumulatedTime += dt;
             if (currentSprite->accumulatedTime > currentSprite->frameDuration) {
-                currentSprite->currentFrameX += currentSprite->width;
-                // if (currentSprite->currentFrameX >= currentSprite->maxWidth) {
-                if (currentSprite->currentFrameX == currentSprite->maxWidth) {
+                currentSprite->frameX += currentSprite->width;
+                if (currentSprite->frameX == currentSprite->maxWidth) {
                     setSpriteAnimated(i, false);
                     if (currentSprite->next != nullptr) {
                         setSpriteAnimated(currentSprite->next->code, true);
@@ -53,7 +53,7 @@ void AnimatedEntity::animate(int dt) {
     }
     if (lastAnimatedSprite != nullptr) {
         texture = lastAnimatedSprite->texture;
-        frame.x = lastAnimatedSprite->currentFrameX;
+        frame.x = lastAnimatedSprite->frameX;
         frame.w = lastAnimatedSprite->width;
         frame.h = lastAnimatedSprite->height;
         xShift = lastAnimatedSprite->xShift;
@@ -63,7 +63,7 @@ void AnimatedEntity::animate(int dt) {
 }
 
 void AnimatedEntity::moveSpriteFrameX(int spriteCode, int x) {
-    spriteArray[spriteCode].currentFrameX = x;
+    spriteArray[spriteCode].frameX = x;
 }
 
 void AnimatedEntity::forceSprite(int spriteCode, int newMaxWidth,
@@ -73,7 +73,7 @@ void AnimatedEntity::forceSprite(int spriteCode, int newMaxWidth,
     forcedSprite->animated = true;
     forcedSprite->maxWidth = newMaxWidth;
     forcedSprite->frameDuration = newFrameDuration;
-    forcedSprite->currentFrameX = startX;
+    forcedSprite->frameX = startX;
 }
 
 void AnimatedEntity::removeForcedSprite() {
@@ -82,12 +82,12 @@ void AnimatedEntity::removeForcedSprite() {
 
 void AnimatedEntity::delay(int spriteCode, int ms) {
     Sprite *sprite = &spriteArray[spriteCode];
-    sprite->currentFrameX -= (ms / sprite->frameDuration) * sprite->width;
+    sprite->frameX -= (ms / sprite->frameDuration) * sprite->width;
 }
 
 void AnimatedEntity::reset(int spriteCode) {
     Sprite *sprite = &spriteArray[spriteCode];
-    sprite->currentFrameX = 0;
+    sprite->frameX = 0;
     sprite->accumulatedTime = 0;
 }
 

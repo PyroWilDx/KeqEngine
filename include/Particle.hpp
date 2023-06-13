@@ -8,22 +8,22 @@
 #include "AnimatedEntity.hpp"
 
 enum {
-    PARTICLE_KQ_NATTACK_4 = 0,
-    PARTICLE_KQ_AIR_NATTACK,
-    PARTICLE_KQ_AIR_NATTACK_GROUND,
-    PARTICLE_KQ_SR_SPAWN,
-    PARTICLE_KQ_SR_IDLE,
-    PARTICLE_KQ_SR_TP_START,
-    PARTICLE_KQ_SR_TP_END,
-    PARTICLE_KQ_SR_EXPLOSION,
-    PARTICLE_KQ_SS_AOE,
-    PARTICLE_KQ_SS_AOE_WAVE,
-    PARTICLE_KQ_SS_VANISH,
-    PARTICLE_KQ_SS_CLONE,
-    PARTICLE_KQ_SS_CLONE_SLASH,
-    PARTICLE_KQ_SS_SLASH,
-    PARTICLE_KQ_SS_FINAL_SLASH,
-    PARTICLE_END_ENUM
+    PARTICLE_KQ_NATK_4 = 0,
+    PARTICLE_KQ_AIR_NATK,
+    PARTICLE_KQ_AIR_NATK_GROUND,
+    PARTICLE_KQ_SKILL_SPAWN,
+    PARTICLE_KQ_SKILL_IDLE,
+    PARTICLE_KQ_SKILL_TP_END,
+    PARTICLE_KQ_SKILL_EXPLOSION,
+    PARTICLE_KQ_BURST_AOE,
+    PARTICLE_KQ_BURST_AOE_WAVE,
+    PARTICLE_KQ_BURST_VANISH,
+    PARTICLE_KQ_BURST_CLONE,
+    PARTICLE_KQ_BURST_CLONE_SLASH,
+    PARTICLE_KQ_BURST_SLASH,
+    PARTICLE_KQ_BURST_CLONE_VANISH,
+    PARTICLE_KQ_BURST_FINAL_SLASH,
+    PARTICLE_ENUM_N
 };
 
 typedef struct FadeAwayParams {
@@ -58,11 +58,17 @@ public:
 
     static inline int getCount() {
         int total = 0;
-        for (int spriteCode = 0; spriteCode < PARTICLE_END_ENUM; spriteCode++) {
+        for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
             total += counts[spriteCode];
         }
         return total;
     }
+
+    void getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
+                             int *pXShift = nullptr, int *pYShift = nullptr,
+                             int *pXShiftR = nullptr);
+
+    void moveToEntityCenter(Particle *centerParticle);
 
     bool isFinished();
 
@@ -78,15 +84,18 @@ public:
 
     inline bool isEntityDependant() { return entityDependant; }
 
-private:
-    static Sprite allParticleTextures[PARTICLE_END_ENUM];
+    inline SDL_RendererFlip getFlip() { return flip; }
 
-    static int activeParticleMaxes[PARTICLE_END_ENUM];
-    static Particle **activeParticles[PARTICLE_END_ENUM];
-    static int counts[PARTICLE_END_ENUM];
+private:
+    static Sprite allParticleTextures[PARTICLE_ENUM_N];
+
+    static int activeParticleMaxes[PARTICLE_ENUM_N];
+    static Particle **activeParticles[PARTICLE_ENUM_N];
+    static int counts[PARTICLE_ENUM_N];
 
     Entity *entity;
     bool entityDependant;
+    SDL_RendererFlip flip;
     bool stopOnLastFrame;
     Particle *nextParticle;
     FadeAwayParams fadeParams;
