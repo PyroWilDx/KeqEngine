@@ -68,12 +68,12 @@ public:
     inline static bool collides(Monster *monster, void *params, void *retVal) {
         Keqing *kq = Keqing::getInstance();
         SDL_Rect addRect;
-        if (kq->isNAttacking()) addRect = {0, 0, 60, 0}; // TODO CHANGE REACH CURRENT
+        if (kq->isNAtking()) addRect = {0, 0, 60, 0}; // TODO CHANGE REACH CURRENT
         else addRect = {0, 0, 0, 0};
         bool collided = kq->collides(monster, addRect);
         bool res = false;
         if (collided) {
-            if (kq->isNAttacking()) {
+            if (kq->isNAtking()) {
                 res = true;
             }
         }

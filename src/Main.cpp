@@ -27,7 +27,7 @@ int main() {
 
     WindowRenderer window = WindowRenderer("Keqing", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    SDL_Texture *backgroundTexture = window.loadTexture("res/gfx/background.png");
+    SDL_Texture *backgroundTexture = window.loadTexture("res/gfx/Background.png");
     Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT,
                                        BACKGROUND_WIDTH, backgroundTexture);
 
@@ -36,6 +36,7 @@ int main() {
     Keqing::initKeqing(&window);
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, DEFAULT_Y, 0);
+    kq->colorTexture(4, 1, 4); // TODO
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
     kq->setCollisionRect({(int) (0.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (12.0f * KQ_HEIGHT_MULTIPLIER),
@@ -67,21 +68,29 @@ int main() {
     SDL_Event event;
     bool pressedKeys[4] = {false, false, false, false};
 
-    Uint32 dtU;
+    int currentTime;
     int dt;
-    Uint32 lastTime = SDL_GetTicks();
-    Uint32 currentTime;
+    int lastTime;
+
+    int pressTime;
+    int mouseDt;
+    bool mousePressed;
 
     int kqLastX = kq->getX();
     int kqX;
 
     Text FPSText = Text();
-    Uint32 accumulatedFPSTime = 10000;
-    Uint32 accumulatedFrames = 0;
+    int accumulatedFPSTime = 10000;
+    int accumulatedFrames = 0;
 
     bool gameRunning = true;
     bool gamePaused = false;
     while (gameRunning) {
+
+        // Time Handling
+        currentTime = getTime();
+        dt = currentTime - lastTime;
+        lastTime = currentTime;
 
         // Events
         int spriteCode = -1;
@@ -96,7 +105,7 @@ int main() {
                     switch (key) {
                         case SDLK_ESCAPE:
                             gamePaused = !gamePaused;
-                            if (!gamePaused) lastTime = SDL_GetTicks();
+                            if (!gamePaused) lastTime = getTime();
                             break;
                         case SDLK_q:
                         case SDLK_d:
@@ -105,20 +114,20 @@ int main() {
                             pressedKeys[key % 4] = true;
                             break;
                         case SDLK_SPACE:
-                            spriteCode = KQ_JUMP_START_SPRITE;
+                            spriteCode = KQ_JUMP_START;
                             break;
                         case SDLK_LSHIFT:
-                            if (!kq->isJumping()) spriteCode = KQ_DASH_START_SPRITE;
-                            else spriteCode = KQ_AIR_DASH_SPRITE;
+                            if (!kq->isJumping()) spriteCode = KQ_DASH_START;
+                            else spriteCode = KQ_AIR_DASH;
                             break;
                         case SDLK_e: {
-                            Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SR_IDLE, 0);
-                            if (idleParticle == nullptr) spriteCode = KQ_STELLAR_RESTORATION_SPRITE;
-                            else spriteCode = KQ_STELLAR_RESTORATION_SLASH_SPRITE;
+                            Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0);
+                            if (idleParticle == nullptr) spriteCode = KQ_SKILL;
+                            else spriteCode = KQ_SKILL_SLASH;
                         }
                             break;
                         case SDLK_r:
-                            spriteCode = KQ_STARWARD_SWORD_SPRITE;
+                            spriteCode = KQ_BURST;
                             break;
                         default:
                             break;
@@ -138,14 +147,29 @@ int main() {
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    if (!kq->isJumping()) spriteCode = KQ_NATTACKS_SPRITE;
-                    else spriteCode = KQ_AIR_NATTACK_SPRITE;
+                    pressTime = getTime();
+                    mousePressed = true;
+                    if (!kq->isJumping()) spriteCode = KQ_NATK;
+                    else spriteCode = KQ_AIR_NATK;
+                    break;
+                case SDL_MOUSEBUTTONUP:
+                    mousePressed = false;
                     break;
                 default:
                     break;
             }
         }
         if (gamePaused) continue;
+
+//        if (spriteCode == -1) {
+//            if (mousePressed) {
+//                mouseDt = getTime() - pressTime;
+//                if (mouseDt < 200) {
+//                    if (!kq->isJumping()) spriteCode = KQ_NATK;
+//                    else spriteCode = KQ_AIR_NATK;
+//                }
+//            }
+//        }
 
         if (spriteCode != -1) {
             if (kq->canDoAction(spriteCode)) {
@@ -154,25 +178,19 @@ int main() {
             }
         }
 
-        // Time Handling
-        currentTime = SDL_GetTicks();
-        dtU = currentTime - lastTime;
-        dt = (int) dtU;
-        lastTime = currentTime;
-
         // Particles
         Particle::animateAll(dt);
 
         // Keqing
         // TODO Hitlag
-        if (kq->canDoAction(KQ_WALK_SPRITE)) kq->updateDirection(pressedKeys, key);
-        if (kq->isNAttacking()) kq->nattack(dt, (int) currentTime);
+        if (kq->canDoAction(KQ_WALK)) kq->updateDirection(pressedKeys, key);
+        if (kq->isNAtking()) kq->nAtk(dt, currentTime);
         if (kq->isDashing()) kq->dash();
-        if (kq->isESkilling()) kq->stellarRestoration();
-        if (kq->isESlashing()) kq->stellarRestorationSlash();
-        if (kq->isRBursting()) kq->starwardSword(dt);
+        if (kq->isSkilling()) kq->skill();
+        if (kq->isSkillSlashing()) kq->skillSlash();
+        if (kq->isBursting()) kq->burst(dt);
         if (kq->isJumping()) kq->jump(dt);
-        if (kq->isAirNAttacking()) kq->airNAttack(dt);
+        if (kq->isAirNAtking()) kq->airNAtk(dt);
         if (kq->isAirDashing()) kq->airDash();
         if (kq->isDamaged()) kq->damage(dt);
         if (kq->isMoving() && !kq->shouldNotMove()) kq->move(dt);

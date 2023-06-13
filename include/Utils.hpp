@@ -29,4 +29,6 @@ bool isNewestFrame(Sprite *sprite, int x);
 
 bool isSameSpriteCode(Sprite *sprite, int spriteCode);
 
+inline int getTime() { return ((int) SDL_GetTicks()); }
+
 #endif

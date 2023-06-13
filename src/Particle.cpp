@@ -5,11 +5,11 @@
 #include "Particle.hpp"
 #include "Keqing.hpp"
 
-Sprite Particle::allParticleTextures[PARTICLE_END_ENUM];
+Sprite Particle::allParticleTextures[PARTICLE_ENUM_N];
 
-int Particle::activeParticleMaxes[PARTICLE_END_ENUM];
-Particle **Particle::activeParticles[PARTICLE_END_ENUM];
-int Particle::counts[PARTICLE_END_ENUM];
+int Particle::activeParticleMaxes[PARTICLE_ENUM_N];
+Particle **Particle::activeParticles[PARTICLE_ENUM_N];
+int Particle::counts[PARTICLE_ENUM_N];
 
 Particle::Particle(int spriteCode, int xShift, int yShift, int frameDuration,
                    float wMultiplier, float hMultiplier, Entity *entity)
@@ -17,155 +17,158 @@ Particle::Particle(int spriteCode, int xShift, int yShift, int frameDuration,
     spriteArray[0] = allParticleTextures[spriteCode];
     Sprite *sprite = &spriteArray[0];
     sprite->animated = true;
-    sprite->xShift = xShift;
-    sprite->yShift = yShift;
-    sprite->xShiftR = -xShift;
     sprite->frameDuration = frameDuration;
     renderWMultiplier = wMultiplier;
     renderHMultiplier = hMultiplier;
     this->entity = entity;
     entityDependant = true;
+    facingEast = entity->isFacingEast();
     stopOnLastFrame = false;
     nextParticle = nullptr;
+    frame.w = sprite->width;
+    frame.h = sprite->height;
+    this->xShift = xShift;
+    this->yShift = yShift;
+    this->xShiftR = -xShift;
 }
 
 void Particle::initParticle(WindowRenderer *window) {
-    allParticleTextures[PARTICLE_KQ_NATTACK_4] =
-            {PARTICLE_KQ_NATTACK_4, false,
-             window->loadTexture("res/particles/kq_nattack_4.png"),
+    allParticleTextures[PARTICLE_KQ_NATK_4] =
+            {PARTICLE_KQ_NATK_4, false,
+             window->loadTexture("res/gfx/particle/KQNAtk4.png"),
              0, 0, 0,
              80, 32,
              6 * 80, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_NATTACK_4] = 1;
+    activeParticleMaxes[PARTICLE_KQ_NATK_4] = 1;
 
-    allParticleTextures[PARTICLE_KQ_AIR_NATTACK] =
-            {PARTICLE_KQ_AIR_NATTACK, false,
-             window->loadTexture("res/particles/kq_air_nattack.png"),
+    allParticleTextures[PARTICLE_KQ_AIR_NATK] =
+            {PARTICLE_KQ_AIR_NATK, false,
+             window->loadTexture("res/gfx/particle/KQAirNAtk.png"),
              0, 0, 0,
              32, 80,
              4 * 32, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_AIR_NATTACK] = 1;
+    activeParticleMaxes[PARTICLE_KQ_AIR_NATK] = 1;
 
-    allParticleTextures[PARTICLE_KQ_AIR_NATTACK_GROUND] =
-            {PARTICLE_KQ_AIR_NATTACK_GROUND, false,
-             window->loadTexture("res/particles/kq_air_nattack_ground.png"),
+    allParticleTextures[PARTICLE_KQ_AIR_NATK_GROUND] =
+            {PARTICLE_KQ_AIR_NATK_GROUND, false,
+             window->loadTexture("res/gfx/particle/KQAirNAtkGround.png"),
              0, 0, 0,
              192, 96,
              6 * 192, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_AIR_NATTACK_GROUND] = 1;
+    activeParticleMaxes[PARTICLE_KQ_AIR_NATK_GROUND] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SR_SPAWN] =
-            {PARTICLE_KQ_SR_SPAWN, false,
-             window->loadTexture("res/particles/kq_sr_spawn.png"),
+    allParticleTextures[PARTICLE_KQ_SKILL_SPAWN] =
+            {PARTICLE_KQ_SKILL_SPAWN, false,
+             window->loadTexture("res/gfx/particle/KQSkillSpawn.png"),
              0, 0, 0,
              96, 96,
              8 * 96, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SR_SPAWN] = 1;
+    activeParticleMaxes[PARTICLE_KQ_SKILL_SPAWN] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SR_IDLE] =
-            {PARTICLE_KQ_SR_IDLE, false,
-             window->loadTexture("res/particles/kq_sr_idle.png"),
+    allParticleTextures[PARTICLE_KQ_SKILL_IDLE] =
+            {PARTICLE_KQ_SKILL_IDLE, false,
+             window->loadTexture("res/gfx/particle/KQSkillIdle.png"),
              0, 0, 0,
              32, 32,
              4 * 32, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SR_IDLE] = 1;
+    activeParticleMaxes[PARTICLE_KQ_SKILL_IDLE] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SR_TP_START] =
-            {PARTICLE_KQ_SR_TP_START, false,
-             window->loadTexture("res/particles/kq_sr_tp_start.png"),
-             0, 0, 0,
-             192, 160,
-             8 * 192, 0,
-             0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SR_TP_START] = 1;
-
-    allParticleTextures[PARTICLE_KQ_SR_TP_END] =
-            {PARTICLE_KQ_SR_TP_END, false,
-             window->loadTexture("res/particles/kq_sr_tp_end.png"),
+    allParticleTextures[PARTICLE_KQ_SKILL_TP_END] =
+            {PARTICLE_KQ_SKILL_TP_END, false,
+             window->loadTexture("res/gfx/particle/KQSkillTPEnd.png"),
              0, 0, 0,
              192, 160,
              7 * 192, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SR_TP_END] = 1;
+    activeParticleMaxes[PARTICLE_KQ_SKILL_TP_END] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SR_EXPLOSION] =
-            {PARTICLE_KQ_SR_EXPLOSION, false,
-             window->loadTexture("res/particles/kq_sr_explosion.png"),
+    allParticleTextures[PARTICLE_KQ_SKILL_EXPLOSION] =
+            {PARTICLE_KQ_SKILL_EXPLOSION, false,
+             window->loadTexture("res/gfx/particle/KQSkillExplosion.png"),
              0, 0, 0,
              192, 160,
              14 * 192, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SR_EXPLOSION] = 1;
+    activeParticleMaxes[PARTICLE_KQ_SKILL_EXPLOSION] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SS_AOE] =
-            {PARTICLE_KQ_SS_AOE, false,
-             window->loadTexture("res/particles/kq_ss_aoe.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_AOE] =
+            {PARTICLE_KQ_BURST_AOE, false,
+             window->loadTexture("res/gfx/particle/KQBurstAOE.png"),
              0, 0, 0,
              200, 200,
              7 * 200, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_AOE] = 1;
+    activeParticleMaxes[PARTICLE_KQ_BURST_AOE] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SS_AOE_WAVE] =
-            {PARTICLE_KQ_SS_AOE_WAVE, false,
-             window->loadTexture("res/particles/kq_ss_aoe_wave.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_AOE_WAVE] =
+            {PARTICLE_KQ_BURST_AOE_WAVE, false,
+             window->loadTexture("res/gfx/particle/KQBurstAOEWave.png"),
              0, 0, 0,
              200, 200,
              12 * 200, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_AOE_WAVE] = 1;
+    activeParticleMaxes[PARTICLE_KQ_BURST_AOE_WAVE] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SS_VANISH] =
-            {PARTICLE_KQ_SS_VANISH, false,
-             window->loadTexture("res/particles/kq_ss_vanish.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_VANISH] =
+            {PARTICLE_KQ_BURST_VANISH, false,
+             window->loadTexture("res/gfx/particle/KQBurstVanish.png"),
              0, 0, 0,
              96, 96,
              6 * 96, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_VANISH] = 1;
+    activeParticleMaxes[PARTICLE_KQ_BURST_VANISH] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SS_CLONE] =
-            {PARTICLE_KQ_SS_CLONE, false,
-             window->loadTexture("res/particles/kq_ss_clone.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_CLONE] =
+            {PARTICLE_KQ_BURST_CLONE, false,
+             window->loadTexture("res/gfx/particle/KQBurstClone.png"),
              0, 0, 0,
              208, 128,
              23 * 208, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_CLONE] = 1;
+    activeParticleMaxes[PARTICLE_KQ_BURST_CLONE] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SS_CLONE_SLASH] =
-            {PARTICLE_KQ_SS_CLONE_SLASH, false,
-             window->loadTexture("res/particles/kq_ss_clone_slash.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_CLONE_SLASH] =
+            {PARTICLE_KQ_BURST_CLONE_SLASH, false,
+             window->loadTexture("res/gfx/particle/KQBurstCloneSlash.png"),
              0, 0, 0,
              224, 64,
              7 * 224, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_CLONE_SLASH] = 1;
+    activeParticleMaxes[PARTICLE_KQ_BURST_CLONE_SLASH] = 1;
 
-    allParticleTextures[PARTICLE_KQ_SS_SLASH] =
-            {PARTICLE_KQ_SS_SLASH, false,
-             window->loadTexture("res/particles/kq_ss_slash.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_SLASH] =
+            {PARTICLE_KQ_BURST_SLASH, false,
+             window->loadTexture("res/gfx/particle/KQBurstSlash.png"),
              0, 0, 0,
              448, 32,
              7 * 448, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_SLASH] = KQ_SS_NUMBER_OF_SLASH;
+    activeParticleMaxes[PARTICLE_KQ_BURST_SLASH] = KQ_BURST_NUMBER_OF_SLASH;
 
-    allParticleTextures[PARTICLE_KQ_SS_FINAL_SLASH] =
-            {PARTICLE_KQ_SS_FINAL_SLASH, false,
-             window->loadTexture("res/particles/kq_ss_final_slash.png"),
+    allParticleTextures[PARTICLE_KQ_BURST_CLONE_VANISH] =
+            {PARTICLE_KQ_BURST_CLONE_VANISH, false,
+             window->loadTexture("res/gfx/particle/KQBurstCloneVanish.png"),
+             0, 0, 0,
+             96, 96,
+             4 * 96, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_BURST_CLONE_VANISH] = KQ_BURST_NUMBER_OF_CLONE;
+
+    allParticleTextures[PARTICLE_KQ_BURST_FINAL_SLASH] =
+            {PARTICLE_KQ_BURST_FINAL_SLASH, false,
+             window->loadTexture("res/gfx/particle/KQBurstFinalSlash.png"),
              0, 0, 0,
              800, 320,
              10 * 800, 0,
              0, 0, nullptr};
-    activeParticleMaxes[PARTICLE_KQ_SS_FINAL_SLASH] = 1;
+    activeParticleMaxes[PARTICLE_KQ_BURST_FINAL_SLASH] = 1;
 
-    for (int spriteCode = 0; spriteCode < PARTICLE_END_ENUM; spriteCode++) {
+    for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         activeParticles[spriteCode] = (Particle **)
                 calloc(activeParticleMaxes[spriteCode], sizeof(Particle *));
         counts[spriteCode] = 0;
@@ -212,12 +215,16 @@ void Particle::remove(int spriteCode, int i) {
 
 void Particle::animateAll(int dt) {
     Particle *currParticle;
-    for (int spriteCode = 0; spriteCode < PARTICLE_END_ENUM; spriteCode++) {
+    for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < counts[spriteCode]; i++) {
             currParticle = activeParticles[spriteCode][i];
             if (currParticle == nullptr) printf("Bizarre!\n");
 
+            int lastXShift = currParticle->getXShift();
+            int lastYShift = currParticle->getYShift();
+            int lastXShiftR = currParticle->getXShiftR();
             currParticle->animate(dt);
+            currParticle->setXYShift(lastXShift, lastYShift, lastXShiftR);
 
             if (currParticle->fadeParams.baseAlpha != -1) {
                 Uint8 alpha;
@@ -236,7 +243,7 @@ void Particle::animateAll(int dt) {
                 if (currParticle->stopOnLastFrame) {
                     currParticle->setSpriteAnimated(0, true);
                     Sprite *sprite = &currParticle->spriteArray[0];
-                    sprite->currentFrameX = sprite->maxWidth - sprite->width;
+                    sprite->frameX = sprite->maxWidth - sprite->width;
                     sprite->frameDuration = INT32_MAX;
                 } else if (currParticle->nextParticle != nullptr) {
                     Particle *nextParticle = currParticle->nextParticle;
@@ -257,7 +264,7 @@ void Particle::animateAll(int dt) {
 
 void Particle::renderAll(WindowRenderer *window, Entity *background) {
     Particle *currParticle;
-    for (int spriteCode = 0; spriteCode < PARTICLE_END_ENUM; spriteCode++) {
+    for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < counts[spriteCode]; i++) {
             currParticle = activeParticles[spriteCode][i];
             if (currParticle == nullptr) printf("Bizarre!\n");
@@ -276,14 +283,62 @@ bool Particle::isActive(int spriteCode, int i) {
 }
 
 void Particle::cleanUp() {
-    for (int i = 0; i < PARTICLE_END_ENUM; i++) {
+    for (int i = 0; i < PARTICLE_ENUM_N; i++) {
         SDL_DestroyTexture(allParticleTextures[i].texture);
     }
-    for (int spriteCode = 0; spriteCode < PARTICLE_END_ENUM; spriteCode++) {
+    for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < counts[spriteCode]; i++) {
             delete activeParticles[spriteCode][i];
         }
     }
+}
+
+void Particle::getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
+                                   int *pXShift, int *pYShift, int *pXShiftR) {
+    float realW = (float) frame.w * renderWMultiplier * entity->getRenderWMultiplier();
+    float realH = (float) frame.h * renderHMultiplier * entity->getRenderHMultiplier();
+
+    SDL_Rect rect;
+    int vX, vY, vZ;
+    Entity *centerEntity;
+    if (centerParticle == nullptr) {
+        rect = entity->getCollisionRect();
+        vX = entity->getX();
+        vY = entity->getY();
+        vZ = entity->getZ();
+        centerEntity = entity;
+    } else {
+        rect = {0, 0,
+                (int) ((float) centerParticle->frame.w *
+                       centerParticle->renderWMultiplier *
+                       centerParticle->entity->getRenderWMultiplier()),
+                (int) ((float) centerParticle->frame.h *
+                       centerParticle->renderHMultiplier *
+                       centerParticle->entity->getRenderHMultiplier())};
+        vX = centerParticle->x;
+        vY = centerParticle->y;
+        vZ = centerParticle->z;
+        centerEntity = centerParticle;
+    }
+
+    *pX = vX + rect.x +
+          (int) ((float) rect.w / 2.0f - realW / 2.0f);
+    *pY = vY + rect.y + vZ +
+          (int) ((float) rect.h / 2.0f - realH / 2.0f);
+
+    if (pXShift != nullptr)
+        *pXShift = (int) ((float) xShift * centerEntity->getRenderWMultiplier());
+    if (pYShift != nullptr)
+        *pYShift = (int) ((float) yShift * centerEntity->getRenderHMultiplier());
+    if (pXShiftR != nullptr)
+        *pXShiftR = (int) ((float) -xShift * centerEntity->getRenderWMultiplier());
+}
+
+void Particle::moveToEntityCenter(Particle *centerParticle) {
+    if (centerParticle == nullptr) facingEast = entity->isFacingEast();
+    else facingEast = centerParticle->facingEast;
+    getToEntityCenterXY(centerParticle, &x, &y,
+                        &xShift, &yShift, &xShiftR);
 }
 
 bool Particle::isFinished() {
