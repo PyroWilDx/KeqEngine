@@ -2,6 +2,8 @@
 // Created by pyrowildx on 13/05/23.
 //
 
+#include <SDL_image.h>
+#include <vector>
 #include "Keqing.hpp"
 #include "Particle.hpp"
 
@@ -203,31 +205,68 @@ void Keqing::initKeqing(WindowRenderer *window) {
     }
 }
 
-void Keqing::colorTexture(int rM, int rG, int rB) {
-//    Uint32 format;
-//    int access, width, height;
-//    SDL_QueryTexture(texture, &format, &access, &width, &height);
-//
-//    void* pixels;
-//    int pitch;
-//    SDL_LockTexture(texture, NULL, &pixels, &pitch);
-//
-//    Uint8* pixelData = static_cast<Uint8*>(pixels);
-//    int numPixels = width * height;
-//    for (int i = 0; i < numPixels; ++i) {
-//        Uint8* pixel = pixelData + i * pitch;
-//        Uint8 red = pixel[0];
-//        pixel[0] = static_cast<Uint8>(red * redMultiplier);
-//        Uint8 green = pixel[1];
-//        pixel[1] = static_cast<Uint8>(green * greenMultiplier);
-//        Uint8 blue = pixel[2];
-//        pixel[2] = static_cast<Uint8>(blue * blueMultiplier);
-//    }
-//
-//    SDL_UnlockTexture(texture);
-//
-//    SDL_RenderCopy(renderer, texture, NULL, NULL);
-//    SDL_RenderPresent(renderer);
+struct Pixel {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+};
+
+
+// Function to convert green to violet
+void convertGreenToViolet(Pixel *pixel) {
+    float h, s, v;
+    RGBtoHSV(pixel->r, pixel->g, pixel->b, &h, &s, &v);
+
+    // Convert green hues (120-180) to violet hues (300-360 or 0-60)
+    if (h >= 120 && h <= 180) {
+        h = 280 + (h - 120);
+    }
+
+    if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
+        if (h >= 330 && h <= 360)
+            h = 280 + (h - 330);
+        else if (h >= 0 && h <= 30)
+            h = 280 + (h - 0);
+    }
+
+    unsigned char r, g, b;
+    HSVtoRGB(h, s, v, &r, &g, &b);
+
+    pixel->r = r;
+    pixel->g = g;
+    pixel->b = b;
+}
+
+void Keqing::colorTexture(int r, int g, int b, WindowRenderer *window) {
+    SDL_Surface *img = IMG_Load("res/gfx/keqing/Idle.png");
+
+    auto *pixel0 = (Uint8 *) img->pixels;
+    for (Uint8 *pixel = pixel0; pixel < pixel0 + (img->w * img->h) * 4; pixel += 4) {
+
+        float h, s, v;
+        RGBtoHSV(pixel[0], pixel[1], pixel[2],
+                 &h, &s, &v);
+
+        // Hair (Green)
+        if (h >= 120 && h <= 180) {
+            h = 280 + (h - 120);
+        }
+
+        // Outfit & Gloves (Red)
+        if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
+            if (h >= 330 && h <= 360)
+                h = 280 + (h - 330);
+            else if (h >= 0 && h <= 30)
+                h = 280 + (h - 0);
+        }
+
+        HSVtoRGB(h, s, v,
+                 &pixel[0], &pixel[1], &pixel[2]);
+    }
+
+    SDL_Texture *mTexture = SDL_CreateTextureFromSurface(
+            window->getRenderer(), img);
+    spriteArray[KQ_IDLE].texture = mTexture;
 }
 
 void Keqing::updateDirection(const bool *pressedKeys, int lastKey) {

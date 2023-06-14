@@ -55,7 +55,7 @@ public:
 
     static inline Keqing *getInstance() { return instance; }
 
-    void colorTexture(int rM, int rG, int rB);
+    void colorTexture(int r, int g, int b, WindowRenderer *window);
 
     void updateDirection(const bool *pressedKeys, int lastKey);
 

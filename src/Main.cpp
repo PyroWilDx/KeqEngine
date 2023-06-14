@@ -36,7 +36,7 @@ int main() {
     Keqing::initKeqing(&window);
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, DEFAULT_Y, 0);
-    kq->colorTexture(4, 1, 4); // TODO
+    kq->colorTexture(4, 1, 4, &window); // TODO
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
     kq->setCollisionRect({(int) (0.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (12.0f * KQ_HEIGHT_MULTIPLIER),

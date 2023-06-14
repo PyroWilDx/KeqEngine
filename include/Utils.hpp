@@ -31,4 +31,10 @@ bool isSameSpriteCode(Sprite *sprite, int spriteCode);
 
 inline int getTime() { return ((int) SDL_GetTicks()); }
 
+void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
+              float *pH, float *pS, float *pV);
+
+void HSVtoRGB(float h, float s, float v,
+              Uint8 *pR, Uint8 *pG, Uint8 *pB);
+
 #endif
