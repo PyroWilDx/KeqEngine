@@ -5,7 +5,7 @@
 #include "Monster.hpp"
 
 Monster::Monster(WindowRenderer *window)
-        : AnimatedEntity(true, ZOMBIE_END_SPRITE_ENUM) {
+        : AnimatedEntity(ZOMBIE_END_SPRITE_ENUM) {
     xVelocity = MONSTER_WALK_SPEED;
     hp = 1;
 
@@ -68,14 +68,11 @@ Monster *Monster::copy(WindowRenderer *window) {
     auto *copyMonster = new Monster(window);
     copyMonster->x = x;
     copyMonster->y = y;
-    copyMonster->z = z;
     copyMonster->xVelocity = xVelocity;
     copyMonster->yVelocity = yVelocity;
-    copyMonster->zVelocity = zVelocity;
     copyMonster->xVelocity = xVelocity;
     copyMonster->frame = frame;
     copyMonster->collisionRect = collisionRect;
-    copyMonster->hasShadow = hasShadow;
     copyMonster->renderWMultiplier = renderWMultiplier;
     copyMonster->renderHMultiplier = renderHMultiplier;
     copyMonster->hp = hp;

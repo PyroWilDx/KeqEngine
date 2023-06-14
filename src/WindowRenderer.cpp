@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include "Utils.hpp"
 #include "WindowRenderer.hpp"
+#include "Entity.hpp"
 #include "Particle.hpp"
 
 WindowRenderer::WindowRenderer(const char *title, int w, int h) {
@@ -14,9 +15,6 @@ WindowRenderer::WindowRenderer(const char *title, int w, int h) {
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     myAssert(renderer != nullptr, "Error Creating Renderer.", SDL_GetError());
-
-    SDL_Texture *shadowTexture = loadTexture("res/gfx/Shadow.png");
-    shadow = new Entity(0, 0, 0, 32, 32, false, shadowTexture);
 }
 
 SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
@@ -26,6 +24,7 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
 }
 
 void WindowRenderer::render(Entity *entity, Entity *background) {
+    //TODO RENDERSELF WILL BE MUCH BETTER
     SDL_Rect entityFrame = entity->getFrame();
 
     if (entityFrame.x < 0 || entityFrame.y < 0) return;
@@ -37,10 +36,8 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
 
     int x = entity->getX();
     int y = entity->getY();
-    int z = entity->getZ();
-    int yz = y + z;
 
-    if (entity != background) x -= background->getFrame().x;
+    if (background != nullptr) x -= background->getFrame().x;
 
     int xShift = entity->getXShift();
     int yShift = entity->getYShift();
@@ -54,24 +51,9 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
     }
 
     SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
-                    (int) ((float) yz + (float) yShift * renderHMultiplier),
+                    (int) ((float) y + (float) yShift * renderHMultiplier),
                     (int) ((float) entityFrame.w * renderWMultiplier),
                     (int) ((float) entityFrame.h * renderHMultiplier)};
-
-    if (entity->getHasShadow()) {
-        SDL_Rect srcShadow = shadow->getFrame();
-        SDL_Rect collRect = entity->getCollisionRect();
-        SDL_Rect dstShadow = {x + collRect.x - collRect.w / 4,
-                              DEFAULT_Y + z + collRect.y + collRect.h - collRect.h / 8,
-                              collRect.w + collRect.w / 2,
-                              collRect.h / 6};
-        SDL_Texture *shadowTexture = shadow->getTexture();
-        int colorV = (int) ((float) (DEFAULT_Y - y) / 2.4f);
-        SDL_SetTextureColorMod(shadowTexture, colorV, colorV, colorV);
-        SDL_RenderCopy(renderer, shadowTexture,
-                       &srcShadow, &dstShadow);
-        // TODO Rect of CollisionRect + Z Length ?
-    }
 
     if (facingEast && rotation == 0) {
         SDL_RenderCopy(renderer, entity->getTexture(),
@@ -86,7 +68,7 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
 
     SDL_Rect collRect = entity->getCollisionRect();
     collRect.x += x;
-    collRect.y += yz;
+    collRect.y += y;
 //    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 //    SDL_RenderDrawRect(renderer, &dst);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -120,7 +102,7 @@ void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
         checkFaceEastEntity = particle_;
 
         x = particle->getX();
-        y = particle->getY() + particle->getZ();
+        y = particle->getY();
         xShift = particle->getXShift();
         yShift = particle->getYShift();
         xShiftR = particle->getXShiftR();
@@ -158,7 +140,6 @@ void WindowRenderer::clear() {
 }
 
 void WindowRenderer::cleanUp() {
-    delete shadow;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 }

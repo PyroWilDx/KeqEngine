@@ -13,7 +13,7 @@ int Particle::counts[PARTICLE_ENUM_N];
 
 Particle::Particle(int spriteCode, int xShift, int yShift, int frameDuration,
                    float wMultiplier, float hMultiplier, Entity *entity)
-        : AnimatedEntity(false, 1), fadeParams({-1, 1.0f}) {
+        : AnimatedEntity(1), fadeParams({-1, 1.0f}) {
     spriteArray[0] = allParticleTextures[spriteCode];
     Sprite *sprite = &spriteArray[0];
     sprite->animated = true;
@@ -299,13 +299,12 @@ void Particle::getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
     float realH = (float) frame.h * renderHMultiplier * entity->getRenderHMultiplier();
 
     SDL_Rect rect;
-    int vX, vY, vZ;
+    int vX, vY;
     Entity *centerEntity;
     if (centerParticle == nullptr) {
         rect = entity->getCollisionRect();
         vX = entity->getX();
         vY = entity->getY();
-        vZ = entity->getZ();
         centerEntity = entity;
     } else {
         rect = {0, 0,
@@ -317,13 +316,12 @@ void Particle::getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
                        centerParticle->entity->getRenderHMultiplier())};
         vX = centerParticle->x;
         vY = centerParticle->y;
-        vZ = centerParticle->z;
         centerEntity = centerParticle;
     }
 
     *pX = vX + rect.x +
           (int) ((float) rect.w / 2.0f - realW / 2.0f);
-    *pY = vY + rect.y + vZ +
+    *pY = vY + rect.y +
           (int) ((float) rect.h / 2.0f - realH / 2.0f);
 
     if (pXShift != nullptr)

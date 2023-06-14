@@ -120,7 +120,7 @@ public:
 
     inline bool isDamaged() { return spriteArray[KQ_HURT].animated; }
 
-    inline bool isMoving() { return (xVelocity != 0 || zVelocity != 0); }
+    inline bool isMoving() { return (xVelocity != 0); }
 
     // TODO may need isInvincible
 
