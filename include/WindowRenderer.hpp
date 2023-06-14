@@ -6,7 +6,8 @@
 #define WINDOWRENDERER_HPP
 
 #include <SDL2/SDL.h>
-#include "Entity.hpp"
+
+class Entity;
 
 class WindowRenderer {
 
@@ -30,7 +31,6 @@ public:
 private:
     SDL_Window *window;
     SDL_Renderer *renderer;
-    Entity *shadow;
 
 };
 

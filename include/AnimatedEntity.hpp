@@ -27,7 +27,7 @@ typedef struct Sprite {
 class AnimatedEntity : public Entity {
 
 public:
-    AnimatedEntity(bool hasShadow, int n);
+    explicit AnimatedEntity(int n);
 
     void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
 

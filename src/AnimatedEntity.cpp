@@ -5,8 +5,8 @@
 #include "AnimatedEntity.hpp"
 #include "Keqing.hpp"
 
-AnimatedEntity::AnimatedEntity(bool hasShadow, int n)
-        : Entity(0, 0, 0, 0, 0, hasShadow, nullptr) {
+AnimatedEntity::AnimatedEntity(int n)
+        : Entity(0, 0, 0, 0, nullptr) {
     this->n = n;
     spriteArray = new Sprite[n + 1];
     spriteArray[n].animated = false;

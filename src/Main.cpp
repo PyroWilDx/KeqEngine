@@ -11,6 +11,7 @@
 #include "Background.hpp"
 #include "MonsterLinkedList.hpp"
 #include "Particle.hpp"
+#include "Hud.hpp"
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -35,13 +36,33 @@ int main() {
 
     Keqing::initKeqing(&window);
     Keqing *kq = Keqing::getInstance();
-    kq->moveTo(0, DEFAULT_Y, 0);
+    kq->moveTo(0, 360);
     kq->colorTexture(4, 1, 4, &window); // TODO
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
     kq->setCollisionRect({(int) (0.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (12.0f * KQ_HEIGHT_MULTIPLIER),
                           (int) (60.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
+
+    const float hudSBCircleM = 3.0f;
+    const float hudSBIconM = 2.6f;
+    int hudSBCircleX = 1060;
+    int hudSBCircleY = 600;
+    Hud skillBurstCircleBG = Hud(hudSBCircleX, hudSBCircleY, 64, 32, 32,
+                                 window.loadTexture("res/gfx/hud/SkillBurstCircleBG.png"));
+    skillBurstCircleBG.setRenderWHMultiplier(hudSBCircleM, hudSBCircleM);
+    skillBurstCircleBG.setRGBAMod(255, 255, 255, 128);
+    Hud skillBurstCircle = Hud(hudSBCircleX, hudSBCircleY, 64, 32, 32,
+                               window.loadTexture("res/gfx/hud/SkillBurstCircle.png"));
+    skillBurstCircle.setRenderWHMultiplier(hudSBCircleM, hudSBCircleM);
+    Hud skillIcon1 = Hud(0, 0, 21, 21, 21,
+                         window.loadTexture("res/gfx/hud/SkillIcon1.png"));
+    skillIcon1.setRenderWHMultiplier(hudSBIconM, hudSBIconM);
+    skillIcon1.moveToHudFrameCenter(&skillBurstCircle, 0);
+    Hud burstIcon = Hud(0, 0, 21, 21, 21,
+                        window.loadTexture("res/gfx/hud/BurstIcon.png"));
+    burstIcon.setRenderWHMultiplier(hudSBIconM, hudSBIconM);
+    burstIcon.moveToHudFrameCenter(&skillBurstCircle, 1);
 
     auto *monsterLL = new MonsterLinkedList();
 //    auto *zombie0 = new Monster(96, 96, &window);
@@ -80,11 +101,12 @@ int main() {
     int kqX;
 
     Text FPSText = Text();
-    int accumulatedFPSTime = 10000;
+    int accumulatedFPSTime = 1002;
     int accumulatedFrames = 0;
 
     bool gameRunning = true;
     bool gamePaused = false;
+    bool runFrame = false;
     while (gameRunning) {
 
         // Time Handling
@@ -103,14 +125,18 @@ int main() {
                 case SDL_KEYDOWN:
                     key = event.key.keysym.sym;
                     switch (key) {
-                        case SDLK_ESCAPE:
+                        case SDLK_BACKSPACE:
                             gamePaused = !gamePaused;
                             if (!gamePaused) lastTime = getTime();
                             break;
+                        case SDLK_RETURN:
+                            if (gamePaused) {
+                                runFrame = true;
+                                dt = 10;
+                            }
+                            break;
                         case SDLK_q:
                         case SDLK_d:
-                        case SDLK_s:
-                        case SDLK_z:
                             pressedKeys[key % 4] = true;
                             break;
                         case SDLK_SPACE:
@@ -159,7 +185,10 @@ int main() {
                     break;
             }
         }
-        if (gamePaused) continue;
+        if (gamePaused) {
+            if (!runFrame) continue;
+            else runFrame = false;
+        }
 
 //        if (spriteCode == -1) {
 //            if (mousePressed) {
@@ -232,8 +261,8 @@ int main() {
         // Window Rendering
         window.clear();
 
-        window.render(&background, &background);
-        window.render(&FPSText, &background);
+        window.render(&background, nullptr);
+        window.render(&FPSText, nullptr);
 
         if (sizeof(WindowRenderer) < sizeof(Background)) {
             auto *windowCastBackground = (Background *) &window;
@@ -246,6 +275,11 @@ int main() {
         }
 
         window.render(kq, &background);
+
+        window.render(&skillBurstCircleBG, nullptr);
+        window.render(&skillBurstCircle, nullptr);
+        window.render(&skillIcon1, nullptr);
+        window.render(&burstIcon, nullptr);
 
         Particle::renderAll(&window, &background);
 
@@ -262,6 +296,10 @@ int main() {
     delete monsterLL;
     kq->destroy();
     Particle::cleanUp();
+    skillBurstCircleBG.destroy();
+    skillBurstCircle.destroy();
+    skillIcon1.destroy();
+    burstIcon.destroy();
     window.cleanUp();
     SDL_Quit();
 

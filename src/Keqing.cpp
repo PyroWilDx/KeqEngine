@@ -17,7 +17,7 @@
 Keqing *Keqing::instance = nullptr;
 
 Keqing::Keqing(WindowRenderer *window)
-        : AnimatedEntity(true, KQ_ENUM_N) {
+        : AnimatedEntity(KQ_ENUM_N) {
     hp = 1;
     yVelocity = KQ_BASE_JUMP_VELOCITY;
     lastNAttackTime = 0;
@@ -29,7 +29,7 @@ Keqing::Keqing(WindowRenderer *window)
              0, 0, -36,
              96, 96,
              18 * 96, 60,
-             0, 10000,
+             0, 60,
              &spriteArray[KQ_IDLE]};
 
     spriteArray[KQ_JUMP_END] =
@@ -205,38 +205,6 @@ void Keqing::initKeqing(WindowRenderer *window) {
     }
 }
 
-struct Pixel {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-};
-
-
-// Function to convert green to violet
-void convertGreenToViolet(Pixel *pixel) {
-    float h, s, v;
-    RGBtoHSV(pixel->r, pixel->g, pixel->b, &h, &s, &v);
-
-    // Convert green hues (120-180) to violet hues (300-360 or 0-60)
-    if (h >= 120 && h <= 180) {
-        h = 280 + (h - 120);
-    }
-
-    if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
-        if (h >= 330 && h <= 360)
-            h = 280 + (h - 330);
-        else if (h >= 0 && h <= 30)
-            h = 280 + (h - 0);
-    }
-
-    unsigned char r, g, b;
-    HSVtoRGB(h, s, v, &r, &g, &b);
-
-    pixel->r = r;
-    pixel->g = g;
-    pixel->b = b;
-}
-
 void Keqing::colorTexture(int r, int g, int b, WindowRenderer *window) {
     SDL_Surface *img = IMG_Load("res/gfx/keqing/Idle.png");
 
@@ -285,16 +253,8 @@ void Keqing::updateDirection(const bool *pressedKeys, int lastKey) {
     } else {
         xVelocity = 0;
     }
-    if (pressedKeys[SDLK_z % 4]) {
-        if (pressedKeys[SDLK_s % 4]) zVelocity = 0;
-        else zVelocity = -KQ_Z_VELOCITY;
-    } else if (pressedKeys[SDLK_s % 4]) {
-        zVelocity = KQ_Z_VELOCITY;
-    } else {
-        zVelocity = 0;
-    }
 
-    if (xVelocity != 0 || zVelocity != 0) {
+    if (xVelocity != 0) {
         setSpriteAnimated(KQ_WALK, true);
     } else {
         setSpriteAnimated(KQ_WALK, false);
@@ -318,12 +278,6 @@ void Keqing::move(int dt) {
         x = minX;
     } else if (x > maxX) {
         x = maxX;
-    }
-
-    if (z < MIN_Z) {
-        z = MIN_Z;
-    } else if (z > MAX_Z) {
-        z = MAX_Z;
     }
 }
 
@@ -406,7 +360,7 @@ void Keqing::skill() {
             spawnParticle->setEntityDependant(false);
             int distance = SKILL_TP_DISTANCE;
             if (!facingEast) distance = -distance;
-            spawnParticle->moveTo(this, distance, 0, 0);
+            spawnParticle->moveTo(this, distance, 0);
         }
     }
 
@@ -424,7 +378,7 @@ void Keqing::skill() {
             idleParticle->getToEntityCenterXY(spawnParticle,
                                               &vX, &vY);
             int newXShift = vX - spawnParticle->getX();
-            int newYShift = vY - spawnParticle->getY() - spawnParticle->getZ();
+            int newYShift = vY - spawnParticle->getY();
             idleParticle->moveTo(spawnParticle);
             idleParticle->setXYShift(newXShift, newYShift, newXShift);
         }
@@ -459,7 +413,7 @@ void Keqing::skillSlash() {
     }
 }
 
-const int cSlashFrameDuration = 20;
+const int cSlashFrameDuration = 16;
 const int cSlashRotations[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
         {16, 200, 354, 152, 306, 90};
 const int cSlashXShift[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
@@ -497,7 +451,7 @@ static void pushCloneSlashParticle(Entity *keqing) {
     }
 }
 
-const int slashDuration = 20;
+const int slashDuration = 46;
 const int slashRotations[KQ_BURST_NUMBER_OF_SLASH] =
         {0, 20, 40, 60, 80, 100, 120, 140};
 
@@ -511,7 +465,7 @@ static void pushSlashParticle(Entity *keqing) {
         Particle *aoeParticle = Particle::getParticle(PARTICLE_KQ_BURST_AOE, 0);
         slashParticle->moveToEntityCenter(aoeParticle);
         slashParticle->setRotation(slashRotations[i]);
-        slashParticle->delay(0, 3 * slashDuration * i);
+        slashParticle->delay(0, 2 * slashDuration * i);
     }
 }
 
@@ -569,7 +523,7 @@ void Keqing::burst(int dt) {
             Particle *cloneParticle =
                     Particle::push(PARTICLE_KQ_BURST_CLONE,
                                    0, -46,
-                                   cSlashFrameDuration * 1.4f,
+                                   (int) (cSlashFrameDuration * 1.8f),
                                    2.0f, 2.0f, this);
             cloneParticle->delay(0, cSlashFrameDuration);
             cloneParticle->setEntityDependant(false);
@@ -602,7 +556,7 @@ void Keqing::burst(int dt) {
 
     Sprite *burstEndSprite = &spriteArray[KQ_BURST_END];
     if (burstEndSprite->animated) {
-        if (isNewestFrame(burstEndSprite, 14 * burstEndSprite->width)) { // Final Slash
+        if (isNewestFrame(burstEndSprite, 11 * burstEndSprite->width)) { // Final Slash
             Particle *aoeParticle = Particle::getParticle(PARTICLE_KQ_BURST_AOE, 0);
             Particle *aoeWaveParticle = Particle::getParticle(PARTICLE_KQ_BURST_AOE_WAVE, 0);
 
@@ -628,8 +582,8 @@ void Keqing::jump(int dt) {
 
     yVelocity -= (float) dt * 0.0016f;
 
-    if (y > DEFAULT_Y) {
-        y = DEFAULT_Y;
+    if (y > 360) { // TODO
+        y = 360;
         yVelocity = KQ_BASE_JUMP_VELOCITY;
         setSpriteAnimated(KQ_JUMP, false);
         if (spriteArray[KQ_JUMP].next != nullptr) {
@@ -659,8 +613,8 @@ void Keqing::airNAtk(int dt) { // Plunge Attack in Genshin
 
         yVelocity -= (float) dt * 0.002f;
 
-        if (y > DEFAULT_Y) {
-            y = DEFAULT_Y;
+        if (y > 360) {
+            y = 360;
             yVelocity = KQ_BASE_JUMP_VELOCITY;
             moveSpriteFrameX(KQ_AIR_NATK, 9 * airNAttackSprite->width);
             Particle::remove(PARTICLE_KQ_AIR_NATK, 0);
@@ -670,7 +624,7 @@ void Keqing::airNAtk(int dt) { // Plunge Attack in Genshin
         }
     }
 
-    if (airNAttackSprite->frameX >= 9 * airNAttackSprite->width && y < DEFAULT_Y) {
+    if (airNAttackSprite->frameX >= 9 * airNAttackSprite->width && y < 360) {
         moveSpriteFrameX(KQ_AIR_NATK, 8 * airNAttackSprite->width);
     }
 }

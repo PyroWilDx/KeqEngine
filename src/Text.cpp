@@ -6,7 +6,7 @@
 #include "Text.hpp"
 
 Text::Text()
-        : Entity(0, 0, 0) {
+        : Entity(0, 0) {
 }
 
 void Text::loadTextTexture(int x, int y, const char *text, const SDL_Color *color,

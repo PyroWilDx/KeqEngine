@@ -7,24 +7,26 @@
 
 #include <SDL2/SDL.h>
 
-#define DEFAULT_ENTITY_LENGTH 4
+class WindowRenderer;
 
 class Entity {
 
 public:
-    Entity(int x, int y, int z);
+    Entity(int x, int y);
 
-    Entity(int x, int y, int z, int w, int h, bool hasShadow, SDL_Texture *texture);
+    Entity(int x, int y, int w, int h, SDL_Texture *texture);
 
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
+    virtual void renderSelf(WindowRenderer *window);
+
     virtual void move(int dt);
 
-    void moveTo(int x_, int y_, int z_);
+    void moveTo(int x_, int y_);
 
     void moveTo(Entity *entity);
 
-    void moveTo(Entity *entity, int addX, int addY, int addZ);
+    void moveTo(Entity *entity, int addX, int addY);
 
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
@@ -58,8 +60,6 @@ public:
 
     [[nodiscard]] inline int getY() const { return y; }
 
-    [[nodiscard]] inline int getZ() const { return z; }
-
     [[nodiscard]] inline float getXVelocity() const { return xVelocity; }
 
     [[nodiscard]] inline bool isFacingEast() const { return facingEast; }
@@ -67,8 +67,6 @@ public:
     [[nodiscard]] inline SDL_Rect getFrame() const { return frame; }
 
     [[nodiscard]] inline SDL_Rect getCollisionRect() const { return collisionRect; }
-
-    [[nodiscard]] inline bool getHasShadow() const { return hasShadow; }
 
     [[nodiscard]] inline SDL_Texture *getTexture() const { return texture; }
 
@@ -85,12 +83,11 @@ public:
     [[nodiscard]] inline double getRotation() const { return rotation; }
 
 protected:
-    int x, y, z;
+    int x, y;
     bool facingEast;
-    float xVelocity, yVelocity, zVelocity;
+    float xVelocity, yVelocity;
     SDL_Rect frame;
     SDL_Rect collisionRect;
-    bool hasShadow;
     SDL_Texture *texture;
     float renderWMultiplier, renderHMultiplier;
     int xShift, yShift, xShiftR;

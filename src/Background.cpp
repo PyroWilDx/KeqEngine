@@ -5,7 +5,7 @@
 #include "Background.hpp"
 
 Background::Background(int w, int h, int totalImgWidth, SDL_Texture *texture) :
-        Entity(0, 0, 0, w, h, false, texture) {
+        Entity(0, 0, w, h, texture) {
     this->totalImgWidth = totalImgWidth;
 }
 
