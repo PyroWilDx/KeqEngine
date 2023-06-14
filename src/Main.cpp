@@ -65,6 +65,7 @@ int main() {
     burstIcon.moveToHudFrameCenter(&skillBurstCircle, 1);
 
     auto *monsterLL = new MonsterLinkedList();
+    
 //    auto *zombie0 = new Monster(96, 96, &window);
 //    zombie0->moveTo(100, DEFAULT_Y, -100);
 //    zombie0->setCollisionRect({70, 76, 76, 120});
