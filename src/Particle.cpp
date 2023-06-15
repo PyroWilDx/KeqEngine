@@ -22,14 +22,19 @@ Particle::Particle(int spriteCode, int xShift, int yShift, int frameDuration,
     renderHMultiplier = hMultiplier;
     this->entity = entity;
     entityDependant = true;
-    facingEast = entity->isFacingEast();
+    if (entity == nullptr) entityDependant = false;
+    if (entity != nullptr) facingEast = entity->isFacingEast();
+    else facingEast = true;
     stopOnLastFrame = false;
-    nextParticle = nullptr;
+    for (int i = 0; i < MAX_NEXT_PARTICLE; i++) {
+        nextParticle[i] = nullptr;
+    }
     frame.w = sprite->width;
     frame.h = sprite->height;
     this->xShift = xShift;
     this->yShift = yShift;
     this->xShiftR = -xShift;
+    onRemove = nullptr;
 }
 
 void Particle::initParticle(WindowRenderer *window) {
@@ -168,6 +173,80 @@ void Particle::initParticle(WindowRenderer *window) {
              0, 0, nullptr};
     activeParticleMaxes[PARTICLE_KQ_BURST_FINAL_SLASH] = 1;
 
+    activeParticleMaxes[PARTICLE_HUD_START] = 0;
+
+    allParticleTextures[PARTICLE_HUD_SKILL_CIRCLE_BG] =
+            {PARTICLE_HUD_SKILL_CIRCLE_BG, false,
+             window->loadTexture("res/gfx/hud/SkillBurstCircleBG.png"),
+             0, 0, 0,
+             32, 32,
+             2 * 32, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_SKILL_CIRCLE_BG] = 1;
+
+    allParticleTextures[PARTICLE_HUD_BURST_CIRCLE_BG] =
+            {PARTICLE_HUD_BURST_CIRCLE_BG, false,
+             window->loadTexture("res/gfx/hud/SkillBurstCircleBG.png"),
+             0, 0, 0,
+             32, 32,
+             2 * 32, 0,
+             1 * 32, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_BURST_CIRCLE_BG] = 1;
+
+    allParticleTextures[PARTICLE_HUD_SKILL_CIRCLE] =
+            {PARTICLE_HUD_SKILL_CIRCLE, false,
+             window->loadTexture("res/gfx/hud/SkillBurstCircle.png"),
+             0, 0, 0,
+             32, 32,
+             2 * 32, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_SKILL_CIRCLE] = 1;
+
+    allParticleTextures[PARTICLE_HUD_BURST_CIRCLE] =
+            {PARTICLE_HUD_BURST_CIRCLE, false,
+             window->loadTexture("res/gfx/hud/SkillBurstCircle.png"),
+             0, 0, 0,
+             32, 32,
+             2 * 32, 0,
+             1 * 32, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_BURST_CIRCLE] = 1;
+
+    allParticleTextures[PARTICLE_HUD_SKILL_ICON_1] =
+            {PARTICLE_HUD_SKILL_ICON_1, false,
+             window->loadTexture("res/gfx/hud/SkillIcon1.png"),
+             0, 0, 0,
+             21, 21,
+             1 * 21, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_SKILL_ICON_1] = 1;
+
+    allParticleTextures[PARTICLE_HUD_SKILL_ICON_2] =
+            {PARTICLE_HUD_SKILL_ICON_2, false,
+             window->loadTexture("res/gfx/hud/SkillIcon2.png"),
+             0, 0, 0,
+             21, 21,
+             1 * 21, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_SKILL_ICON_2] = 1;
+
+    allParticleTextures[PARTICLE_HUD_BURST_ICON] =
+            {PARTICLE_HUD_BURST_ICON, false,
+             window->loadTexture("res/gfx/hud/BurstIcon.png"),
+             0, 0, 0,
+             21, 21,
+             1 * 21, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_BURST_ICON] = 1;
+
+    allParticleTextures[PARTICLE_HUD_SKILL_BURST_TIMER] =
+            {PARTICLE_HUD_SKILL_BURST_TIMER, false,
+             window->loadTexture("res/gfx/hud/SkillBurstTimer.png"),
+             0, 0, 0,
+             32, 32,
+             HUD_SB_TIMER_FRAME_N * 32, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_HUD_SKILL_BURST_TIMER] = 2;
+
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         activeParticles[spriteCode] = (Particle **)
                 calloc(activeParticleMaxes[spriteCode], sizeof(Particle *));
@@ -204,6 +283,7 @@ void Particle::remove(int spriteCode, int i) {
     }
     Particle *particle = activeParticles[spriteCode][i];
     if (particle == nullptr) return;
+    if (particle->onRemove != nullptr) particle->onRemove();
 
     int lastIndex = counts[spriteCode] - 1;
     particle->setRGBAMod(255, 255, 255, 255);
@@ -245,11 +325,12 @@ void Particle::animateAll(int dt) {
                     Sprite *sprite = &currParticle->spriteArray[0];
                     sprite->frameX = sprite->maxWidth - sprite->width;
                     sprite->frameDuration = INT32_MAX;
-                } else if (currParticle->nextParticle != nullptr) {
-                    Particle *nextParticle = currParticle->nextParticle;
-                    if (nextParticle != currParticle) {
+                } else if (currParticle->nextParticle[0] != nullptr) {
+                    if (currParticle->nextParticle[0] != currParticle) {
                         remove(spriteCode, i);
-                        pushFast(nextParticle);
+                        for (auto *nextParticle: currParticle->nextParticle) {
+                            if (nextParticle != nullptr) pushFast(nextParticle);
+                        }
                     } else {
                         currParticle->setSpriteAnimated(0, true);
                         currParticle->reset(0);
@@ -269,7 +350,11 @@ void Particle::renderAll(WindowRenderer *window, Entity *background) {
             currParticle = activeParticles[spriteCode][i];
             if (currParticle == nullptr) printf("Bizarre!\n");
 
-            window->renderParticle(currParticle, background);
+            if (currParticle->entity != nullptr && spriteCode < PARTICLE_HUD_START) {
+                window->renderParticle(currParticle, background);
+            } else {
+                window->renderParticle(currParticle, nullptr);
+            }
         }
     }
 }
@@ -293,27 +378,45 @@ void Particle::cleanUp() {
     }
 }
 
+void Particle::setFrameX(int x) {
+    spriteArray[0].frameX = x;
+}
+
 void Particle::getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
                                    int *pXShift, int *pYShift, int *pXShiftR) {
-    float realW = (float) frame.w * renderWMultiplier * entity->getRenderWMultiplier();
-    float realH = (float) frame.h * renderHMultiplier * entity->getRenderHMultiplier();
+    float eWM, eHM;
+    if (entity != nullptr) {
+        eWM = entity->getRenderWMultiplier();
+        eHM = entity->getRenderHMultiplier();
+    } else {
+        eWM = 1.0f;
+        eHM = 1.0f;
+    }
+    float realW = (float) frame.w * renderWMultiplier * eWM;
+    float realH = (float) frame.h * renderHMultiplier * eHM;
 
     SDL_Rect rect;
     int vX, vY;
     Entity *centerEntity;
     if (centerParticle == nullptr) {
+        // Can't have (centerParticle == NULL && entity == NULL)
         rect = entity->getCollisionRect();
         vX = entity->getX();
         vY = entity->getY();
         centerEntity = entity;
     } else {
+        if (centerParticle->entity != nullptr) {
+            eWM = centerParticle->entity->getRenderWMultiplier();
+            eHM = centerParticle->entity->getRenderHMultiplier();
+        } else {
+            eWM = 1.0f;
+            eHM = 1.0f;
+        }
         rect = {0, 0,
                 (int) ((float) centerParticle->frame.w *
-                       centerParticle->renderWMultiplier *
-                       centerParticle->entity->getRenderWMultiplier()),
+                       centerParticle->renderWMultiplier * eWM),
                 (int) ((float) centerParticle->frame.h *
-                       centerParticle->renderHMultiplier *
-                       centerParticle->entity->getRenderHMultiplier())};
+                       centerParticle->renderHMultiplier * eHM)};
         vX = centerParticle->x;
         vY = centerParticle->y;
         centerEntity = centerParticle;
@@ -339,6 +442,15 @@ void Particle::moveToEntityCenter(Particle *centerParticle) {
                         &xShift, &yShift, &xShiftR);
 }
 
+void Particle::addNextParticle(Particle *particle) {
+    for (int i = 0; i < MAX_NEXT_PARTICLE; i++) {
+        if (nextParticle[i] == nullptr) {
+            nextParticle[i] = particle;
+            return;
+        }
+    }
+}
+
 bool Particle::isFinished() {
     return (!spriteArray[0].animated);
 //    Sprite *currSprite = &spriteArray[0];
@@ -354,4 +466,26 @@ void Particle::fadeAway(float speed) {
     SDL_GetTextureAlphaMod(texture, &alpha);
     fadeParams.baseAlpha = alpha;
     fadeParams.speed = speed;
+}
+
+Particle *Particle::copy() {
+    auto *newParticle = new Particle(spriteArray->code,
+                                     xShift, yShift,
+                                     spriteArray->frameDuration,
+                                     renderWMultiplier, renderHMultiplier,
+                                     entity);
+    newParticle->x = this->x;
+    newParticle->y = this->y;
+    newParticle->frame = this->frame;
+    newParticle->rotation = this->rotation;
+    newParticle->spriteArray[0] = this->spriteArray[0];
+    newParticle->spriteArray[0].animated = true;
+    newParticle->entityDependant = this->entityDependant;
+    newParticle->facingEast = this->facingEast;
+    newParticle->stopOnLastFrame = this->stopOnLastFrame;
+    for (int i = 0; i < MAX_NEXT_PARTICLE; i++) {
+        newParticle->nextParticle[i] = this->nextParticle[i];
+    }
+
+    return newParticle;
 }

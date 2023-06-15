@@ -11,7 +11,6 @@
 #include "Background.hpp"
 #include "MonsterLinkedList.hpp"
 #include "Particle.hpp"
-#include "Hud.hpp"
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -44,28 +43,55 @@ int main() {
                           (int) (60.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
 
-    const float hudSBCircleM = 3.0f;
-    const float hudSBIconM = 2.6f;
-    int hudSBCircleX = 1060;
-    int hudSBCircleY = 600;
-    Hud skillBurstCircleBG = Hud(hudSBCircleX, hudSBCircleY, 64, 32, 32,
-                                 window.loadTexture("res/gfx/hud/SkillBurstCircleBG.png"));
-    skillBurstCircleBG.setRenderWHMultiplier(hudSBCircleM, hudSBCircleM);
-    skillBurstCircleBG.setRGBAMod(255, 255, 255, 128);
-    Hud skillBurstCircle = Hud(hudSBCircleX, hudSBCircleY, 64, 32, 32,
-                               window.loadTexture("res/gfx/hud/SkillBurstCircle.png"));
-    skillBurstCircle.setRenderWHMultiplier(hudSBCircleM, hudSBCircleM);
-    Hud skillIcon1 = Hud(0, 0, 21, 21, 21,
-                         window.loadTexture("res/gfx/hud/SkillIcon1.png"));
-    skillIcon1.setRenderWHMultiplier(hudSBIconM, hudSBIconM);
-    skillIcon1.moveToHudFrameCenter(&skillBurstCircle, 0);
-    Hud burstIcon = Hud(0, 0, 21, 21, 21,
-                        window.loadTexture("res/gfx/hud/BurstIcon.png"));
-    burstIcon.setRenderWHMultiplier(hudSBIconM, hudSBIconM);
-    burstIcon.moveToHudFrameCenter(&skillBurstCircle, 1);
+    const int hudSBCircleY = 560;
+
+    Particle *skillCircleBG =
+            Particle::push(PARTICLE_HUD_SKILL_CIRCLE_BG,
+                           0, 0, INT32_MAX,
+                           HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
+                           nullptr);
+    skillCircleBG->moveTo(940, hudSBCircleY);
+    skillCircleBG->setRGBAMod(255, 255, 255, 128);
+
+    Particle *skillCircle =
+            Particle::push(PARTICLE_HUD_SKILL_CIRCLE,
+                           0, 0, INT32_MAX,
+                           HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
+                           nullptr);
+    skillCircle->moveToEntityCenter(skillCircleBG);
+    skillCircle->setRGBAMod(238, 10, 238, 255);
+
+    Particle *burstCircleBG =
+            Particle::push(PARTICLE_HUD_BURST_CIRCLE_BG,
+                           0, 0, INT32_MAX,
+                           HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
+                           nullptr);
+    burstCircleBG->moveTo(1100, hudSBCircleY);
+    burstCircleBG->setRGBAMod(255, 255, 255, 128);
+
+    Particle *burstCircle =
+            Particle::push(PARTICLE_HUD_BURST_CIRCLE,
+                           0, 0, INT32_MAX,
+                           HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
+                           nullptr);
+    burstCircle->moveToEntityCenter(burstCircleBG);
+
+    Particle *skillIcon1 =
+            Particle::push(PARTICLE_HUD_SKILL_ICON_1,
+                           0, 0, INT32_MAX,
+                           HUB_SB_ICON_M, HUB_SB_ICON_M,
+                           nullptr);
+    skillIcon1->moveToEntityCenter(skillCircle);
+
+    Particle *burstIcon =
+            Particle::push(PARTICLE_HUD_BURST_ICON,
+                           0, 0, INT32_MAX,
+                           HUB_SB_ICON_M, HUB_SB_ICON_M,
+                           nullptr);
+    burstIcon->moveToEntityCenter(burstCircle);
 
     auto *monsterLL = new MonsterLinkedList();
-    
+
 //    auto *zombie0 = new Monster(96, 96, &window);
 //    zombie0->moveTo(100, DEFAULT_Y, -100);
 //    zombie0->setCollisionRect({70, 76, 76, 120});
@@ -148,13 +174,17 @@ int main() {
                             else spriteCode = KQ_AIR_DASH;
                             break;
                         case SDLK_e: {
-                            Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0);
-                            if (idleParticle == nullptr) spriteCode = KQ_SKILL;
-                            else spriteCode = KQ_SKILL_SLASH;
+                            if (Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE, 0) != nullptr) {
+                                Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0);
+                                if (idleParticle == nullptr) spriteCode = KQ_SKILL;
+                                else spriteCode = KQ_SKILL_SLASH;
+                            }
                         }
                             break;
                         case SDLK_r:
-                            spriteCode = KQ_BURST;
+                            if (Particle::getParticle(PARTICLE_HUD_BURST_CIRCLE, 0) != nullptr) {
+                                spriteCode = KQ_BURST;
+                            }
                             break;
                         default:
                             break;
@@ -277,11 +307,6 @@ int main() {
 
         window.render(kq, &background);
 
-        window.render(&skillBurstCircleBG, nullptr);
-        window.render(&skillBurstCircle, nullptr);
-        window.render(&skillIcon1, nullptr);
-        window.render(&burstIcon, nullptr);
-
         Particle::renderAll(&window, &background);
 
         window.display();
@@ -297,10 +322,6 @@ int main() {
     delete monsterLL;
     kq->destroy();
     Particle::cleanUp();
-    skillBurstCircleBG.destroy();
-    skillBurstCircle.destroy();
-    skillIcon1.destroy();
-    burstIcon.destroy();
     window.cleanUp();
     SDL_Quit();
 

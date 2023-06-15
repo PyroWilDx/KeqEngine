@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 #include "Entity.hpp"
 #include "AnimatedEntity.hpp"
+#include "Particle.hpp"
 
 //Screen dimension constants
 #define SCREEN_WIDTH 1280
@@ -16,8 +17,10 @@
 #define BACKGROUND_WIDTH 3000
 
 #define MIN_X (-40)
+#define MAX_X (BACKGROUND_WIDTH - 20)
 
-const int MAX_X = BACKGROUND_WIDTH - 20;
+#define HUD_SB_CIRCLE_M 4.0f
+#define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74f)
 
 void myAssert(bool expr, const char *msg, const char *err);
 
