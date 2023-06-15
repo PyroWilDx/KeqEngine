@@ -85,8 +85,12 @@ void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
 
     Entity *entity = particle->getEntity();
 
-    float renderWMultiplier = particle->getRenderWMultiplier() * entity->getRenderWMultiplier();
-    float renderHMultiplier = particle->getRenderHMultiplier() * entity->getRenderHMultiplier();
+    float renderWMultiplier = particle->getRenderWMultiplier();
+    float renderHMultiplier = particle->getRenderHMultiplier();
+    if (entity != nullptr) {
+        renderWMultiplier *= entity->getRenderWMultiplier();
+        renderHMultiplier *= entity->getRenderHMultiplier();
+    }
     float realW = (float) particleFrame.w * renderWMultiplier;
     float realH = (float) particleFrame.h * renderHMultiplier;
 
@@ -121,7 +125,7 @@ void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
     x += vXShift;
     y += particle->getYShift();
 
-    x -= background->getFrame().x;
+    if (background != nullptr) x -= background->getFrame().x;
 
     SDL_Rect dst = {x, y, (int) realW, (int) realH};
 

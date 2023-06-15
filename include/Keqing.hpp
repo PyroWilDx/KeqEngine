@@ -37,7 +37,6 @@ enum {
 
 #define KQ_WALK_VELOCITY 0.4f
 #define KQ_DASH_VELOCITY 1.0f
-#define KQ_Z_VELOCITY 0.24f
 
 #define KQ_BASE_JUMP_VELOCITY 1.0f
 #define KQ_AIR_DASH_VELOCITY 0.8f
@@ -47,6 +46,9 @@ enum {
 #define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
 #define KQ_BURST_NUMBER_OF_SLASH 8
 #define KQ_BURST_NUMBER_OF_CLONE 5
+
+#define KQ_SKILL_COOLDOWN 6000
+#define KQ_BURST_COOLDOWN 10000
 
 class Keqing : public AnimatedEntity {
 

@@ -10,7 +10,7 @@
 #define MAX_TIME_BETWEEN_NATK 400
 #define NATK_SPRITE_WIDTH 192
 
-#define SKILL_TP_DISTANCE 400;
+#define SKILL_TP_DISTANCE 400
 
 #define BURST_FRAME_DURATION 70
 
@@ -352,7 +352,15 @@ void Keqing::dash() {
 void Keqing::skill() {
     Sprite *skillSprite = &spriteArray[KQ_SKILL];
     if (skillSprite->animated) {
-        if (isNewestFrame(skillSprite, 6 * skillSprite->width)) { // Lightning Stiletto
+        if (isNewestFrame(skillSprite, 0)) {
+            Particle *skillIcon1 = Particle::getParticle(PARTICLE_HUD_SKILL_ICON_1, 0);
+            Particle *skillIcon2 =
+                    Particle::push(PARTICLE_HUD_SKILL_ICON_2,
+                                   0, 0, INT32_MAX,
+                                   HUB_SB_ICON_M, HUB_SB_ICON_M,
+                                   nullptr); // TODO
+
+        } else if (isNewestFrame(skillSprite, 6 * skillSprite->width)) { // Lightning Stiletto
             Particle *spawnParticle =
                     Particle::push(PARTICLE_KQ_SKILL_SPAWN,
                                    0, 0, 60,
@@ -372,7 +380,7 @@ void Keqing::skill() {
                     Particle::push(PARTICLE_KQ_SKILL_IDLE,
                                    0, 0, 200,
                                    2.0f, 2.0f, this);
-            idleParticle->setNextParticle(idleParticle);
+            idleParticle->addNextParticle(idleParticle);
             idleParticle->setEntityDependant(false);
             int vX, vY;
             idleParticle->getToEntityCenterXY(spawnParticle,
@@ -446,7 +454,7 @@ static void pushCloneSlashParticle(Entity *keqing) {
                                                 cSlashHM[i],
                                                 keqing);
         nextCSlashParticle->setRotation(cSlashRotations[i]);
-        lastParticle->setNextParticle(nextCSlashParticle);
+        lastParticle->addNextParticle(nextCSlashParticle);
         lastParticle = nextCSlashParticle;
     }
 }
@@ -489,6 +497,12 @@ static void pushCloneVanishParticle(Entity *keqing, Particle *aoeParticle) {
     }
 }
 
+
+static void burstTimerHudOnRemove() {
+    Particle *burstIcon = Particle::getParticle(PARTICLE_HUD_BURST_ICON, 0);
+    burstIcon->setRGBAMod(255, 255, 255, 255);
+}
+
 const float aoeBaseWHM = 0.0f;
 const float aoeMaxWHM = 2.0f;
 
@@ -496,13 +510,30 @@ void Keqing::burst(int dt) {
     Sprite *burstSprite = &spriteArray[KQ_BURST];
     if (burstSprite->animated) {
         if (isNewestFrame(burstSprite, 0)) { // Burst Start
+            Particle *burstCircleHud = Particle::getParticle(
+                    PARTICLE_HUD_BURST_CIRCLE, 0);
+            Particle *timerHud =
+                    Particle::push(PARTICLE_HUD_SKILL_BURST_TIMER,
+                                   0, 0,
+                                   KQ_BURST_COOLDOWN / HUD_SB_TIMER_FRAME_N,
+                                   HUD_SB_CIRCLE_M * 1.486f,
+                                   HUD_SB_CIRCLE_M * 1.486f,
+                                   nullptr);
+            timerHud->moveToEntityCenter(burstCircleHud);
+            Particle *newBurstCircleHud = burstCircleHud->copy();
+            timerHud->addNextParticle(newBurstCircleHud);
+            timerHud->setOnRemove(&burstTimerHudOnRemove);
+            Particle::remove(PARTICLE_HUD_BURST_CIRCLE, 0);
+            Particle *burstIcon = Particle::getParticle(PARTICLE_HUD_BURST_ICON, 0);
+            burstIcon->setRGBAMod(255, 255, 255, 128);
+
             Particle *aoeParticle =
                     Particle::push(PARTICLE_KQ_BURST_AOE,
                                    0, 0, 80,
                                    aoeBaseWHM, aoeBaseWHM,
                                    this);
             aoeParticle->setEntityDependant(false);
-            aoeParticle->setNextParticle(aoeParticle);
+            aoeParticle->addNextParticle(aoeParticle);
 
             Particle *aoeWaveParticle =
                     Particle::push(PARTICLE_KQ_BURST_AOE_WAVE,
@@ -511,7 +542,7 @@ void Keqing::burst(int dt) {
                                    this);
             aoeWaveParticle->setEntityDependant(false);
             aoeWaveParticle->setRGBAMod(255, 255, 255, 128);
-            aoeWaveParticle->setNextParticle(aoeWaveParticle);
+            aoeWaveParticle->addNextParticle(aoeWaveParticle);
 
         } else if (isNewestFrame(burstSprite, 12 * burstSprite->width)) { // Vanish
             Particle::push(PARTICLE_KQ_BURST_VANISH,
@@ -605,7 +636,7 @@ void Keqing::airNAtk(int dt) { // Plunge Attack in Genshin
                 Particle::push(PARTICLE_KQ_AIR_NATK,
                                24, -24, 60,
                                3.2f, 2.0f, this);
-        airNAttackParticle->setNextParticle(airNAttackParticle);
+        airNAttackParticle->addNextParticle(airNAttackParticle);
     }
 
     if (airNAttackSprite->frameX < 9 * airNAttackSprite->width) {

@@ -23,8 +23,21 @@ enum {
     PARTICLE_KQ_BURST_SLASH,
     PARTICLE_KQ_BURST_CLONE_VANISH,
     PARTICLE_KQ_BURST_FINAL_SLASH,
+    PARTICLE_HUD_START,
+    PARTICLE_HUD_SKILL_CIRCLE_BG,
+    PARTICLE_HUD_BURST_CIRCLE_BG,
+    PARTICLE_HUD_SKILL_CIRCLE,
+    PARTICLE_HUD_BURST_CIRCLE,
+    PARTICLE_HUD_SKILL_ICON_1,
+    PARTICLE_HUD_SKILL_ICON_2,
+    PARTICLE_HUD_BURST_ICON,
+    PARTICLE_HUD_SKILL_BURST_TIMER,
     PARTICLE_ENUM_N
 };
+
+#define HUD_SB_TIMER_FRAME_N 25
+
+#define MAX_NEXT_PARTICLE 4
 
 typedef struct FadeAwayParams {
     int baseAlpha;
@@ -64,27 +77,31 @@ public:
         return total;
     }
 
+    void setFrameX(int x);
+
     void getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
                              int *pXShift = nullptr, int *pYShift = nullptr,
                              int *pXShiftR = nullptr);
 
     void moveToEntityCenter(Particle *centerParticle);
 
+    void addNextParticle(Particle *particle);
+
     bool isFinished();
 
     void fadeAway(float speed = 1.0f);
+
+    Particle *copy();
 
     inline void setEntityDependant(bool dependant) { entityDependant = dependant; }
 
     inline void setStopOnLastFrame(bool stop) { stopOnLastFrame = stop; }
 
-    inline void setNextParticle(Particle *particle) { nextParticle = particle; }
-
     inline Entity *getEntity() { return entity; }
 
     inline bool isEntityDependant() { return entityDependant; }
 
-    inline SDL_RendererFlip getFlip() { return flip; }
+    inline void setOnRemove(void (*onRemove_)()) { onRemove = onRemove_; }
 
 private:
     static Sprite allParticleTextures[PARTICLE_ENUM_N];
@@ -95,10 +112,10 @@ private:
 
     Entity *entity;
     bool entityDependant;
-    SDL_RendererFlip flip;
     bool stopOnLastFrame;
-    Particle *nextParticle;
+    Particle *nextParticle[MAX_NEXT_PARTICLE];
     FadeAwayParams fadeParams;
+    void (*onRemove)();
 };
 
 #endif
