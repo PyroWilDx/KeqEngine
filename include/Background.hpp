@@ -13,9 +13,7 @@ class Background : public Entity {
 public:
     Background(int w, int h, int totalImgWidth, SDL_Texture *texture);
 
-    void addFrameX(int x);
-
-    void translate(Entity *entity, int xDiff);
+    void translate(Entity *entity);
 
     void destroy() override;
 

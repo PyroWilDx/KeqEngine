@@ -43,14 +43,15 @@ int main(int argc, char *argv[]) {
                           (int) (60.0f * KQ_WIDTH_MULTIPLIER),
                           (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
 
-    const int hudSBCircleY = 560;
+    const int hudSBCircleY = SCREEN_HEIGHT - 130;
 
+    const int hudSkillCircleX = 1016;
     Particle *skillCircleBG =
             Particle::push(PARTICLE_HUD_SKILL_CIRCLE_BG,
                            0, 0, INT32_MAX,
                            HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
                            nullptr);
-    skillCircleBG->moveTo(940, hudSBCircleY);
+    skillCircleBG->moveTo(hudSkillCircleX, hudSBCircleY);
     skillCircleBG->setRGBAMod(255, 255, 255, 128);
 
     Particle *skillCircle =
@@ -59,14 +60,17 @@ int main(int argc, char *argv[]) {
                            HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
                            nullptr);
     skillCircle->moveToEntityCenter(skillCircleBG);
-    skillCircle->setRGBAMod(238, 10, 238, 255);
+    skillCircle->setRGBAMod(KQ_SKILL_CIRCLE_RGBA);
 
     Particle *burstCircleBG =
             Particle::push(PARTICLE_HUD_BURST_CIRCLE_BG,
                            0, 0, INT32_MAX,
                            HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M,
                            nullptr);
-    burstCircleBG->moveTo(1100, hudSBCircleY);
+    float hudSCW;
+    skillCircle->getRealSize(&hudSCW, nullptr);
+    burstCircleBG->moveTo(hudSkillCircleX + hudSCW,
+                          hudSBCircleY);
     burstCircleBG->setRGBAMod(255, 255, 255, 128);
 
     Particle *burstCircle =
@@ -114,18 +118,17 @@ int main(int argc, char *argv[]) {
 //    monsterLL->insert(zombie3);
 
     SDL_Event event;
-    bool pressedKeys[4] = {false, false, false, false};
+    bool pressedKeys[256];
+    for (int i = 0; i < 256; i++) {
+        pressedKeys[i] = false;
+    }
 
     int currentTime;
     int dt;
     int lastTime;
 
-    int pressTime;
-    int mouseDt;
-    bool mousePressed;
-
-    int kqLastX = kq->getX();
-    int kqX;
+    float kqLastX = kq->getX();
+    float kqX;
 
     Text FPSText = Text();
     int accumulatedFPSTime = 1002;
@@ -162,29 +165,29 @@ int main(int argc, char *argv[]) {
                                 dt = 10;
                             }
                             break;
+                        case SDLK_z:
+                            pressedKeys[KEY_Z] = true;
+                            break;
                         case SDLK_q:
+                            pressedKeys[KEY_Q] = true;
+                            break;
+                        case SDLK_s:
+                            pressedKeys[KEY_S] = true;
+                            break;
                         case SDLK_d:
-                            pressedKeys[key % 4] = true;
+                            pressedKeys[KEY_D] = true;
                             break;
-                        case SDLK_SPACE:
-                            spriteCode = KQ_JUMP_START;
-                            break;
-                        case SDLK_LSHIFT:
-                            if (!kq->isJumping()) spriteCode = KQ_DASH_START;
-                            else spriteCode = KQ_AIR_DASH;
-                            break;
-                        case SDLK_e: {
-                            if (Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE, 0) != nullptr) {
-                                Particle *idleParticle = Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0);
-                                if (idleParticle == nullptr) spriteCode = KQ_SKILL;
-                                else spriteCode = KQ_SKILL_SLASH;
-                            }
-                        }
+                        case SDLK_e:
+                            pressedKeys[KEY_E] = true;
                             break;
                         case SDLK_r:
-                            if (Particle::getParticle(PARTICLE_HUD_BURST_CIRCLE, 0) != nullptr) {
-                                spriteCode = KQ_BURST;
-                            }
+                            pressedKeys[KEY_R] = true;
+                            break;
+                        case SDLK_SPACE:
+                            pressedKeys[KEY_SPACE] = true;
+                            break;
+                        case SDLK_LSHIFT:
+                            pressedKeys[KEY_SHIFT] = true;
                             break;
                         default:
                             break;
@@ -193,29 +196,65 @@ int main(int argc, char *argv[]) {
                 case SDL_KEYUP:
                     key = event.key.keysym.sym;
                     switch (key) {
-                        case SDLK_q:
-                        case SDLK_d:
-                        case SDLK_s:
                         case SDLK_z:
-                            pressedKeys[key % 4] = false;
+                            pressedKeys[KEY_Z] = false;
+                            break;
+                        case SDLK_q:
+                            pressedKeys[KEY_Q] = false;
+                            break;
+                        case SDLK_s:
+                            pressedKeys[KEY_S] = false;
+                            break;
+                        case SDLK_d:
+                            pressedKeys[KEY_D] = false;
+                            break;
+                        case SDLK_e:
+                            pressedKeys[KEY_E] = false;
+                            break;
+                        case SDLK_r:
+                            pressedKeys[KEY_R] = false;
+                            break;
+                        case SDLK_SPACE:
+                            pressedKeys[KEY_SPACE] = false;
+                            break;
+                        case SDLK_LSHIFT:
+                            pressedKeys[KEY_SHIFT] = false;
                             break;
                         default:
                             break;
                     }
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    pressTime = getTime();
-                    mousePressed = true;
                     if (!kq->isJumping()) spriteCode = KQ_NATK;
                     else spriteCode = KQ_AIR_NATK;
-                    break;
-                case SDL_MOUSEBUTTONUP:
-                    mousePressed = false;
                     break;
                 default:
                     break;
             }
         }
+
+        if (key != -1) { // There is a key event
+            if (pressedKeys[KEY_R]) {
+                spriteCode = KQ_BURST;
+
+            } else if (pressedKeys[KEY_E]) {
+                if (!Keqing::isLightningStilettoExisting()) spriteCode = KQ_SKILL;
+                else spriteCode = KQ_SKILL_SLASH;
+
+            } else if (pressedKeys[KEY_SPACE]) {
+                spriteCode = KQ_JUMP_START;
+
+            } else if (pressedKeys[KEY_SHIFT]) {
+                if (!kq->isJumping()) {
+                    if (pressedKeys[KEY_Q] || pressedKeys[KEY_D]) { // TOTO CHECK ON ROA
+                        spriteCode = KQ_DASH;
+                    }
+                } else {
+                    spriteCode = KQ_AIR_DASH;
+                }
+            }
+        }
+
         if (gamePaused) {
             if (!runFrame) continue;
             else runFrame = false;
@@ -233,7 +272,7 @@ int main(int argc, char *argv[]) {
 
         if (spriteCode != -1) {
             if (kq->canDoAction(spriteCode)) {
-                kq->preAction(spriteCode);
+                kq->preAction(spriteCode, pressedKeys);
                 kq->setSpriteAnimated(spriteCode, true);
             }
         }
@@ -245,7 +284,7 @@ int main(int argc, char *argv[]) {
         // TODO Hitlag
         if (kq->canDoAction(KQ_WALK)) kq->updateDirection(pressedKeys, key);
         if (kq->isNAtking()) kq->nAtk(dt, currentTime);
-        if (kq->isDashing()) kq->dash();
+        if (kq->isDashing()) kq->dash(pressedKeys);
         if (kq->isSkilling()) kq->skill();
         if (kq->isSkillSlashing()) kq->skillSlash();
         if (kq->isBursting()) kq->burst(dt);
@@ -256,18 +295,18 @@ int main(int argc, char *argv[]) {
         if (kq->isMoving() && !kq->shouldNotMove()) kq->move(dt);
 
         kqX = kq->getX();
-        int xDiff = kqX - kqLastX;
-        if (xDiff != 0) background.translate(kq, xDiff);
+        float xDiff = kqX - kqLastX;
+        if (xDiff != 0) background.translate(kq);
         kqLastX = kqX;
 
         kq->animate(dt);
 
         // Monster(s)
-        monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
-        if (rand() % 1000 < 10) {
-            monsterLL->operateAllCells(&Monster::attack, nullptr, nullptr);
-        }
-        monsterLL->operateAllCells(&Monster::animate, &dt, nullptr);
+//        monsterLL->operateAllCells(&Monster::move, &dt, nullptr);
+//        if (rand() % 1000 < 10) {
+//            monsterLL->operateAllCells(&Monster::attack, nullptr, nullptr);
+//        }
+//        monsterLL->operateAllCells(&Monster::animate, &dt, nullptr);
 
         // Handling Keqing Collisions
         bool kqDamaged = false;
@@ -295,15 +334,15 @@ int main(int argc, char *argv[]) {
         window.render(&background, nullptr);
         window.render(&FPSText, nullptr);
 
-        if (sizeof(WindowRenderer) < sizeof(Background)) {
-            auto *windowCastBackground = (Background *) &window;
-            Background params[2] = {*windowCastBackground, background};
-            monsterLL->operateAllCells(&Monster::render, params, nullptr);
-        } else {
-            auto *backgroundCastWindow = (WindowRenderer *) &background;
-            WindowRenderer params[2] = {window, *backgroundCastWindow};
-            monsterLL->operateAllCells(&Monster::render, params, nullptr);
-        }
+//        if (sizeof(WindowRenderer) < sizeof(Background)) {
+        auto *windowCastBackground = (Background *) &window;
+        Background params[2] = {*windowCastBackground, background};
+        monsterLL->operateAllCells(&Monster::render, params, nullptr);
+//        } else {
+//            auto *backgroundCastWindow = (WindowRenderer *) &background;
+//            WindowRenderer params[2] = {window, *backgroundCastWindow};
+//            monsterLL->operateAllCells(&Monster::render, params, nullptr);
+//        }
 
         window.render(kq, &background);
 

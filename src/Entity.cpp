@@ -4,7 +4,7 @@
 
 #include "Entity.hpp"
 
-Entity::Entity(int x, int y) :
+Entity::Entity(float x, float y) :
         frame({0, 0, 0, 0}), collisionRect(frame) {
     this->x = x;
     this->y = y;
@@ -20,7 +20,7 @@ Entity::Entity(int x, int y) :
     rotation = 0.0f;
 }
 
-Entity::Entity(int x, int y, int w, int h, SDL_Texture *texture)
+Entity::Entity(float x, float y, int w, int h, SDL_Texture *texture)
         : Entity(x, y) {
     frame.x = 0;
     frame.y = 0;
@@ -40,10 +40,13 @@ void Entity::renderSelf(WindowRenderer *window) {
 }
 
 void Entity::move(int dt) {
-    x += (int) ((float) dt * xVelocity);
+    float addX = xVelocity * (float) dt;
+
+    if (facingEast) x += addX;
+    else x -= addX;
 }
 
-void Entity::moveTo(int x_, int y_) {
+void Entity::moveTo(float x_, float y_) {
     x = x_;
     y = y_;
 }
@@ -52,10 +55,17 @@ void Entity::moveTo(Entity *entity) {
     moveTo(entity->x, entity->y);
 }
 
-void Entity::moveTo(Entity *entity, int addX, int addY) {
+void Entity::moveTo(Entity *entity, float addX, float addY) {
     moveTo(entity);
     x += addX;
     y += addY;
+}
+
+void Entity::getRealSize(float *pW, float *pH) {
+    if (pW != nullptr)
+        *pW = (float) frame.w * renderWMultiplier;
+    if (pH != nullptr)
+        *pH = (float) frame.h * renderHMultiplier;
 }
 
 bool Entity::collides(Entity *entity, SDL_Rect addRect) const {

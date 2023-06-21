@@ -22,6 +22,18 @@
 #define HUD_SB_CIRCLE_M 4.0f
 #define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74f)
 
+enum {
+    KEY_Z,
+    KEY_Q,
+    KEY_S,
+    KEY_D,
+    KEY_A,
+    KEY_E,
+    KEY_R,
+    KEY_SPACE,
+    KEY_SHIFT,
+};
+
 void myAssert(bool expr, const char *msg, const char *err);
 
 bool isNewestFrame(Sprite *sprite, int x);

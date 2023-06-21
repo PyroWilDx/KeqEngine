@@ -12,14 +12,14 @@
 enum {
     KQ_IDLE = 0,
     KQ_JUMP_END,
-    KQ_DASH_END,
-    KQ_SKILL_END,
-    KQ_SKILL_SLASH_END,
-    KQ_BURST_END,
+//    KQ_DASH_END,
+//    KQ_SKILL_END,
+//    KQ_SKILL_SLASH_END,
+//    KQ_BURST_END,
     KQ_WALK,
     KQ_TURN,
     KQ_NATK, // NAtk = Normal Attack
-    KQ_DASH_START,
+//    KQ_DASH_START,
     KQ_DASH,
     KQ_SKILL,
     KQ_SKILL_SLASH,
@@ -47,8 +47,10 @@ enum {
 #define KQ_BURST_NUMBER_OF_SLASH 8
 #define KQ_BURST_NUMBER_OF_CLONE 5
 
-#define KQ_SKILL_COOLDOWN 6000
+#define KQ_SKILL_COOLDOWN 7000
+#define KQ_LIGHTNING_STILETTO_DURATION 6000
 #define KQ_BURST_COOLDOWN 10000
+#define KQ_SKILL_CIRCLE_RGBA 10, 255, 10, 255
 
 class Keqing : public AnimatedEntity {
 
@@ -65,7 +67,7 @@ public:
 
     void nAtk(int dt, int currentTime);
 
-    void dash();
+    void dash(bool *pressedKeys);
 
     void skill();
 
@@ -87,54 +89,42 @@ public:
 
     bool shouldNotMove();
 
-    void preAction(int spriteCode);
+    void preAction(int spriteCode, const bool *pressedKeys);
 
     void destroy() override;
 
-    inline bool isNAtking() { return spriteArray[KQ_NATK].animated; }
+    inline bool isNAtking() { return (spriteArray[KQ_NATK].animated); }
 
-    inline bool isDashing() {
-        return (spriteArray[KQ_DASH_START].animated ||
-                spriteArray[KQ_DASH].animated ||
-                spriteArray[KQ_DASH_END].animated);
-    }
+    inline bool isDashing() { return (spriteArray[KQ_DASH].animated); }
 
-    inline bool isSkilling() {
-        return (spriteArray[KQ_SKILL].animated ||
-                spriteArray[KQ_SKILL_END].animated);
-    }
+    inline bool isSkilling() { return (spriteArray[KQ_SKILL].animated); }
 
-    inline bool isSkillSlashing() {
-        return (spriteArray[KQ_SKILL_SLASH].animated ||
-                spriteArray[KQ_SKILL_SLASH_END].animated);
-    }
+    inline bool isSkillSlashing() { return (spriteArray[KQ_SKILL_SLASH].animated); }
 
-    inline bool isBursting() {
-        return (spriteArray[KQ_BURST].animated ||
-                spriteArray[KQ_BURST_END].animated);
-    }
+    inline bool isBursting() { return (spriteArray[KQ_BURST].animated); }
 
-    inline bool isJumping() { return spriteArray[KQ_JUMP].animated; }
+    inline bool isJumping() { return (spriteArray[KQ_JUMP].animated); }
 
-    inline bool isAirNAtking() { return spriteArray[KQ_AIR_NATK].animated; }
+    inline bool isAirNAtking() { return (spriteArray[KQ_AIR_NATK].animated); }
 
-    inline bool isAirDashing() { return spriteArray[KQ_AIR_DASH].animated; }
+    inline bool isAirDashing() { return (spriteArray[KQ_AIR_DASH].animated); }
 
-    inline bool isDamaged() { return spriteArray[KQ_HURT].animated; }
+    inline bool isDamaged() { return (spriteArray[KQ_HURT].animated); }
 
     inline bool isMoving() { return (xVelocity != 0); }
 
+    static inline bool isLightningStilettoExisting() { return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0) != nullptr); }
+
     // TODO may need isInvincible
 
-    inline int getHp() { return hp; }
+    [[nodiscard]] inline int getHp() const { return hp; }
 
 private:
     explicit Keqing(WindowRenderer *window);
 
     static Keqing *instance;
     int hp;
-    int lastNAttackTime;
-    float dashXToAdd;
+    int lastNAttackTime; // TODO
 };
 
 #endif

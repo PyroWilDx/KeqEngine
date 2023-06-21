@@ -12,9 +12,9 @@ class WindowRenderer;
 class Entity {
 
 public:
-    Entity(int x, int y);
+    Entity(float x, float y);
 
-    Entity(int x, int y, int w, int h, SDL_Texture *texture);
+    Entity(float x, float y, int w, int h, SDL_Texture *texture);
 
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
@@ -22,11 +22,13 @@ public:
 
     virtual void move(int dt);
 
-    void moveTo(int x_, int y_);
+    void moveTo(float x_, float y_);
 
     void moveTo(Entity *entity);
 
-    void moveTo(Entity *entity, int addX, int addY);
+    void moveTo(Entity *entity, float addX, float addY);
+
+    virtual void getRealSize(float *pW, float *pH);
 
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
@@ -56,9 +58,9 @@ public:
         xShiftR = xShiftR_;
     }
 
-    [[nodiscard]] inline int getX() const { return x; }
+    [[nodiscard]] inline float getX() const { return x; }
 
-    [[nodiscard]] inline int getY() const { return y; }
+    [[nodiscard]] inline float getY() const { return y; }
 
     [[nodiscard]] inline float getXVelocity() const { return xVelocity; }
 
@@ -83,7 +85,7 @@ public:
     [[nodiscard]] inline double getRotation() const { return rotation; }
 
 protected:
-    int x, y;
+    float x, y;
     bool facingEast;
     float xVelocity, yVelocity;
     SDL_Rect frame;
