@@ -2,8 +2,9 @@
 // Created by pyrowildx on 13/05/23.
 //
 
-#include <SDL_image.h>
+#include <cstdio>
 #include <vector>
+#include <SDL2/SDL_image.h>
 #include "Keqing.hpp"
 #include "Particle.hpp"
 

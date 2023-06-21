@@ -2,6 +2,7 @@
 // Created by pyrowildx on 03/06/23.
 //
 
+#include <cstdio>
 #include "MonsterLinkedList.hpp"
 
 MonsterLinkedList::MonsterLinkedList() {

@@ -17,8 +17,8 @@ const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
 const SDL_Color FPSTextColor = {255, 255, 255};
 const int FPSFontSize = 40;
 
-int main() {
-    std::string path = std::filesystem::current_path();
+int main(int argc, char *argv[]) {
+    std::string path = std::filesystem::current_path().string();
     std::filesystem::current_path(path + "/..");
 
     myAssert(SDL_Init(SDL_INIT_VIDEO) >= 0, "SDL_Init FAILED.", SDL_GetError());

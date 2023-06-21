@@ -2,7 +2,7 @@
 // Created by pyrowildx on 14/05/23.
 //
 
-#include <SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include "Text.hpp"
 
 Text::Text()
