@@ -138,6 +138,15 @@ void Particle::initParticle(WindowRenderer *window) {
              0, 0, nullptr};
     activeParticleMaxes[PARTICLE_KQ_BURST_CLONE] = 1;
 
+    allParticleTextures[PARTICLE_KQ_BURST_CLONE_APPEAR] =
+            {PARTICLE_KQ_BURST_CLONE_APPEAR, false,
+             window->loadTexture("res/gfx/particle/KQBurstCloneAppear.png"),
+             0, 0, 0,
+             96, 96,
+             7 * 96, 0,
+             0, 0, nullptr};
+    activeParticleMaxes[PARTICLE_KQ_BURST_CLONE_APPEAR] = KQ_BURST_NUMBER_OF_CLONE;
+
     allParticleTextures[PARTICLE_KQ_BURST_CLONE_SLASH] =
             {PARTICLE_KQ_BURST_CLONE_SLASH, false,
              window->loadTexture("res/gfx/particle/KQBurstCloneSlash.png"),
@@ -284,7 +293,7 @@ void Particle::remove(int spriteCode, int i) {
     }
     Particle *particle = activeParticles[spriteCode][i];
     if (particle == nullptr) return;
-    if (particle->onRemove != nullptr) particle->onRemove();
+    if (particle->onRemove != nullptr) particle->onRemove(particle);
 
     int lastIndex = counts[spriteCode] - 1;
     particle->setRGBAMod(255, 255, 255, 255);
@@ -379,54 +388,48 @@ void Particle::cleanUp() {
     }
 }
 
+void Particle::getRealSize(float *pW, float *pH) {
+    Entity::getRealSize(pW, pH);
+    if (entity != nullptr) {
+        if (pW != nullptr)
+            *pW *= entity->getRenderWMultiplier();
+        if (pH != nullptr)
+            *pH *= entity->getRenderHMultiplier();
+    }
+}
+
 void Particle::setFrameX(int x) {
     spriteArray[0].frameX = x;
 }
 
-void Particle::getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
+void Particle::getToEntityCenterXY(Particle *centerParticle, float *pX, float *pY,
                                    int *pXShift, int *pYShift, int *pXShiftR) {
-    float eWM, eHM;
-    if (entity != nullptr) {
-        eWM = entity->getRenderWMultiplier();
-        eHM = entity->getRenderHMultiplier();
-    } else {
-        eWM = 1.0f;
-        eHM = 1.0f;
-    }
-    float realW = (float) frame.w * renderWMultiplier * eWM;
-    float realH = (float) frame.h * renderHMultiplier * eHM;
+    float realW, realH;
+    this->getRealSize(&realW, &realH);
 
-    SDL_Rect rect;
-    int vX, vY;
+    float vX, vY;
+    float addX, addY, addW, addH;
     Entity *centerEntity;
     if (centerParticle == nullptr) {
         // Can't have (centerParticle == NULL && entity == NULL)
-        rect = entity->getCollisionRect();
         vX = entity->getX();
         vY = entity->getY();
+        addX = (float) entity->getCollisionRect().x;
+        addY = (float) entity->getCollisionRect().y;
+        addW = (float) entity->getCollisionRect().w;
+        addH = (float) entity->getCollisionRect().h;
         centerEntity = entity;
     } else {
-        if (centerParticle->entity != nullptr) {
-            eWM = centerParticle->entity->getRenderWMultiplier();
-            eHM = centerParticle->entity->getRenderHMultiplier();
-        } else {
-            eWM = 1.0f;
-            eHM = 1.0f;
-        }
-        rect = {0, 0,
-                (int) ((float) centerParticle->frame.w *
-                       centerParticle->renderWMultiplier * eWM),
-                (int) ((float) centerParticle->frame.h *
-                       centerParticle->renderHMultiplier * eHM)};
         vX = centerParticle->x;
         vY = centerParticle->y;
+        addX = 0;
+        addY = 0;
+        centerParticle->getRealSize(&addW, &addH);
         centerEntity = centerParticle;
     }
 
-    *pX = vX + rect.x +
-          (int) ((float) rect.w / 2.0f - realW / 2.0f);
-    *pY = vY + rect.y +
-          (int) ((float) rect.h / 2.0f - realH / 2.0f);
+    *pX = vX + addX + (addW / 2.0f - (float) realW / 2.0f);
+    *pY = vY + addY + (addH / 2.0f - (float) realH / 2.0f);
 
     if (pXShift != nullptr)
         *pXShift = (int) ((float) xShift * centerEntity->getRenderWMultiplier());

@@ -19,6 +19,7 @@ enum {
     PARTICLE_KQ_BURST_AOE_WAVE,
     PARTICLE_KQ_BURST_VANISH,
     PARTICLE_KQ_BURST_CLONE,
+    PARTICLE_KQ_BURST_CLONE_APPEAR,
     PARTICLE_KQ_BURST_CLONE_SLASH,
     PARTICLE_KQ_BURST_SLASH,
     PARTICLE_KQ_BURST_CLONE_VANISH,
@@ -36,6 +37,7 @@ enum {
 };
 
 #define HUD_SB_TIMER_FRAME_N 25
+#define HUD_SB_USED_ALPHA 64
 
 #define MAX_NEXT_PARTICLE 4
 
@@ -77,9 +79,11 @@ public:
         return total;
     }
 
+    void getRealSize(float *pW, float *pH) override;
+
     void setFrameX(int x);
 
-    void getToEntityCenterXY(Particle *centerParticle, int *pX, int *pY,
+    void getToEntityCenterXY(Particle *centerParticle, float *pX, float *pY,
                              int *pXShift = nullptr, int *pYShift = nullptr,
                              int *pXShiftR = nullptr);
 
@@ -97,11 +101,13 @@ public:
 
     inline void setStopOnLastFrame(bool stop) { stopOnLastFrame = stop; }
 
+    inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
+
     inline Entity *getEntity() { return entity; }
 
     inline bool isEntityDependant() { return entityDependant; }
 
-    inline void setOnRemove(void (*onRemove_)()) { onRemove = onRemove_; }
+    inline Particle *getNextParticle(int i) { return nextParticle[i]; }
 
 private:
     static Sprite allParticleTextures[PARTICLE_ENUM_N];
@@ -115,7 +121,8 @@ private:
     bool stopOnLastFrame;
     Particle *nextParticle[MAX_NEXT_PARTICLE];
     FadeAwayParams fadeParams;
-    void (*onRemove)();
+
+    void (*onRemove)(Particle *);
 };
 
 #endif

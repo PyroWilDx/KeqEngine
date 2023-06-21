@@ -34,10 +34,10 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
     float renderWMultiplier = entity->getRenderWMultiplier();
     float renderHMultiplier = entity->getRenderHMultiplier();
 
-    int x = entity->getX();
-    int y = entity->getY();
+    float x = entity->getX();
+    float y = entity->getY();
 
-    if (background != nullptr) x -= background->getFrame().x;
+    if (background != nullptr) x -= (float) background->getFrame().x;
 
     int xShift = entity->getXShift();
     int yShift = entity->getYShift();
@@ -67,8 +67,8 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
     }
 
     SDL_Rect collRect = entity->getCollisionRect();
-    collRect.x += x;
-    collRect.y += y;
+    collRect.x += (int) x;
+    collRect.y += (int) y;
 //    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 //    SDL_RenderDrawRect(renderer, &dst);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -85,16 +85,10 @@ void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
 
     Entity *entity = particle->getEntity();
 
-    float renderWMultiplier = particle->getRenderWMultiplier();
-    float renderHMultiplier = particle->getRenderHMultiplier();
-    if (entity != nullptr) {
-        renderWMultiplier *= entity->getRenderWMultiplier();
-        renderHMultiplier *= entity->getRenderHMultiplier();
-    }
-    float realW = (float) particleFrame.w * renderWMultiplier;
-    float realH = (float) particleFrame.h * renderHMultiplier;
+    float realW, realH;
+    particle->getRealSize(&realW, &realH);
 
-    int x, y;
+    float x, y;
     int xShift, yShift, xShiftR;
     Entity *checkFaceEastEntity;
     if (particle->isEntityDependant()) {
@@ -122,12 +116,12 @@ void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {
         rendererFlip = SDL_FLIP_HORIZONTAL;
     }
 
-    x += vXShift;
-    y += particle->getYShift();
+    x += (float) vXShift;
+    y += (float) particle->getYShift();
 
-    if (background != nullptr) x -= background->getFrame().x;
+    if (background != nullptr) x -= (float) background->getFrame().x;
 
-    SDL_Rect dst = {x, y, (int) realW, (int) realH};
+    SDL_Rect dst = {(int) x, (int) y, (int) realW, (int) realH};
 
     SDL_RenderCopyEx(renderer, particle->getTexture(),
                      &src, &dst,
