@@ -1,28 +1,43 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.8)
 project(Keqing)
 
 # Paths
 
 get_filename_component(ROOT_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-set(HEADER_DIRS "${ROOT_DIR}/include")
 set(SRC_DIR "${ROOT_DIR}/src")
 
-set(LIB_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf")
+set(HEADER_DIRS "${ROOT_DIR}/include")
+set(LIB_FLAGS -LC:/C/SDL2/lib -lmingw32 -lrpcrt4 -lSDL2main -lSDL2.dll -lSDL2_image -lSDL2_ttf -lm)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter -m64")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "C:/C/SDL2/lib/cmake/SDL2")
 
-# Linux definitions
+if (WIN32)
+    set(SDL2 "C:/C/SDL2")
+    set(RPCRT4 "C:/C/Rpcrt4")
 
-set(HEADER_DIRS ${HEADER_DIRS} "/usr/include/SDL2")
-set(PLATFORM_LIB_FLAGS ${LIB_FLAGS} -lm)
+    set(HEADER_DIRS ${HEADER_DIRS} ${SDL2}/include)
+    set(HEADER_DIRS ${HEADER_DIRS} ${RPCRT4}/include)
+    set(PLATFORM_LIB_FLAGS ${LIB_FLAGS}
+            ${SDL2}/lib/libSDL2main.a
+            ${SDL2}/lib/libSDL2.dll.a
+            ${SDL2}/lib/libSDL2_image.a
+            ${SDL2}/lib/libSDL2_ttf.a
+            ${RPCRT4}/lib/librpcrt4.a)
 
-message(STATUS "Building for Linux")
+    message(STATUS "Building for Windows")
 
-# General definitions for all targets
+elseif (UNIX AND NOT APPLE)
+    set(HEADER_DIRS ${HEADER_DIRS} "/usr/include/SDL2")
+    set(PLATFORM_LIB_FLAGS ${LIB_FLAGS})
+
+    message(STATUS "Building for Linux")
+
+endif ()
 
 include_directories(${HEADER_DIRS})
 
-# target main
+# Main
 
 set(EXECUTABLE_OUTPUT_PATH "${ROOT_DIR}/bin")
 add_executable(main ${SRC_DIR}/Main.cpp)

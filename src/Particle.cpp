@@ -2,6 +2,7 @@
 // Created by pyrowildx on 06/06/23.
 //
 
+#include <cstdio>
 #include "Particle.hpp"
 #include "Keqing.hpp"
 
