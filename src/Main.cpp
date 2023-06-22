@@ -14,7 +14,7 @@
 
 // Text constants
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
-const SDL_Color FPSTextColor = {255, 255, 255};
+const SDL_Color FPSTextColor = {255, 255, 255, 255};
 const int FPSFontSize = 40;
 
 int main(int argc, char *argv[]) {
@@ -335,9 +335,9 @@ int main(int argc, char *argv[]) {
         window.render(&FPSText, nullptr);
 
 //        if (sizeof(WindowRenderer) < sizeof(Background)) {
-        auto *windowCastBackground = (Background *) &window;
-        Background params[2] = {*windowCastBackground, background};
-        monsterLL->operateAllCells(&Monster::render, params, nullptr);
+//        auto *windowCastBackground = (Background *) &window;
+//        Background params[2] = {*windowCastBackground, background};
+//        monsterLL->operateAllCells(&Monster::render, params, nullptr);
 //        } else {
 //            auto *backgroundCastWindow = (WindowRenderer *) &background;
 //            WindowRenderer params[2] = {window, *backgroundCastWindow};
@@ -355,11 +355,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Free
-    background.destroy();
-    FPSText.destroy();
     monsterLL->deleteAllCells();
     delete monsterLL;
-    kq->destroy();
     Particle::cleanUp();
     window.cleanUp();
     SDL_Quit();

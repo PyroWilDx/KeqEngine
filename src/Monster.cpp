@@ -79,7 +79,3 @@ Monster *Monster::copy(WindowRenderer *window) {
 
     return copyMonster;
 }
-
-void Monster::destroy() {
-    AnimatedEntity::destroy();
-}

@@ -43,7 +43,6 @@ void MonsterLinkedList::deleteSelf() {
     if (monster != nullptr) {
         MonsterLinkedList *prevLL = this->prev;
         MonsterLinkedList *nextLL = this->next;
-        this->monster->destroy();
         delete this->monster;
         delete this;
         prevLL->next = nextLL;
@@ -62,7 +61,6 @@ void MonsterLinkedList::deleteAllCells() {
         MonsterLinkedList *tmpNext;
         while (tmp != nullptr) {
             tmpNext = tmp->next;
-            tmp->monster->destroy();
             delete tmp->monster;
             delete tmp;
             tmp = tmpNext;

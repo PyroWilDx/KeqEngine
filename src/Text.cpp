@@ -23,7 +23,3 @@ void Text::loadTextTexture(int x, int y, const char *text, const SDL_Color *colo
     TTF_CloseFont(font);
     SDL_FreeSurface(textSurface);
 }
-
-void Text::destroy() {
-    Entity::destroy();
-}

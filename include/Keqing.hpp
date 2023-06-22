@@ -32,8 +32,8 @@ enum {
     KQ_ENUM_N
 };
 
-#define KQ_WIDTH_MULTIPLIER 1.4f
-#define KQ_HEIGHT_MULTIPLIER 1.4f
+#define KQ_WIDTH_MULTIPLIER 1.0f
+#define KQ_HEIGHT_MULTIPLIER 1.0f
 
 #define KQ_WALK_VELOCITY 0.4f
 #define KQ_DASH_VELOCITY 1.0f
@@ -55,6 +55,8 @@ enum {
 class Keqing : public AnimatedEntity {
 
 public:
+    ~Keqing() override = default;
+
     static void initKeqing(WindowRenderer *window);
 
     static inline Keqing *getInstance() { return instance; }
@@ -91,8 +93,6 @@ public:
 
     void preAction(int spriteCode, const bool *pressedKeys);
 
-    void destroy() override;
-
     inline bool isNAtking() { return (spriteArray[KQ_NATK].animated); }
 
     inline bool isDashing() { return (spriteArray[KQ_DASH].animated); }
@@ -113,7 +113,9 @@ public:
 
     inline bool isMoving() { return (xVelocity != 0); }
 
-    static inline bool isLightningStilettoExisting() { return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0) != nullptr); }
+    static inline bool isLightningStilettoExisting() {
+        return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0) != nullptr);
+    }
 
     // TODO may need isInvincible
 

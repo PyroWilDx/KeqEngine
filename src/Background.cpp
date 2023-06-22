@@ -21,7 +21,3 @@ void Background::translate(Entity *entity) {
     }
 
 }
-
-void Background::destroy() {
-    Entity::destroy();
-}

@@ -13,9 +13,9 @@ class Background : public Entity {
 public:
     Background(int w, int h, int totalImgWidth, SDL_Texture *texture);
 
-    void translate(Entity *entity);
+    ~Background() override = default;
 
-    void destroy() override;
+    void translate(Entity *entity);
 
 private:
     int totalImgWidth;
