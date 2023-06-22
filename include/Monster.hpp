@@ -28,7 +28,9 @@ const float MONSTER_RUN_SPEED = 0.6f;
 class Monster : public AnimatedEntity {
 
 public:
-    Monster(WindowRenderer *window);
+    explicit Monster(WindowRenderer *window);
+
+    ~Monster() override = default;
 
     void move(int dt) override;
 
@@ -39,8 +41,6 @@ public:
     void attack();
 
     Monster *copy(WindowRenderer *window);
-
-    void destroy() override;
 
     inline bool isMoving() {
         return (spriteArray[ZOMBIE_WALK_SPRITE].animated ||

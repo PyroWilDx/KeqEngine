@@ -30,6 +30,10 @@ Entity::Entity(float x, float y, int w, int h, SDL_Texture *texture)
     this->texture = texture;
 }
 
+Entity::~Entity() {
+    clearTexture();
+}
+
 void Entity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_SetTextureColorMod(texture, r, g, b);
     SDL_SetTextureAlphaMod(texture, a);
@@ -87,8 +91,4 @@ bool Entity::collides(Entity *entity, SDL_Rect addRect) const {
 void Entity::clearTexture() {
     SDL_DestroyTexture(texture);
     texture = nullptr;
-}
-
-void Entity::destroy() {
-    clearTexture();
 }

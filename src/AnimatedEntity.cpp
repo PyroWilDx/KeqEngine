@@ -12,6 +12,10 @@ AnimatedEntity::AnimatedEntity(int n)
     spriteArray[n].animated = false;
 }
 
+AnimatedEntity::~AnimatedEntity() {
+    texture = nullptr;
+}
+
 void AnimatedEntity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     for (int i = 0; i < n; i++) {
         SDL_Texture *currTexture = spriteArray[i].texture;
@@ -94,11 +98,4 @@ void AnimatedEntity::reset(int spriteCode) {
 int AnimatedEntity::getTotalDuration(int spriteCode) {
     Sprite *sprite = &spriteArray[spriteCode];
     return (sprite->frameDuration * (sprite->maxWidth / sprite->width));
-}
-
-void AnimatedEntity::destroy() {
-    for (int i = 0; i < n; i++) {
-        SDL_DestroyTexture(spriteArray[i].texture);
-    }
-    delete[] spriteArray;
 }

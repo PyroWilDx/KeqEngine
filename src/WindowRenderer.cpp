@@ -2,6 +2,7 @@
 // Created by pyrowildx on 13/05/23.
 //
 
+#include <windows.h>
 #include <SDL2/SDL_image.h>
 #include "Utils.hpp"
 #include "WindowRenderer.hpp"
@@ -9,8 +10,11 @@
 #include "Particle.hpp"
 
 WindowRenderer::WindowRenderer(const char *title, int w, int h) {
+    SetProcessDPIAware();
+
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              w, h, SDL_WINDOW_SHOWN);
+                              w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_SetWindowMinimumSize(window, w, h);
     myAssert(window != nullptr, "Error Creating Window.", SDL_GetError());
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
@@ -50,6 +54,13 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
         rotation = -rotation;
     }
 
+    if (x > 30) {
+        x += (96.0f - (float) entityFrame.w) / 2.0f;
+        y += (96.0f - (float) entityFrame.h) / 2.0f;
+    xShift = 0;
+    yShift = 0;
+    }
+
     SDL_Rect dst = {(int) ((float) x + (float) xShift * renderWMultiplier),
                     (int) ((float) y + (float) yShift * renderHMultiplier),
                     (int) ((float) entityFrame.w * renderWMultiplier),
@@ -71,8 +82,8 @@ void WindowRenderer::render(Entity *entity, Entity *background) {
     collRect.y += (int) y;
 //    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 //    SDL_RenderDrawRect(renderer, &dst);
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &collRect);
+//    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+//    SDL_RenderDrawRect(renderer, &collRect);
 }
 
 void WindowRenderer::renderParticle(Entity *particle_, Entity *background) {

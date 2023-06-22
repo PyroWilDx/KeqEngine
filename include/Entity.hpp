@@ -16,6 +16,8 @@ public:
 
     Entity(float x, float y, int w, int h, SDL_Texture *texture);
 
+    virtual ~Entity();
+
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
     virtual void renderSelf(WindowRenderer *window);
@@ -33,8 +35,6 @@ public:
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
     void clearTexture();
-
-    virtual void destroy();
 
     inline void setCollisionRect(SDL_Rect collisionRect_) { collisionRect = collisionRect_; }
 

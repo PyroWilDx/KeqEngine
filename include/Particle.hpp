@@ -52,6 +52,8 @@ public:
     Particle(int spriteCode, int xShift, int yShift, int frameDuration,
              float wMultiplier, float hMultiplier, Entity *entity);
 
+    ~Particle() override = default;
+
     static void initParticle(WindowRenderer *window);
 
     static Particle *push(int spriteCode, int xShift, int yShift, int frameDuration,

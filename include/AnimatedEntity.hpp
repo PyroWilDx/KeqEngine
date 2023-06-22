@@ -29,6 +29,8 @@ class AnimatedEntity : public Entity {
 public:
     explicit AnimatedEntity(int n);
 
+    ~AnimatedEntity() override;
+
     void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
 
     void setSpriteAnimated(int spriteCode, bool animated, bool reset = true);
@@ -47,8 +49,6 @@ public:
     void reset(int spriteCode);
 
     int getTotalDuration(int spriteCode);
-
-    void destroy() override;
 
     inline Sprite *getSpriteArray() { return spriteArray; }
 

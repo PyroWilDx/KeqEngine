@@ -759,8 +759,3 @@ void Keqing::preAction(int spriteCode, const bool *pressedKeys) {
         else if (pressedKeys[KEY_D]) setFacingEast(false);
     }
 }
-
-void Keqing::destroy() {
-    AnimatedEntity::destroy();
-    delete this;
-}
