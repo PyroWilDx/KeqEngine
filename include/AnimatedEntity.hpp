@@ -9,51 +9,65 @@
 #include "WindowRenderer.hpp"
 
 typedef struct Sprite {
-    int code;
-    bool animated;
-    SDL_Texture *texture;
-    int xShift;
-    int yShift;
-    int xShiftR;
-    int width;
-    int height;
-    int maxWidth;
-    int frameDuration;
-    int frameX;
-    int accumulatedTime;
-    Sprite *next;
+    int sCode;
+    SDL_Texture *sTexture;
+    bool sAnimated;
+    int sFrameW;
+    int sFrameH;
+    int sFrameN;
+    int sCurrentFrame;
+    int *sFrameLengths;
+    int sTimer;
+    Sprite *sNext;
 } Sprite;
+
 
 class AnimatedEntity : public Entity {
 
 public:
-    explicit AnimatedEntity(int n);
+    explicit AnimatedEntity(int spriteArrayLength);
 
     ~AnimatedEntity() override;
 
     void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
 
-    void setSpriteAnimated(int spriteCode, bool animated, bool reset = true);
+    void initSprite(int spriteCode, const char *imgPath,
+                    int spriteFrameW, int spriteFrameH, int spriteFrameN,
+                    int spriteFrameLength = 0);
 
-    void animate(int dt);
+    void setSpriteAnimated(int spriteCode, bool animated);
 
-    void moveSpriteFrameX(int spriteCode, int x);
+    void setSpriteCurrentFrame(int spriteCode, int spriteCurrentFrame);
 
-    void forceSprite(int spriteCode, int newMaxWidth,
-                     int newFrameDuration, int startX);
+    void setSpriteFrameLengthFromTo(int spriteCode, int spriteFrameLength,
+                                    int startFrame = -2, int endFrame = -2);
 
-    void removeForcedSprite();
+    void setSpriteFrameLengths(int spriteCode, const int *spriteFrameLengths);
+
+    void setSpriteNext(int spriteCode, int nextSpriteCode);
+
+    bool isFrameAt(int spriteCode, int frameIndex);
+
+    bool isNewestFrame(int spriteCode, int frameIndex);
+
+    bool isFrameBetween(int spriteCode, int startFrame, int endFrame);
+
+    bool willFrameFinish(int spriteCode, int frameIndex);
+
+    void goToFrame(int spriteCode, int frameIndex);
+
+    void goToNextFrame(int spriteCode);
+
+    void stopOnFrame(int spriteCode, int frameIndex = -1);
+
+    void resetSprite(int spriteCode);
 
     void delay(int spriteCode, int ms);
 
-    void reset(int spriteCode);
-
-    int getTotalDuration(int spriteCode);
-
-    inline Sprite *getSpriteArray() { return spriteArray; }
+    void animate();
 
 protected:
-    int n;
+    int spriteArrayLength;
     Sprite *spriteArray;
 
 private:

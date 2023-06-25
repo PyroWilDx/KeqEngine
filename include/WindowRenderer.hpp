@@ -12,13 +12,13 @@ class Entity;
 class WindowRenderer {
 
 public:
-    WindowRenderer(const char *title, int w, int h);
+    static void initWindowRenderer(const char *title, int w, int h);
+
+    static inline WindowRenderer *getInstance() { return instance; }
 
     SDL_Texture *loadTexture(const char *imgPath);
 
-    void render(Entity *entity, Entity *background);
-
-    void renderParticle(Entity *particle, Entity *background);
+    void render(Entity *entity);
 
     void display();
 
@@ -26,9 +26,15 @@ public:
 
     void cleanUp();
 
+    inline SDL_Window *getWindow() { return window; }
+
     inline SDL_Renderer *getRenderer() { return renderer; }
 
 private:
+    WindowRenderer(const char *title, int w, int h);
+
+    static WindowRenderer *instance;
+
     SDL_Window *window;
     SDL_Renderer *renderer;
 

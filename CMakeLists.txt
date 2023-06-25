@@ -9,7 +9,9 @@ set(SRC_DIR "${ROOT_DIR}/src")
 set(HEADER_DIRS "${ROOT_DIR}/include")
 set(LIB_FLAGS -LC:/C/SDL2/lib -lmingw32 -lrpcrt4 -lSDL2main -lSDL2.dll -lSDL2_image -lSDL2_ttf -lm)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter -m64")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "C:/C/SDL2/lib/cmake/SDL2")
 
 if (WIN32)
@@ -48,8 +50,11 @@ target_sources(main PRIVATE
         ${SRC_DIR}/Entity.cpp
         ${SRC_DIR}/AnimatedEntity.cpp
         ${SRC_DIR}/Keqing.cpp
-        ${SRC_DIR}/Monster.cpp
+        # ${SRC_DIR}/Monster.cpp
         ${SRC_DIR}/Background.cpp
-        ${SRC_DIR}/MonsterLinkedList.cpp
-        ${SRC_DIR}/Particle.cpp)
+        # ${SRC_DIR}/MonsterLinkedList.cpp
+        ${SRC_DIR}/Particle.cpp
+        ${SRC_DIR}/World.cpp
+        ${SRC_DIR}/Block.cpp
+        ${SRC_DIR}/Global.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

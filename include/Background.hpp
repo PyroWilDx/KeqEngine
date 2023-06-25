@@ -15,6 +15,8 @@ public:
 
     ~Background() override = default;
 
+    bool shouldTranslate() override;
+
     void translate(Entity *entity);
 
 private:

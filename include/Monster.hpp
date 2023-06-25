@@ -43,11 +43,11 @@ public:
     Monster *copy(WindowRenderer *window);
 
     inline bool isMoving() {
-        return (spriteArray[ZOMBIE_WALK_SPRITE].animated ||
-                spriteArray[ZOMBIE_RUN_SPRITE].animated);
+        return (spriteArray[ZOMBIE_WALK_SPRITE].sAnimated ||
+                spriteArray[ZOMBIE_RUN_SPRITE].sAnimated);
     }
 
-    inline bool isAttacking() { return spriteArray[ZOMBIE_ATTACK_SPRITE].animated; }
+    inline bool isAttacking() { return spriteArray[ZOMBIE_ATTACK_SPRITE].sAnimated; }
 
     inline static bool render(Monster *monster, void *params, void *retVal) {
         WindowRenderer *window;
@@ -113,15 +113,15 @@ public:
     inline static bool isMoving(Monster *monster, void *params, void *retVal) {
         bool *tmpRetVal = (bool *) retVal;
         *tmpRetVal = *tmpRetVal ||
-                     (monster->spriteArray[ZOMBIE_WALK_SPRITE].animated ||
-                      monster->spriteArray[ZOMBIE_RUN_SPRITE].animated);
+                     (monster->spriteArray[ZOMBIE_WALK_SPRITE].sAnimated ||
+                      monster->spriteArray[ZOMBIE_RUN_SPRITE].sAnimated);
         return false;
     }
 
     inline static bool isAttacking(Monster *monster, void *params, void *retVal) {
         bool *tmpRetVal = (bool *) retVal;
         *tmpRetVal = *tmpRetVal ||
-                     monster->spriteArray[ZOMBIE_ATTACK_SPRITE].animated;
+                     monster->spriteArray[ZOMBIE_ATTACK_SPRITE].sAnimated;
         return false;
     }
 

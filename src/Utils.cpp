@@ -3,24 +3,57 @@
 //
 
 #include <cassert>
-#include <cstdio>
 #include <algorithm>
 #include "Utils.hpp"
+#include "Global.hpp"
 
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {
-        printf("Message : %s\n", msg);
-        printf("Error : %s\n", err);
+        SDL_Log("Message : %s\n", msg);
+        SDL_Log("Error : %s\n", err);
         assert(expr);
     }
 }
 
-bool isNewestFrame(Sprite *sprite, int x) {
-    return (sprite->frameX == x && sprite->accumulatedTime == 0);
+int getTime() {
+    return ((int) SDL_GetTicks());
 }
 
-bool isSameSpriteCode(Sprite *sprite, int spriteCode) {
-    return (sprite->code == spriteCode);
+int getSDLKeyRelation(int SDLKey, bool isKeyboard) {
+    if (!isKeyboard) {
+        if (SDLKey == SDL_BUTTON_LEFT) return KEY_MOUSE_LEFT;
+        if (SDLKey == SDL_BUTTON_RIGHT) return KEY_MOUSE_RIGHT;
+
+        return -1;
+    }
+
+    if (SDLKey == SDLK_z) return KEY_Z;
+    if (SDLKey == SDLK_q) return KEY_Q;
+    if (SDLKey == SDLK_s) return KEY_S;
+    if (SDLKey == SDLK_d) return KEY_D;
+    if (SDLKey == SDLK_e) return KEY_E;
+    if (SDLKey == SDLK_r) return KEY_R;
+    if (SDLKey == SDLK_SPACE) return KEY_SPACE;
+    if (SDLKey == SDLK_LSHIFT) return KEY_SHIFT;
+
+    return -1;
+}
+
+int updatePressedKeys(int SDLKey, bool isKeyPressed, bool isKeyboard) {
+    int key = getSDLKeyRelation(SDLKey, isKeyboard);
+    if (key != -1) {
+        Global::pressedKeys[key] = isKeyPressed;
+        if (isKeyPressed) Global::pressedTime[key] = Global::currentTime;
+    }
+    return key;
+}
+
+bool isKeyPressedRecent(int key) {
+    return ((Global::currentTime - Global::pressedTime[key]) < 100);
+}
+
+bool isMouseLeftRecent() {
+    return isKeyPressedRecent(KEY_MOUSE_LEFT);
 }
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,

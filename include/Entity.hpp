@@ -20,9 +20,7 @@ public:
 
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
-    virtual void renderSelf(WindowRenderer *window);
-
-    virtual void move(int dt);
+    virtual void move();
 
     void moveTo(float x_, float y_);
 
@@ -32,11 +30,15 @@ public:
 
     virtual void getRealSize(float *pW, float *pH);
 
+    virtual bool shouldTranslate();
+
+    virtual SDL_Rect getRenderRect();
+
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
     void clearTexture();
 
-    inline void setCollisionRect(SDL_Rect collisionRect_) { collisionRect = collisionRect_; }
+    inline void getHitbox(SDL_Rect collisionRect_) { hitbox = collisionRect_; }
 
     inline void setRenderWHMultiplier(float wMultiplier, float hMultiplier) {
         renderWMultiplier = wMultiplier;
@@ -52,35 +54,21 @@ public:
 
     inline void setRotation(double rotation_) { rotation = rotation_; }
 
-    inline void setXYShift(int xShift_, int yShift_, int xShiftR_) {
-        xShift = xShift_;
-        yShift = yShift_;
-        xShiftR = xShiftR_;
-    }
-
     [[nodiscard]] inline float getX() const { return x; }
 
     [[nodiscard]] inline float getY() const { return y; }
-
-    [[nodiscard]] inline float getXVelocity() const { return xVelocity; }
 
     [[nodiscard]] inline bool isFacingEast() const { return facingEast; }
 
     [[nodiscard]] inline SDL_Rect getFrame() const { return frame; }
 
-    [[nodiscard]] inline SDL_Rect getCollisionRect() const { return collisionRect; }
+    [[nodiscard]] inline SDL_Rect getCollisionRect() const { return hitbox; }
 
     [[nodiscard]] inline SDL_Texture *getTexture() const { return texture; }
 
     [[nodiscard]] inline float getRenderWMultiplier() const { return renderWMultiplier; }
 
     [[nodiscard]] inline float getRenderHMultiplier() const { return renderHMultiplier; }
-
-    [[nodiscard]] inline int getXShift() const { return xShift; }
-
-    [[nodiscard]] inline int getYShift() const { return yShift; }
-
-    [[nodiscard]] inline int getXShiftR() const { return xShiftR; }
 
     [[nodiscard]] inline double getRotation() const { return rotation; }
 
@@ -89,10 +77,9 @@ protected:
     bool facingEast;
     float xVelocity, yVelocity;
     SDL_Rect frame;
-    SDL_Rect collisionRect;
+    SDL_Rect hitbox;
     SDL_Texture *texture;
     float renderWMultiplier, renderHMultiplier;
-    int xShift, yShift, xShiftR;
     double rotation;
 
 private:
