@@ -14,7 +14,7 @@ public:
 
     ~Text() override = default;
 
-    void loadTextTexture(int x, int y, const char *text, const SDL_Color *color,
+    void loadTextTexture(float x, float y, const char *text, const SDL_Color *color,
                          const char *fontPath, int fontSize, SDL_Renderer *renderer);
 
 private:

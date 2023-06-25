@@ -11,8 +11,8 @@
 #include "Particle.hpp"
 
 //Screen dimension constants
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+#define SCREEN_BASE_WIDTH 1280
+#define SCREEN_BASE_HEIGHT 720
 
 #define BACKGROUND_WIDTH 3000
 
@@ -22,7 +22,12 @@
 #define HUD_SB_CIRCLE_M 4.0f
 #define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74f)
 
+#define RGB_FULL 255, 255, 255
+#define RGBA_FULL 255, 255, 255, 255
+
 enum {
+    KEY_MOUSE_LEFT,
+    KEY_MOUSE_RIGHT,
     KEY_Z,
     KEY_Q,
     KEY_S,
@@ -32,15 +37,20 @@ enum {
     KEY_R,
     KEY_SPACE,
     KEY_SHIFT,
+    KEY_ENUM_N
 };
 
 void myAssert(bool expr, const char *msg, const char *err);
 
-bool isNewestFrame(Sprite *sprite, int x);
+int getTime();
 
-bool isSameSpriteCode(Sprite *sprite, int spriteCode);
+int getSDLKeyRelation(int SDLKey, bool isKeyboard);
 
-inline int getTime() { return ((int) SDL_GetTicks()); }
+int updatePressedKeys(int SDLKey, bool isKeyPressed, bool isKeyboard);
+
+bool isKeyPressedRecent(int key);
+
+bool isMouseLeftRecent();
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
               float *pH, float *pS, float *pV);

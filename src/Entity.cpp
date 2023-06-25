@@ -3,9 +3,10 @@
 //
 
 #include "Entity.hpp"
+#include "Global.hpp"
 
 Entity::Entity(float x, float y) :
-        frame({0, 0, 0, 0}), collisionRect(frame) {
+        frame({0, 0, 0, 0}), hitbox(frame) {
     this->x = x;
     this->y = y;
     xVelocity = 0;
@@ -14,9 +15,6 @@ Entity::Entity(float x, float y) :
     texture = nullptr;
     renderWMultiplier = 1.0f;
     renderHMultiplier = 1.0f;
-    xShift = 0;
-    yShift = 0;
-    xShiftR = 0;
     rotation = 0.0f;
 }
 
@@ -26,7 +24,7 @@ Entity::Entity(float x, float y, int w, int h, SDL_Texture *texture)
     frame.y = 0;
     frame.w = w;
     frame.h = h;
-    collisionRect = frame;
+    hitbox = frame;
     this->texture = texture;
 }
 
@@ -39,12 +37,8 @@ void Entity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_SetTextureAlphaMod(texture, a);
 }
 
-void Entity::renderSelf(WindowRenderer *window) {
-
-}
-
-void Entity::move(int dt) {
-    float addX = xVelocity * (float) dt;
+void Entity::move() {
+    float addX = xVelocity * (float) Global::dt;
 
     if (facingEast) x += addX;
     else x -= addX;
@@ -72,15 +66,38 @@ void Entity::getRealSize(float *pW, float *pH) {
         *pH = (float) frame.h * renderHMultiplier;
 }
 
+bool Entity::shouldTranslate() {
+    return true;
+}
+
+SDL_Rect Entity::getRenderRect() {
+    float dstX = x;
+    float dstY = y;
+
+    float realW, realH;
+    getRealSize(&realW, &realH);
+
+    if (shouldTranslate()) {
+        dstX -= (float) Global::currentWorld->getBackground()->getFrame().x;
+    }
+
+    float xCoeff = (float) Global::windowWidth / SCREEN_BASE_WIDTH;
+    float yCoeff = (float) Global::windowHeight / SCREEN_BASE_HEIGHT;
+
+    SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
+                    (int) (realW * xCoeff), (int) (realH * yCoeff)};
+    return dst;
+}
+
 bool Entity::collides(Entity *entity, SDL_Rect addRect) const {
-    int x1 = x + collisionRect.x + addRect.x;
-    int y1 = y + collisionRect.y + addRect.y;
-    int maxX1 = x1 + collisionRect.w + addRect.w;
-    int maxY1 = y1 + collisionRect.h + addRect.h;
-    int x2 = entity->x + entity->collisionRect.x;
-    int y2 = entity->y + entity->collisionRect.y;
-    int maxX2 = x2 + entity->collisionRect.w;
-    int maxY2 = y2 + entity->collisionRect.h;
+    float x1 = x + hitbox.x + addRect.x;
+    float y1 = y + hitbox.y + addRect.y;
+    int maxX1 = x1 + hitbox.w + addRect.w;
+    int maxY1 = y1 + hitbox.h + addRect.h;
+    int x2 = entity->x + entity->hitbox.x;
+    int y2 = entity->y + entity->hitbox.y;
+    int maxX2 = x2 + entity->hitbox.w;
+    int maxY2 = y2 + entity->hitbox.h;
 
     if (maxX1 < x2 || x1 > maxX2) return false;
     if (maxY1 < y2 || y1 > maxY2) return false;

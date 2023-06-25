@@ -9,7 +9,7 @@ Text::Text()
         : Entity(0, 0) {
 }
 
-void Text::loadTextTexture(int x, int y, const char *text, const SDL_Color *color,
+void Text::loadTextTexture(float x, float y, const char *text, const SDL_Color *color,
                            const char *fontPath, int fontSize, SDL_Renderer *renderer) {
     clearTexture();
     this->x = x;

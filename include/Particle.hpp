@@ -39,8 +39,6 @@ enum {
 #define HUD_SB_TIMER_FRAME_N 25
 #define HUD_SB_USED_ALPHA 64
 
-#define MAX_NEXT_PARTICLE 4
-
 typedef struct FadeAwayParams {
     int baseAlpha;
     float speed;
@@ -49,23 +47,23 @@ typedef struct FadeAwayParams {
 class Particle : public AnimatedEntity {
 
 public:
-    Particle(int spriteCode, int xShift, int yShift, int frameDuration,
-             float wMultiplier, float hMultiplier, Entity *entity);
+    Particle();
+
+    Particle(int spriteCode, int frameLength, float wMultiplier, float hMultiplier);
 
     ~Particle() override = default;
 
-    static void initParticle(WindowRenderer *window);
+    static void initParticle();
 
-    static Particle *push(int spriteCode, int xShift, int yShift, int frameDuration,
-                          float wMultiplier, float hMultiplier, Entity *entity);
+    static Particle *push(int spriteCode, int frameLength, float wMultiplier, float hMultiplier);
 
     static void pushFast(Particle *particle);
 
     static void remove(int spriteCode, int i);
 
-    static void animateAll(int dt);
+    static void animateAll();
 
-    static void renderAll(WindowRenderer *window, Entity *background);
+    static void renderAll();
 
     static Particle *getParticle(int spriteCode, int i);
 
@@ -73,25 +71,17 @@ public:
 
     static void cleanUp();
 
-    static inline int getCount() {
-        int total = 0;
-        for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
-            total += counts[spriteCode];
-        }
-        return total;
-    }
+    void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
 
     void getRealSize(float *pW, float *pH) override;
 
-    void setFrameX(int x);
+    bool shouldTranslate() override;
 
-    void getToEntityCenterXY(Particle *centerParticle, float *pX, float *pY,
-                             int *pXShift = nullptr, int *pYShift = nullptr,
-                             int *pXShiftR = nullptr);
+    void setEntity(Entity *newEntity);
 
-    void moveToEntityCenter(Particle *centerParticle);
+    void getToEntityCenterXY(Entity *centerEntity, float *pX, float *pY);
 
-    void addNextParticle(Particle *particle);
+    void moveToEntityCenter(Entity *centerEntity);
 
     bool isFinished();
 
@@ -99,29 +89,25 @@ public:
 
     Particle *copy();
 
-    inline void setEntityDependant(bool dependant) { entityDependant = dependant; }
-
-    inline void setStopOnLastFrame(bool stop) { stopOnLastFrame = stop; }
+    inline void shiftXY(float xShift, float yShift) {
+        x += xShift;
+        y += yShift;
+    }
 
     inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
 
-    inline Entity *getEntity() { return entity; }
-
-    inline bool isEntityDependant() { return entityDependant; }
-
-    inline Particle *getNextParticle(int i) { return nextParticle[i]; }
+    [[nodiscard]] inline int getCode() const { return code; }
 
 private:
-    static Sprite allParticleTextures[PARTICLE_ENUM_N];
+    static Particle *baseParticle;
 
-    static int activeParticleMaxes[PARTICLE_ENUM_N];
+    static int particleMaxActives[PARTICLE_ENUM_N];
     static Particle **activeParticles[PARTICLE_ENUM_N];
-    static int counts[PARTICLE_ENUM_N];
+    static int activeCounts[PARTICLE_ENUM_N];
 
+    int code;
     Entity *entity;
-    bool entityDependant;
-    bool stopOnLastFrame;
-    Particle *nextParticle[MAX_NEXT_PARTICLE];
+    float entityLastX, entityLastY;
     FadeAwayParams fadeParams;
 
     void (*onRemove)(Particle *);

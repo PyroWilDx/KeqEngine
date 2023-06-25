@@ -23,7 +23,7 @@ void MonsterLinkedList::insert(Monster *monster_) {
         }
         this->next = newHead;
     } else {
-        printf("WARNING, trying to insert a new cell in a MonsterLinkedList that is not the head!\n");
+        SDL_Log("WARNING, trying to insert a new cell in a MonsterLinkedList that is not the head!\n");
     }
 }
 
@@ -50,7 +50,7 @@ void MonsterLinkedList::deleteSelf() {
             nextLL->prev = prevLL;
         }
     } else {
-        printf("WARNING, trying to delete the first cell that does not represent a monster!\n");
+        SDL_Log("WARNING, trying to delete the first cell that does not represent a monster!\n");
     }
 
 }
@@ -67,6 +67,6 @@ void MonsterLinkedList::deleteAllCells() {
         }
         this->next = nullptr;
     } else {
-        printf("WARNING, trying to delete all cells not from the head!\n");
+        SDL_Log("WARNING, trying to delete all cells not from the head!\n");
     }
 }

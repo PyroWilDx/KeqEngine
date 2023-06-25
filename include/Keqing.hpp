@@ -12,14 +12,9 @@
 enum {
     KQ_IDLE = 0,
     KQ_JUMP_END,
-//    KQ_DASH_END,
-//    KQ_SKILL_END,
-//    KQ_SKILL_SLASH_END,
-//    KQ_BURST_END,
     KQ_WALK,
     KQ_TURN,
     KQ_NATK, // NAtk = Normal Attack
-//    KQ_DASH_START,
     KQ_DASH,
     KQ_SKILL,
     KQ_SKILL_SLASH,
@@ -36,7 +31,7 @@ enum {
 #define KQ_HEIGHT_MULTIPLIER 1.0f
 
 #define KQ_WALK_VELOCITY 0.4f
-#define KQ_DASH_VELOCITY 1.0f
+#define KQ_DASH_VELOCITY 0.8f
 
 #define KQ_BASE_JUMP_VELOCITY 1.0f
 #define KQ_AIR_DASH_VELOCITY 0.8f
@@ -57,59 +52,59 @@ class Keqing : public AnimatedEntity {
 public:
     ~Keqing() override = default;
 
-    static void initKeqing(WindowRenderer *window);
+    static void initKeqing();
 
     static inline Keqing *getInstance() { return instance; }
 
-    void colorTexture(int r, int g, int b, WindowRenderer *window);
+    void colorTexture(int r, int g, int b);
 
-    void updateDirection(const bool *pressedKeys, int lastKey);
+    SDL_Rect getRenderRect() override;
 
-    void move(int dt) override;
+    void move() override;
 
-    void nAtk(int dt, int currentTime);
+    void updateDirection();
 
-    void dash(bool *pressedKeys);
+    void NAtk();
 
-    void skill();
+    void dash();
 
-    void skillSlash();
+    void ESkill();
 
-    void burst(int dt);
+    void ESkillSlash();
 
-    void jump(int dt);
+    void RBurst();
 
-    void airNAtk(int dt);
+    void jump();
+
+    void airNAtk();
 
     void airDash();
 
-    void damage(int dt);
+    void damage();
 
     void setFacingEast(bool value);
 
     bool canDoAction(int spriteCode);
 
-    bool shouldNotMove();
+    void preAction(int spriteCode);
 
-    void preAction(int spriteCode, const bool *pressedKeys);
+    inline bool isNAtking() { return (spriteArray[KQ_NATK].sAnimated); } // TODO CHANGE TO JUSTE UNE FONTION UPDATE
 
-    inline bool isNAtking() { return (spriteArray[KQ_NATK].animated); }
+    inline bool isDashing() { return (spriteArray[KQ_DASH].sAnimated); }
 
-    inline bool isDashing() { return (spriteArray[KQ_DASH].animated); }
+    inline bool isESkilling() { return (spriteArray[KQ_SKILL].sAnimated); }
 
-    inline bool isSkilling() { return (spriteArray[KQ_SKILL].animated); }
+    inline bool isESkillSlashing() { return (spriteArray[KQ_SKILL_SLASH].sAnimated); }
 
-    inline bool isSkillSlashing() { return (spriteArray[KQ_SKILL_SLASH].animated); }
+    inline bool isRBursting() { return (spriteArray[KQ_BURST].sAnimated); }
 
-    inline bool isBursting() { return (spriteArray[KQ_BURST].animated); }
+    inline bool isJumping() { return (spriteArray[KQ_JUMP].sAnimated); }
 
-    inline bool isJumping() { return (spriteArray[KQ_JUMP].animated); }
+    inline bool isAirNAtking() { return (spriteArray[KQ_AIR_NATK].sAnimated); }
 
-    inline bool isAirNAtking() { return (spriteArray[KQ_AIR_NATK].animated); }
+    inline bool isAirDashing() { return (spriteArray[KQ_AIR_DASH].sAnimated); }
 
-    inline bool isAirDashing() { return (spriteArray[KQ_AIR_DASH].animated); }
-
-    inline bool isDamaged() { return (spriteArray[KQ_HURT].animated); }
+    inline bool isDamaged() { return (spriteArray[KQ_HURT].sAnimated); }
 
     inline bool isMoving() { return (xVelocity != 0); }
 
@@ -119,14 +114,15 @@ public:
 
     // TODO may need isInvincible
 
+    //TODO MAYBE IGNORE LAST FRAME TO MORE RESPONSIVITY
+
     [[nodiscard]] inline int getHp() const { return hp; }
 
 private:
-    explicit Keqing(WindowRenderer *window);
+    explicit Keqing();
 
     static Keqing *instance;
     int hp;
-    int lastNAttackTime; // TODO
 };
 
 #endif
