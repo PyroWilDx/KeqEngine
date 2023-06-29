@@ -41,7 +41,7 @@ enum {
 
 typedef struct FadeAwayParams {
     int baseAlpha;
-    float speed;
+    double speed;
 } FadeAwayParams;
 
 class Particle : public AnimatedEntity {
@@ -49,13 +49,13 @@ class Particle : public AnimatedEntity {
 public:
     Particle();
 
-    Particle(int spriteCode, int frameLength, float wMultiplier, float hMultiplier);
+    Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
 
     ~Particle() override = default;
 
     static void initParticle();
 
-    static Particle *push(int spriteCode, int frameLength, float wMultiplier, float hMultiplier);
+    static Particle *push(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
 
     static void pushFast(Particle *particle);
 
@@ -73,23 +73,23 @@ public:
 
     void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
 
-    void getRealSize(float *pW, float *pH) override;
+    void getRealSize(double *pW, double *pH) override;
 
     bool shouldTranslate() override;
 
     void setEntity(Entity *newEntity);
 
-    void getToEntityCenterXY(Entity *centerEntity, float *pX, float *pY);
+    void getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY);
 
     void moveToEntityCenter(Entity *centerEntity);
 
     bool isFinished();
 
-    void fadeAway(float speed = 1.0f);
+    void fadeAway(double speed = 1.0f);
 
     Particle *copy();
 
-    inline void shiftXY(float xShift, float yShift) {
+    inline void shiftXY(double xShift, double yShift) {
         x += xShift;
         y += yShift;
     }
@@ -107,7 +107,7 @@ private:
 
     int code;
     Entity *entity;
-    float entityLastX, entityLastY;
+    double entityLastX, entityLastY;
     FadeAwayParams fadeParams;
 
     void (*onRemove)(Particle *);

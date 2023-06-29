@@ -15,6 +15,10 @@ void myAssert(bool expr, const char *msg, const char *err) {
     }
 }
 
+int roundToInt(double x) {
+    return ((int) round(x));
+}
+
 int getTime() {
     return ((int) SDL_GetTicks());
 }
@@ -57,15 +61,15 @@ bool isMouseLeftRecent() {
 }
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
-              float *pH, float *pS, float *pV) {
-    float fr = (float) r / 255.0f;
-    float fg = (float) g / 255.0f;
-    float fb = (float) b / 255.0f;
+              double *pH, double *pS, double *pV) {
+    double fr = (double) r / 255.0f;
+    double fg = (double) g / 255.0f;
+    double fb = (double) b / 255.0f;
 
-    float maxVal = std::max(fr, std::max(fg, fb));
-    float minVal = std::min(fr, std::min(fg, fb));
+    double maxVal = std::max(fr, std::max(fg, fb));
+    double minVal = std::min(fr, std::min(fg, fb));
 
-    float h, s, v;
+    double h, s, v;
 
     v = maxVal;
 
@@ -78,7 +82,7 @@ void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
     if (s == 0.0f)
         h = 0.0f;
     else {
-        float delta = maxVal - minVal;
+        double delta = maxVal - minVal;
 
         if (maxVal == fr) {
             h = (fg - fb) / delta;
@@ -98,7 +102,7 @@ void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
     *pV = v;
 }
 
-void HSVtoRGB(float h, float s, float v,
+void HSVtoRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB) {
     if (s == 0.0f) {
         *pR = *pG = *pB = (Uint8) (v * 255.0f);
@@ -109,10 +113,10 @@ void HSVtoRGB(float h, float s, float v,
 
     h /= 60.0f;
     int i = (int) h;
-    float f = h - (float) i;
-    float p = v * (1.0f - s);
-    float q = v * (1.0f - s * f);
-    float t = v * (1.0f - s * (1.0f - f));
+    double f = h - (double) i;
+    double p = v * (1.0f - s);
+    double q = v * (1.0f - s * f);
+    double t = v * (1.0f - s * (1.0f - f));
 
     switch (i) {
         case 0:

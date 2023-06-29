@@ -14,13 +14,27 @@ using namespace std;
 class World {
 
 public:
-    World(int backgroundW, int backgroundH, int backgroundTotalW, const char *backgroundImgPath);
+    World(int screenW, int screenH,
+          int backgroundTotalW, int backgroundTotalH,
+          const char *backgroundImgPath);
+
+    ~World();
+
+    void addBlock(Block *block);
+
+    void addBlock(int blockCode, double x, double y, int renderW, int renderH);
+
+    int getPixel(double x, double y);
+
+    double getNearestWallFrom(double x, double y, int direction);
+
+    void renderSelf();
 
     inline Background *getBackground() { return background; }
 
 private:
     Background *background;
-    vector<Block> blocks;
+    vector<Block *> blocks;
     int **pixels;
 
 };

@@ -32,7 +32,10 @@ int main(int argc, char *argv[]) {
     SDL_SetWindowResizable(gWindow->getWindow(), SDL_TRUE);
 
     Global::currentWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     BACKGROUND_WIDTH, "res/gfx/Background.png");
+                                     3000, 720,
+                                     "res/gfx/Background.png");
+    Global::currentWorld->addBlock(BLOCK_DIRT,
+                                   100, 720-200, 176, 500);
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, 360);
@@ -62,7 +65,7 @@ int main(int argc, char *argv[]) {
     Particle *burstCircleBG =
             Particle::push(PARTICLE_HUD_BURST_CIRCLE_BG, INT32_MAX,
                            HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
-    float hudSCW;
+    double hudSCW;
     skillCircle->getRealSize(&hudSCW, nullptr);
     burstCircleBG->moveTo(hudSkillCircleX + hudSCW,
                           hudSBCircleY);
@@ -85,11 +88,11 @@ int main(int argc, char *argv[]) {
 
     SDL_Event event;
 
-    float kqLastX = kq->getX();
-    float kqX;
+    double kqLastX = kq->getX();
+    double kqX;
 
     Text FPSText = Text();
-    int accumulatedFPSTime = 1002;
+    int accumulatedFPSTime = 10000;
     int accumulatedFrames = 0;
 
     bool gameRunning = true;
@@ -213,10 +216,11 @@ int main(int argc, char *argv[]) {
         if (kq->isAirNAtking()) kq->airNAtk();
         if (kq->isAirDashing()) kq->airDash();
         if (kq->isDamaged()) kq->damage();
-        if (kq->isMoving()) kq->move();
+        if (kq->isMoving()) kq->moveX(); // TODO
+        kq->fallGravity(); // TODO
 
         kqX = kq->getX();
-        float xDiff = kqX - kqLastX;
+        double xDiff = kqX - kqLastX;
         if (xDiff != 0) Global::currentWorld->getBackground()->translate(kq);
         kqLastX = kqX;
 
@@ -237,7 +241,8 @@ int main(int argc, char *argv[]) {
         // Window Rendering
         gWindow->clear();
 
-        gWindow->render(Global::currentWorld->getBackground()); // TODO
+        Global::currentWorld->renderSelf();
+
         gWindow->render(&FPSText);
 
         gWindow->render(kq);
