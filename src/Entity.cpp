@@ -5,7 +5,7 @@
 #include "Entity.hpp"
 #include "Global.hpp"
 
-Entity::Entity(float x, float y) :
+Entity::Entity(double x, double y) :
         frame({0, 0, 0, 0}), hitbox(frame) {
     this->x = x;
     this->y = y;
@@ -18,7 +18,7 @@ Entity::Entity(float x, float y) :
     rotation = 0.0f;
 }
 
-Entity::Entity(float x, float y, int w, int h, SDL_Texture *texture)
+Entity::Entity(double x, double y, int w, int h, SDL_Texture *texture)
         : Entity(x, y) {
     frame.x = 0;
     frame.y = 0;
@@ -37,14 +37,88 @@ void Entity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_SetTextureAlphaMod(texture, a);
 }
 
-void Entity::move() {
-    float addX = xVelocity * (float) Global::dt;
+void Entity::moveX() {
+    if (xVelocity == 0) return;
 
-    if (facingEast) x += addX;
-    else x -= addX;
+    double addX = xVelocity * (double) Global::dt;
+
+    if (!facingEast) addX = -addX;
+
+    x += addX;
+
+    double yUp = y + hitbox.y;
+    double yDown = yUp + hitbox.h;
+    double x0, y0 = -1;
+    int direction;
+    if (addX > 0) {
+        x0 = x + hitbox.x + hitbox.w;
+        direction = KEY_Q;
+    }
+    if (addX < 0) {
+        x0 = x + hitbox.x;
+        direction = KEY_D;
+    }
+
+    if (Global::currentWorld->getPixel(x0, yUp) != BLOCK_NULL) {
+        y0 = yUp;
+    } else if (Global::currentWorld->getPixel(x0, yDown) != BLOCK_NULL) {
+        y0 = yDown;
+    }
+    if (y0 != -1) {
+        double xWall = Global::currentWorld->getNearestWallFrom(
+                x0, y0, direction);
+        x -= (x0 - xWall);
+        if (addX > 0) x--;
+        else x++;
+    }
 }
 
-void Entity::moveTo(float x_, float y_) {
+void Entity::moveY() {
+    if (yVelocity == 0) return;
+
+    y += yVelocity * (double) Global::dt;
+
+    double xLeft = x + hitbox.x;
+    double xRight = xLeft + hitbox.w;
+    double x0 = -1, y0;
+    int direction;
+    if (yVelocity > 0) {
+        y0 = y + hitbox.y + hitbox.h;
+        direction = KEY_Z;
+    }
+    if (yVelocity < 0) {
+        y0 = y + hitbox.y;
+        direction = KEY_S;
+    }
+
+    if (Global::currentWorld->getPixel(xLeft, y0) != BLOCK_NULL) {
+        x0 = xLeft;
+    } else if (Global::currentWorld->getPixel(xRight, y0) != BLOCK_NULL) {
+        x0 = xRight;
+    }
+    if (x0 != -1) {
+        double yGround = Global::currentWorld->getNearestWallFrom(
+                x0, y0, direction);
+        y -= (y0 - yGround);
+        if (yVelocity > 0) y--;
+        else y++;
+    }
+}
+
+void Entity::fallGravity() {
+    double xLeft = x + hitbox.x;
+    double xRight = xLeft + hitbox.w;
+    double yDown = y + hitbox.y + hitbox.h;
+    if (!(Global::currentWorld->getPixel(xLeft, yDown) != BLOCK_NULL ||
+          Global::currentWorld->getPixel(xRight, yDown) != BLOCK_NULL)) {
+        yVelocity += weight;
+        moveY();
+    } else {
+        yVelocity = 0;
+    }
+}
+
+void Entity::moveTo(double x_, double y_) {
     x = x_;
     y = y_;
 }
@@ -53,17 +127,17 @@ void Entity::moveTo(Entity *entity) {
     moveTo(entity->x, entity->y);
 }
 
-void Entity::moveTo(Entity *entity, float addX, float addY) {
+void Entity::moveTo(Entity *entity, double addX, double addY) {
     moveTo(entity);
     x += addX;
     y += addY;
 }
 
-void Entity::getRealSize(float *pW, float *pH) {
+void Entity::getRealSize(double *pW, double *pH) {
     if (pW != nullptr)
-        *pW = (float) frame.w * renderWMultiplier;
+        *pW = (double) frame.w * renderWMultiplier;
     if (pH != nullptr)
-        *pH = (float) frame.h * renderHMultiplier;
+        *pH = (double) frame.h * renderHMultiplier;
 }
 
 bool Entity::shouldTranslate() {
@@ -71,18 +145,20 @@ bool Entity::shouldTranslate() {
 }
 
 SDL_Rect Entity::getRenderRect() {
-    float dstX = x;
-    float dstY = y;
+    double dstX = x;
+    double dstY = y;
 
-    float realW, realH;
+    double realW, realH;
     getRealSize(&realW, &realH);
 
     if (shouldTranslate()) {
-        dstX -= (float) Global::currentWorld->getBackground()->getFrame().x;
+        SDL_Rect backgroundFrame = Global::currentWorld->getBackground()->getFrame();
+        dstX -= (double) backgroundFrame.x;
+        dstY -= (double) backgroundFrame.y;
     }
 
-    float xCoeff = (float) Global::windowWidth / SCREEN_BASE_WIDTH;
-    float yCoeff = (float) Global::windowHeight / SCREEN_BASE_HEIGHT;
+    double xCoeff = (double) Global::windowWidth / SCREEN_BASE_WIDTH;
+    double yCoeff = (double) Global::windowHeight / SCREEN_BASE_HEIGHT;
 
     SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
                     (int) (realW * xCoeff), (int) (realH * yCoeff)};
@@ -90,8 +166,8 @@ SDL_Rect Entity::getRenderRect() {
 }
 
 bool Entity::collides(Entity *entity, SDL_Rect addRect) const {
-    float x1 = x + hitbox.x + addRect.x;
-    float y1 = y + hitbox.y + addRect.y;
+    double x1 = x + hitbox.x + addRect.x;
+    double y1 = y + hitbox.y + addRect.y;
     int maxX1 = x1 + hitbox.w + addRect.w;
     int maxY1 = y1 + hitbox.h + addRect.h;
     int x2 = entity->x + entity->hitbox.x;

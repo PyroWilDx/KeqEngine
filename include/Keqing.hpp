@@ -60,8 +60,6 @@ public:
 
     SDL_Rect getRenderRect() override;
 
-    void move() override;
-
     void updateDirection();
 
     void NAtk();

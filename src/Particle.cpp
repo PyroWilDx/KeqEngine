@@ -21,7 +21,7 @@ Particle::Particle()
     onRemove = nullptr;
 }
 
-Particle::Particle(int spriteCode, int frameLength, float wMultiplier, float hMultiplier)
+Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier)
         : Particle() {
     for (int i = 0; i < PARTICLE_ENUM_N; i++) {
         setSpriteAnimated(i, false);
@@ -152,7 +152,7 @@ void Particle::initParticle() {
     }
 }
 
-Particle *Particle::push(int spriteCode, int frameLength, float wMultiplier, float hMultiplier) {
+Particle *Particle::push(int spriteCode, int frameLength, double wMultiplier, double hMultiplier) {
     auto *particle = new Particle(spriteCode, frameLength, wMultiplier, hMultiplier);
     pushFast(particle);
     return particle;
@@ -196,8 +196,8 @@ void Particle::animateAll() {
             currParticle = activeParticles[spriteCode][i];
 
             if (currParticle->entity != nullptr) { // Translate Particle
-                float entityX = currParticle->entity->getX();
-                float entityY = currParticle->entity->getY();
+                double entityX = currParticle->entity->getX();
+                double entityY = currParticle->entity->getY();
                 currParticle->x += entityX - currParticle->entityLastX;
                 currParticle->y += entityY - currParticle->entityLastY;
                 currParticle->entityLastX = entityX;
@@ -211,8 +211,8 @@ void Particle::animateAll() {
             if (currParticle->fadeParams.baseAlpha != -1) {
                 Uint8 alpha;
                 SDL_GetTextureAlphaMod(currParticle->texture, &alpha);
-                alpha -= (int) ((float) Global::dt * currParticle->fadeParams.speed *
-                                ((float) currParticle->fadeParams.baseAlpha / 255.0f));
+                alpha -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
+                                ((double) currParticle->fadeParams.baseAlpha / 255.0f));
                 if (alpha < 20) {
                     remove(spriteCode, i);
                     continue;
@@ -270,7 +270,7 @@ void Particle::setEntity(Entity *newEntity) {
     entityLastY = entity->getY();
 }
 
-void Particle::getRealSize(float *pW, float *pH) {
+void Particle::getRealSize(double *pW, double *pH) {
     Entity::getRealSize(pW, pH);
     if (entity != nullptr) {
         if (pW != nullptr)
@@ -284,27 +284,27 @@ bool Particle::shouldTranslate() {
     return (code < PARTICLE_HUD_START);
 }
 
-void Particle::getToEntityCenterXY(Entity *centerEntity, float *pX, float *pY) {
-    float realW, realH;
+void Particle::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
+    double realW, realH;
     this->getRealSize(&realW, &realH);
 
-    float vX = centerEntity->getX();
-    float vY = centerEntity->getY();
-    float addX, addY, addW, addH;
-    SDL_Rect collisionRect = centerEntity->getCollisionRect();
+    double vX = centerEntity->getX();
+    double vY = centerEntity->getY();
+    double addX, addY, addW, addH;
+    SDL_Rect collisionRect = centerEntity->getHitbox();
     if (collisionRect.w != 0 && collisionRect.h != 0) {
-        addX = (float) centerEntity->getCollisionRect().x;
-        addY = (float) centerEntity->getCollisionRect().y;
-        addW = (float) centerEntity->getCollisionRect().w;
-        addH = (float) centerEntity->getCollisionRect().h;
+        addX = (double) centerEntity->getHitbox().x;
+        addY = (double) centerEntity->getHitbox().y;
+        addW = (double) centerEntity->getHitbox().w;
+        addH = (double) centerEntity->getHitbox().h;
     } else {
         addX = 0;
         addY = 0;
         centerEntity->getRealSize(&addW, &addH);
     }
 
-    *pX = vX + addX + (addW / 2.0f - (float) realW / 2.0f);
-    *pY = vY + addY + (addH / 2.0f - (float) realH / 2.0f);
+    *pX = vX + addX + (addW / 2.0f - (double) realW / 2.0f);
+    *pY = vY + addY + (addH / 2.0f - (double) realH / 2.0f);
 }
 
 void Particle::moveToEntityCenter(Entity *centerEntity) {
@@ -316,7 +316,7 @@ bool Particle::isFinished() {
     return (!spriteArray[code].sAnimated);
 }
 
-void Particle::fadeAway(float speed) {
+void Particle::fadeAway(double speed) {
     Uint8 alpha;
     SDL_GetTextureAlphaMod(texture, &alpha);
     fadeParams.baseAlpha = alpha;

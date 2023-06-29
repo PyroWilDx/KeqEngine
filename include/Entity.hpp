@@ -12,23 +12,27 @@ class WindowRenderer;
 class Entity {
 
 public:
-    Entity(float x, float y);
+    Entity(double x, double y);
 
-    Entity(float x, float y, int w, int h, SDL_Texture *texture);
+    Entity(double x, double y, int w, int h, SDL_Texture *texture);
 
     virtual ~Entity();
 
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
-    virtual void move();
+    void moveX();
 
-    void moveTo(float x_, float y_);
+    void moveY();
+
+    virtual void fallGravity();
+
+    void moveTo(double x_, double y_);
 
     void moveTo(Entity *entity);
 
-    void moveTo(Entity *entity, float addX, float addY);
+    void moveTo(Entity *entity, double addX, double addY);
 
-    virtual void getRealSize(float *pW, float *pH);
+    virtual void getRealSize(double *pW, double *pH);
 
     virtual bool shouldTranslate();
 
@@ -40,12 +44,12 @@ public:
 
     inline void getHitbox(SDL_Rect collisionRect_) { hitbox = collisionRect_; }
 
-    inline void setRenderWHMultiplier(float wMultiplier, float hMultiplier) {
+    inline void setRenderWHMultiplier(double wMultiplier, double hMultiplier) {
         renderWMultiplier = wMultiplier;
         renderHMultiplier = hMultiplier;
     }
 
-    inline void addRenderWHMultiplier(float addW, float addH, float maxW, float maxH) {
+    inline void addRenderWHMultiplier(double addW, double addH, double maxW, double maxH) {
         renderWMultiplier += addW;
         if (renderWMultiplier > maxW) renderWMultiplier = maxW;
         renderHMultiplier += addH;
@@ -54,32 +58,33 @@ public:
 
     inline void setRotation(double rotation_) { rotation = rotation_; }
 
-    [[nodiscard]] inline float getX() const { return x; }
+    [[nodiscard]] inline double getX() const { return x; }
 
-    [[nodiscard]] inline float getY() const { return y; }
+    [[nodiscard]] inline double getY() const { return y; }
 
     [[nodiscard]] inline bool isFacingEast() const { return facingEast; }
 
     [[nodiscard]] inline SDL_Rect getFrame() const { return frame; }
 
-    [[nodiscard]] inline SDL_Rect getCollisionRect() const { return hitbox; }
+    [[nodiscard]] inline SDL_Rect getHitbox() const { return hitbox; }
 
     [[nodiscard]] inline SDL_Texture *getTexture() const { return texture; }
 
-    [[nodiscard]] inline float getRenderWMultiplier() const { return renderWMultiplier; }
+    [[nodiscard]] inline double getRenderWMultiplier() const { return renderWMultiplier; }
 
-    [[nodiscard]] inline float getRenderHMultiplier() const { return renderHMultiplier; }
+    [[nodiscard]] inline double getRenderHMultiplier() const { return renderHMultiplier; }
 
     [[nodiscard]] inline double getRotation() const { return rotation; }
 
 protected:
-    float x, y;
+    double x, y;
     bool facingEast;
-    float xVelocity, yVelocity;
+    double xVelocity, yVelocity;
+    double weight;
     SDL_Rect frame;
     SDL_Rect hitbox;
     SDL_Texture *texture;
-    float renderWMultiplier, renderHMultiplier;
+    double renderWMultiplier, renderHMultiplier;
     double rotation;
 
 private:

@@ -13,6 +13,7 @@
 #include "WindowRenderer.hpp"
 #include "Entity.hpp"
 #include "Global.hpp"
+#include "Block.hpp"
 
 WindowRenderer *WindowRenderer::instance = nullptr;
 
@@ -49,6 +50,7 @@ void WindowRenderer::render(Entity *entity) {
     SDL_Rect src = entity->getFrame();
 
     if (src.x < 0 || src.y < 0) return;
+    if (src.w <= 0 || src.h <= 0) return;
 
     SDL_Rect dst = entity->getRenderRect();
 
@@ -69,13 +71,97 @@ void WindowRenderer::render(Entity *entity) {
                          rotation, nullptr, renderFlip);
     }
 
-//    SDL_Rect collRect = entity->getCollisionRect();
-//    collRect.x += (int) x;
-//    collRect.y += (int) y;
-//    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-//    SDL_RenderDrawRect(renderer, &dst);
-//    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-//    SDL_RenderDrawRect(renderer, &collRect);
+    SDL_Rect hitbox = entity->getHitbox();
+    hitbox.x += dst.x;
+    hitbox.y += dst.y;
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(renderer, &dst);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderDrawRect(renderer, &hitbox);
+}
+
+void WindowRenderer::render(Block *block) {
+    SDL_Rect src = block->getFrame();
+
+    if (src.x < 0 || src.y < 0) return;
+    if (src.w <= 0 || src.h <= 0) return;
+
+    SDL_Rect dst = block->getRenderRect();
+    SDL_Rect backgroundFrame = Global::currentWorld->getBackground()->getFrame();
+    dst.x -= backgroundFrame.x;
+    dst.y -= backgroundFrame.y;
+
+    bool facingEast = block->isFacingEast();
+    double rotation = block->getRotation();
+
+    SDL_RendererFlip renderFlip = SDL_FLIP_NONE;
+    if (!facingEast) {
+        rotation = -rotation;
+        renderFlip = SDL_FLIP_HORIZONTAL;
+    }
+
+    int baseX = dst.x;
+    int baseY = dst.y;
+    double xCoeff = ((double) block->getRenderW() / (double) block->getFrame().w);
+    double yCoeff = ((double) block->getRenderH() / (double) block->getFrame().h);
+    for (int i = 0; i < (int) xCoeff; i++) {
+        for (int j = 0; j < (int) yCoeff; j++) {
+            SDL_RenderCopyEx(renderer, block->getTexture(),
+                             &src, &dst,
+                             rotation, nullptr, renderFlip);
+            dst.y += dst.h;
+        }
+        dst.y = baseY;
+        dst.x += dst.w;
+    }
+
+    int lastX = baseX + dst.w * (int) xCoeff;
+    int lastY = baseY + dst.h * (int) yCoeff;
+    int srcBaseW = src.w;
+    int srcBaseH = src.h;
+    int dstBaseW = dst.w;
+    int dstBaseH = dst.h;
+    double xLeftover = xCoeff - (int) xCoeff;
+    double yLeftover = yCoeff - (int) yCoeff;
+    if (xLeftover > 0.001) {
+        src.w = roundToInt((double) srcBaseW * xLeftover);
+        src.h = srcBaseH;
+        dst.x = lastX;
+        dst.y = baseY;
+        dst.w = src.w;
+        dst.h = dstBaseH;
+        for (int j = 0; j < (int) yCoeff; j++) {
+            SDL_RenderCopyEx(renderer, block->getTexture(),
+                             &src, &dst,
+                             rotation, nullptr, renderFlip);
+            dst.y += dst.h;
+        }
+    }
+    if (yLeftover > 0.001) {
+        src.w = srcBaseW;
+        src.h = roundToInt((double) srcBaseH * yLeftover);
+        dst.x = baseX;
+        dst.y = lastY;
+        dst.w = dstBaseW;
+        dst.h = src.h;
+        for (int i = 0; i < (int) xCoeff; i++) {
+            SDL_RenderCopyEx(renderer, block->getTexture(),
+                             &src, &dst,
+                             rotation, nullptr, renderFlip);
+            dst.x += dst.w;
+        }
+    }
+    if (xLeftover > 0.001 && yLeftover > 0.001) {
+        src.w = roundToInt((double) srcBaseW * xLeftover);
+        src.h = roundToInt((double) srcBaseH * yLeftover);
+        dst.x = lastX;
+        dst.y = lastY;
+        dst.w = src.w;
+        dst.h = src.h;
+        SDL_RenderCopyEx(renderer, block->getTexture(),
+                         &src, &dst,
+                         rotation, nullptr, renderFlip);
+    }
 }
 
 void WindowRenderer::display() {

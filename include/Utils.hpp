@@ -14,10 +14,8 @@
 #define SCREEN_BASE_WIDTH 1280
 #define SCREEN_BASE_HEIGHT 720
 
-#define BACKGROUND_WIDTH 3000
-
 #define MIN_X (-40)
-#define MAX_X (BACKGROUND_WIDTH - 20)
+#define MAX_X (3000 - 20)
 
 #define HUD_SB_CIRCLE_M 4.0f
 #define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74f)
@@ -42,6 +40,8 @@ enum {
 
 void myAssert(bool expr, const char *msg, const char *err);
 
+int roundToInt(double value);
+
 int getTime();
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard);
@@ -53,9 +53,9 @@ bool isKeyPressedRecent(int key);
 bool isMouseLeftRecent();
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
-              float *pH, float *pS, float *pV);
+              double *pH, double *pS, double *pV);
 
-void HSVtoRGB(float h, float s, float v,
+void HSVtoRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB);
 
 #endif

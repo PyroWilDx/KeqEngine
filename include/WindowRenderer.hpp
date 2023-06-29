@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 
 class Entity;
+class Block;
 
 class WindowRenderer {
 
@@ -19,6 +20,8 @@ public:
     SDL_Texture *loadTexture(const char *imgPath);
 
     void render(Entity *entity);
+
+    void render(Block *block);
 
     void display();
 

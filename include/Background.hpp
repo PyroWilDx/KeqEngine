@@ -11,7 +11,8 @@
 class Background : public Entity {
 
 public:
-    Background(int w, int h, int totalImgWidth, SDL_Texture *texture);
+    Background(int screenW, int screenH, int totalWidth, int totalHeight,
+               SDL_Texture *texture);
 
     ~Background() override = default;
 
@@ -19,8 +20,15 @@ public:
 
     void translate(Entity *entity);
 
+    [[nodiscard]] int getTotalPixels() const;
+
+    [[nodiscard]] inline int getTotalW() const { return totalWidth; }
+
+    [[nodiscard]] inline int getTotalH() const { return totalHeight; }
+
 private:
-    int totalImgWidth;
+    int totalWidth;
+    int totalHeight;
 
 };
 
