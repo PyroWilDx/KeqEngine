@@ -46,10 +46,6 @@ void AnimatedEntity::setSpriteAnimated(int spriteCode, bool animated) {
     }
 }
 
-void AnimatedEntity::setSpriteCurrentFrame(int spriteCode, int spriteCurrentFrame) {
-    spriteArray[spriteCode].sCurrentFrame = spriteCurrentFrame;
-}
-
 void AnimatedEntity::setSpriteFrameLengthFromTo(int spriteCode, int spriteFrameLength,
                                                 int startFrame, int endFrame) {
     Sprite *sprite = &spriteArray[spriteCode];
@@ -82,10 +78,12 @@ void AnimatedEntity::setSpriteNext(int spriteCode, int nextSpriteCode) {
 }
 
 bool AnimatedEntity::isFrameAt(int spriteCode, int frameIndex) {
+    if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
     return (spriteArray[spriteCode].sCurrentFrame == frameIndex);
 }
 
 bool AnimatedEntity::isNewestFrame(int spriteCode, int frameIndex) {
+    if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
     return (isFrameAt(spriteCode, frameIndex) &&
             spriteArray[spriteCode].sTimer == 0);
 }
@@ -102,6 +100,7 @@ bool AnimatedEntity::isFrameBetween(int spriteCode, int startFrame, int endFrame
 }
 
 bool AnimatedEntity::willFrameFinish(int spriteCode, int frameIndex) {
+    if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
     Sprite *sprite = &spriteArray[spriteCode];
     return (isFrameAt(spriteCode, frameIndex) &&
             sprite->sTimer + Global::dt > sprite->sFrameLengths[frameIndex]);

@@ -4,6 +4,7 @@
 
 #include "Block.hpp"
 #include "WindowRenderer.hpp"
+#include "Global.hpp"
 
 Block::Block(int blockCode, double x, double y, int renderW, int renderH)
         : Entity(x, y) {
@@ -35,11 +36,19 @@ void Block::setBlockInfo() {
 
 void Block::getRealSize(double *pW, double *pH) {
     if (pW != nullptr)
-        *pW = renderW;
+        *pW = frame.w;
     if (pH != nullptr)
-        *pH = renderH;
+        *pH = frame.h;
 }
 
-SDL_Rect Block::getRenderRect() {
-    return {getX(), getY(), frame.w, frame.h};
-}
+//SDL_Rect Block::getRenderRect() {
+//    double xCoeff = (double) Global::windowWidth / SCREEN_BASE_WIDTH;
+//    double yCoeff = (double) Global::windowHeight / SCREEN_BASE_HEIGHT;
+//    SDL_Rect backgroundFrame = Global::currentWorld->getBackground()->getFrame();
+//    dst.x -= backgroundFrame.x;
+//    dst.y -= backgroundFrame.y;
+//    return {roundToInt(getX() * xCoeff),
+//            roundToInt(getY() * yCoeff),
+//            roundToInt(frame.w * xCoeff),
+//            roundToInt(frame.h * yCoeff)};
+//}

@@ -17,8 +17,8 @@
 #define MIN_X (-40)
 #define MAX_X (3000 - 20)
 
-#define HUD_SB_CIRCLE_M 4.0f
-#define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74f)
+#define HUD_SB_CIRCLE_M 4.0
+#define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74)
 
 #define RGB_FULL 255, 255, 255
 #define RGBA_FULL 255, 255, 255, 255

@@ -62,9 +62,9 @@ bool isMouseLeftRecent() {
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
               double *pH, double *pS, double *pV) {
-    double fr = (double) r / 255.0f;
-    double fg = (double) g / 255.0f;
-    double fb = (double) b / 255.0f;
+    double fr = (double) r / 255.0;
+    double fg = (double) g / 255.0;
+    double fb = (double) b / 255.0;
 
     double maxVal = std::max(fr, std::max(fg, fb));
     double minVal = std::min(fr, std::min(fg, fb));
@@ -73,28 +73,28 @@ void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
 
     v = maxVal;
 
-    if (maxVal != 0.0f) {
+    if (maxVal != 0) {
         s = (maxVal - minVal) / maxVal;
     } else {
-        s = 0.0f;
+        s = 0;
     }
 
-    if (s == 0.0f)
-        h = 0.0f;
+    if (s == 0)
+        h = 0;
     else {
         double delta = maxVal - minVal;
 
         if (maxVal == fr) {
             h = (fg - fb) / delta;
         } else if (maxVal == fg) {
-            h = 2.0f + (fb - fr) / delta;
+            h = 2.0 + (fb - fr) / delta;
         } else {
-            h = 4.0f + (fr - fg) / delta;
+            h = 4.0 + (fr - fg) / delta;
         }
 
-        h *= 60.0f;
+        h *= 60.0;
 
-        if (h < 0.0f) h += 360.0f;
+        if (h < 0) h += 360.0;
     }
 
     *pH = h;
@@ -104,50 +104,50 @@ void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
 
 void HSVtoRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB) {
-    if (s == 0.0f) {
-        *pR = *pG = *pB = (Uint8) (v * 255.0f);
+    if (s == 0) {
+        *pR = *pG = *pB = (Uint8) (v * 255.0);
         return;
     }
 
     int r, g, b;
 
-    h /= 60.0f;
+    h /= 60.0;
     int i = (int) h;
     double f = h - (double) i;
-    double p = v * (1.0f - s);
-    double q = v * (1.0f - s * f);
-    double t = v * (1.0f - s * (1.0f - f));
+    double p = v * (1.0 - s);
+    double q = v * (1.0 - s * f);
+    double t = v * (1.0 - s * (1.0 - f));
 
     switch (i) {
         case 0:
-            r = (Uint8) (v * 255.0f);
-            g = (Uint8) (t * 255.0f);
-            b = (Uint8) (p * 255.0f);
+            r = (Uint8) (v * 255.0);
+            g = (Uint8) (t * 255.0);
+            b = (Uint8) (p * 255.0);
             break;
         case 1:
-            r = (Uint8) (q * 255.0f);
-            g = (Uint8) (v * 255.0f);
-            b = (Uint8) (p * 255.0f);
+            r = (Uint8) (q * 255.0);
+            g = (Uint8) (v * 255.0);
+            b = (Uint8) (p * 255.0);
             break;
         case 2:
-            r = (Uint8) (p * 255.0f);
-            g = (Uint8) (v * 255.0f);
-            b = (Uint8) (t * 255.0f);
+            r = (Uint8) (p * 255.0);
+            g = (Uint8) (v * 255.0);
+            b = (Uint8) (t * 255.0);
             break;
         case 3:
-            r = (Uint8) (p * 255.0f);
-            g = (Uint8) (q * 255.0f);
-            b = (Uint8) (v * 255.0f);
+            r = (Uint8) (p * 255.0);
+            g = (Uint8) (q * 255.0);
+            b = (Uint8) (v * 255.0);
             break;
         case 4:
-            r = (Uint8) (t * 255.0f);
-            g = (Uint8) (p * 255.0f);
-            b = (Uint8) (v * 255.0f);
+            r = (Uint8) (t * 255.0);
+            g = (Uint8) (p * 255.0);
+            b = (Uint8) (v * 255.0);
             break;
         default:
-            r = (Uint8) (v * 255.0f);
-            g = (Uint8) (p * 255.0f);
-            b = (Uint8) (q * 255.0f);
+            r = (Uint8) (v * 255.0);
+            g = (Uint8) (p * 255.0);
+            b = (Uint8) (q * 255.0);
             break;
     }
 

@@ -87,9 +87,6 @@ void WindowRenderer::render(Block *block) {
     if (src.w <= 0 || src.h <= 0) return;
 
     SDL_Rect dst = block->getRenderRect();
-    SDL_Rect backgroundFrame = Global::currentWorld->getBackground()->getFrame();
-    dst.x -= backgroundFrame.x;
-    dst.y -= backgroundFrame.y;
 
     bool facingEast = block->isFacingEast();
     double rotation = block->getRotation();
@@ -115,20 +112,28 @@ void WindowRenderer::render(Block *block) {
         dst.x += dst.w;
     }
 
+    double xLeftover = xCoeff - (int) xCoeff;
+    double yLeftover = yCoeff - (int) yCoeff;
+    double epsilon = 0.0001;
+
+    if (xLeftover <= epsilon && yLeftover <= epsilon) return;
+
     int lastX = baseX + dst.w * (int) xCoeff;
     int lastY = baseY + dst.h * (int) yCoeff;
     int srcBaseW = src.w;
     int srcBaseH = src.h;
     int dstBaseW = dst.w;
     int dstBaseH = dst.h;
-    double xLeftover = xCoeff - (int) xCoeff;
-    double yLeftover = yCoeff - (int) yCoeff;
-    if (xLeftover > 0.001) {
-        src.w = roundToInt((double) srcBaseW * xLeftover);
+    double srcLeftoverW = (double) srcBaseW * xLeftover;
+    double srcLeftoverH = (double) srcBaseH * yLeftover;
+    double wLeftoverCoeff = (double) dstBaseW / (double) srcBaseW;
+    double hLeftoverCoeff = (double) dstBaseH / (double) srcBaseH;
+    if (xLeftover > epsilon) {
+        src.w = roundToInt(srcLeftoverW);
         src.h = srcBaseH;
         dst.x = lastX;
         dst.y = baseY;
-        dst.w = src.w;
+        dst.w = roundToInt(srcLeftoverW * wLeftoverCoeff);
         dst.h = dstBaseH;
         for (int j = 0; j < (int) yCoeff; j++) {
             SDL_RenderCopyEx(renderer, block->getTexture(),
@@ -137,13 +142,13 @@ void WindowRenderer::render(Block *block) {
             dst.y += dst.h;
         }
     }
-    if (yLeftover > 0.001) {
+    if (yLeftover > epsilon) {
         src.w = srcBaseW;
-        src.h = roundToInt((double) srcBaseH * yLeftover);
+        src.h = roundToInt(srcLeftoverH);
         dst.x = baseX;
         dst.y = lastY;
         dst.w = dstBaseW;
-        dst.h = src.h;
+        dst.h = roundToInt(srcLeftoverH * hLeftoverCoeff);
         for (int i = 0; i < (int) xCoeff; i++) {
             SDL_RenderCopyEx(renderer, block->getTexture(),
                              &src, &dst,
@@ -151,13 +156,13 @@ void WindowRenderer::render(Block *block) {
             dst.x += dst.w;
         }
     }
-    if (xLeftover > 0.001 && yLeftover > 0.001) {
-        src.w = roundToInt((double) srcBaseW * xLeftover);
-        src.h = roundToInt((double) srcBaseH * yLeftover);
+    if (xLeftover > epsilon && yLeftover > epsilon) {
+        src.w = roundToInt(srcLeftoverW);
+        src.h = roundToInt(srcLeftoverH);
         dst.x = lastX;
         dst.y = lastY;
-        dst.w = src.w;
-        dst.h = src.h;
+        dst.w = roundToInt(srcLeftoverW * wLeftoverCoeff);
+        dst.h = roundToInt(srcLeftoverH * hLeftoverCoeff);
         SDL_RenderCopyEx(renderer, block->getTexture(),
                          &src, &dst,
                          rotation, nullptr, renderFlip);
