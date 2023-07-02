@@ -16,9 +16,9 @@ bool Background::shouldTranslate() {
 }
 
 void Background::translate(Entity *entity) {
-    double xMid = entity->getX() + (double) entity->getHitbox().w / 2.0f;
+    double xMid = entity->getX() + (double) entity->getHitbox().w / 2.0;
 
-    frame.x = (int) (xMid - SCREEN_BASE_WIDTH / 2.0f);
+    frame.x = (int) (xMid - SCREEN_BASE_WIDTH / 2.0);
 
     if (frame.x < 0) {
         frame.x = 0;

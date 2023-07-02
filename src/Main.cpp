@@ -35,16 +35,22 @@ int main(int argc, char *argv[]) {
                                      3000, 720,
                                      "res/gfx/Background.png");
     Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   100, 720-200, 176, 500);
+                                   300, 720-200, 176, 500);
+    Global::currentWorld->addBlock(BLOCK_DIRT,
+                                   751, 720-200, 176, 200);
+    Global::currentWorld->addBlock(BLOCK_DIRT,
+                                   1000, 720-20, 176, 20);
+    Global::currentWorld->addBlock(BLOCK_DIRT,
+                                   1120, 720-120, 176, 40);
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, 360);
 //    kq->colorTexture(4, 1, 4); // TODO
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
-    kq->getHitbox({(int) (0.0f * KQ_WIDTH_MULTIPLIER),
-                   (int) (12.0f * KQ_HEIGHT_MULTIPLIER),
-                   (int) (60.0f * KQ_WIDTH_MULTIPLIER),
-                   (int) (84.0f * KQ_HEIGHT_MULTIPLIER)});
+    kq->getHitbox({(int) (0.0 * KQ_WIDTH_MULTIPLIER),
+                   (int) (12.0 * KQ_HEIGHT_MULTIPLIER),
+                   (int) (60.0 * KQ_WIDTH_MULTIPLIER),
+                   (int) (84.0 * KQ_HEIGHT_MULTIPLIER)});
 
     const int hudSBCircleY = SCREEN_BASE_HEIGHT - 130;
     const int hudSBCircleBGAlpha = 128;
@@ -206,6 +212,7 @@ int main(int argc, char *argv[]) {
 
         // Keqing
         // TODO Hitlag
+        kq->fallGravity();
         if (kq->canDoAction(KQ_WALK)) kq->updateDirection();
         if (kq->isNAtking()) kq->NAtk();
         if (kq->isDashing()) kq->dash();
@@ -217,13 +224,14 @@ int main(int argc, char *argv[]) {
         if (kq->isAirDashing()) kq->airDash();
         if (kq->isDamaged()) kq->damage();
         if (kq->isMoving()) kq->moveX(); // TODO
-        kq->fallGravity(); // TODO
+        kq->moveY();
 
         kqX = kq->getX();
         double xDiff = kqX - kqLastX;
         if (xDiff != 0) Global::currentWorld->getBackground()->translate(kq);
         kqLastX = kqX;
 
+        kq->airAnimate();
         kq->animate();
 
         // FPS Text

@@ -37,8 +37,6 @@ public:
 
     void setSpriteAnimated(int spriteCode, bool animated);
 
-    void setSpriteCurrentFrame(int spriteCode, int spriteCurrentFrame);
-
     void setSpriteFrameLengthFromTo(int spriteCode, int spriteFrameLength,
                                     int startFrame = -2, int endFrame = -2);
 

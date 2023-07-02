@@ -85,7 +85,7 @@ public:
 
     bool isFinished();
 
-    void fadeAway(double speed = 1.0f);
+    void fadeAway(double speed = 1);
 
     Particle *copy();
 

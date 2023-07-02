@@ -23,7 +23,7 @@ public:
 
     void getRealSize(double *pW, double *pH) override;
 
-    SDL_Rect getRenderRect() override;
+//    SDL_Rect getRenderRect() override;
 
     inline int getX() { return roundToInt(x); }
 

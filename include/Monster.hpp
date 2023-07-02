@@ -22,8 +22,8 @@ enum {
 
 const int MONSTER_WIDTH = 200;
 const int MONSTER_HEIGHT = 200;
-const double MONSTER_WALK_SPEED = 0.2f;
-const double MONSTER_RUN_SPEED = 0.6f;
+const double MONSTER_WALK_SPEED = 0.2;
+const double MONSTER_RUN_SPEED = 0.6;
 
 class Monster : public AnimatedEntity {
 

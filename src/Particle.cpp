@@ -13,7 +13,7 @@ Particle **Particle::activeParticles[PARTICLE_ENUM_N];
 int Particle::activeCounts[PARTICLE_ENUM_N];
 
 Particle::Particle()
-        : AnimatedEntity(PARTICLE_ENUM_N), fadeParams({-1, 1.0f}) {
+        : AnimatedEntity(PARTICLE_ENUM_N), fadeParams({-1, 1}) {
     code = 0;
     entity = nullptr;
     entityLastX = 0;
@@ -117,7 +117,7 @@ void Particle::initParticle() {
 
     baseParticle->initSprite(PARTICLE_HUD_BURST_CIRCLE_BG, "res/gfx/hud/SkillBurstCircleBG.png",
                              32, 32, 2, 0);
-    baseParticle->setSpriteCurrentFrame(PARTICLE_HUD_BURST_CIRCLE_BG, 1);
+    baseParticle->goToFrame(PARTICLE_HUD_BURST_CIRCLE_BG, 1);
     particleMaxActives[PARTICLE_HUD_BURST_CIRCLE_BG] = 1;
 
     baseParticle->initSprite(PARTICLE_HUD_SKILL_CIRCLE, "res/gfx/hud/SkillBurstCircle.png",
@@ -126,7 +126,7 @@ void Particle::initParticle() {
 
     baseParticle->initSprite(PARTICLE_HUD_BURST_CIRCLE, "res/gfx/hud/SkillBurstCircle.png",
                              32, 32, 2, 0);
-    baseParticle->setSpriteCurrentFrame(PARTICLE_HUD_BURST_CIRCLE, 1);
+    baseParticle->goToFrame(PARTICLE_HUD_BURST_CIRCLE, 1);
     particleMaxActives[PARTICLE_HUD_BURST_CIRCLE] = 1;
 
     baseParticle->initSprite(PARTICLE_HUD_SKILL_ICON_1, "res/gfx/hud/SkillIcon1.png",
@@ -212,7 +212,7 @@ void Particle::animateAll() {
                 Uint8 alpha;
                 SDL_GetTextureAlphaMod(currParticle->texture, &alpha);
                 alpha -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
-                                ((double) currParticle->fadeParams.baseAlpha / 255.0f));
+                                ((double) currParticle->fadeParams.baseAlpha / 255.0));
                 if (alpha < 20) {
                     remove(spriteCode, i);
                     continue;
@@ -247,6 +247,7 @@ bool Particle::isActive(int spriteCode, int i) {
 
 void Particle::cleanUp() {
     for (int i = 0; i < PARTICLE_ENUM_N; i++) {
+        if (particleMaxActives[i] == 0) continue;
         SDL_DestroyTexture(baseParticle->spriteArray[i].sTexture);
     }
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
@@ -303,8 +304,8 @@ void Particle::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY)
         centerEntity->getRealSize(&addW, &addH);
     }
 
-    *pX = vX + addX + (addW / 2.0f - (double) realW / 2.0f);
-    *pY = vY + addY + (addH / 2.0f - (double) realH / 2.0f);
+    *pX = vX + addX + (addW / 2.0 - (double) realW / 2.0);
+    *pY = vY + addY + (addH / 2.0 - (double) realH / 2.0);
 }
 
 void Particle::moveToEntityCenter(Entity *centerEntity) {

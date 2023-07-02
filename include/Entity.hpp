@@ -64,6 +64,8 @@ public:
 
     [[nodiscard]] inline bool isFacingEast() const { return facingEast; }
 
+    [[nodiscard]] inline double getYVelocity() const { return yVelocity; }
+
     [[nodiscard]] inline SDL_Rect getFrame() const { return frame; }
 
     [[nodiscard]] inline SDL_Rect getHitbox() const { return hitbox; }
@@ -80,7 +82,7 @@ protected:
     double x, y;
     bool facingEast;
     double xVelocity, yVelocity;
-    double weight;
+    double gravityWeight;
     SDL_Rect frame;
     SDL_Rect hitbox;
     SDL_Texture *texture;

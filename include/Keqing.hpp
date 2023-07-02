@@ -27,16 +27,16 @@ enum {
     KQ_ENUM_N
 };
 
-#define KQ_WIDTH_MULTIPLIER 1.0f
-#define KQ_HEIGHT_MULTIPLIER 1.0f
+#define KQ_WIDTH_MULTIPLIER 1.0
+#define KQ_HEIGHT_MULTIPLIER 1.0
 
-#define KQ_WALK_VELOCITY 0.4f
-#define KQ_DASH_VELOCITY 0.8f
+#define KQ_WALK_VELOCITY 0.4
+#define KQ_DASH_VELOCITY 0.8
 
-#define KQ_BASE_JUMP_VELOCITY 1.0f
-#define KQ_AIR_DASH_VELOCITY 0.8f
+#define KQ_JUMP_BASE_VELOCITY 1.0
+#define KQ_AIR_DASH_VELOCITY 0.8
 
-#define KQ_KNOCKBACK_VELOCITY 0.6f
+#define KQ_KNOCKBACK_VELOCITY 0.6
 
 #define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
 #define KQ_BURST_NUMBER_OF_SLASH 8
@@ -71,6 +71,8 @@ public:
     void ESkillSlash();
 
     void RBurst();
+
+    void airAnimate();
 
     void jump();
 

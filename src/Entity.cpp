@@ -11,11 +11,12 @@ Entity::Entity(double x, double y) :
     this->y = y;
     xVelocity = 0;
     yVelocity = 0;
+    gravityWeight = 0;
     facingEast = true;
     texture = nullptr;
-    renderWMultiplier = 1.0f;
-    renderHMultiplier = 1.0f;
-    rotation = 0.0f;
+    renderWMultiplier = 1;
+    renderHMultiplier = 1;
+    rotation = 0;
 }
 
 Entity::Entity(double x, double y, int w, int h, SDL_Texture *texture)
@@ -46,30 +47,29 @@ void Entity::moveX() {
 
     x += addX;
 
-    double yUp = y + hitbox.y;
-    double yDown = yUp + hitbox.h;
-    double x0, y0 = -1;
-    int direction;
+    double yUp = y + hitbox.y + 1;
+    double yDown = y + hitbox.y + hitbox.h - 1;
+
     if (addX > 0) {
-        x0 = x + hitbox.x + hitbox.w;
-        direction = KEY_Q;
-    }
-    if (addX < 0) {
-        x0 = x + hitbox.x;
-        direction = KEY_D;
+        double xRight = x + hitbox.x + hitbox.w;
+        double xWall = Global::currentWorld->getNearestWallFrom(
+                xRight, yUp, KEY_Q);
+        xWall = min(xWall, Global::currentWorld->getNearestWallFrom(
+                xRight, yDown, KEY_Q));
+        if (xRight > xWall) {
+            x -= (xRight - xWall);
+        }
     }
 
-    if (Global::currentWorld->getPixel(x0, yUp) != BLOCK_NULL) {
-        y0 = yUp;
-    } else if (Global::currentWorld->getPixel(x0, yDown) != BLOCK_NULL) {
-        y0 = yDown;
-    }
-    if (y0 != -1) {
+    if (addX < 0) {
+        double xLeft = x + hitbox.x;
         double xWall = Global::currentWorld->getNearestWallFrom(
-                x0, y0, direction);
-        x -= (x0 - xWall);
-        if (addX > 0) x--;
-        else x++;
+                xLeft, yUp, KEY_D);
+        xWall = max(xWall, Global::currentWorld->getNearestWallFrom(
+                xLeft, yDown, KEY_D));
+        if (xLeft < xWall) {
+            x -= (xLeft - xWall);
+        }
     }
 }
 
@@ -78,43 +78,43 @@ void Entity::moveY() {
 
     y += yVelocity * (double) Global::dt;
 
-    double xLeft = x + hitbox.x;
-    double xRight = xLeft + hitbox.w;
-    double x0 = -1, y0;
-    int direction;
+    double xLeft = x + hitbox.x + 1;
+    double xRight = x + hitbox.x + hitbox.w - 1;
+
     if (yVelocity > 0) {
-        y0 = y + hitbox.y + hitbox.h;
-        direction = KEY_Z;
-    }
-    if (yVelocity < 0) {
-        y0 = y + hitbox.y;
-        direction = KEY_S;
+        double yDown = y + hitbox.y + hitbox.h;
+        double yWall = Global::currentWorld->getNearestWallFrom(
+                xLeft, yDown, KEY_Z);
+        yWall = min(yWall, Global::currentWorld->getNearestWallFrom(
+                xRight, yDown, KEY_Z));
+        if (yDown > yWall) {
+            y -= (yDown - yWall);
+        }
     }
 
-    if (Global::currentWorld->getPixel(xLeft, y0) != BLOCK_NULL) {
-        x0 = xLeft;
-    } else if (Global::currentWorld->getPixel(xRight, y0) != BLOCK_NULL) {
-        x0 = xRight;
-    }
-    if (x0 != -1) {
-        double yGround = Global::currentWorld->getNearestWallFrom(
-                x0, y0, direction);
-        y -= (y0 - yGround);
-        if (yVelocity > 0) y--;
-        else y++;
+    if (yVelocity < 0) {
+        double yUp = y + hitbox.y;
+        double yWall = Global::currentWorld->getNearestWallFrom(
+                xLeft, yUp, KEY_S);
+        yWall = max(yWall, Global::currentWorld->getNearestWallFrom(
+                xRight, yUp, KEY_S));
+        if (yUp < yWall) {
+            y -= (yUp - yWall);
+        }
     }
 }
 
 void Entity::fallGravity() {
-    double xLeft = x + hitbox.x;
-    double xRight = xLeft + hitbox.w;
+    double xLeft = x + hitbox.x + 1;
+    double xRight = x + hitbox.x + hitbox.w - 1;
     double yDown = y + hitbox.y + hitbox.h;
     if (!(Global::currentWorld->getPixel(xLeft, yDown) != BLOCK_NULL ||
           Global::currentWorld->getPixel(xRight, yDown) != BLOCK_NULL)) {
-        yVelocity += weight;
-        moveY();
+        yVelocity += gravityWeight * (double) Global::dt;
     } else {
-        yVelocity = 0;
+        if (yVelocity > 0) {
+            yVelocity = 0;
+        }
     }
 }
 
@@ -160,8 +160,8 @@ SDL_Rect Entity::getRenderRect() {
     double xCoeff = (double) Global::windowWidth / SCREEN_BASE_WIDTH;
     double yCoeff = (double) Global::windowHeight / SCREEN_BASE_HEIGHT;
 
-    SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
-                    (int) (realW * xCoeff), (int) (realH * yCoeff)};
+    SDL_Rect dst = {roundToInt(dstX * xCoeff), roundToInt(dstY * yCoeff),
+                    roundToInt(realW * xCoeff), roundToInt(realH * yCoeff)};
     return dst;
 }
 
