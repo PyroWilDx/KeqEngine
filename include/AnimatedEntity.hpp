@@ -35,7 +35,7 @@ public:
                     int spriteFrameW, int spriteFrameH, int spriteFrameN,
                     int spriteFrameLength = 0);
 
-    void setSpriteAnimated(int spriteCode, bool animated);
+    virtual void setSpriteAnimated(int spriteCode, bool animated);
 
     void setSpriteFrameLengthFromTo(int spriteCode, int spriteFrameLength,
                                     int startFrame = -2, int endFrame = -2);
@@ -43,6 +43,8 @@ public:
     void setSpriteFrameLengths(int spriteCode, const int *spriteFrameLengths);
 
     void setSpriteNext(int spriteCode, int nextSpriteCode);
+
+    bool isSpriteAnimated(int spriteCode);
 
     bool isFrameAt(int spriteCode, int frameIndex);
 
@@ -67,6 +69,7 @@ public:
 protected:
     int spriteArrayLength;
     Sprite *spriteArray;
+    int currSpriteCode;
 
 private:
 

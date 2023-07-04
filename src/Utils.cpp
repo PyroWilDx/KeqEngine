@@ -7,6 +7,8 @@
 #include "Utils.hpp"
 #include "Global.hpp"
 
+#define KEY_PRESS_SHORT_DURATION 100
+
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {
         SDL_Log("Message : %s\n", msg);
@@ -16,7 +18,7 @@ void myAssert(bool expr, const char *msg, const char *err) {
 }
 
 int roundToInt(double x) {
-    return ((int) round(x));
+    return ((int) (x));
 }
 
 int getTime() {
@@ -52,12 +54,32 @@ int updatePressedKeys(int SDLKey, bool isKeyPressed, bool isKeyboard) {
     return key;
 }
 
+bool isKeyPressed(int key) {
+    return (Global::pressedKeys[key]);
+}
+
 bool isKeyPressedRecent(int key) {
-    return ((Global::currentTime - Global::pressedTime[key]) < 100);
+    return ((Global::currentTime - Global::pressedTime[key]) < KEY_PRESS_SHORT_DURATION);
+}
+
+bool isKeyPressedShort(int key) {
+    return (isKeyPressed(key) && isKeyPressedRecent(key));
+}
+
+bool isKeyPressedLong(int key) {
+    return (isKeyPressed(key) && !isKeyPressedRecent(key));
 }
 
 bool isMouseLeftRecent() {
-    return isKeyPressedRecent(KEY_MOUSE_LEFT);
+    return (isKeyPressedRecent(KEY_MOUSE_LEFT));
+}
+
+bool isMouseLeftShort() {
+    return (isKeyPressedShort(KEY_MOUSE_LEFT));
+}
+
+bool isMouseLeftLong() {
+    return (isKeyPressedLong(KEY_MOUSE_LEFT));
 }
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,

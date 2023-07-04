@@ -10,6 +10,7 @@ AnimatedEntity::AnimatedEntity(int spriteArrayLength)
     this->spriteArrayLength = spriteArrayLength;
     spriteArray = new Sprite[spriteArrayLength];
     spriteArray[spriteArrayLength].sAnimated = false;
+    currSpriteCode = 0;
 }
 
 AnimatedEntity::~AnimatedEntity() {
@@ -75,6 +76,10 @@ void AnimatedEntity::setSpriteFrameLengths(int spriteCode, const int *spriteFram
 
 void AnimatedEntity::setSpriteNext(int spriteCode, int nextSpriteCode) {
     spriteArray[spriteCode].sNext = &spriteArray[nextSpriteCode];
+}
+
+bool AnimatedEntity::isSpriteAnimated(int spriteCode) {
+    return (spriteArray[spriteCode].sAnimated);
 }
 
 bool AnimatedEntity::isFrameAt(int spriteCode, int frameIndex) {
@@ -166,5 +171,6 @@ void AnimatedEntity::animate() {
         frame.x = lastAnimatedSprite->sCurrentFrame * lastAnimatedSprite->sFrameW;
         frame.w = lastAnimatedSprite->sFrameW;
         frame.h = lastAnimatedSprite->sFrameH;
+        currSpriteCode = lastAnimatedSprite->sCode;
     }
 }
