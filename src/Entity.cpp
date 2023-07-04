@@ -38,37 +38,73 @@ void Entity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_SetTextureAlphaMod(texture, a);
 }
 
-void Entity::moveX() {
-    if (xVelocity == 0) return;
+void Entity::checkXCollision(bool checkRight) {
+    double yHitbox = y + hitbox.y;
+    const double yToCheck[5] = {
+            yHitbox + 1, // 0%
+            yHitbox + (double) hitbox.h / 4.0, // 25%
+            yHitbox + (double) hitbox.h / 2.0, // 50%
+            yHitbox + (double) hitbox.h / (4.0 / 3.0), // 75%
+            yHitbox + (double) hitbox.h - 1 // 100%
+    };
 
-    double addX = xVelocity * (double) Global::dt;
-
-    if (!facingEast) addX = -addX;
-
-    x += addX;
-
-    double yUp = y + hitbox.y + 1;
-    double yDown = y + hitbox.y + hitbox.h - 1;
-
-    if (addX > 0) {
+    if (checkRight) {
         double xRight = x + hitbox.x + hitbox.w;
-        double xWall = Global::currentWorld->getNearestWallFrom(
-                xRight, yUp, KEY_Q);
-        xWall = min(xWall, Global::currentWorld->getNearestWallFrom(
-                xRight, yDown, KEY_Q));
+        double xWall = INT32_MAX;
+        for (double vY: yToCheck) {
+            xWall = min(xWall, Global::currentWorld->getNearestWallFrom(
+                    xRight, vY, KEY_Q));
+        }
         if (xRight > xWall) {
-            x -= (xRight - xWall);
+            x = xWall - hitbox.w - hitbox.x;
+        }
+
+    } else {
+        double xLeft = x + hitbox.x;
+        double xWall = -INT32_MAX;
+        for (double vY: yToCheck) {
+            xWall = max(xWall, Global::currentWorld->getNearestWallFrom(
+                    xLeft, vY, KEY_D));
+        }
+        if (xLeft < xWall) {
+            x = xWall - hitbox.x;
         }
     }
+}
 
-    if (addX < 0) {
-        double xLeft = x + hitbox.x;
-        double xWall = Global::currentWorld->getNearestWallFrom(
-                xLeft, yUp, KEY_D);
-        xWall = max(xWall, Global::currentWorld->getNearestWallFrom(
-                xLeft, yDown, KEY_D));
-        if (xLeft < xWall) {
-            x -= (xLeft - xWall);
+void Entity::moveX() {
+    double addX = xVelocity * (double) Global::dt;
+
+    if (addX == 0) return;
+
+    if (!facingEast) addX = -addX;
+    x += addX;
+
+    checkXCollision((addX > 0));
+}
+
+void Entity::checkYCollision(bool checkDown) {
+    double xLeft = x + hitbox.x + 1;
+    double xRight = x + hitbox.x + hitbox.w - 1;
+
+    if (checkDown) {
+        double yDown = y + hitbox.y + hitbox.h;
+        double yWall = Global::currentWorld->getNearestWallFrom(
+                xLeft, yDown, KEY_Z);
+        yWall = min(yWall, Global::currentWorld->getNearestWallFrom(
+                xRight, yDown, KEY_Z));
+        if (yDown > yWall) {
+            y = yWall - hitbox.h - hitbox.y;
+        }
+
+    } else {
+        double yUp = y + hitbox.y;
+        double yWall = Global::currentWorld->getNearestWallFrom(
+                xLeft, yUp, KEY_S);
+        yWall = max(yWall, Global::currentWorld->getNearestWallFrom(
+                xRight, yUp, KEY_S));
+        if (yUp < yWall) {
+            y = yWall - hitbox.y;
         }
     }
 }
@@ -78,38 +114,19 @@ void Entity::moveY() {
 
     y += yVelocity * (double) Global::dt;
 
-    double xLeft = x + hitbox.x + 1;
-    double xRight = x + hitbox.x + hitbox.w - 1;
-
-    if (yVelocity > 0) {
-        double yDown = y + hitbox.y + hitbox.h;
-        double yWall = Global::currentWorld->getNearestWallFrom(
-                xLeft, yDown, KEY_Z);
-        yWall = min(yWall, Global::currentWorld->getNearestWallFrom(
-                xRight, yDown, KEY_Z));
-        if (yDown > yWall) {
-            y -= (yDown - yWall);
-        }
-    }
-
-    if (yVelocity < 0) {
-        double yUp = y + hitbox.y;
-        double yWall = Global::currentWorld->getNearestWallFrom(
-                xLeft, yUp, KEY_S);
-        yWall = max(yWall, Global::currentWorld->getNearestWallFrom(
-                xRight, yUp, KEY_S));
-        if (yUp < yWall) {
-            y -= (yUp - yWall);
-        }
-    }
+    checkYCollision((yVelocity > 0));
 }
 
-void Entity::fallGravity() {
+bool Entity::isInAir() {
     double xLeft = x + hitbox.x + 1;
     double xRight = x + hitbox.x + hitbox.w - 1;
     double yDown = y + hitbox.y + hitbox.h;
-    if (!(Global::currentWorld->getPixel(xLeft, yDown) != BLOCK_NULL ||
-          Global::currentWorld->getPixel(xRight, yDown) != BLOCK_NULL)) {
+    return (Global::currentWorld->getPixel(xLeft, yDown) == BLOCK_NULL &&
+            Global::currentWorld->getPixel(xRight, yDown) == BLOCK_NULL);
+}
+
+void Entity::fallGravity() {
+    if (isInAir()) {
         yVelocity += gravityWeight * (double) Global::dt;
     } else {
         if (yVelocity > 0) {
@@ -145,8 +162,8 @@ bool Entity::shouldTranslate() {
 }
 
 SDL_Rect Entity::getRenderRect() {
-    double dstX = x;
-    double dstY = y;
+    double dstX = getX();
+    double dstY = getY();
 
     double realW, realH;
     getRealSize(&realW, &realH);
@@ -160,8 +177,8 @@ SDL_Rect Entity::getRenderRect() {
     double xCoeff = (double) Global::windowWidth / SCREEN_BASE_WIDTH;
     double yCoeff = (double) Global::windowHeight / SCREEN_BASE_HEIGHT;
 
-    SDL_Rect dst = {roundToInt(dstX * xCoeff), roundToInt(dstY * yCoeff),
-                    roundToInt(realW * xCoeff), roundToInt(realH * yCoeff)};
+    SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
+                    (int) (realW * xCoeff), (int) (realH * yCoeff)};
     return dst;
 }
 

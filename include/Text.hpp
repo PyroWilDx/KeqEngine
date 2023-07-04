@@ -15,9 +15,12 @@ public:
     ~Text() override = default;
 
     void loadTextTexture(double x, double y, const char *text, const SDL_Color *color,
-                         const char *fontPath, int fontSize, SDL_Renderer *renderer);
+                         const char *fontPath, int fontSize, bool translateBackground);
+
+    inline bool shouldTranslate() override { return translateBackground; }
 
 private:
+    bool translateBackground;
 
 };
 

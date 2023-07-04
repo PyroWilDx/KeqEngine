@@ -90,7 +90,8 @@ public:
     Particle *copy();
 
     inline void shiftXY(double xShift, double yShift) {
-        x += xShift;
+        if (entity != nullptr && !entity->isFacingEast()) x -= xShift;
+        else x += xShift;
         y += yShift;
     }
 

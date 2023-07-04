@@ -35,13 +35,15 @@ int main(int argc, char *argv[]) {
                                      3000, 720,
                                      "res/gfx/Background.png");
     Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   300, 720-200, 176, 500);
+                                   300, 720 - 200, 176, 500);
     Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   751, 720-200, 176, 200);
+                                   751, 720 - 200, 176, 200);
     Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   1000, 720-20, 176, 20);
+                                   1000, 720 - 20, 176, 20);
     Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   1120, 720-120, 176, 40);
+                                   1120, 720 - 120, 176, 40);
+    Global::currentWorld->addBlock(BLOCK_DIRT,
+                                   1200, 720 - 180, 176, 40);
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, 360);
@@ -112,7 +114,6 @@ int main(int argc, char *argv[]) {
         Global::currentTime = currentTime;
 
         // Events
-        int spriteCode = -1;
         int SDLKey;
         int key;
         while (SDL_PollEvent(&event)) {
@@ -174,6 +175,7 @@ int main(int argc, char *argv[]) {
             else runFrame = false;
         }
 
+        int spriteCode = -1;
         if (key != -1) { // There is a SDLKey event
             if (Global::pressedKeys[KEY_R]) {
                 spriteCode = KQ_BURST;
@@ -186,7 +188,7 @@ int main(int argc, char *argv[]) {
                 spriteCode = KQ_JUMP_START;
 
             } else if (Global::pressedKeys[KEY_SHIFT]) {
-                if (!kq->isJumping()) {
+                if (!kq->isInAir()) {
                     if (Global::pressedKeys[KEY_Q] || Global::pressedKeys[KEY_D]) {
                         spriteCode = KQ_DASH;
                     }
@@ -195,14 +197,20 @@ int main(int argc, char *argv[]) {
                 }
 
             } else if (Global::pressedKeys[KEY_MOUSE_LEFT]) {
-                if (!kq->isJumping()) spriteCode = KQ_NATK;
+                if (!kq->isInAir()) spriteCode = KQ_NATK;
                 else spriteCode = KQ_AIR_NATK;
+
+            } else if (Global::pressedKeys[KEY_Z] ||
+                       Global::pressedKeys[KEY_Q] ||
+                       Global::pressedKeys[KEY_S] ||
+                       Global::pressedKeys[KEY_D]) {
+                spriteCode = KQ_WALK;
+
             }
         }
 
         if (spriteCode != -1) {
             if (kq->canDoAction(spriteCode)) {
-                kq->preAction(spriteCode);
                 kq->setSpriteAnimated(spriteCode, true);
             }
         }
@@ -213,17 +221,14 @@ int main(int argc, char *argv[]) {
         // Keqing
         // TODO Hitlag
         kq->fallGravity();
-        if (kq->canDoAction(KQ_WALK)) kq->updateDirection();
-        if (kq->isNAtking()) kq->NAtk();
-        if (kq->isDashing()) kq->dash();
-        if (kq->isESkilling()) kq->ESkill();
-        if (kq->isESkillSlashing()) kq->ESkillSlash();
-        if (kq->isRBursting()) kq->RBurst();
-        if (kq->isJumping()) kq->jump();
-        if (kq->isAirNAtking()) kq->airNAtk();
-        if (kq->isAirDashing()) kq->airDash();
-        if (kq->isDamaged()) kq->damage();
-        if (kq->isMoving()) kq->moveX(); // TODO
+
+        if (kq->shouldUpdateDirection()) kq->updateDirection();
+
+        if (kq->canWalk()) kq->walk();
+
+        kq->update();
+
+        kq->moveX();
         kq->moveY();
 
         kqX = kq->getX();
@@ -239,7 +244,7 @@ int main(int argc, char *argv[]) {
             char text[16];
             sprintf(text, "FPS : %d", accumulatedFrames);
             FPSText.loadTextTexture(0, 0, text, &FPSTextColor,
-                                    fontPath, FPSFontSize, gWindow->getRenderer());
+                                    fontPath, FPSFontSize, false);
             accumulatedFPSTime = 0;
             accumulatedFrames = 0;
         }

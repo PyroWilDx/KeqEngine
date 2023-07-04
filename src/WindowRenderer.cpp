@@ -72,8 +72,8 @@ void WindowRenderer::render(Entity *entity) {
     }
 
     SDL_Rect hitbox = entity->getHitbox();
-    hitbox.x += dst.x;
-    hitbox.y += dst.y;
+    hitbox.x += entity->getX() - Global::currentWorld->getBackground()->getFrame().x;
+    hitbox.y += entity->getY() - Global::currentWorld->getBackground()->getFrame().y;
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderDrawRect(renderer, &dst);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);

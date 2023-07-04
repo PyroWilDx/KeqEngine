@@ -20,9 +20,15 @@ public:
 
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
-    void moveX();
+    void checkXCollision(bool checkRight);
+
+    virtual void moveX();
+
+    void checkYCollision(bool checkDown);
 
     void moveY();
+
+    bool isInAir();
 
     virtual void fallGravity();
 
