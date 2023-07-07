@@ -19,6 +19,7 @@ public:
 
     static bool pressedKeys[KEY_ENUM_N];
     static int pressedTime[KEY_ENUM_N];
+    static int lastPressedTime[KEY_ENUM_N];
 
     static int currentTime;
     static int dt;

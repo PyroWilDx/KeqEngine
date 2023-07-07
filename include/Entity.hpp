@@ -28,7 +28,7 @@ public:
 
     void moveY();
 
-    bool isInAir();
+    bool isInAir() const;
 
     virtual void fallGravity();
 
@@ -44,6 +44,10 @@ public:
 
     virtual SDL_Rect getRenderRect();
 
+    void addRenderWHMultiplier(double addW, double addH, double maxW, double maxH);
+
+    void addRenderWHMultiplierR(double addW, double addH, double maxW, double maxH);
+
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
     void clearTexture();
@@ -53,13 +57,6 @@ public:
     inline void setRenderWHMultiplier(double wMultiplier, double hMultiplier) {
         renderWMultiplier = wMultiplier;
         renderHMultiplier = hMultiplier;
-    }
-
-    inline void addRenderWHMultiplier(double addW, double addH, double maxW, double maxH) {
-        renderWMultiplier += addW;
-        if (renderWMultiplier > maxW) renderWMultiplier = maxW;
-        renderHMultiplier += addH;
-        if (renderHMultiplier > maxH) renderHMultiplier = maxH;
     }
 
     inline void setRotation(double rotation_) { rotation = rotation_; }

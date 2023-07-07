@@ -45,6 +45,10 @@ void Particle::initParticle() {
                              80, 32, 6, 60);
     particleMaxActives[PARTICLE_KQ_NATK_4] = 1;
 
+    baseParticle->initSprite(PARTICLE_KQ_CATK, "res/gfx/particle/KQCAtk.png",
+                             160, 96, 6, 60);
+    particleMaxActives[PARTICLE_KQ_CATK] = 1;
+
     baseParticle->initSprite(PARTICLE_KQ_AIR_NATK, "res/gfx/particle/KQAirNAtk.png",
                              32, 80, 4, 0);
     baseParticle->setSpriteNext(PARTICLE_KQ_AIR_NATK, PARTICLE_KQ_AIR_NATK);
@@ -206,7 +210,7 @@ void Particle::animateAll() {
                 currParticle->facingEast = currParticle->entity->isFacingEast();
             }
 
-            currParticle->animate();
+            currParticle->animateSprite();
 
             if (currParticle->fadeParams.baseAlpha != -1) {
                 Uint8 alpha;
@@ -311,6 +315,16 @@ void Particle::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY)
 void Particle::moveToEntityCenter(Entity *centerEntity) {
     facingEast = centerEntity->isFacingEast();
     getToEntityCenterXY(centerEntity, &x, &y);
+}
+
+void Particle::xyShift(double xShift, double yShift) {
+    if ((entity != nullptr && !entity->isFacingEast()) ||
+        !isFacingEast()) {
+        x -= xShift;
+    } else {
+        x += xShift;
+    }
+    y += yShift;
 }
 
 bool Particle::isFinished() {

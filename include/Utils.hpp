@@ -46,7 +46,7 @@ int getTime();
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard);
 
-int updatePressedKeys(int SDLKey, bool isKeyPressed, bool isKeyboard);
+int updatePressedKeys(int SDLKey, bool keyPressed, bool isKeyboard);
 
 bool isKeyPressed(int key);
 
@@ -61,6 +61,8 @@ bool isMouseLeftRecent();
 bool isMouseLeftShort();
 
 bool isMouseLeftLong();
+
+bool isKeyDoublePressed(int key);
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
               double *pH, double *pS, double *pV);

@@ -54,6 +54,8 @@ public:
 
     bool willFrameFinish(int spriteCode, int frameIndex);
 
+    bool isCurrentSprite(int spriteCode);
+
     void goToFrame(int spriteCode, int frameIndex);
 
     void goToNextFrame(int spriteCode);
@@ -62,9 +64,11 @@ public:
 
     void resetSprite(int spriteCode);
 
-    void delay(int spriteCode, int ms);
+    void delaySprite(int spriteCode, int ms);
 
-    void animate();
+    void animateSprite();
+
+//    virtual void updateSprite(int spriteCode) = 0;
 
 protected:
     int spriteArrayLength;
