@@ -16,14 +16,14 @@ bool Background::shouldTranslate() {
 }
 
 void Background::translate(Entity *entity) {
-    double xMid = entity->getX() + (double) entity->getHitbox().w / 2.0;
+    double xMid = entity->getX() + (double) entity->getHitBox().w / 2.0;
 
-    frame.x = (int) (xMid - SCREEN_BASE_WIDTH / 2.0);
+    imgFrame.x = (int) (xMid - SCREEN_BASE_WIDTH / 2.0);
 
-    if (frame.x < 0) {
-        frame.x = 0;
-    } else if (frame.x > totalWidth - SCREEN_BASE_WIDTH) {
-        frame.x = totalWidth - SCREEN_BASE_WIDTH;
+    if (imgFrame.x < 0) {
+        imgFrame.x = 0;
+    } else if (imgFrame.x > totalWidth - SCREEN_BASE_WIDTH) {
+        imgFrame.x = totalWidth - SCREEN_BASE_WIDTH;
     }
 
 }

@@ -48,18 +48,20 @@ public:
 
     void addRenderWHMultiplierR(double addW, double addH, double maxW, double maxH);
 
+    virtual void renderSelf(SDL_Renderer *gRenderer);
+
     bool collides(Entity *entity, SDL_Rect addRect) const;
 
     void clearTexture();
 
-    inline void getHitbox(SDL_Rect collisionRect_) { hitbox = collisionRect_; }
+    inline void getHitbox(SDL_Rect collisionRect_) { hitBox = collisionRect_; }
 
     inline void setRenderWHMultiplier(double wMultiplier, double hMultiplier) {
         renderWMultiplier = wMultiplier;
         renderHMultiplier = hMultiplier;
     }
 
-    inline void setRotation(double rotation_) { rotation = rotation_; }
+    inline void setRotation(double rotation_) { degRotation = rotation_; }
 
     [[nodiscard]] inline double getX() const { return x; }
 
@@ -69,28 +71,28 @@ public:
 
     [[nodiscard]] inline double getYVelocity() const { return yVelocity; }
 
-    [[nodiscard]] inline SDL_Rect getFrame() const { return frame; }
+    [[nodiscard]] inline SDL_Rect getFrame() const { return imgFrame; }
 
-    [[nodiscard]] inline SDL_Rect getHitbox() const { return hitbox; }
+    [[nodiscard]] inline SDL_Rect getHitBox() const { return hitBox; }
 
-    [[nodiscard]] inline SDL_Texture *getTexture() const { return texture; }
+    [[nodiscard]] inline SDL_Texture *getTexture() const { return imgTexture; }
 
     [[nodiscard]] inline double getRenderWMultiplier() const { return renderWMultiplier; }
 
     [[nodiscard]] inline double getRenderHMultiplier() const { return renderHMultiplier; }
 
-    [[nodiscard]] inline double getRotation() const { return rotation; }
+    [[nodiscard]] inline double getRotation() const { return degRotation; }
 
 protected:
     double x, y;
     bool facingEast;
     double xVelocity, yVelocity;
     double gravityWeight;
-    SDL_Rect frame;
-    SDL_Rect hitbox;
-    SDL_Texture *texture;
+    SDL_Rect imgFrame;
+    SDL_Rect hitBox;
+    SDL_Texture *imgTexture;
     double renderWMultiplier, renderHMultiplier;
-    double rotation;
+    double degRotation;
 
 private:
 

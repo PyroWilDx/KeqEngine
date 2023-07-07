@@ -116,7 +116,7 @@ Keqing::Keqing()
                96, 96, 6, 60);
     setXYShift(KQ_HURT, 0, 0, 0);
 
-    texture = spriteArray[KQ_IDLE].sTexture;
+//    imgTexture = spriteArray[KQ_IDLE].sTexture;
 }
 
 
@@ -158,7 +158,7 @@ void Keqing::colorTexture(int r, int g, int b) {
 
     SDL_Texture *mTexture = SDL_CreateTextureFromSurface(
             WindowRenderer::getInstance()->getRenderer(), img);
-    spriteArray[KQ_IDLE].sTexture = mTexture;
+    getSprite(KQ_IDLE)->sTexture = mTexture;
 }
 
 
@@ -173,8 +173,8 @@ void Keqing::moveX() {
         if (!facingEast) addX = -addX;
 
         double vX = x + addX;
-        if (addX >= 0) vX += hitbox.x + hitbox.w;
-        double yDown = y + hitbox.y + hitbox.h;
+        if (addX >= 0) vX += hitBox.x + hitBox.w;
+        double yDown = y + hitBox.y + hitBox.h;
         if (Global::currentWorld->getPixel(vX, yDown) != BLOCK_NULL) {
             Entity::moveX();
         }
@@ -185,10 +185,10 @@ void Keqing::moveX() {
 SDL_Rect Keqing::getRenderRect() {
     SDL_Rect dst = Entity::getRenderRect();
 
-    if (facingEast) dst.x += spriteXShifts[currSpriteCode];
-    else dst.x += spriteXRShifts[currSpriteCode];
+    if (facingEast) dst.x += spriteXShifts[getCurrentSpriteCode()];
+    else dst.x += spriteXRShifts[getCurrentSpriteCode()];
 
-    dst.y += spriteYShifts[currSpriteCode];
+    dst.y += spriteYShifts[getCurrentSpriteCode()];
 
     return dst;
 }

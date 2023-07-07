@@ -87,8 +87,8 @@ double World::getNearestWallFrom(double x, double y, int direction) {
 
 void World::renderSelf() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
-    gWindow->render(background);
+    gWindow->renderEntity(background);
     for (Block *block: blocks) {
-        gWindow->render(block);
+        gWindow->renderEntity(block);
     }
 }

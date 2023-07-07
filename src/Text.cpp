@@ -18,9 +18,9 @@ void Text::loadTextTexture(double x, double y, const char *text, const SDL_Color
     this->y = y;
     TTF_Font *font = TTF_OpenFont(fontPath, fontSize);
     SDL_Surface *textSurface = TTF_RenderText_Solid(font, text, *color);
-    texture = SDL_CreateTextureFromSurface(WindowRenderer::getInstance()->getRenderer(), textSurface);
-    frame.w = textSurface->w;
-    frame.h = textSurface->h;
+    imgTexture = SDL_CreateTextureFromSurface(WindowRenderer::getInstance()->getRenderer(), textSurface);
+    imgFrame.w = textSurface->w;
+    imgFrame.h = textSurface->h;
     this->translateBackground = translateBackground_;
 
     TTF_CloseFont(font);

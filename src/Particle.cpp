@@ -27,17 +27,17 @@ Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double h
         setSpriteAnimated(i, false);
     }
     code = spriteCode;
-    Sprite *baseSprite = &baseParticle->spriteArray[code];
-    spriteArray[code] = *baseSprite;
-    Sprite *sprite = &spriteArray[code];
+    Sprite *baseSprite = baseParticle->getSprite(code);
+    Sprite *currentSprite = getSprite(code);
+    *currentSprite = *baseSprite;
     setSpriteAnimated(code, true);
     setSpriteFrameLengthFromTo(spriteCode, frameLength);
     if (baseSprite->sNext != nullptr) { // If != nullptr, then repeat itself
-        sprite->sNext = sprite;
+        currentSprite->sNext = currentSprite;
     }
     renderWMultiplier = wMultiplier;
     renderHMultiplier = hMultiplier;
-    frame = {0, 0, sprite->sFrameW, sprite->sFrameH};
+    imgFrame = {0, 0, currentSprite->sFrameW, currentSprite->sFrameH};
 }
 
 void Particle::initParticle() {
@@ -214,7 +214,7 @@ void Particle::animateAll() {
 
             if (currParticle->fadeParams.baseAlpha != -1) {
                 Uint8 alpha;
-                SDL_GetTextureAlphaMod(currParticle->texture, &alpha);
+                SDL_GetTextureAlphaMod(currParticle->imgTexture, &alpha);
                 alpha -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
                                 ((double) currParticle->fadeParams.baseAlpha / 255.0));
                 if (alpha < 20) {
@@ -236,7 +236,7 @@ void Particle::renderAll() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
-            gWindow->render(activeParticles[spriteCode][i]);
+            gWindow->renderEntity(activeParticles[spriteCode][i]);
         }
     }
 }
@@ -252,7 +252,7 @@ bool Particle::isActive(int spriteCode, int i) {
 void Particle::cleanUp() {
     for (int i = 0; i < PARTICLE_ENUM_N; i++) {
         if (particleMaxActives[i] == 0) continue;
-        SDL_DestroyTexture(baseParticle->spriteArray[i].sTexture);
+        SDL_DestroyTexture(baseParticle->getSprite(i)->sTexture);
     }
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
@@ -262,7 +262,7 @@ void Particle::cleanUp() {
 }
 
 void Particle::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-    SDL_Texture *currTexture = spriteArray[code].sTexture;
+    SDL_Texture *currTexture = getSprite(code)->sTexture;
     SDL_SetTextureColorMod(currTexture, r, g, b);
     SDL_SetTextureAlphaMod(currTexture, a);
 }
@@ -296,12 +296,12 @@ void Particle::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY)
     double vX = centerEntity->getX();
     double vY = centerEntity->getY();
     double addX, addY, addW, addH;
-    SDL_Rect collisionRect = centerEntity->getHitbox();
+    SDL_Rect collisionRect = centerEntity->getHitBox();
     if (collisionRect.w != 0 && collisionRect.h != 0) {
-        addX = (double) centerEntity->getHitbox().x;
-        addY = (double) centerEntity->getHitbox().y;
-        addW = (double) centerEntity->getHitbox().w;
-        addH = (double) centerEntity->getHitbox().h;
+        addX = (double) centerEntity->getHitBox().x;
+        addY = (double) centerEntity->getHitBox().y;
+        addW = (double) centerEntity->getHitBox().w;
+        addH = (double) centerEntity->getHitBox().h;
     } else {
         addX = 0;
         addY = 0;
@@ -328,27 +328,27 @@ void Particle::xyShift(double xShift, double yShift) {
 }
 
 bool Particle::isFinished() {
-    return (!spriteArray[code].sAnimated);
+    return (!getSprite(code)->sAnimated);
 }
 
 void Particle::fadeAway(double speed) {
     Uint8 alpha;
-    SDL_GetTextureAlphaMod(texture, &alpha);
+    SDL_GetTextureAlphaMod(imgTexture, &alpha);
     fadeParams.baseAlpha = alpha;
     fadeParams.speed = speed;
 }
 
 Particle *Particle::copy() {
-    auto *newParticle = new Particle(this->code,
-                                     this->spriteArray[this->code].sFrameLengths[0],
+    auto *newParticle = new Particle(code,
+                                     getSprite(code)->sFrameLengths[0],
                                      renderWMultiplier,
                                      renderHMultiplier);
-    newParticle->x = this->x;
-    newParticle->y = this->y;
-    newParticle->frame = this->frame;
-    newParticle->rotation = this->rotation;
-    newParticle->entity = this->entity;
-    newParticle->facingEast = this->facingEast;
+    newParticle->x = x;
+    newParticle->y = y;
+    newParticle->imgFrame = imgFrame;
+    newParticle->degRotation = degRotation;
+    newParticle->entity = entity;
+    newParticle->facingEast = facingEast;
 
     return newParticle;
 }

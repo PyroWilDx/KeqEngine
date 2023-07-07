@@ -50,11 +50,10 @@ target_sources(main PRIVATE
         ${SRC_DIR}/Entity.cpp
         ${SRC_DIR}/AnimatedEntity.cpp
         ${SRC_DIR}/Keqing.cpp
-        # ${SRC_DIR}/Monster.cpp
         ${SRC_DIR}/Background.cpp
-        # ${SRC_DIR}/MonsterLinkedList.cpp
         ${SRC_DIR}/Particle.cpp
         ${SRC_DIR}/World.cpp
         ${SRC_DIR}/Block.cpp
-        ${SRC_DIR}/Global.cpp)
+        ${SRC_DIR}/Global.cpp
+        ${SRC_DIR}/Button.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})
