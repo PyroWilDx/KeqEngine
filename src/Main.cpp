@@ -175,44 +175,53 @@ int main(int argc, char *argv[]) {
             else runFrame = false;
         }
 
-        int spriteCode = -1;
+        int spriteCode = KQ_IDLE;
         if (key != -1) { // There is a SDLKey event
-            if (Global::pressedKeys[KEY_R]) {
+            if (isKeyPressed(KEY_R)) {
                 spriteCode = KQ_BURST;
 
-            } else if (Global::pressedKeys[KEY_E]) {
+            } else if (isKeyPressed(KEY_E)) {
                 if (!Keqing::isLightningStilettoExisting()) spriteCode = KQ_SKILL;
                 else spriteCode = KQ_SKILL_SLASH;
 
-            } else if (Global::pressedKeys[KEY_SPACE]) {
-                spriteCode = KQ_JUMP_START;
-
-            } else if (Global::pressedKeys[KEY_SHIFT]) {
+            } else if (isKeyPressed(KEY_SHIFT)) {
                 if (!kq->isInAir()) {
-                    if (Global::pressedKeys[KEY_Q] || Global::pressedKeys[KEY_D]) {
-                        spriteCode = KQ_DASH;
+                    if (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D)) {
+                        if (isKeyPressedShort(KEY_SHIFT)) {
+                            spriteCode = KQ_DASH;
+                        }
                     }
                 } else {
                     spriteCode = KQ_AIR_DASH;
                 }
 
-            } else if (Global::pressedKeys[KEY_MOUSE_LEFT]) {
-                if (!kq->isInAir()) spriteCode = KQ_NATK;
-                else spriteCode = KQ_AIR_NATK;
+            } else if (isKeyPressed(KEY_MOUSE_LEFT)) {
+                if (!kq->isInAir()) {
+                    spriteCode = KQ_NATK;
+                } else {
+                    if (isKeyPressed(KEY_S)) {
+                        spriteCode = KQ_AIR_NATK;
+                    }
+                }
 
-            } else if (Global::pressedKeys[KEY_Z] ||
-                       Global::pressedKeys[KEY_Q] ||
-                       Global::pressedKeys[KEY_S] ||
-                       Global::pressedKeys[KEY_D]) {
-                spriteCode = KQ_WALK;
+            } else if (isKeyPressed(KEY_SPACE)) {
+                if (!kq->isInAir()) {
+                    spriteCode = KQ_JUMP_START;
+                }
+
+            } else if (isKeyPressed(KEY_Q) ||
+                       isKeyPressed(KEY_D)) {
+                if (!isKeyPressed(KEY_MOUSE_RIGHT)) {
+                    spriteCode = KQ_WALK;
+                } else {
+                    spriteCode = KQ_RUN_START;
+                }
 
             }
         }
 
-        if (spriteCode != -1) {
-            if (kq->canDoAction(spriteCode)) {
-                kq->setSpriteAnimated(spriteCode, true);
-            }
+        if (kq->canDoAction(spriteCode)) {
+            kq->setSpriteAnimated(spriteCode, true);
         }
 
         // Particles
@@ -223,10 +232,9 @@ int main(int argc, char *argv[]) {
         kq->fallGravity();
 
         if (kq->shouldUpdateDirection()) kq->updateDirection();
+        if (kq->canMoveLR()) kq->moveLR();
 
-        if (kq->canWalk()) kq->walk();
-
-        kq->update();
+        kq->updateAction();
 
         kq->moveX();
         kq->moveY();
@@ -237,7 +245,7 @@ int main(int argc, char *argv[]) {
         kqLastX = kqX;
 
         kq->airAnimate();
-        kq->animate();
+        kq->animateSprite();
 
         // FPS Text
         if (accumulatedFPSTime > 1000) {

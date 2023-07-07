@@ -11,19 +11,23 @@
 
 enum {
     KQ_IDLE = 0,
+    KQ_RUN_END,
     KQ_JUMP_END,
     KQ_WALK,
-    KQ_TURN,
-    KQ_NATK, // NAtk = Normal Attack
+    KQ_WALK_TURN,
+    KQ_RUN_START,
+    KQ_RUN,
+    KQ_RUN_TURN,
+    KQ_JUMP_START,
+    KQ_JUMP,
+    KQ_NATK,
     KQ_CATK,
     KQ_DASH,
     KQ_SKILL,
     KQ_SKILL_SLASH,
     KQ_BURST,
-    KQ_JUMP_START,
-    KQ_JUMP,
-    KQ_AIR_DASH,
     KQ_AIR_NATK,
+    KQ_AIR_DASH,
     KQ_HURT,
     KQ_ENUM_N
 };
@@ -32,6 +36,7 @@ enum {
 #define KQ_HEIGHT_MULTIPLIER 1.0
 
 #define KQ_WALK_VELOCITY 0.4
+#define KQ_RUN_VELOCITY 0.6
 #define KQ_DASH_VELOCITY 0.8
 
 #define KQ_JUMP_BASE_VELOCITY 1.0
@@ -69,7 +74,19 @@ public:
 
     void updateDirection();
 
-    void walk();
+//    bool canWalk();
+
+    bool canMoveLR();
+
+    void moveLR();
+
+//    void walk();
+//
+//    void run();
+//
+//    void jumpMove();
+
+    void jump();
 
     void NAtk();
 
@@ -85,8 +102,6 @@ public:
 
     void airAnimate();
 
-    void jump();
-
     void airNAtk();
 
     void airDash();
@@ -99,16 +114,16 @@ public:
 
     void preAction(int spriteCode);
 
-    void update();
+    void updateAction();
 
-    inline bool canWalk() { return (canDoAction(KQ_WALK)); }
+//    void updateSprite(int spriteCode) override;
 
     static inline bool isLightningStilettoExisting() {
         return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0) != nullptr);
     }
 
     // TODO may need isInvincible
-    
+
     [[nodiscard]] inline int getHp() const { return hp; }
 
 private:

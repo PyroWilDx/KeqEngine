@@ -9,6 +9,7 @@
 
 enum {
     PARTICLE_KQ_NATK_4 = 0,
+    PARTICLE_KQ_CATK,
     PARTICLE_KQ_AIR_NATK,
     PARTICLE_KQ_AIR_NATK_GROUND,
     PARTICLE_KQ_SKILL_SPAWN,
@@ -83,21 +84,19 @@ public:
 
     void moveToEntityCenter(Entity *centerEntity);
 
+    void xyShift(double xShift, double yShift);
+
     bool isFinished();
 
     void fadeAway(double speed = 1);
 
     Particle *copy();
 
-    inline void shiftXY(double xShift, double yShift) {
-        if (entity != nullptr && !entity->isFacingEast()) x -= xShift;
-        else x += xShift;
-        y += yShift;
-    }
-
     inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
 
     [[nodiscard]] inline int getCode() const { return code; }
+
+//    inline void updateSprite(int spriteCode) override {};
 
 private:
     static Particle *baseParticle;

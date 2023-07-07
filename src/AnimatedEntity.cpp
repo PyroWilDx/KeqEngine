@@ -42,6 +42,9 @@ void AnimatedEntity::initSprite(int spriteCode, const char *imgPath,
 
 void AnimatedEntity::setSpriteAnimated(int spriteCode, bool animated) {
     spriteArray[spriteCode].sAnimated = animated;
+    if (animated) {
+        currSpriteCode = spriteCode;
+    }
     if (!animated) {
         resetSprite(spriteCode);
     }
@@ -111,6 +114,10 @@ bool AnimatedEntity::willFrameFinish(int spriteCode, int frameIndex) {
             sprite->sTimer + Global::dt > sprite->sFrameLengths[frameIndex]);
 }
 
+bool AnimatedEntity::isCurrentSprite(int spriteCode) {
+    return (spriteCode == currSpriteCode);
+}
+
 void AnimatedEntity::goToFrame(int spriteCode, int frameIndex) {
     if (frameIndex == -1) {
         frameIndex = spriteArray[spriteCode].sFrameN - 1;
@@ -137,11 +144,38 @@ void AnimatedEntity::resetSprite(int spriteCode) {
     sprite->sTimer = 0;
 }
 
-void AnimatedEntity::delay(int spriteCode, int ms) {
+void AnimatedEntity::delaySprite(int spriteCode, int ms) {
     spriteArray[spriteCode].sTimer -= ms;
 }
 
-void AnimatedEntity::animate() {
+//void AnimatedEntity::animateSprite() {
+//    Sprite *sprite = &spriteArray[currSpriteCode];
+//    if (sprite->sAnimated) {
+//        sprite->sTimer += Global::dt;
+//
+//        if (sprite->sTimer < 0) return;
+//
+//        int currentFrame = sprite->sCurrentFrame;
+//        if (sprite->sTimer > sprite->sFrameLengths[currentFrame]) {
+//            sprite->sCurrentFrame++;
+//            if (sprite->sCurrentFrame == sprite->sFrameN) {
+//                setSpriteAnimated(sprite->sCode, false);
+//                if (sprite->sNext != nullptr) {
+//                    setSpriteAnimated(sprite->sNext->sCode, true);
+//                }
+//                return;
+//            }
+//            sprite->sTimer = 0;
+//        }
+//    }
+//    texture = sprite->sTexture;
+//    frame.x = sprite->sCurrentFrame * sprite->sFrameW;
+//    frame.w = sprite->sFrameW;
+//    frame.h = sprite->sFrameH;
+//}
+
+
+void AnimatedEntity::animateSprite() {
     Sprite *lastAnimatedSprite = nullptr;
     for (int i = 0; i < spriteArrayLength; i++) {
         Sprite *sprite = &spriteArray[i];

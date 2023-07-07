@@ -10,6 +10,7 @@ int Global::windowHeight = SCREEN_BASE_HEIGHT;
 
 bool Global::pressedKeys[KEY_ENUM_N];
 int Global::pressedTime[KEY_ENUM_N];
+int Global::lastPressedTime[KEY_ENUM_N];
 
 int Global::currentTime = 0;
 int Global::dt = 0;
@@ -20,5 +21,6 @@ void Global::initGlobal() {
     for (int i = 0; i < KEY_ENUM_N; i++) {
         pressedKeys[i] = false;
         pressedTime[i] = 0;
+        lastPressedTime[i] = 0;
     }
 }

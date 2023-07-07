@@ -45,11 +45,16 @@ int getSDLKeyRelation(int SDLKey, bool isKeyboard) {
     return -1;
 }
 
-int updatePressedKeys(int SDLKey, bool isKeyPressed, bool isKeyboard) {
+int updatePressedKeys(int SDLKey, bool keyPressed, bool isKeyboard) {
     int key = getSDLKeyRelation(SDLKey, isKeyboard);
     if (key != -1) {
-        Global::pressedKeys[key] = isKeyPressed;
-        if (isKeyPressed) Global::pressedTime[key] = Global::currentTime;
+        if (Global::pressedKeys[key] != keyPressed) {
+            Global::pressedKeys[key] = keyPressed;
+            if (keyPressed) {
+                Global::lastPressedTime[key] = Global::pressedTime[key];
+                Global::pressedTime[key] = Global::currentTime;
+            }
+        }
     }
     return key;
 }
@@ -80,6 +85,11 @@ bool isMouseLeftShort() {
 
 bool isMouseLeftLong() {
     return (isKeyPressedLong(KEY_MOUSE_LEFT));
+}
+
+bool isKeyDoublePressed(int key) {
+    if (!isKeyPressed(key)) return false;
+    return (Global::pressedTime[key] - Global::lastPressedTime[key] < 200);
 }
 
 void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,

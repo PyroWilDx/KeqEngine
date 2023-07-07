@@ -105,6 +105,7 @@ void Entity::checkYCollision(bool checkDown) {
                 xRight, yUp, KEY_S));
         if (yUp < yWall) {
             y = yWall - hitbox.y;
+            yVelocity = 0;
         }
     }
 }
@@ -117,7 +118,7 @@ void Entity::moveY() {
     checkYCollision((yVelocity > 0));
 }
 
-bool Entity::isInAir() {
+bool Entity::isInAir() const {
     double xLeft = x + hitbox.x + 1;
     double xRight = x + hitbox.x + hitbox.w - 1;
     double yDown = y + hitbox.y + hitbox.h;
@@ -180,6 +181,32 @@ SDL_Rect Entity::getRenderRect() {
     SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
                     (int) (realW * xCoeff), (int) (realH * yCoeff)};
     return dst;
+}
+
+void Entity::addRenderWHMultiplier(double addW, double addH, double maxW, double maxH) {
+    if (addW != 0) {
+        renderWMultiplier += addW;
+        if (maxW > 0 && renderWMultiplier > maxW) renderWMultiplier = maxW;
+    }
+    if (addH != 0) {
+        renderHMultiplier += addH;
+        if (maxH > 0 && renderHMultiplier > maxH) renderHMultiplier = maxH;
+    }
+}
+
+void Entity::addRenderWHMultiplierR(double addW, double addH, double maxW, double maxH) {
+    double lastRenderWM = renderWMultiplier;
+    double lastRenderHM = renderHMultiplier;
+    double lastW, lastH;
+    getRealSize(&lastW, &lastH);
+
+    addRenderWHMultiplier(addW, addH, maxW, maxH);
+
+    double newW, newH;
+    getRealSize(&newW, &newH);
+
+    if (lastRenderWM != renderWMultiplier) x -= (newW - lastW);
+    if (lastRenderHM != renderHMultiplier) y -= (newH - lastH);
 }
 
 bool Entity::collides(Entity *entity, SDL_Rect addRect) const {
