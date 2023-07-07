@@ -19,9 +19,7 @@ public:
 
     SDL_Texture *loadTexture(const char *imgPath);
 
-    void render(Entity *entity);
-
-    void render(Block *block);
+    void renderEntity(Entity *entity);
 
     void display();
 
@@ -29,17 +27,17 @@ public:
 
     void cleanUp();
 
-    inline SDL_Window *getWindow() { return window; }
+    inline SDL_Window *getWindow() { return gWindow; }
 
-    inline SDL_Renderer *getRenderer() { return renderer; }
+    inline SDL_Renderer *getRenderer() { return gRenderer; }
 
 private:
     WindowRenderer(const char *title, int w, int h);
 
     static WindowRenderer *instance;
 
-    SDL_Window *window;
-    SDL_Renderer *renderer;
+    SDL_Window *gWindow;
+    SDL_Renderer *gRenderer;
 
 };
 

@@ -14,7 +14,7 @@ AnimatedEntity::AnimatedEntity(int spriteArrayLength)
 }
 
 AnimatedEntity::~AnimatedEntity() {
-    texture = nullptr;
+    imgTexture = nullptr;
 }
 
 void AnimatedEntity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
@@ -168,10 +168,10 @@ void AnimatedEntity::delaySprite(int spriteCode, int ms) {
 //            sprite->sTimer = 0;
 //        }
 //    }
-//    texture = sprite->sTexture;
-//    frame.x = sprite->sCurrentFrame * sprite->sFrameW;
-//    frame.w = sprite->sFrameW;
-//    frame.h = sprite->sFrameH;
+//    imgTexture = sprite->sTexture;
+//    imgFrame.x = sprite->sCurrentFrame * sprite->sFrameW;
+//    imgFrame.w = sprite->sFrameW;
+//    imgFrame.h = sprite->sFrameH;
 //}
 
 
@@ -201,10 +201,10 @@ void AnimatedEntity::animateSprite() {
         }
     }
     if (lastAnimatedSprite != nullptr) {
-        texture = lastAnimatedSprite->sTexture;
-        frame.x = lastAnimatedSprite->sCurrentFrame * lastAnimatedSprite->sFrameW;
-        frame.w = lastAnimatedSprite->sFrameW;
-        frame.h = lastAnimatedSprite->sFrameH;
+        imgTexture = lastAnimatedSprite->sTexture;
+        imgFrame.x = lastAnimatedSprite->sCurrentFrame * lastAnimatedSprite->sFrameW;
+        imgFrame.w = lastAnimatedSprite->sFrameW;
+        imgFrame.h = lastAnimatedSprite->sFrameH;
         currSpriteCode = lastAnimatedSprite->sCode;
     }
 }

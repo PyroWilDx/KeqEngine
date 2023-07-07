@@ -264,9 +264,9 @@ int main(int argc, char *argv[]) {
 
         Global::currentWorld->renderSelf();
 
-        gWindow->render(&FPSText);
+        gWindow->renderEntity(&FPSText);
 
-        gWindow->render(kq);
+        gWindow->renderEntity(kq);
 
         Particle::renderAll();
 

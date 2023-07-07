@@ -68,9 +68,11 @@ public:
 
     void animateSprite();
 
-//    virtual void updateSprite(int spriteCode) = 0;
+    inline Sprite *getSprite(int spriteCode) { return (&spriteArray[spriteCode]); }
 
-protected:
+    inline int getCurrentSpriteCode() { return currSpriteCode; }
+
+private:
     int spriteArrayLength;
     Sprite *spriteArray;
     int currSpriteCode;
