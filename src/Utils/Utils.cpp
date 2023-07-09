@@ -4,8 +4,8 @@
 
 #include <cassert>
 #include <algorithm>
-#include "Utils.hpp"
-#include "Global.hpp"
+#include "Utils/Utils.hpp"
+#include "Utils/Global.hpp"
 
 #define KEY_PRESS_SHORT_DURATION 100
 

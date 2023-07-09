@@ -3,11 +3,11 @@
 //
 
 #include <SDL2/SDL_ttf.h>
-#include "Text.hpp"
+#include "Entity/Text.hpp"
 #include "WindowRenderer.hpp"
 
 Text::Text()
-        : Entity(0, 0) {
+        : Entity() {
     translateBackground = true;
 }
 

@@ -7,9 +7,15 @@
 
 #include <vector>
 #include "Background.hpp"
+#include "Button.hpp"
 #include "Block.hpp"
 
 using namespace std;
+
+typedef struct Pixel {
+    int worldType;
+    int worldCode;
+} Pixel;
 
 class World {
 
@@ -20,11 +26,21 @@ public:
 
     ~World();
 
+    void updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntity);
+
     void addBlock(Block *block);
 
     void addBlock(int blockCode, double x, double y, int renderW, int renderH);
 
-    int getPixel(double x, double y);
+    void addButton(Button *button);
+
+    Pixel getPixel(double x, double y);
+
+    bool isPixelBlock(double x, double y);
+
+    bool isPixelButton(double x, double y);
+
+    bool isPixelSurface(double x, double y);
 
     double getNearestWallFrom(double x, double y, int direction);
 
@@ -33,9 +49,12 @@ public:
     inline Background *getBackground() { return background; }
 
 private:
+    void addWorldEntity(WorldEntity *worldEntity);
+
     Background *background;
+    vector<Button *> buttons;
     vector<Block *> blocks;
-    int **pixels;
+    Pixel **pixels;
 
 };
 

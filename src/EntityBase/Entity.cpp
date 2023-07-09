@@ -2,13 +2,13 @@
 // Created by pyrowildx on 13/05/23.
 //
 
-#include "Entity.hpp"
-#include "Global.hpp"
+#include "EntityBase/Entity.hpp"
+#include "Utils/Global.hpp"
 
-Entity::Entity(double x, double y) :
-        imgFrame({0, 0, 0, 0}), hitBox(imgFrame) {
-    this->x = x;
-    this->y = y;
+Entity::Entity()
+        : imgFrame({0, 0, 0, 0}), hitBox(imgFrame) {
+    x = 0;
+    y = 0;
     xVelocity = 0;
     yVelocity = 0;
     gravityWeight = 0;
@@ -19,14 +19,34 @@ Entity::Entity(double x, double y) :
     degRotation = 0;
 }
 
-Entity::Entity(double x, double y, int w, int h, SDL_Texture *texture)
+Entity::Entity(double x, double y)
+        : Entity() {
+    this->x = x;
+    this->y = y;
+}
+
+Entity::Entity(double x, double y, int frameW, int frameH)
         : Entity(x, y) {
-    imgFrame.x = 0;
-    imgFrame.y = 0;
-    imgFrame.w = w;
-    imgFrame.h = h;
+    imgFrame.w = frameW;
+    imgFrame.h = frameH;
+}
+
+Entity::Entity(double x, double y, int frameW, int frameH, const char *imgPath)
+        : Entity(x, y, frameW, frameH) {
     hitBox = imgFrame;
-    this->imgTexture = texture;
+    imgTexture = WindowRenderer::getInstance()->loadTexture(imgPath);
+}
+
+Entity::Entity(double x, double y, double renderWM, double renderHM)
+        : Entity(x, y) {
+    renderWMultiplier = renderWM;
+    renderHMultiplier = renderHM;
+}
+
+Entity::Entity(double x, double y, int frameW, int frameH,
+               double renderWM, double renderHM, const char *imgPath)
+        : Entity(x, y, frameW, frameH, imgPath) {
+    setRenderWHMultiplier(renderWM, renderHM);
 }
 
 Entity::~Entity() {
@@ -122,8 +142,8 @@ bool Entity::isInAir() const {
     double xLeft = x + hitBox.x + 1;
     double xRight = x + hitBox.x + hitBox.w - 1;
     double yDown = y + hitBox.y + hitBox.h;
-    return (Global::currentWorld->getPixel(xLeft, yDown) == BLOCK_NULL &&
-            Global::currentWorld->getPixel(xRight, yDown) == BLOCK_NULL);
+    return (!Global::currentWorld->isPixelSurface(xLeft, yDown) &&
+            !Global::currentWorld->isPixelSurface(xRight, yDown));
 }
 
 void Entity::fallGravity() {
@@ -207,6 +227,34 @@ void Entity::addRenderWHMultiplierR(double addW, double addH, double maxW, doubl
 
     if (lastRenderWM != renderWMultiplier) x -= (newW - lastW);
     if (lastRenderHM != renderHMultiplier) y -= (newH - lastH);
+}
+
+void Entity::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
+    double realW, realH;
+    this->getRealSize(&realW, &realH);
+
+    double vX = centerEntity->getX();
+    double vY = centerEntity->getY();
+    double addX, addY, addW, addH;
+    SDL_Rect collisionRect = centerEntity->getHitBox();
+    if (collisionRect.w != 0 && collisionRect.h != 0) {
+        addX = (double) centerEntity->getHitBox().x;
+        addY = (double) centerEntity->getHitBox().y;
+        addW = (double) centerEntity->getHitBox().w;
+        addH = (double) centerEntity->getHitBox().h;
+    } else {
+        addX = 0;
+        addY = 0;
+        centerEntity->getRealSize(&addW, &addH);
+    }
+
+    *pX = vX + addX + (addW / 2.0 - (double) realW / 2.0);
+    *pY = vY + addY + (addH / 2.0 - (double) realH / 2.0);
+}
+
+void Entity::moveToEntityCenter(Entity *centerEntity) {
+    facingEast = centerEntity->isFacingEast();
+    getToEntityCenterXY(centerEntity, &x, &y);
 }
 
 void Entity::renderSelf(SDL_Renderer *gRenderer) {

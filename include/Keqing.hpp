@@ -6,8 +6,8 @@
 #define KEQING_HPP
 
 #include "WindowRenderer.hpp"
-#include "Utils.hpp"
-#include "AnimatedEntity.hpp"
+#include "Utils/Utils.hpp"
+#include "EntityBase/AnimatedEntity.hpp"
 
 enum {
     KQ_IDLE = 0,
@@ -115,8 +115,6 @@ public:
     void preAction(int spriteCode);
 
     void updateAction();
-
-//    void updateSprite(int spriteCode) override;
 
     static inline bool isLightningStilettoExisting() {
         return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0) != nullptr);

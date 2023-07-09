@@ -1,39 +1,23 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <filesystem>
-#include <iostream>
-#include "Utils.hpp"
+//
+// Created by pyrow on 09/07/2023.
+//
+
+#include <cstdio>
+#include "Main/Game.hpp"
 #include "WindowRenderer.hpp"
+#include "Utils/Global.hpp"
 #include "Keqing.hpp"
-#include "Text.hpp"
-#include "Particle.hpp"
-#include "Global.hpp"
 
-// Text constants
-const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
-const SDL_Color FPSTextColor = {RGBA_FULL};
-const int FPSFontSize = 40;
-
-int main(int argc, char *argv[]) {
-    std::string path = std::filesystem::current_path().string();
-    std::filesystem::current_path(path + "/..");
-
-    myAssert(SDL_Init(SDL_INIT_VIDEO) >= 0, "SDL_Init FAILED.", SDL_GetError());
-    myAssert(IMG_Init(IMG_INIT_PNG) != 0, "IMG_Init FAILED.", SDL_GetError());
-    myAssert(TTF_Init() != -1, "TTF_Init FAILED.", SDL_GetError());
-
-    WindowRenderer::initWindowRenderer("Keqing", SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT);
-    Global::initGlobal();
-    Keqing::initKeqing();
-    Particle::initParticle();
+void runGame1() {
+    const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
+    const SDL_Color FPSTextColor = {RGBA_FULL};
+    const int FPSFontSize = 40;
 
     WindowRenderer *gWindow = WindowRenderer::getInstance();
-    SDL_SetWindowResizable(gWindow->getWindow(), SDL_TRUE);
 
     Global::currentWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      3000, 720,
-                                     "res/gfx/Background.png");
+                                     "res/gfx/background/Background.png");
     Global::currentWorld->addBlock(BLOCK_DIRT,
                                    300, 720 - 200, 176, 500);
     Global::currentWorld->addBlock(BLOCK_DIRT,
@@ -272,11 +256,4 @@ int main(int argc, char *argv[]) {
 
         gWindow->display();
     }
-
-    // Free
-    Particle::cleanUp();
-    gWindow->cleanUp();
-    SDL_Quit();
-
-    return EXIT_SUCCESS;
 }

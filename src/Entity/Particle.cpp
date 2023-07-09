@@ -2,9 +2,9 @@
 // Created by pyrowildx on 06/06/23.
 //
 
-#include "Particle.hpp"
+#include "Entity/Particle.hpp"
 #include "Keqing.hpp"
-#include "Global.hpp"
+#include "Utils/Global.hpp"
 
 Particle *Particle::baseParticle = new Particle();
 
@@ -24,13 +24,13 @@ Particle::Particle()
 Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier)
         : Particle() {
     for (int i = 0; i < PARTICLE_ENUM_N; i++) {
-        setSpriteAnimated(i, false);
+        this->setSpriteAnimated(i, false);
     }
     code = spriteCode;
     Sprite *baseSprite = baseParticle->getSprite(code);
     Sprite *currentSprite = getSprite(code);
     *currentSprite = *baseSprite;
-    setSpriteAnimated(code, true);
+    this->setSpriteAnimated(code, true);
     setSpriteFrameLengthFromTo(spriteCode, frameLength);
     if (baseSprite->sNext != nullptr) { // If != nullptr, then repeat itself
         currentSprite->sNext = currentSprite;
@@ -287,34 +287,6 @@ void Particle::getRealSize(double *pW, double *pH) {
 
 bool Particle::shouldTranslate() {
     return (code < PARTICLE_HUD_START);
-}
-
-void Particle::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
-    double realW, realH;
-    this->getRealSize(&realW, &realH);
-
-    double vX = centerEntity->getX();
-    double vY = centerEntity->getY();
-    double addX, addY, addW, addH;
-    SDL_Rect collisionRect = centerEntity->getHitBox();
-    if (collisionRect.w != 0 && collisionRect.h != 0) {
-        addX = (double) centerEntity->getHitBox().x;
-        addY = (double) centerEntity->getHitBox().y;
-        addW = (double) centerEntity->getHitBox().w;
-        addH = (double) centerEntity->getHitBox().h;
-    } else {
-        addX = 0;
-        addY = 0;
-        centerEntity->getRealSize(&addW, &addH);
-    }
-
-    *pX = vX + addX + (addW / 2.0 - (double) realW / 2.0);
-    *pY = vY + addY + (addH / 2.0 - (double) realH / 2.0);
-}
-
-void Particle::moveToEntityCenter(Entity *centerEntity) {
-    facingEast = centerEntity->isFacingEast();
-    getToEntityCenterXY(centerEntity, &x, &y);
 }
 
 void Particle::xyShift(double xShift, double yShift) {

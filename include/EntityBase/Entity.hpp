@@ -12,9 +12,18 @@ class WindowRenderer;
 class Entity {
 
 public:
+    Entity();
+
     Entity(double x, double y);
 
-    Entity(double x, double y, int w, int h, SDL_Texture *texture);
+    Entity(double x, double y, int frameW, int frameH);
+
+    Entity(double x, double y, int frameW, int frameH, const char *imgPath);
+
+    Entity(double x, double y, double renderWM, double renderHM);
+
+    Entity(double x, double y, int frameW, int frameH,
+           double renderWM, double renderHM, const char *imgPath);
 
     virtual ~Entity();
 
@@ -47,6 +56,10 @@ public:
     void addRenderWHMultiplier(double addW, double addH, double maxW, double maxH);
 
     void addRenderWHMultiplierR(double addW, double addH, double maxW, double maxH);
+
+    void getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY);
+
+    void moveToEntityCenter(Entity *centerEntity);
 
     virtual void renderSelf(SDL_Renderer *gRenderer);
 

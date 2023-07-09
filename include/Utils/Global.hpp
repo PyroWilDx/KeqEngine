@@ -5,7 +5,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include "World.hpp"
+#include "World/World.hpp"
 
 class Global {
 
