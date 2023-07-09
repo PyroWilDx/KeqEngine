@@ -2,8 +2,8 @@
 // Created by pyrow on 25/06/2023.
 //
 
-#include "Global.hpp"
-#include "Utils.hpp"
+#include "Utils/Global.hpp"
+#include "Utils/Utils.hpp"
 
 int Global::windowWidth = SCREEN_BASE_WIDTH;
 int Global::windowHeight = SCREEN_BASE_HEIGHT;

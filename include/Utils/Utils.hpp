@@ -6,9 +6,9 @@
 #define UTILS_HPP
 
 #include <SDL2/SDL.h>
-#include "Entity.hpp"
-#include "AnimatedEntity.hpp"
-#include "Particle.hpp"
+#include "EntityBase/Entity.hpp"
+#include "EntityBase/AnimatedEntity.hpp"
+#include "Entity/Particle.hpp"
 
 //Screen dimension constants
 #define SCREEN_BASE_WIDTH 1280

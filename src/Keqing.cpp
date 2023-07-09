@@ -5,8 +5,8 @@
 #include <vector>
 #include <SDL2/SDL_image.h>
 #include "Keqing.hpp"
-#include "Particle.hpp"
-#include "Global.hpp"
+#include "Entity/Particle.hpp"
+#include "Utils/Global.hpp"
 
 #define SKILL_TP_DISTANCE 400
 
@@ -175,7 +175,7 @@ void Keqing::moveX() {
         double vX = x + addX;
         if (addX >= 0) vX += hitBox.x + hitBox.w;
         double yDown = y + hitBox.y + hitBox.h;
-        if (Global::currentWorld->getPixel(vX, yDown) != BLOCK_NULL) {
+        if (Global::currentWorld->isPixelSurface(vX, yDown)) {
             Entity::moveX();
         }
     }

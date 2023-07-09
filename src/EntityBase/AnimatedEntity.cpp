@@ -2,11 +2,11 @@
 // Created by pyrowildx on 30/05/23.
 //
 
-#include "AnimatedEntity.hpp"
-#include "Global.hpp"
+#include "EntityBase/AnimatedEntity.hpp"
+#include "Utils/Global.hpp"
 
 AnimatedEntity::AnimatedEntity(int spriteArrayLength)
-        : Entity(0, 0, 0, 0, nullptr) {
+        : Entity() {
     this->spriteArrayLength = spriteArrayLength;
     spriteArray = new Sprite[spriteArrayLength];
     spriteArray[spriteArrayLength].sAnimated = false;
@@ -147,33 +147,6 @@ void AnimatedEntity::resetSprite(int spriteCode) {
 void AnimatedEntity::delaySprite(int spriteCode, int ms) {
     spriteArray[spriteCode].sTimer -= ms;
 }
-
-//void AnimatedEntity::animateSprite() {
-//    Sprite *sprite = &spriteArray[currSpriteCode];
-//    if (sprite->sAnimated) {
-//        sprite->sTimer += Global::dt;
-//
-//        if (sprite->sTimer < 0) return;
-//
-//        int currentFrame = sprite->sCurrentFrame;
-//        if (sprite->sTimer > sprite->sFrameLengths[currentFrame]) {
-//            sprite->sCurrentFrame++;
-//            if (sprite->sCurrentFrame == sprite->sFrameN) {
-//                setSpriteAnimated(sprite->sCode, false);
-//                if (sprite->sNext != nullptr) {
-//                    setSpriteAnimated(sprite->sNext->sCode, true);
-//                }
-//                return;
-//            }
-//            sprite->sTimer = 0;
-//        }
-//    }
-//    imgTexture = sprite->sTexture;
-//    imgFrame.x = sprite->sCurrentFrame * sprite->sFrameW;
-//    imgFrame.w = sprite->sFrameW;
-//    imgFrame.h = sprite->sFrameH;
-//}
-
 
 void AnimatedEntity::animateSprite() {
     Sprite *lastAnimatedSprite = nullptr;

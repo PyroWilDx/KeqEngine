@@ -2,11 +2,12 @@
 // Created by pyrowildx on 01/06/23.
 //
 
-#include "Background.hpp"
+#include "World/Background.hpp"
 
-Background::Background(int screenW, int screenH, int totalWidth, int totalHeight,
-                       SDL_Texture *texture) :
-        Entity(0, 0, screenW, screenH, texture) {
+Background::Background(int renderW, int renderH, int totalWidth, int totalHeight,
+                       const char *imgPath) :
+        WorldEntity(0, 0, renderW, renderH, WORLD_BACKGROUND) {
+    this->addImage(imgPath);
     this->totalWidth = totalWidth;
     this->totalHeight = totalHeight;
 }
@@ -27,7 +28,6 @@ void Background::translate(Entity *entity) {
     }
 
 }
-
 
 int Background::getTotalPixels() const {
     return (totalWidth * totalHeight);

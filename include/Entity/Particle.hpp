@@ -5,7 +5,7 @@
 #ifndef PARTICLE_HPP
 #define PARTICLE_HPP
 
-#include "AnimatedEntity.hpp"
+#include "EntityBase/AnimatedEntity.hpp"
 
 enum {
     PARTICLE_KQ_NATK_4 = 0,
@@ -79,10 +79,6 @@ public:
     bool shouldTranslate() override;
 
     void setEntity(Entity *newEntity);
-
-    void getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY);
-
-    void moveToEntityCenter(Entity *centerEntity);
 
     void xyShift(double xShift, double yShift);
 

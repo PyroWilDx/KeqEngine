@@ -5,14 +5,13 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include "Entity.hpp"
-#include "Keqing.hpp"
+#include "EntityBase/WorldEntity.hpp"
 
-class Background : public Entity {
+class Background : public WorldEntity {
 
 public:
-    Background(int screenW, int screenH, int totalWidth, int totalHeight,
-               SDL_Texture *texture);
+    Background(int renderW, int renderH, int totalWidth, int totalHeight,
+               const char *imgPath);
 
     ~Background() override = default;
 

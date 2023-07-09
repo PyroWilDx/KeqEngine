@@ -9,11 +9,10 @@
 #endif
 
 #include <SDL2/SDL_image.h>
-#include "Utils.hpp"
+#include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
-#include "Entity.hpp"
-#include "Global.hpp"
-#include "Block.hpp"
+#include "EntityBase/Entity.hpp"
+#include "Utils/Global.hpp"
 
 WindowRenderer *WindowRenderer::instance = nullptr;
 
@@ -25,7 +24,8 @@ WindowRenderer::WindowRenderer(const char *title, int w, int h) {
 
     gWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_SetWindowMinimumSize(gWindow, w, h);
+//    SDL_SetWindowMinimumSize(gWindow, w, h);
+    SDL_SetWindowResizable(gWindow, SDL_TRUE);
     myAssert(gWindow != nullptr, "Error Creating Window.", SDL_GetError());
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);

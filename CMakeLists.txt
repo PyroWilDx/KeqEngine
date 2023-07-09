@@ -42,18 +42,21 @@ include_directories(${HEADER_DIRS})
 # Main
 
 set(EXECUTABLE_OUTPUT_PATH "${ROOT_DIR}/bin")
-add_executable(main ${SRC_DIR}/Main.cpp)
+add_executable(main ${SRC_DIR}/Main/Main.cpp)
 target_sources(main PRIVATE
-        ${SRC_DIR}/Utils.cpp
+        ${SRC_DIR}/Utils/Utils.cpp
         ${SRC_DIR}/WindowRenderer.cpp
-        ${SRC_DIR}/Text.cpp
-        ${SRC_DIR}/Entity.cpp
-        ${SRC_DIR}/AnimatedEntity.cpp
+        ${SRC_DIR}/Entity/Text.cpp
+        ${SRC_DIR}/EntityBase/Entity.cpp
+        ${SRC_DIR}/EntityBase/AnimatedEntity.cpp
         ${SRC_DIR}/Keqing.cpp
-        ${SRC_DIR}/Background.cpp
-        ${SRC_DIR}/Particle.cpp
-        ${SRC_DIR}/World.cpp
-        ${SRC_DIR}/Block.cpp
-        ${SRC_DIR}/Global.cpp
-        ${SRC_DIR}/Button.cpp)
+        ${SRC_DIR}/World/Background.cpp
+        ${SRC_DIR}/Entity/Particle.cpp
+        ${SRC_DIR}/World/World.cpp
+        ${SRC_DIR}/World/Block.cpp
+        ${SRC_DIR}/Utils/Global.cpp
+        ${SRC_DIR}/World/Button.cpp
+        ${SRC_DIR}/EntityBase/WorldEntity.cpp
+        ${SRC_DIR}/Main/Menu.cpp
+        ${SRC_DIR}/Main/Game.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})
