@@ -8,14 +8,17 @@
 #include "EntityBase/WorldEntity.hpp"
 #include "Entity/Text.hpp"
 
+typedef enum {
+    BUTTON_IDLE = 0,
+    BUTTON_CLICKED
+} ButtonState;
+
 class Button : public WorldEntity {
 
 public:
     Button(double x, double y, int renderW, int renderH);
 
     void changeColor(Uint8 r, Uint8 g, Uint8 b);
-
-    void addImage(const char *imgPath, int frameW = 0, int frameH = 0);
 
     void addText(const char *text, const SDL_Color *color,
                  const char *fontPath, int fontSize);
@@ -26,11 +29,19 @@ public:
 
     void onClick();
 
-    inline void setCallBack(void (*fCallBack_)(void *params)) { fCallBack = fCallBack_; }
+    void onClickRelease(bool isMouseOnButton);
+
+    inline void setCallBack(void (*fCallBack_)(void *onClickParams)) { fCallBack = fCallBack_; }
+
+    inline void setOnClickParams(void *onClickParams_) { onClickParams = onClickParams_; }
+
+    inline void setState(ButtonState buttonState_) { buttonState = buttonState_; }
 
 private:
-    void (*fCallBack)(void *params);
+    void (*fCallBack)(void *onClickParams);
 
+    void *onClickParams;
+    ButtonState buttonState;
     SDL_Color buttonColor;
     Text *buttonText;
 

@@ -7,6 +7,7 @@
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
 
+#define DOUBLE_EPSILON 0.001
 #define KEY_PRESS_SHORT_DURATION 100
 
 void myAssert(bool expr, const char *msg, const char *err) {
@@ -21,8 +22,22 @@ int roundToInt(double x) {
     return ((int) (x));
 }
 
+bool areDoubleEpsilonEqual(double a, double b) {
+    return (abs(a - b) < DOUBLE_EPSILON);
+}
+
 int getTime() {
     return ((int) SDL_GetTicks());
+}
+
+void getScreenXYCoeff(double *pXCoeff, double *pYCoeff) {
+    *pXCoeff = (double) Global::renderWindowWidth / SCREEN_BASE_WIDTH;
+    *pYCoeff = (double) Global::renderWindowHeight / SCREEN_BASE_HEIGHT;
+}
+
+void shiftXYScreen(int *pX, int *pY) {
+    *pX += (Global::windowWidth - Global::renderWindowWidth) / 2;
+    *pY += (Global::windowHeight - Global::renderWindowHeight) / 2;
 }
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard) {

@@ -16,6 +16,9 @@ public:
 
     static int windowWidth;
     static int windowHeight;
+    static int renderWindowWidth;
+    static int renderWindowHeight;
+    static bool isWindowFullscreen;
 
     static bool pressedKeys[KEY_ENUM_N];
     static int pressedTime[KEY_ENUM_N];

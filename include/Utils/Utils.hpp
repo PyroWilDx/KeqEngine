@@ -42,7 +42,13 @@ void myAssert(bool expr, const char *msg, const char *err);
 
 int roundToInt(double value);
 
+bool areDoubleEpsilonEqual(double a, double b);
+
 int getTime();
+
+void getScreenXYCoeff(double *pXCoeff, double *pYCoeff);
+
+void shiftXYScreen(int *pX, int *pY);
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard);
 
