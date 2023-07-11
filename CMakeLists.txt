@@ -57,6 +57,8 @@ target_sources(main PRIVATE
         ${SRC_DIR}/Utils/Global.cpp
         ${SRC_DIR}/World/Button.cpp
         ${SRC_DIR}/EntityBase/WorldEntity.cpp
-        ${SRC_DIR}/Main/Menu.cpp
-        ${SRC_DIR}/Main/Game.cpp)
+        ${SRC_DIR}/Main/HomeMenu.cpp
+        ${SRC_DIR}/Main/Game1.cpp
+        ${SRC_DIR}/Main/ColorKeqing.cpp
+        ${SRC_DIR}/Utils/Events.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

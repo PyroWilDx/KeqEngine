@@ -3,7 +3,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <filesystem>
 #include <iostream>
-#include "Main/Menu.hpp"
+#include "Main/HomeMenu.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Keqing.hpp"
@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     Keqing::initKeqing();
     Particle::initParticle();
 
-    runBaseMenu();
+    runHomeMenu();
 
     Particle::cleanUp();
     WindowRenderer::getInstance()->cleanUp();

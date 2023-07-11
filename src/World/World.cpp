@@ -19,6 +19,8 @@ World::World(int screenW, int screenH,
             pixels[i][j] = {-1, -1};
         }
     }
+
+    activeButton = nullptr;
 }
 
 World::~World() {
@@ -68,7 +70,7 @@ Pixel World::getPixel(double x, double y) {
         y < 0 || y >= background->getTotalH()) {
         return {WORLD_BLOCK, BLOCK_WALL_INVISIBLE};
     }
-    return pixels[(int) x][(int) y];
+    return pixels[roundToInt(x)][roundToInt(y)];
 }
 
 bool World::isPixelBlock(double x, double y) {
@@ -81,6 +83,10 @@ bool World::isPixelButton(double x, double y) {
 
 bool World::isPixelSurface(double x, double y) {
     return (isPixelBlock(x, y));
+}
+
+bool World::isPixelCode(double x, double y, int worldCode) {
+    return (getPixel(x, y).worldCode == worldCode);
 }
 
 double World::getNearestWallFrom(double x, double y, int direction) {
@@ -111,6 +117,29 @@ double World::getNearestWallFrom(double x, double y, int direction) {
     }
     if (addX == 0) return (j - addY);
     else return (i - addX);
+}
+
+void World::clickPixel(double x, double y, Uint32 eventType) {
+    if (eventType == SDL_MOUSEBUTTONDOWN) {
+        if (isPixelButton(x, y)) {
+            int worldCode = getPixel(x, y).worldCode;
+            for (Button *button: buttons) {
+                if (button->getWorldCode() == worldCode) {
+                    button->onClick();
+                    activeButton = button;
+                    return;
+                }
+            }
+        }
+    }
+
+    if (eventType == SDL_MOUSEBUTTONUP) {
+        if (activeButton != nullptr) {
+            bool isMouseOnButton = isPixelCode(x, y, activeButton->getWorldCode());
+            activeButton->onClickRelease(isMouseOnButton);
+            activeButton = nullptr;
+        }
+    }
 }
 
 void World::renderSelf() {

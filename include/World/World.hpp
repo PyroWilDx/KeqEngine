@@ -42,7 +42,11 @@ public:
 
     bool isPixelSurface(double x, double y);
 
+    bool isPixelCode(double x, double y, int worldCode);
+
     double getNearestWallFrom(double x, double y, int direction);
+
+    void clickPixel(double x, double y, Uint32 eventType);
 
     void renderSelf();
 
@@ -52,9 +56,10 @@ private:
     void addWorldEntity(WorldEntity *worldEntity);
 
     Background *background;
-    vector<Button *> buttons;
     vector<Block *> blocks;
+    vector<Button *> buttons;
     Pixel **pixels;
+    Button *activeButton;
 
 };
 

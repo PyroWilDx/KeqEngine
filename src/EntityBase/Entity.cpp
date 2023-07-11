@@ -195,11 +195,14 @@ SDL_Rect Entity::getRenderRect() {
         dstY -= (double) backgroundFrame.y;
     }
 
-    double xCoeff = (double) Global::windowWidth / SCREEN_BASE_WIDTH;
-    double yCoeff = (double) Global::windowHeight / SCREEN_BASE_HEIGHT;
+    double xCoeff, yCoeff;
+    getScreenXYCoeff(&xCoeff, &yCoeff);
 
     SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
                     (int) (realW * xCoeff), (int) (realH * yCoeff)};
+
+    shiftXYScreen(&dst.x, &dst.y);
+
     return dst;
 }
 
@@ -283,8 +286,8 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect dstHitBox = hitBox;
     dstHitBox.x += getX() - Global::currentWorld->getBackground()->getFrame().x;
     dstHitBox.y += getY() - Global::currentWorld->getBackground()->getFrame().y;
-    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(gRenderer, &dst);
+//    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+//    SDL_RenderDrawRect(gRenderer, &dst);
     SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(gRenderer, &dstHitBox);
 }

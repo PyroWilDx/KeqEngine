@@ -2,8 +2,8 @@
 // Created by pyrow on 09/07/2023.
 //
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef GAME1_HPP
+#define GAME1_HPP
 
 void runGame1();
 

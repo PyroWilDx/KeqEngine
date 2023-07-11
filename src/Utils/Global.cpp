@@ -7,6 +7,9 @@
 
 int Global::windowWidth = SCREEN_BASE_WIDTH;
 int Global::windowHeight = SCREEN_BASE_HEIGHT;
+int Global::renderWindowWidth = SCREEN_BASE_WIDTH;
+int Global::renderWindowHeight = SCREEN_BASE_HEIGHT;
+bool Global::isWindowFullscreen = false;
 
 bool Global::pressedKeys[KEY_ENUM_N];
 int Global::pressedTime[KEY_ENUM_N];

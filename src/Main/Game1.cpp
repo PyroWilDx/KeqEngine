@@ -3,10 +3,11 @@
 //
 
 #include <cstdio>
-#include "Main/Game.hpp"
+#include "Main/Game1.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Keqing.hpp"
+#include "Utils/Events.hpp"
 
 void runGame1() {
     const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
@@ -87,10 +88,11 @@ void runGame1() {
     int accumulatedFPSTime = 10000;
     int accumulatedFrames = 0;
 
-    bool gameRunning = true;
-    bool gamePaused = false;
+    bool gRunning = true;
+    bool gPaused = false;
     bool runFrame = false;
-    while (gameRunning) {
+
+    while (gRunning) {
 
         // Time Handling
         int currentTime = getTime();
@@ -101,29 +103,18 @@ void runGame1() {
         int SDLKey;
         int key;
         while (SDL_PollEvent(&event)) {
+            handleBasicEvents(&event, &gRunning);
+
             switch (event.type) {
-                case SDL_QUIT:
-                    gameRunning = false;
-                    break;
-
-                case SDL_WINDOWEVENT:
-                    switch (event.window.event) {
-                        case SDL_WINDOWEVENT_RESIZED:
-                            Global::windowWidth = event.window.data1;
-                            Global::windowHeight = event.window.data2;
-                            break;
-                    }
-                    break;
-
                 case SDL_KEYDOWN:
                     SDLKey = event.key.keysym.sym;
                     switch (SDLKey) {
                         case SDLK_BACKSPACE:
-                            gamePaused = !gamePaused;
-                            if (!gamePaused) Global::currentTime = getTime();
+                            gPaused = !gPaused;
+                            if (!gPaused) Global::currentTime = getTime();
                             break;
                         case SDLK_RETURN:
-                            if (gamePaused) {
+                            if (gPaused) {
                                 runFrame = true;
                                 Global::dt = 10;
                             }
@@ -154,7 +145,7 @@ void runGame1() {
             }
         }
 
-        if (gamePaused) {
+        if (gPaused) {
             if (!runFrame) continue;
             else runFrame = false;
         }

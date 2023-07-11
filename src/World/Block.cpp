@@ -63,9 +63,9 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
 
     double xLeftover = xCoeff - (int) xCoeff;
     double yLeftover = yCoeff - (int) yCoeff;
-    double epsilon = 0.0001;
+    double epsilonLeftover = 0.01;
 
-    if (xLeftover <= epsilon && yLeftover <= epsilon) return;
+    if (xLeftover <= epsilonLeftover && yLeftover <= epsilonLeftover) return;
 
     int lastX = baseX + blockDst.w * (int) xCoeff;
     int lastY = baseY + blockDst.h * (int) yCoeff;
@@ -77,7 +77,7 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
     double srcLeftoverH = (double) srcBaseH * yLeftover;
     double wLeftoverCoeff = (double) dstBaseW / (double) srcBaseW;
     double hLeftoverCoeff = (double) dstBaseH / (double) srcBaseH;
-    if (xLeftover > epsilon) {
+    if (xLeftover > epsilonLeftover) {
         src.w = roundToInt(srcLeftoverW);
         src.h = srcBaseH;
         blockDst.x = lastX;
@@ -91,7 +91,7 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
             blockDst.y += blockDst.h;
         }
     }
-    if (yLeftover > epsilon) {
+    if (yLeftover > epsilonLeftover) {
         src.w = srcBaseW;
         src.h = roundToInt(srcLeftoverH);
         blockDst.x = baseX;
@@ -105,7 +105,7 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
             blockDst.x += blockDst.w;
         }
     }
-    if (xLeftover > epsilon && yLeftover > epsilon) {
+    if (xLeftover > epsilonLeftover && yLeftover > epsilonLeftover) {
         src.w = roundToInt(srcLeftoverW);
         src.h = roundToInt(srcLeftoverH);
         blockDst.x = lastX;
