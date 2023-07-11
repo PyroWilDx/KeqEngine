@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 25/06/2023.
+// Created by pyrowildx on 25/06/2023.
 //
 
 #include "World/World.hpp"
@@ -24,11 +24,11 @@ World::World(int screenW, int screenH,
 }
 
 World::~World() {
-    for (Block *block: blocks) {
+    for (Block *block: blockVector) {
         delete block;
     }
-    for (Button *button: buttons) {
-        delete button;
+    for (pair<const int, Button *> it: buttonHashMap) {
+        delete it.second;
     }
 }
 
@@ -51,7 +51,7 @@ void World::addWorldEntity(WorldEntity *worldEntity) {
 }
 
 void World::addBlock(Block *block) {
-    blocks.push_back(block);
+    blockVector.push_back(block);
     addWorldEntity(block);
 }
 
@@ -61,7 +61,7 @@ void World::addBlock(int blockCode, double x, double y, int renderW, int renderH
 }
 
 void World::addButton(Button *button) {
-    buttons.push_back(button);
+    buttonHashMap[button->getWorldCode()] = button;
     addWorldEntity(button);
 }
 
@@ -77,8 +77,12 @@ bool World::isPixelBlock(double x, double y) {
     return (getPixel(x, y).worldType == WORLD_BLOCK);
 }
 
+bool World::isPixelButton(Pixel pixel) {
+    return (pixel.worldType == WORLD_BUTTON);
+}
+
 bool World::isPixelButton(double x, double y) {
-    return (getPixel(x, y).worldType == WORLD_BUTTON);
+    return isPixelButton(getPixel(x, y));
 }
 
 bool World::isPixelSurface(double x, double y) {
@@ -121,9 +125,12 @@ double World::getNearestWallFrom(double x, double y, int direction) {
 
 void World::clickPixel(double x, double y, Uint32 eventType) {
     if (eventType == SDL_MOUSEBUTTONDOWN) {
-        if (isPixelButton(x, y)) {
-            int worldCode = getPixel(x, y).worldCode;
-            for (Button *button: buttons) {
+        Pixel clickPixel = getPixel(x, y);
+        if (isPixelButton(clickPixel)) {
+            int worldCode = clickPixel.worldCode;
+            auto buttonIterator = buttonHashMap.equal_range(clickPixel.worldCode);
+            for (auto it = buttonIterator.first; it != buttonIterator.second; it++) {
+                Button *button = it->second;
                 if (button->getWorldCode() == worldCode) {
                     button->onClick();
                     activeButton = button;
@@ -145,10 +152,10 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
 void World::renderSelf() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
     gWindow->renderEntity(background);
-    for (Block *block: blocks) {
+    for (Block *block: blockVector) {
         gWindow->renderEntity(block);
     }
-    for (Button *button: buttons) {
-        gWindow->renderEntity(button);
+    for (pair<const int, Button *> it: buttonHashMap) {
+        gWindow->renderEntity(it.second);
     }
 }
