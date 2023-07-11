@@ -1,11 +1,12 @@
 //
-// Created by pyrow on 25/06/2023.
+// Created by pyrowildx on 25/06/2023.
 //
 
 #ifndef WORLD_H
 #define WORLD_H
 
 #include <vector>
+#include <unordered_map>
 #include "Background.hpp"
 #include "Button.hpp"
 #include "Block.hpp"
@@ -38,6 +39,8 @@ public:
 
     bool isPixelBlock(double x, double y);
 
+    bool isPixelButton(Pixel pixel);
+
     bool isPixelButton(double x, double y);
 
     bool isPixelSurface(double x, double y);
@@ -56,8 +59,8 @@ private:
     void addWorldEntity(WorldEntity *worldEntity);
 
     Background *background;
-    vector<Block *> blocks;
-    vector<Button *> buttons;
+    vector<Block *> blockVector;
+    unordered_map<int, Button *> buttonHashMap;
     Pixel **pixels;
     Button *activeButton;
 
