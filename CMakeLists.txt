@@ -55,10 +55,11 @@ target_sources(main PRIVATE
         ${SRC_DIR}/World/World.cpp
         ${SRC_DIR}/World/Block.cpp
         ${SRC_DIR}/Utils/Global.cpp
-        ${SRC_DIR}/World/Button.cpp
+        ${SRC_DIR}/UI/Button.cpp
         ${SRC_DIR}/EntityBase/WorldEntity.cpp
         ${SRC_DIR}/Main/HomeMenu.cpp
         ${SRC_DIR}/Main/Game1.cpp
         ${SRC_DIR}/Main/ColorKeqing.cpp
-        ${SRC_DIR}/Utils/Events.cpp)
+        ${SRC_DIR}/Utils/Events.cpp
+        ${SRC_DIR}/UI/ColorPicker.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

@@ -8,10 +8,8 @@
 #include <vector>
 #include <unordered_map>
 #include "Background.hpp"
-#include "Button.hpp"
+#include "UI/Button.hpp"
 #include "Block.hpp"
-
-using namespace std;
 
 typedef struct Pixel {
     int worldType;
@@ -35,11 +33,11 @@ public:
 
     void addButton(Button *button);
 
+    void addEntity(Entity *entity);
+
     Pixel getPixel(double x, double y);
 
     bool isPixelBlock(double x, double y);
-
-    bool isPixelButton(Pixel pixel);
 
     bool isPixelButton(double x, double y);
 
@@ -59,10 +57,10 @@ private:
     void addWorldEntity(WorldEntity *worldEntity);
 
     Background *background;
-    vector<Block *> blockVector;
-    unordered_map<int, Button *> buttonHashMap;
-    Pixel **pixels;
+    std::vector<Block *> blockVector;
+    std::unordered_map<int, Button *> buttonHashMap;
     Button *activeButton;
+    Pixel **pixels;
 
 };
 

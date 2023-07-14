@@ -27,20 +27,24 @@ public:
 
     void renderSelf(SDL_Renderer *gRenderer) override;
 
-    void onClick();
+    void performCallBack(int mouseX, int mouseY);
 
-    void onClickRelease(bool isMouseOnButton);
+    virtual void onClick(int mouseX, int mouseY);
 
-    inline void setCallBack(void (*fCallBack_)(void *onClickParams)) { fCallBack = fCallBack_; }
+    void onClickRelease(int mouseX, int mouseY, bool isMouseOnButton);
+
+    void setCallBack(void (*fCallBack_)(Button *self, int mouseX, int mouseY, void *onClickParams)) { fCallBack = fCallBack_; }
 
     inline void setOnClickParams(void *onClickParams_) { onClickParams = onClickParams_; }
 
     inline void setState(ButtonState buttonState_) { buttonState = buttonState_; }
 
-private:
-    void (*fCallBack)(void *onClickParams);
+protected:
+    void (*fCallBack)(Button *self, int mouseX, int mouseY, void *onClickParams);
 
     void *onClickParams;
+    bool fCallOnRelease;
+    bool swapColorOnClick;
     ButtonState buttonState;
     SDL_Color buttonColor;
     Text *buttonText;

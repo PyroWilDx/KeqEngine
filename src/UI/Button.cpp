@@ -3,7 +3,7 @@
 //
 
 #include <algorithm>
-#include "World/Button.hpp"
+#include "UI/Button.hpp"
 #include "WindowRenderer.hpp"
 
 Button::Button(double x, double y, int renderW, int renderH)
@@ -11,6 +11,8 @@ Button::Button(double x, double y, int renderW, int renderH)
           buttonColor() {
     fCallBack = nullptr;
     onClickParams = nullptr;
+    fCallOnRelease = true;
+    swapColorOnClick = true;
     buttonState = BUTTON_IDLE;
     buttonColor = {RGBA_FULL};
     buttonText = nullptr;
@@ -49,9 +51,11 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
     } else {
         SDL_Color renderColor = buttonColor;
         if (buttonState == BUTTON_CLICKED) {
-            renderColor.r = renderColor.r / 2;
-            renderColor.g = renderColor.g / 2;
-            renderColor.b = renderColor.b / 2;
+            if (swapColorOnClick) {
+                renderColor.r = renderColor.r / 2;
+                renderColor.g = renderColor.g / 2;
+                renderColor.b = renderColor.b / 2;
+            }
         }
         SDL_SetRenderDrawColor(gRenderer, renderColor.r, renderColor.g,
                                renderColor.b, renderColor.a);
@@ -60,11 +64,16 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
     if (buttonText != nullptr) buttonText->renderSelf(gRenderer);
 }
 
-void Button::onClick() {
+void Button::performCallBack(int mouseX, int mouseY) {
+    if (fCallBack != nullptr) fCallBack(this, mouseX, mouseY, onClickParams);
+}
+
+void Button::onClick(int mouseX, int mouseY) {
+    if (!fCallOnRelease) performCallBack(mouseX, mouseY);
     buttonState = BUTTON_CLICKED;
 }
 
-void Button::onClickRelease(bool isMouseOnButton) {
-    if (isMouseOnButton) fCallBack(onClickParams);
+void Button::onClickRelease(int mouseX, int mouseY, bool isMouseOnButton) {
+    if (isMouseOnButton && fCallOnRelease) performCallBack(mouseX, mouseY);
     buttonState = BUTTON_IDLE;
 }

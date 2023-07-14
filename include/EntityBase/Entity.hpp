@@ -67,7 +67,7 @@ public:
 
     void clearTexture();
 
-    inline void getHitbox(SDL_Rect collisionRect_) { hitBox = collisionRect_; }
+    inline void setHitbox(SDL_Rect collisionRect_) { hitBox = collisionRect_; }
 
     inline void setRenderWHMultiplier(double wMultiplier, double hMultiplier) {
         renderWMultiplier = wMultiplier;

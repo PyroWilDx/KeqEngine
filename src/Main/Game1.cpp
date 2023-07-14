@@ -16,25 +16,25 @@ void runGame1() {
 
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    Global::currentWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     3000, 720,
-                                     "res/gfx/background/Background.png");
-    Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   300, 720 - 200, 176, 500);
-    Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   751, 720 - 200, 176, 200);
-    Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   1000, 720 - 20, 176, 20);
-    Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   1120, 720 - 120, 176, 40);
-    Global::currentWorld->addBlock(BLOCK_DIRT,
-                                   1200, 720 - 180, 176, 40);
+    auto *gWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                             3000, 720,
+                             "res/gfx/background/Background.png");
+    Global::currentWorld = gWorld;
+    gWorld->addBlock(BLOCK_DIRT,
+                     300, 720 - 200, 176, 500);
+    gWorld->addBlock(BLOCK_DIRT,
+                     751, 720 - 200, 176, 200);
+    gWorld->addBlock(BLOCK_DIRT,
+                     1000, 720 - 20, 176, 20);
+    gWorld->addBlock(BLOCK_DIRT,
+                     1120, 720 - 120, 176, 40);
+    gWorld->addBlock(BLOCK_DIRT,
+                     1200, 720 - 180, 176, 40);
 
     Keqing *kq = Keqing::getInstance();
-    kq->moveTo(0, 360);
-//    kq->colorTexture(4, 1, 4); // TODO
+    kq->moveTo(0, 0);
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
-    kq->getHitbox({(int) (0.0 * KQ_WIDTH_MULTIPLIER),
+    kq->setHitbox({(int) (0.0 * KQ_WIDTH_MULTIPLIER),
                    (int) (12.0 * KQ_HEIGHT_MULTIPLIER),
                    (int) (60.0 * KQ_WIDTH_MULTIPLIER),
                    (int) (84.0 * KQ_HEIGHT_MULTIPLIER)});
@@ -94,10 +94,7 @@ void runGame1() {
 
     while (gRunning) {
 
-        // Time Handling
-        int currentTime = getTime();
-        Global::dt = currentTime - Global::currentTime;
-        Global::currentTime = currentTime;
+        handleTime();
 
         // Events
         int SDLKey;
@@ -216,7 +213,7 @@ void runGame1() {
 
         kqX = kq->getX();
         double xDiff = kqX - kqLastX;
-        if (xDiff != 0) Global::currentWorld->getBackground()->translate(kq);
+        if (xDiff != 0) gWorld->getBackground()->translate(kq);
         kqLastX = kqX;
 
         kq->airAnimate();
@@ -237,7 +234,7 @@ void runGame1() {
         // Window Rendering
         gWindow->clear();
 
-        Global::currentWorld->renderSelf();
+        gWorld->renderSelf();
 
         gWindow->renderEntity(&FPSText);
 
@@ -247,4 +244,6 @@ void runGame1() {
 
         gWindow->display();
     }
+
+    delete gWorld;
 }

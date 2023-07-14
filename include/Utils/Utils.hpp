@@ -46,6 +46,8 @@ bool areDoubleEpsilonEqual(double a, double b);
 
 int getTime();
 
+void handleTime();
+
 void getScreenXYCoeff(double *pXCoeff, double *pYCoeff);
 
 void shiftXYScreen(int *pX, int *pY);

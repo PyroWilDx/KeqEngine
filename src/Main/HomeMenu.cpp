@@ -12,12 +12,13 @@
 void runHomeMenu() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    Global::currentWorld = new World(1280, 720,
-                                     1280, 720,
-                                     "res/gfx/background/Keqing.png");
+    auto *gWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                             SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                             "res/gfx/background/Keqing.png");
+    Global::currentWorld = gWorld;
 
     auto *runGame1Button = new Button(400, 0, 200, 100);
-    runGame1Button->setCallBack([](void *onClickParams) {
+    runGame1Button->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
         bool *pGRunning = (bool *) onClickParams;
         *pGRunning = false;
         runGame1();
@@ -25,10 +26,10 @@ void runHomeMenu() {
     SDL_Color tmpColor = {255, 255, 255, 255};
     runGame1Button->addText("RRUN GAME 1", &tmpColor, "res/fonts/JetBrainsMono-Regular.ttf", 16);
     runGame1Button->changeColor(255, 0, 0);
-    Global::currentWorld->addButton(runGame1Button);
+    gWorld->addButton(runGame1Button);
 
     auto *runColorKQButton = new Button(400, 200, 200, 100);
-    runColorKQButton->setCallBack([](void *onClickParams) {
+    runColorKQButton->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
         bool *pGRunning = (bool *) onClickParams;
         *pGRunning = false;
         runColorKeqing();
@@ -36,7 +37,7 @@ void runHomeMenu() {
     tmpColor = {255, 255, 255, 255};
     runColorKQButton->addText("RRUN CUSTOM MENU 1", &tmpColor, "res/fonts/JetBrainsMono-Regular.ttf", 16);
     runColorKQButton->changeColor(255, 0, 0);
-    Global::currentWorld->addButton(runColorKQButton);
+    gWorld->addButton(runColorKQButton);
 
     SDL_Event event;
     bool gRunning = true;
@@ -50,8 +51,9 @@ void runHomeMenu() {
         }
 
         gWindow->clear();
-        Global::currentWorld->renderSelf();
-        gWindow->display();
 
+        gWorld->renderSelf();
+
+        gWindow->display();
     }
 }
