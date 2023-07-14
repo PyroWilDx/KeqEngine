@@ -4,6 +4,7 @@
 
 #include "Utils/Events.hpp"
 #include "Utils/Global.hpp"
+#include "Main/HomeMenu.hpp"
 
 void onWindowResize(int newW, int newH) {
     Global::windowWidth = newW;
@@ -79,6 +80,11 @@ void handleBasicEvents(SDL_Event *event, bool *pGRunning) {
 
         case SDL_KEYDOWN:
             switch (event->key.keysym.sym) {
+                case SDLK_ESCAPE:
+                    runHomeMenu();
+                    *pGRunning = false;
+                    break;
+
                 case SDLK_F11: {
                     SDL_Window *gWindow = WindowRenderer::getInstance()->getWindow();
                     int windowFlag = (Global::isWindowFullscreen) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP;

@@ -10,6 +10,7 @@
 
 typedef struct Sprite {
     int sCode;
+    const char *imgPath;
     SDL_Texture *sTexture;
     bool sAnimated;
     int sFrameW;

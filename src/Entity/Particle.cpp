@@ -149,6 +149,10 @@ void Particle::initParticle() {
                              32, 32, HUD_SB_TIMER_FRAME_N, 0);
     particleMaxActives[PARTICLE_HUD_SKILL_BURST_TIMER] = 2;
 
+    baseParticle->initSprite(PARTICLE_HUD_COLOR_PICKER_CURSOR, "res/gfx/hud/ColorPickerCursor.png",
+                             16, 16, 2, 30);
+    particleMaxActives[PARTICLE_HUD_COLOR_PICKER_CURSOR] = 1;
+
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         activeParticles[spriteCode] = (Particle **)
                 calloc(particleMaxActives[spriteCode], sizeof(Particle *));

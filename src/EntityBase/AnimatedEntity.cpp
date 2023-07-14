@@ -31,7 +31,7 @@ void AnimatedEntity::initSprite(int spriteCode, const char *imgPath,
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     spriteArray[spriteCode] =
-            {spriteCode, gWindow->loadTexture(imgPath), false,
+            {spriteCode, imgPath, gWindow->loadTexture(imgPath), false,
              spriteFrameW, spriteFrameH, spriteFrameN, 0,
              new int[spriteFrameN], 0, nullptr};
 

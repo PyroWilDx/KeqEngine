@@ -72,7 +72,7 @@ void Entity::checkXCollision(bool checkRight) {
         double xRight = x + hitBox.x + hitBox.w;
         double xWall = INT32_MAX;
         for (double vY: yToCheck) {
-            xWall = min(xWall, Global::currentWorld->getNearestWallFrom(
+            xWall = std::min(xWall, Global::currentWorld->getNearestWallFrom(
                     xRight, vY, KEY_Q));
         }
         if (xRight > xWall) {
@@ -83,7 +83,7 @@ void Entity::checkXCollision(bool checkRight) {
         double xLeft = x + hitBox.x;
         double xWall = -INT32_MAX;
         for (double vY: yToCheck) {
-            xWall = max(xWall, Global::currentWorld->getNearestWallFrom(
+            xWall = std::max(xWall, Global::currentWorld->getNearestWallFrom(
                     xLeft, vY, KEY_D));
         }
         if (xLeft < xWall) {
@@ -111,7 +111,7 @@ void Entity::checkYCollision(bool checkDown) {
         double yDown = y + hitBox.y + hitBox.h;
         double yWall = Global::currentWorld->getNearestWallFrom(
                 xLeft, yDown, KEY_Z);
-        yWall = min(yWall, Global::currentWorld->getNearestWallFrom(
+        yWall = std::min(yWall, Global::currentWorld->getNearestWallFrom(
                 xRight, yDown, KEY_Z));
         if (yDown > yWall) {
             y = yWall - hitBox.h - hitBox.y;
@@ -121,7 +121,7 @@ void Entity::checkYCollision(bool checkDown) {
         double yUp = y + hitBox.y;
         double yWall = Global::currentWorld->getNearestWallFrom(
                 xLeft, yUp, KEY_S);
-        yWall = max(yWall, Global::currentWorld->getNearestWallFrom(
+        yWall = std::max(yWall, Global::currentWorld->getNearestWallFrom(
                 xRight, yUp, KEY_S));
         if (yUp < yWall) {
             y = yWall - hitBox.y;

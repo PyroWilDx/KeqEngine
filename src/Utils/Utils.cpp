@@ -30,6 +30,12 @@ int getTime() {
     return ((int) SDL_GetTicks());
 }
 
+void handleTime() {
+    int currentTime = getTime();
+    Global::dt = currentTime - Global::currentTime;
+    Global::currentTime = currentTime;
+}
+
 void getScreenXYCoeff(double *pXCoeff, double *pYCoeff) {
     *pXCoeff = (double) Global::renderWindowWidth / SCREEN_BASE_WIDTH;
     *pYCoeff = (double) Global::renderWindowHeight / SCREEN_BASE_HEIGHT;
@@ -144,9 +150,9 @@ void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
         if (h < 0) h += 360.0;
     }
 
-    *pH = h;
-    *pS = s;
-    *pV = v;
+    if (pH != nullptr) *pH = h;
+    if (pS != nullptr) *pS = s;
+    if (pV != nullptr) *pV = v;
 }
 
 void HSVtoRGB(double h, double s, double v,

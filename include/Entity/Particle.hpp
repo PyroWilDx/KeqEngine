@@ -34,6 +34,7 @@ enum {
     PARTICLE_HUD_SKILL_ICON_2,
     PARTICLE_HUD_BURST_ICON,
     PARTICLE_HUD_SKILL_BURST_TIMER,
+    PARTICLE_HUD_COLOR_PICKER_CURSOR,
     PARTICLE_ENUM_N
 };
 
@@ -91,8 +92,6 @@ public:
     inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
 
     [[nodiscard]] inline int getCode() const { return code; }
-
-//    inline void updateSprite(int spriteCode) override {};
 
 private:
     static Particle *baseParticle;

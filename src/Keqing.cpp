@@ -129,36 +129,51 @@ void Keqing::initKeqing() {
 }
 
 
-void Keqing::colorTexture(int r, int g, int b) {
-    SDL_Surface *img = IMG_Load("res/gfx/keqing/Idle.png");
+void Keqing::colorTexture(Uint8 r, Uint8 g, Uint8 b) {
+    SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
 
-    auto *pixel0 = (Uint8 *) img->pixels;
-    for (Uint8 *pixel = pixel0; pixel < pixel0 + (img->w * img->h) * 4; pixel += 4) {
+    for (int spriteCode = 0; spriteCode < KQ_ENUM_N; spriteCode++) {
+        Sprite *currSprite = getSprite(spriteCode);
+        SDL_Surface *img = IMG_Load(currSprite->imgPath);
 
-        double h, s, v;
-        RGBtoHSV(pixel[0], pixel[1], pixel[2],
-                 &h, &s, &v);
+        auto *pixel0 = (Uint8 *) img->pixels;
+        for (Uint8 *pixel = pixel0; pixel < pixel0 + (img->w * img->h) * 4; pixel += 4) {
 
-        // Hair (Green)
-        if (h >= 120 && h <= 180) {
-            h = 280 + (h - 120);
+            double h, s, v;
+            RGBtoHSV(pixel[0], pixel[1], pixel[2],
+                     &h, &s, &v);
+
+            double rgbH, rgbS, rgbV;
+            RGBtoHSV(r, g, b,
+                     &rgbH, &rgbS, &rgbV);
+
+
+            bool change = false;
+            // Hair (Green)
+            if (h >= 120 && h <= 180) {
+                h = rgbH + (h - 120);
+
+                change = true;
+            }
+
+            // Outfit & Gloves (Red)
+            if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
+                if (h >= 330 && h <= 360)
+                    h = rgbH + (h - 330);
+                else if (h >= 0 && h <= 30)
+                    h = rgbH + (h - 0);
+
+                change = true;
+            }
+
+            if (change)
+                HSVtoRGB(h, rgbS, v,
+                         &pixel[0], &pixel[1], &pixel[2]);
         }
 
-        // Outfit & Gloves (Red)
-        if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
-            if (h >= 330 && h <= 360)
-                h = 280 + (h - 330);
-            else if (h >= 0 && h <= 30)
-                h = 280 + (h - 0);
-        }
-
-        HSVtoRGB(h, s, v,
-                 &pixel[0], &pixel[1], &pixel[2]);
+        SDL_Texture *mTexture = SDL_CreateTextureFromSurface(gRenderer, img);
+        currSprite->sTexture = mTexture;
     }
-
-    SDL_Texture *mTexture = SDL_CreateTextureFromSurface(
-            WindowRenderer::getInstance()->getRenderer(), img);
-    getSprite(KQ_IDLE)->sTexture = mTexture;
 }
 
 
@@ -326,7 +341,7 @@ void Keqing::CAtk() {
     }
 
     if (xVelocity < 0) {
-        xVelocity = min(xVelocity + 0.001 * Global::dt, 0.0);
+        xVelocity = std::min(xVelocity + 0.001 * Global::dt, 0.0);
     }
 }
 
@@ -341,7 +356,7 @@ void Keqing::dash() {
 
     } else if (isFrameBetween(KQ_DASH, 6, -1)) {
         if (xVelocity < 0) {
-            xVelocity = min(xVelocity + 0.01 * (double) Global::dt, 0.0);
+            xVelocity = std::min(xVelocity + 0.01 * (double) Global::dt, 0.0);
         }
     }
 }

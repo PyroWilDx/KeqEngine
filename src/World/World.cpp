@@ -6,11 +6,11 @@
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
-             const char *backgroundImgPath)
-        : background(new Background(screenW, screenH,
-                                    backgroundTotalW, backgroundTotalH,
-                                    backgroundImgPath)),
-          pixels() {
+             const char *backgroundImgPath) {
+    background = new Background(screenW, screenH,
+                                backgroundTotalW, backgroundTotalH,
+                                backgroundImgPath);
+    activeButton = nullptr;
 
     pixels = (Pixel **) new Pixel[backgroundTotalW];
     for (int i = 0; i < background->getTotalW(); i++) {
@@ -19,15 +19,13 @@ World::World(int screenW, int screenH,
             pixels[i][j] = {-1, -1};
         }
     }
-
-    activeButton = nullptr;
 }
 
 World::~World() {
     for (Block *block: blockVector) {
         delete block;
     }
-    for (pair<const int, Button *> it: buttonHashMap) {
+    for (std::pair<const int, Button *> it: buttonHashMap) {
         delete it.second;
     }
 }
@@ -43,10 +41,10 @@ void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntit
 void World::addWorldEntity(WorldEntity *worldEntity) {
     double worldEntityW, worldEntityH;
     worldEntity->getRealSize(&worldEntityW, &worldEntityH);
-    int minX = max(worldEntity->getX(), 0);
-    int maxX = (int) min(worldEntity->getX() + worldEntityW, (double) background->getTotalW());
-    int minY = max(worldEntity->getY(), 0);
-    int maxY = (int) min(worldEntity->getY() + worldEntityH, (double) background->getTotalH());
+    int minX = std::max(worldEntity->getX(), 0);
+    int maxX = (int) std::min(worldEntity->getX() + worldEntityW, (double) background->getTotalW());
+    int minY = std::max(worldEntity->getY(), 0);
+    int maxY = (int) std::min(worldEntity->getY() + worldEntityH, (double) background->getTotalH());
     updatePixels(minX, minY, maxX, maxY, worldEntity);
 }
 
@@ -77,12 +75,8 @@ bool World::isPixelBlock(double x, double y) {
     return (getPixel(x, y).worldType == WORLD_BLOCK);
 }
 
-bool World::isPixelButton(Pixel pixel) {
-    return (pixel.worldType == WORLD_BUTTON);
-}
-
 bool World::isPixelButton(double x, double y) {
-    return isPixelButton(getPixel(x, y));
+    return (getPixel(x, y).worldType == WORLD_BUTTON);
 }
 
 bool World::isPixelSurface(double x, double y) {
@@ -125,14 +119,13 @@ double World::getNearestWallFrom(double x, double y, int direction) {
 
 void World::clickPixel(double x, double y, Uint32 eventType) {
     if (eventType == SDL_MOUSEBUTTONDOWN) {
-        Pixel clickPixel = getPixel(x, y);
-        if (isPixelButton(clickPixel)) {
-            int worldCode = clickPixel.worldCode;
-            auto buttonIterator = buttonHashMap.equal_range(clickPixel.worldCode);
+        if (isPixelButton(x, y)) {
+            int worldCode = getPixel(x, y).worldCode;
+            auto buttonIterator = buttonHashMap.equal_range(worldCode);
             for (auto it = buttonIterator.first; it != buttonIterator.second; it++) {
                 Button *button = it->second;
                 if (button->getWorldCode() == worldCode) {
-                    button->onClick();
+                    button->onClick((int) x, (int) y);
                     activeButton = button;
                     return;
                 }
@@ -143,7 +136,7 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
     if (eventType == SDL_MOUSEBUTTONUP) {
         if (activeButton != nullptr) {
             bool isMouseOnButton = isPixelCode(x, y, activeButton->getWorldCode());
-            activeButton->onClickRelease(isMouseOnButton);
+            activeButton->onClickRelease((int) x, (int) y, isMouseOnButton);
             activeButton = nullptr;
         }
     }
@@ -155,7 +148,7 @@ void World::renderSelf() {
     for (Block *block: blockVector) {
         gWindow->renderEntity(block);
     }
-    for (pair<const int, Button *> it: buttonHashMap) {
+    for (std::pair<const int, Button *> it: buttonHashMap) {
         gWindow->renderEntity(it.second);
     }
 }
