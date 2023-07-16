@@ -11,6 +11,7 @@ ColorPicker::ColorPicker(double x, double y, int renderW, int renderH)
     swapColorOnClick = false;
     pickerX = (int) x;
     pickerY = (int) y;
+    currentRGBA = 0;
 }
 
 void ColorPicker::onClick(int mouseX, int mouseY) {
@@ -23,6 +24,12 @@ int ColorPicker::getPickerSize() {
     double w, h;
     getRealSize(&w, &h);
     return ((int) (std::min(w, h) / 32.0));
+}
+
+static double setRGB(double *pRGB, double value) {
+    *pRGB = value;
+    *pRGB = std::min(*pRGB, 255.0);
+    *pRGB = std::max(*pRGB, 0.0);
 }
 
 void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {
@@ -61,28 +68,16 @@ void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {
                 currentRGBA = (rInt << 24) | (gInt << 16) | (bInt << 8) | 0x000000FF;
             }
 
-            r += yAddR;
-            r = std::min(r, 255.0);
-            r = std::max(r, 0.0);
-            g += yAddG;
-            g = std::min(g, 255.0);
-            g = std::max(g, 0.0);
-            b += yAddB;
-            b = std::min(b, 255.0);
-            b = std::max(b, 0.0);
+            setRGB(&r, r + yAddR);
+            setRGB(&g, g + yAddG);
+            setRGB(&b, b + yAddB);
         }
 
         colorIndex = ((i - dst.x) * nComb) / dst.w;
 
-        r = lastR + xAddRInfo[colorIndex];
-        r = std::min(r, 255.0);
-        r = std::max(r, 0.0);
-        g = lastG + xAddGInfo[colorIndex];
-        g = std::min(g, 255.0);
-        g = std::max(g, 0.0);
-        b = lastB + xAddBInfo[colorIndex];
-        b = std::min(b, 255.0);
-        b = std::max(b, 0.0);
+        setRGB(&r, lastR + xAddRInfo[colorIndex]);
+        setRGB(&g, lastG + xAddGInfo[colorIndex]);
+        setRGB(&b, lastB + xAddBInfo[colorIndex]);
     }
 
     int cursorSize = getPickerSize();
