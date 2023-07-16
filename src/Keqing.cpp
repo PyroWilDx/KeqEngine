@@ -437,7 +437,7 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
 }
 
 void Keqing::ESkill() {
-    if (isNewestFrame(KQ_SKILL, 3)) { // Lightning Stiletto
+    if (isNewestFrame(KQ_SKILL, 4)) { // Lightning Stiletto
         if (!isKeyPressed(KEY_E)) {
             createLightningStelitto(this);
         } else {
@@ -491,7 +491,7 @@ void Keqing::ESkillAiming() {
         setSpriteAnimated(KQ_SKILL_AIMING, false);
         createLightningStelitto(this, mouseX, mouseY);
         pauseSprite(KQ_SKILL, false);
-        goToFrame(KQ_SKILL, 4);
+        goToFrame(KQ_SKILL, 5);
         return;
     }
 }
