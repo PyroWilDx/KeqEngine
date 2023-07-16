@@ -26,7 +26,7 @@ int ColorPicker::getPickerSize() {
     return ((int) (std::min(w, h) / 32.0));
 }
 
-static double setRGB(double *pRGB, double value) {
+static void setRGB(double *pRGB, double value) {
     *pRGB = value;
     *pRGB = std::min(*pRGB, 255.0);
     *pRGB = std::max(*pRGB, 0.0);

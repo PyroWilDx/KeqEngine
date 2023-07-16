@@ -103,15 +103,7 @@ void handleBasicEvents(SDL_Event *event, bool *pGRunning) {
         case SDL_MOUSEBUTTONUP: {
             int mouseX = event->button.x;
             int mouseY = event->button.y;
-            int xShift = 0;
-            int yShift = 0;
-            shiftXYScreen(&xShift, &yShift);
-            mouseX -= xShift;
-            mouseY -= yShift;
-            double xCoeff, yCoeff;
-            getScreenXYCoeff(&xCoeff, &yCoeff);
-            mouseX = (int) ((double) mouseX / xCoeff);
-            mouseY = (int) ((double) mouseY / yCoeff);
+            getMouseAbsoluteXY(&mouseX, &mouseY);
             Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
             break;
         }

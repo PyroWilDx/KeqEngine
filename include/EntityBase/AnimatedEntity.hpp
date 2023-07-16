@@ -63,6 +63,8 @@ public:
 
     void stopOnFrame(int spriteCode, int frameIndex = -1);
 
+    void pauseSprite(int spriteCode, bool pause);
+
     void resetSprite(int spriteCode);
 
     void delaySprite(int spriteCode, int ms);
@@ -71,12 +73,12 @@ public:
 
     inline Sprite *getSprite(int spriteCode) { return (&spriteArray[spriteCode]); }
 
-    inline int getCurrentSpriteCode() { return currSpriteCode; }
+    inline int getCurrentSpriteCode() { return currentSprite->sCode; }
 
 private:
     int spriteArrayLength;
     Sprite *spriteArray;
-    int currSpriteCode;
+    Sprite *currentSprite;
 
 private:
 

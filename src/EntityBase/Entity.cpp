@@ -171,6 +171,12 @@ void Entity::moveTo(Entity *entity, double addX, double addY) {
     y += addY;
 }
 
+void Entity::moveToCenter(double x_, double y_) {
+    double realW, realH;
+    getRealSize(&realW, &realH);
+    moveTo(x_ - realW / 2.0, y_ - realH / 2.0);
+}
+
 void Entity::getRealSize(double *pW, double *pH) {
     if (pW != nullptr)
         *pW = (double) imgFrame.w * renderWMultiplier;
@@ -201,7 +207,7 @@ SDL_Rect Entity::getRenderRect() {
     SDL_Rect dst = {(int) (dstX * xCoeff), (int) (dstY * yCoeff),
                     (int) (realW * xCoeff), (int) (realH * yCoeff)};
 
-    shiftXYScreen(&dst.x, &dst.y);
+    shiftXYFromScreenPosition(&dst.x, &dst.y);
 
     return dst;
 }
@@ -230,6 +236,18 @@ void Entity::addRenderWHMultiplierR(double addW, double addH, double maxW, doubl
 
     if (lastRenderWM != renderWMultiplier) x -= (newW - lastW);
     if (lastRenderHM != renderHMultiplier) y -= (newH - lastH);
+}
+
+void Entity::getSelfCenter(double *pX, double *pY) {
+    if (hitBox.w != 0 && hitBox.h != 0) {
+        *pX = x + hitBox.x + (double) hitBox.w / 2.0;
+        *pY = y + hitBox.y + (double) hitBox.h / 2.0;
+    } else {
+        double realW, realH;
+        getRealSize(&realW, &realH);
+        *pX = x + realW / 2.0;
+        *pY = y + realH / 2.0;
+    }
 }
 
 void Entity::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {

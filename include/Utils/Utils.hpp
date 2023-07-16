@@ -50,7 +50,9 @@ void handleTime();
 
 void getScreenXYCoeff(double *pXCoeff, double *pYCoeff);
 
-void shiftXYScreen(int *pX, int *pY);
+void shiftXYFromScreenPosition(int *pX, int *pY);
+
+void getMouseAbsoluteXY(int *pMouseX, int *pMouseY);
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard);
 

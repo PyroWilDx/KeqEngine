@@ -75,6 +75,11 @@ void Particle::initParticle() {
                              192, 160, 14, 0);
     particleMaxActives[PARTICLE_KQ_SKILL_EXPLOSION] = 1;
 
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_AIMING_IDLE, "res/gfx/particle/KQSkillAimingIdle.png",
+                             48, 48, 8, 0);
+    baseParticle->setSpriteNext(PARTICLE_KQ_SKILL_AIMING_IDLE, PARTICLE_KQ_SKILL_AIMING_IDLE);
+    particleMaxActives[PARTICLE_KQ_SKILL_AIMING_IDLE] = 1;
+
     baseParticle->initSprite(PARTICLE_KQ_BURST_AOE, "res/gfx/particle/KQBurstAOE.png",
                              200, 200, 7, 0);
     baseParticle->setSpriteNext(PARTICLE_KQ_BURST_AOE, PARTICLE_KQ_BURST_AOE);

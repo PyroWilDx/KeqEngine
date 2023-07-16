@@ -41,9 +41,21 @@ void getScreenXYCoeff(double *pXCoeff, double *pYCoeff) {
     *pYCoeff = (double) Global::renderWindowHeight / SCREEN_BASE_HEIGHT;
 }
 
-void shiftXYScreen(int *pX, int *pY) {
+void shiftXYFromScreenPosition(int *pX, int *pY) {
     *pX += (Global::windowWidth - Global::renderWindowWidth) / 2;
     *pY += (Global::windowHeight - Global::renderWindowHeight) / 2;
+}
+
+void getMouseAbsoluteXY(int *pMouseX, int *pMouseY) {
+    int xShift = 0;
+    int yShift = 0;
+    shiftXYFromScreenPosition(&xShift, &yShift);
+    *pMouseX -= xShift;
+    *pMouseY -= yShift;
+    double xCoeff, yCoeff;
+    getScreenXYCoeff(&xCoeff, &yCoeff);
+    *pMouseX = (int) ((double) *pMouseX / xCoeff);
+    *pMouseY = (int) ((double) *pMouseY / yCoeff);
 }
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard) {

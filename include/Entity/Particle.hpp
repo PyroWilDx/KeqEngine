@@ -16,6 +16,7 @@ enum {
     PARTICLE_KQ_SKILL_IDLE,
     PARTICLE_KQ_SKILL_TP_END,
     PARTICLE_KQ_SKILL_EXPLOSION,
+    PARTICLE_KQ_SKILL_AIMING_IDLE,
     PARTICLE_KQ_BURST_AOE,
     PARTICLE_KQ_BURST_AOE_WAVE,
     PARTICLE_KQ_BURST_VANISH,
@@ -57,7 +58,7 @@ public:
 
     static void initParticle();
 
-    static Particle *push(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
+    static Particle *push(int spriteCode, int frameLength, double wMultiplier = 1.0, double hMultiplier = 1.0);
 
     static void pushFast(Particle *particle);
 

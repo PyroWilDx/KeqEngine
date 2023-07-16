@@ -1,0 +1,2 @@
+Custom HashTable for Buttons.
+Diminuer la size que prend une particule psq c'est là c'est trop
