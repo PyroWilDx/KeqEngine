@@ -22,50 +22,50 @@ public:
                     int spriteFrameW, int spriteFrameH, int spriteFrameN,
                     int spriteFrameLength = 0);
 
-    virtual void setSpriteAnimated(int spriteCode, bool animated);
+    void setSpriteAnimated(bool animated, int spriteCode = 0,
+                           void (*preAction)(int spriteCode, void *fParams) = nullptr,
+                           void *fParams = nullptr);
 
-    void setSpriteFrameLengthFromTo(int spriteCode, int spriteFrameLength,
-                                    int startFrame = -2, int endFrame = -2);
+    void setSpriteFrameLengthFromTo(int spriteFrameLength, int startFrame, int endFrame,
+                                    int spriteCode = 0);
 
-    void setSpriteFrameLengths(int spriteCode, const int *spriteFrameLengths);
+//    void setSpriteFrameLengths(const int *spriteFrameLengths, int spriteCode = 0);
 
-    void setSpriteNext(int spriteCode, int nextSpriteCode);
+    void setSpriteNext(int nextSpriteCode, int spriteCode);
 
-    bool isSpriteAnimated(int spriteCode);
+    bool isSpriteAnimated(int spriteCode = 0);
 
-    bool isFrameAt(int spriteCode, int frameIndex);
+    bool isFrameAt(int frameIndex, int spriteCode = 0);
 
-    bool isNewestFrame(int spriteCode, int frameIndex);
+    bool isNewestFrame(int frameIndex, int spriteCode = 0);
 
-    bool isFrameBetween(int spriteCode, int startFrame, int endFrame);
+    bool isFrameBetween(int startFrame, int endFrame, int spriteCode = 0);
 
-    bool willFrameFinish(int spriteCode, int frameIndex);
+    bool willFrameFinish(int frameIndex, int spriteCode = 0);
 
-    bool isCurrentSprite(int spriteCode);
+    bool isCurrentSprite(int spriteCode = 0);
 
-    void goToFrame(int spriteCode, int frameIndex);
+    void goToFrame(int frameIndex, int spriteCode = 0);
 
-    void goToNextFrame(int spriteCode);
+    void goToNextFrame(int spriteCode = 0);
 
-    void stopOnFrame(int spriteCode, int frameIndex = -1);
+    void stopOnFrame(int frameIndex, int spriteCode = 0);
 
-    void pauseSprite(int spriteCode, bool pause);
+    void pauseSprite(bool pause, int spriteCode = 0);
 
-    void resetSprite(int spriteCode);
+    void resetSprite(int spriteCode = 0);
 
-    void delaySprite(int spriteCode, int ms);
+    void delaySprite(int ms, int spriteCode = 0);
 
     void animateSprite();
 
-    inline Sprite *getSprite(int spriteCode) { return (&spriteArray[spriteCode]); }
+    inline Sprite *getSprite(int spriteCode = 0) { return (&spriteArray[spriteCode]); }
 
     inline int getCurrentSpriteCode() { return currentSprite->sCode; }
 
 private:
     SpriteArray spriteArray;
     Sprite *currentSprite;
-
-private:
 
 };
 

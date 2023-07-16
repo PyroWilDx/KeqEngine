@@ -69,7 +69,7 @@ public:
 
     SDL_Rect getRenderRect() override;
 
-    void setSpriteAnimated(int spriteCode, bool animated) override;
+    void setSpriteAnimated(bool animated, int spriteCode);
 
     bool shouldUpdateDirection();
 
@@ -107,12 +107,12 @@ public:
 
     bool canDoAction(int spriteCode);
 
-    void preAction(int spriteCode);
+    static void preAction(int spriteCode, void *fParams);
 
     void updateAction();
 
     static inline bool isLightningStilettoExisting() {
-        return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE, 0) != nullptr);
+        return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE) != nullptr);
     }
 
     // TODO may need isInvincible
@@ -127,7 +127,7 @@ private:
     static int spriteYShifts[KQ_ENUM_N];
     static int spriteXRShifts[KQ_ENUM_N];
 
-    static void setXYShift(int spriteCode, int xShift, int yShift, int xRShift);
+    static void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
 
     int hp;
     bool airDashed;

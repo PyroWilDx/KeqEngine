@@ -193,7 +193,7 @@ void runGame1() {
         }
 
         if (kq->canDoAction(spriteCode)) {
-            kq->setSpriteAnimated(spriteCode, true);
+            kq->setSpriteAnimated(true, spriteCode);
         }
 
         // Particles
