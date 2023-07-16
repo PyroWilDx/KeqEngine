@@ -61,5 +61,6 @@ target_sources(main PRIVATE
         ${SRC_DIR}/Main/Game1.cpp
         ${SRC_DIR}/Main/ColorKeqing.cpp
         ${SRC_DIR}/Utils/Events.cpp
-        ${SRC_DIR}/UI/ColorPicker.cpp)
+        ${SRC_DIR}/UI/ColorPicker.cpp
+        ${SRC_DIR}/Utils/SpriteArray.cpp)
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})

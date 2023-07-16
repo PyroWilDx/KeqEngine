@@ -7,21 +7,7 @@
 
 #include "Entity.hpp"
 #include "WindowRenderer.hpp"
-
-typedef struct Sprite {
-    int sCode;
-    const char *imgPath;
-    SDL_Texture *sTexture;
-    bool sAnimated;
-    int sFrameW;
-    int sFrameH;
-    int sFrameN;
-    int sCurrentFrame;
-    int *sFrameLengths;
-    int sTimer;
-    Sprite *sNext;
-} Sprite;
-
+#include "Utils/SpriteArray.hpp"
 
 class AnimatedEntity : public Entity {
 
@@ -76,8 +62,7 @@ public:
     inline int getCurrentSpriteCode() { return currentSprite->sCode; }
 
 private:
-    int spriteArrayLength;
-    Sprite *spriteArray;
+    SpriteArray spriteArray;
     Sprite *currentSprite;
 
 private:

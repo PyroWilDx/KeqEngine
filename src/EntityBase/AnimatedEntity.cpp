@@ -6,10 +6,7 @@
 #include "Utils/Global.hpp"
 
 AnimatedEntity::AnimatedEntity(int spriteArrayLength)
-        : Entity() {
-    this->spriteArrayLength = spriteArrayLength;
-    spriteArray = new Sprite[spriteArrayLength];
-    spriteArray[spriteArrayLength].sAnimated = false;
+        : Entity(), spriteArray(spriteArrayLength) {
     currentSprite = &spriteArray[0];
 }
 
@@ -18,7 +15,7 @@ AnimatedEntity::~AnimatedEntity() {
 }
 
 void AnimatedEntity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-    for (int i = 0; i < spriteArrayLength; i++) {
+    for (int i = 0; i < spriteArray.getSpriteArrayLength(); i++) {
         SDL_Texture *currTexture = spriteArray[i].sTexture;
         SDL_SetTextureColorMod(currTexture, r, g, b);
         SDL_SetTextureAlphaMod(currTexture, a);
@@ -152,7 +149,8 @@ void AnimatedEntity::delaySprite(int spriteCode, int ms) {
 
 void AnimatedEntity::animateSprite() {
     Sprite *lastAnimatedSprite = nullptr;
-    for (int i = 0; i < spriteArrayLength; i++) {
+
+    for (int i = 0; i < spriteArray.getSpriteArrayLength(); i++) {
         Sprite *sprite = &spriteArray[i];
         if (sprite->sAnimated) {
             sprite->sTimer += Global::dt;
