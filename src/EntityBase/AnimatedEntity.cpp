@@ -10,7 +10,7 @@ AnimatedEntity::AnimatedEntity(int spriteArrayLength)
     this->spriteArrayLength = spriteArrayLength;
     spriteArray = new Sprite[spriteArrayLength];
     spriteArray[spriteArrayLength].sAnimated = false;
-    currSpriteCode = 0;
+    currentSprite = &spriteArray[0];
 }
 
 AnimatedEntity::~AnimatedEntity() {
@@ -43,7 +43,7 @@ void AnimatedEntity::initSprite(int spriteCode, const char *imgPath,
 void AnimatedEntity::setSpriteAnimated(int spriteCode, bool animated) {
     spriteArray[spriteCode].sAnimated = animated;
     if (animated) {
-        currSpriteCode = spriteCode;
+        currentSprite = &spriteArray[spriteCode];
     }
     if (!animated) {
         resetSprite(spriteCode);
@@ -99,9 +99,7 @@ bool AnimatedEntity::isNewestFrame(int spriteCode, int frameIndex) {
 bool AnimatedEntity::isFrameBetween(int spriteCode, int startFrame, int endFrame) {
     Sprite *sprite = &spriteArray[spriteCode];
 
-    if (endFrame == -1) {
-        endFrame = sprite->sFrameN - 1;
-    }
+    if (endFrame == -1) endFrame = sprite->sFrameN - 1;
 
     return (sprite->sCurrentFrame >= startFrame &&
             sprite->sCurrentFrame <= endFrame);
@@ -115,7 +113,7 @@ bool AnimatedEntity::willFrameFinish(int spriteCode, int frameIndex) {
 }
 
 bool AnimatedEntity::isCurrentSprite(int spriteCode) {
-    return (spriteCode == currSpriteCode);
+    return (spriteCode == currentSprite->sCode);
 }
 
 void AnimatedEntity::goToFrame(int spriteCode, int frameIndex) {
@@ -136,6 +134,10 @@ void AnimatedEntity::stopOnFrame(int spriteCode, int frameIndex) {
         frameIndex = spriteArray[spriteCode].sFrameN - 1;
     }
     spriteArray[spriteCode].sFrameLengths[frameIndex] = INT32_MAX;
+}
+
+void AnimatedEntity::pauseSprite(int spriteCode, bool pause) {
+    spriteArray[spriteCode].sAnimated = !pause;
 }
 
 void AnimatedEntity::resetSprite(int spriteCode) {
@@ -173,11 +175,12 @@ void AnimatedEntity::animateSprite() {
             lastAnimatedSprite = sprite;
         }
     }
+
     if (lastAnimatedSprite != nullptr) {
         imgTexture = lastAnimatedSprite->sTexture;
         imgFrame.x = lastAnimatedSprite->sCurrentFrame * lastAnimatedSprite->sFrameW;
         imgFrame.w = lastAnimatedSprite->sFrameW;
         imgFrame.h = lastAnimatedSprite->sFrameH;
-        currSpriteCode = lastAnimatedSprite->sCode;
+        currentSprite = lastAnimatedSprite;
     }
 }

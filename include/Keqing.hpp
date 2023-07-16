@@ -24,6 +24,7 @@ enum {
     KQ_CATK,
     KQ_DASH,
     KQ_SKILL,
+    KQ_SKILL_AIMING,
     KQ_SKILL_SLASH,
     KQ_BURST,
     KQ_AIR_NATK,
@@ -74,17 +75,9 @@ public:
 
     void updateDirection();
 
-//    bool canWalk();
-
     bool canMoveLR();
 
     void moveLR();
-
-//    void walk();
-//
-//    void run();
-//
-//    void jumpMove();
 
     void jump();
 
@@ -95,6 +88,8 @@ public:
     void dash();
 
     void ESkill();
+
+    void ESkillAiming();
 
     void ESkillSlash();
 
@@ -135,6 +130,7 @@ private:
     static void setXYShift(int spriteCode, int xShift, int yShift, int xRShift);
 
     int hp;
+    bool airDashed;
 };
 
 #endif

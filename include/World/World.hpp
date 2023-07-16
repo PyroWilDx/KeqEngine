@@ -33,8 +33,6 @@ public:
 
     void addButton(Button *button);
 
-    void addEntity(Entity *entity);
-
     Pixel getPixel(double x, double y);
 
     bool isPixelBlock(double x, double y);

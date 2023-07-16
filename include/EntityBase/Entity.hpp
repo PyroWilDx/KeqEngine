@@ -47,6 +47,8 @@ public:
 
     void moveTo(Entity *entity, double addX, double addY);
 
+    void moveToCenter(double x_, double y_);
+
     virtual void getRealSize(double *pW, double *pH);
 
     virtual bool shouldTranslate();
@@ -56,6 +58,8 @@ public:
     void addRenderWHMultiplier(double addW, double addH, double maxW, double maxH);
 
     void addRenderWHMultiplierR(double addW, double addH, double maxW, double maxH);
+
+    void getSelfCenter(double *pX, double *pY);
 
     void getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY);
 
