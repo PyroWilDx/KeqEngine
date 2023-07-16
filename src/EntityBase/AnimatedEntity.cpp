@@ -33,48 +33,40 @@ void AnimatedEntity::initSprite(int spriteCode, const char *imgPath,
              new int[spriteFrameN], 0, nullptr};
 
     if (spriteFrameLength != 0) {
-        setSpriteFrameLengthFromTo(spriteCode, spriteFrameLength);
+        setSpriteFrameLengthFromTo(spriteFrameLength, 0, -1, spriteCode);
     }
 }
 
-void AnimatedEntity::setSpriteAnimated(int spriteCode, bool animated) {
+void AnimatedEntity::setSpriteAnimated(bool animated, int spriteCode,
+                                       void (*preAction)(int spriteCode, void *fParams),
+                                       void *fParams) {
+    if (preAction != nullptr) {
+        if (animated && !isSpriteAnimated(spriteCode)) {
+            preAction(spriteCode, fParams);
+        }
+    }
     spriteArray[spriteCode].sAnimated = animated;
-    if (animated) {
-        currentSprite = &spriteArray[spriteCode];
-    }
-    if (!animated) {
-        resetSprite(spriteCode);
-    }
+    if (animated) currentSprite = &spriteArray[spriteCode];
+    if (!animated) resetSprite(spriteCode);
 }
 
-void AnimatedEntity::setSpriteFrameLengthFromTo(int spriteCode, int spriteFrameLength,
-                                                int startFrame, int endFrame) {
+void AnimatedEntity::setSpriteFrameLengthFromTo(int spriteFrameLength, int startFrame, int endFrame,
+                                                int spriteCode) {
     Sprite *sprite = &spriteArray[spriteCode];
-
-    if ((startFrame == -2) && (endFrame == -2)) {
-        startFrame = 0;
-        endFrame = sprite->sFrameN - 1;
-    } else if (endFrame == -2) {
-        endFrame = startFrame;
-    }
-
-    if (endFrame == -1) {
-        endFrame = sprite->sFrameN - 1;
-    }
-
+    if (endFrame == -1) endFrame = sprite->sFrameN - 1;
     for (int i = startFrame; i <= endFrame; i++) {
         sprite->sFrameLengths[i] = spriteFrameLength;
     }
 }
 
-void AnimatedEntity::setSpriteFrameLengths(int spriteCode, const int *spriteFrameLengths) {
-    Sprite *sprite = &spriteArray[spriteCode];
-    for (int i = 0; i < sprite->sFrameN; i++) {
-        sprite->sFrameLengths[i] = spriteFrameLengths[i];
-    }
-}
+//void AnimatedEntity::setSpriteFrameLengths(const int *spriteFrameLengths, int spriteCode) {
+//    Sprite *sprite = &spriteArray[spriteCode];
+//    for (int i = 0; i < sprite->sFrameN; i++) {
+//        sprite->sFrameLengths[i] = spriteFrameLengths[i];
+//    }
+//}
 
-void AnimatedEntity::setSpriteNext(int spriteCode, int nextSpriteCode) {
+void AnimatedEntity::setSpriteNext(int nextSpriteCode, int spriteCode) {
     spriteArray[spriteCode].sNext = &spriteArray[nextSpriteCode];
 }
 
@@ -82,18 +74,18 @@ bool AnimatedEntity::isSpriteAnimated(int spriteCode) {
     return (spriteArray[spriteCode].sAnimated);
 }
 
-bool AnimatedEntity::isFrameAt(int spriteCode, int frameIndex) {
+bool AnimatedEntity::isFrameAt(int frameIndex, int spriteCode) {
     if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
     return (spriteArray[spriteCode].sCurrentFrame == frameIndex);
 }
 
-bool AnimatedEntity::isNewestFrame(int spriteCode, int frameIndex) {
+bool AnimatedEntity::isNewestFrame(int frameIndex, int spriteCode) {
     if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
-    return (isFrameAt(spriteCode, frameIndex) &&
+    return (isFrameAt(frameIndex, spriteCode) &&
             spriteArray[spriteCode].sTimer == 0);
 }
 
-bool AnimatedEntity::isFrameBetween(int spriteCode, int startFrame, int endFrame) {
+bool AnimatedEntity::isFrameBetween(int startFrame, int endFrame, int spriteCode) {
     Sprite *sprite = &spriteArray[spriteCode];
 
     if (endFrame == -1) endFrame = sprite->sFrameN - 1;
@@ -102,10 +94,10 @@ bool AnimatedEntity::isFrameBetween(int spriteCode, int startFrame, int endFrame
             sprite->sCurrentFrame <= endFrame);
 }
 
-bool AnimatedEntity::willFrameFinish(int spriteCode, int frameIndex) {
+bool AnimatedEntity::willFrameFinish(int frameIndex, int spriteCode) {
     if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
     Sprite *sprite = &spriteArray[spriteCode];
-    return (isFrameAt(spriteCode, frameIndex) &&
+    return (isFrameAt(frameIndex, spriteCode) &&
             sprite->sTimer + Global::dt > sprite->sFrameLengths[frameIndex]);
 }
 
@@ -113,7 +105,7 @@ bool AnimatedEntity::isCurrentSprite(int spriteCode) {
     return (spriteCode == currentSprite->sCode);
 }
 
-void AnimatedEntity::goToFrame(int spriteCode, int frameIndex) {
+void AnimatedEntity::goToFrame(int frameIndex, int spriteCode) {
     if (frameIndex == -1) {
         frameIndex = spriteArray[spriteCode].sFrameN - 1;
     }
@@ -122,18 +114,18 @@ void AnimatedEntity::goToFrame(int spriteCode, int frameIndex) {
 }
 
 void AnimatedEntity::goToNextFrame(int spriteCode) {
-    goToFrame(spriteCode, spriteArray[spriteCode].sCurrentFrame + 1);
+    goToFrame(spriteArray[spriteCode].sCurrentFrame + 1, spriteCode);
     spriteArray[spriteCode].sTimer = 0;
 }
 
-void AnimatedEntity::stopOnFrame(int spriteCode, int frameIndex) {
+void AnimatedEntity::stopOnFrame(int frameIndex, int spriteCode) {
     if (frameIndex == -1) {
         frameIndex = spriteArray[spriteCode].sFrameN - 1;
     }
     spriteArray[spriteCode].sFrameLengths[frameIndex] = INT32_MAX;
 }
 
-void AnimatedEntity::pauseSprite(int spriteCode, bool pause) {
+void AnimatedEntity::pauseSprite(bool pause, int spriteCode) {
     spriteArray[spriteCode].sAnimated = !pause;
 }
 
@@ -143,7 +135,7 @@ void AnimatedEntity::resetSprite(int spriteCode) {
     sprite->sTimer = 0;
 }
 
-void AnimatedEntity::delaySprite(int spriteCode, int ms) {
+void AnimatedEntity::delaySprite(int ms, int spriteCode) {
     spriteArray[spriteCode].sTimer -= ms;
 }
 
@@ -161,9 +153,9 @@ void AnimatedEntity::animateSprite() {
             if (sprite->sTimer > sprite->sFrameLengths[currentFrame]) {
                 sprite->sCurrentFrame++;
                 if (sprite->sCurrentFrame == sprite->sFrameN) {
-                    setSpriteAnimated(sprite->sCode, false);
+                    setSpriteAnimated(false, sprite->sCode);
                     if (sprite->sNext != nullptr) {
-                        setSpriteAnimated(sprite->sNext->sCode, true);
+                        setSpriteAnimated(true, sprite->sNext->sCode);
                         lastAnimatedSprite = sprite->sNext;
                     }
                     continue;

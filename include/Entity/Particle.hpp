@@ -50,7 +50,7 @@ typedef struct FadeAwayParams {
 class Particle : public AnimatedEntity {
 
 public:
-    Particle();
+    explicit Particle(bool isBaseParticle);
 
     Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
 
@@ -62,15 +62,15 @@ public:
 
     static void pushFast(Particle *particle);
 
-    static void remove(int spriteCode, int i);
+    static void remove(int spriteCode, int i = 0);
 
     static void animateAll();
 
     static void renderAll();
 
-    static Particle *getParticle(int spriteCode, int i);
+    static Particle *getParticle(int spriteCode, int i = 0);
 
-    static bool isActive(int spriteCode, int i);
+    static bool isActive(int spriteCode, int i = 0);
 
     static void cleanUp();
 
@@ -92,7 +92,7 @@ public:
 
     inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
 
-    [[nodiscard]] inline int getCode() const { return code; }
+    [[nodiscard]] inline int getCode() const { return particleCode; }
 
 private:
     static Particle *baseParticle;
@@ -101,7 +101,7 @@ private:
     static Particle **activeParticles[PARTICLE_ENUM_N];
     static int activeCounts[PARTICLE_ENUM_N];
 
-    int code;
+    int particleCode;
     Entity *entity;
     double entityLastX, entityLastY;
     FadeAwayParams fadeParams;
