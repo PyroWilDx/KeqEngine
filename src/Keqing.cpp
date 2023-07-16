@@ -203,10 +203,12 @@ void Keqing::moveX() {
 SDL_Rect Keqing::getRenderRect() {
     SDL_Rect dst = Entity::getRenderRect();
 
-    if (facingEast) dst.x += spriteXShifts[getCurrentSpriteCode()];
-    else dst.x += spriteXRShifts[getCurrentSpriteCode()];
+    double xCoeff, yCoeff;
+    getScreenXYCoeff(&xCoeff, &yCoeff);
+    if (facingEast) dst.x += (int) ((double) spriteXShifts[getCurrentSpriteCode()] * xCoeff);
+    else dst.x += (int) ((double) spriteXRShifts[getCurrentSpriteCode()] * xCoeff);
 
-    dst.y += spriteYShifts[getCurrentSpriteCode()];
+    dst.y += (int) ((double) spriteYShifts[getCurrentSpriteCode()] * yCoeff);
 
     return dst;
 }
@@ -471,7 +473,6 @@ void Keqing::ESkillAiming() {
 
     double kqCenterX, kqCenterY;
     getSelfCenter(&kqCenterX, &kqCenterY);
-    SDL_Log("%f %f %d %d\n", kqCenterX, kqCenterY, mouseX, mouseY);
     double xDiff = abs(mouseX - kqCenterX);
     double yDiff = abs(mouseY - kqCenterY);
     double angle;
