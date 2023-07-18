@@ -18,6 +18,7 @@ enum {
     KQ_RUN_START,
     KQ_RUN,
     KQ_RUN_TURN,
+    KQ_CROUCH,
     KQ_JUMP_START,
     KQ_JUMP,
     KQ_NATK,
@@ -27,7 +28,9 @@ enum {
     KQ_SKILL_AIMING,
     KQ_SKILL_SLASH,
     KQ_BURST,
+    KQ_AIR_DOUBLE_JUMP,
     KQ_AIR_NATK,
+    KQ_AIR_PLUNGE,
     KQ_AIR_DASH,
     KQ_HURT,
     KQ_ENUM_N
@@ -41,6 +44,7 @@ enum {
 #define KQ_DASH_VELOCITY 0.8
 
 #define KQ_JUMP_BASE_VELOCITY 1.0
+#define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
 #define KQ_AIR_DASH_VELOCITY 0.8
 
 #define KQ_KNOCKBACK_VELOCITY 0.6
@@ -79,7 +83,7 @@ public:
 
     void moveLR();
 
-    void jump();
+    void crouch();
 
     void NAtk();
 
@@ -97,7 +101,13 @@ public:
 
     void airAnimate();
 
+    void jump();
+
+    void airDoubleJump();
+
     void airNAtk();
+
+    void airPlunge();
 
     void airDash();
 
@@ -130,6 +140,8 @@ private:
     static void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
 
     int hp;
+    int jumpPressTime;
+    bool doubleJumped;
     bool airDashed;
 };
 

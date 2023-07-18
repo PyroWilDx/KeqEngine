@@ -63,7 +63,7 @@ int getSDLKeyRelation(int SDLKey, bool isKeyboard) {
         if (SDLKey == SDL_BUTTON_LEFT) return KEY_MOUSE_LEFT;
         if (SDLKey == SDL_BUTTON_RIGHT) return KEY_MOUSE_RIGHT;
 
-        return -1;
+        return KEY_UNDEFINED;
     }
 
     if (SDLKey == SDLK_z) return KEY_Z;
@@ -75,12 +75,12 @@ int getSDLKeyRelation(int SDLKey, bool isKeyboard) {
     if (SDLKey == SDLK_SPACE) return KEY_SPACE;
     if (SDLKey == SDLK_LSHIFT) return KEY_SHIFT;
 
-    return -1;
+    return KEY_UNDEFINED;
 }
 
 int updatePressedKeys(int SDLKey, bool keyPressed, bool isKeyboard) {
     int key = getSDLKeyRelation(SDLKey, isKeyboard);
-    if (key != -1) {
+    if (key != KEY_UNDEFINED) {
         if (Global::pressedKeys[key] != keyPressed) {
             Global::pressedKeys[key] = keyPressed;
             if (keyPressed) {
