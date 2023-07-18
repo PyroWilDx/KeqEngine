@@ -40,14 +40,14 @@ void runHomeMenu() {
     gWorld->addButton(runColorKQButton);
 
     SDL_Event event;
-    bool gRunning = true;
-    runGame1Button->setOnClickParams((void *) &gRunning);
-    runColorKQButton->setOnClickParams((void *) &gRunning);
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+    runGame1Button->setOnClickParams((void *) &(gInfo.gRunning));
+    runColorKQButton->setOnClickParams((void *) &(gInfo.gRunning));
 
-    while (gRunning) {
+    while (gInfo.gRunning) {
 
         while (SDL_PollEvent(&event)) {
-            handleBasicEvents(&event, &gRunning);
+            handleBasicEvents(&event, nullptr, &gInfo);
         }
 
         gWindow->clear();

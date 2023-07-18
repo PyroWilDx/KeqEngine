@@ -3,6 +3,7 @@
 //
 
 #include "World/World.hpp"
+#include "Utils/Events.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,

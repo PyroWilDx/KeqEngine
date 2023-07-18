@@ -25,6 +25,8 @@ void runColorKeqing() {
     gWorld->addButton(colorPicker);
 
     // TODO FAIRE UN BOUTON SET COLOR POUR EVITER LE LAG.
+    // TODO FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
+    // TODO CURSEUR QUI SUIT LA SOURIS QUAND CLIQUEE
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(100, 100);
@@ -35,14 +37,14 @@ void runColorKeqing() {
                    (int) (84.0 * KQ_HEIGHT_MULTIPLIER)});
 
     SDL_Event event;
-    bool gRunning = true;
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
 
-    while (gRunning) {
+    while (gInfo.gRunning) {
 
         handleTime();
 
         while (SDL_PollEvent(&event)) {
-            handleBasicEvents(&event, &gRunning);
+            handleBasicEvents(&event, nullptr, &gInfo);
         }
 
         kq->animateSprite();

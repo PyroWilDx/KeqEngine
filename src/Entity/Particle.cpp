@@ -5,6 +5,7 @@
 #include "Entity/Particle.hpp"
 #include "Keqing.hpp"
 #include "Utils/Global.hpp"
+#include "Utils/Events.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
 
@@ -48,14 +49,14 @@ void Particle::initParticle() {
                              160, 96, 6);
     particleMaxActives[PARTICLE_KQ_CATK] = 1;
 
-    baseParticle->initSprite(PARTICLE_KQ_AIR_NATK, "res/gfx/particle/KQAirNAtk.png",
+    baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE, "res/gfx/particle/KQAirNAtk.png",
                              32, 80, 4);
-    baseParticle->setSpriteNext(PARTICLE_KQ_AIR_NATK, PARTICLE_KQ_AIR_NATK);
-    particleMaxActives[PARTICLE_KQ_AIR_NATK] = 1;
+    baseParticle->setSpriteNext(PARTICLE_KQ_AIR_PLUNGE, PARTICLE_KQ_AIR_PLUNGE);
+    particleMaxActives[PARTICLE_KQ_AIR_PLUNGE] = 1;
 
-    baseParticle->initSprite(PARTICLE_KQ_AIR_NATK_GROUND, "res/gfx/particle/KQAirNAtkGround.png",
+    baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE_GROUND, "res/gfx/particle/KQAirNAtkGround.png",
                              192, 96, 6);
-    particleMaxActives[PARTICLE_KQ_AIR_NATK_GROUND] = 1;
+    particleMaxActives[PARTICLE_KQ_AIR_PLUNGE_GROUND] = 1;
 
     baseParticle->initSprite(PARTICLE_KQ_SKILL_SPAWN, "res/gfx/particle/KQSkillSpawn.png",
                              96, 96, 8);

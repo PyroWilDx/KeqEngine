@@ -88,110 +88,80 @@ void runGame1() {
     int accumulatedFPSTime = 10000;
     int accumulatedFrames = 0;
 
-    bool gRunning = true;
-    bool gPaused = false;
-    bool runFrame = false;
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
 
-    while (gRunning) {
+    while (gInfo.gRunning) {
 
         handleTime();
 
         // Events
-        int SDLKey;
-        int key;
+        int key = KEY_UNDEFINED;
         while (SDL_PollEvent(&event)) {
-            handleBasicEvents(&event, &gRunning);
-
-            switch (event.type) {
-                case SDL_KEYDOWN:
-                    SDLKey = event.key.keysym.sym;
-                    switch (SDLKey) {
-                        case SDLK_BACKSPACE:
-                            gPaused = !gPaused;
-                            if (!gPaused) Global::currentTime = getTime();
-                            break;
-                        case SDLK_RETURN:
-                            if (gPaused) {
-                                runFrame = true;
-                                Global::dt = 10;
-                            }
-                            break;
-                        default:
-                            key = updatePressedKeys(SDLKey, true, true);
-                            break;
-                    }
-                    break;
-
-                case SDL_KEYUP:
-                    SDLKey = event.key.keysym.sym;
-                    key = updatePressedKeys(SDLKey, false, true);
-                    break;
-
-                case SDL_MOUSEBUTTONDOWN:
-                    SDLKey = event.button.button;
-                    key = updatePressedKeys(SDLKey, true, false);
-                    break;
-
-                case SDL_MOUSEBUTTONUP:
-                    SDLKey = event.button.button;
-                    key = updatePressedKeys(SDLKey, false, false);
-                    break;
-
-                default:
-                    break;
-            }
+            handleBasicEvents(&event, &key, &gInfo);
         }
 
-        if (gPaused) {
-            if (!runFrame) continue;
-            else runFrame = false;
+        // Dev Mode
+        if (gInfo.gPaused) {
+            if (!gInfo.runFrame) continue;
+            else gInfo.runFrame = false;
         }
 
+        // Handling Keys
         int spriteCode = KQ_IDLE;
-        if (key != -1) { // There is a SDLKey event
-            if (isKeyPressed(KEY_R)) {
-                spriteCode = KQ_BURST;
+        if (isKeyPressed(KEY_R)) {
+            spriteCode = KQ_BURST;
 
-            } else if (isKeyPressed(KEY_E)) {
-                if (!Keqing::isLightningStilettoExisting()) spriteCode = KQ_SKILL;
-                else spriteCode = KQ_SKILL_SLASH;
-
-            } else if (isKeyPressed(KEY_SHIFT)) {
-                if (!kq->isInAir()) {
-                    if (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D)) {
-                        if (isKeyPressedShort(KEY_SHIFT)) {
-                            spriteCode = KQ_DASH;
-                        }
-                    }
-                } else {
-                    spriteCode = KQ_AIR_DASH;
-                }
-
-            } else if (isKeyPressed(KEY_MOUSE_LEFT)) {
-                if (!kq->isInAir()) {
-                    spriteCode = KQ_NATK;
-                } else {
-                    if (isKeyPressed(KEY_S)) {
-                        spriteCode = KQ_AIR_NATK;
-                    }
-                }
-
-            } else if (isKeyPressed(KEY_SPACE)) {
-                if (!kq->isInAir()) {
-                    spriteCode = KQ_JUMP_START;
-                }
-
-            } else if (isKeyPressed(KEY_Q) ||
-                       isKeyPressed(KEY_D)) {
-                if (!isKeyPressed(KEY_MOUSE_RIGHT)) {
-                    spriteCode = KQ_WALK;
-                } else {
-                    spriteCode = KQ_RUN_START;
-                }
-
+        } else if (isKeyPressed(KEY_E)) {
+            if (!Keqing::isLightningStilettoExisting()) {
+                spriteCode = KQ_SKILL;
+            } else {
+                spriteCode = KQ_SKILL_SLASH;
             }
+
+        } else if (isKeyPressed(KEY_SHIFT)) {
+            if (!kq->isInAir()) {
+                if (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D)) {
+                    if (isKeyPressedShort(KEY_SHIFT)) {
+                        spriteCode = KQ_DASH;
+                    }
+                }
+            } else {
+                spriteCode = KQ_AIR_DASH;
+            }
+
+        } else if (isKeyPressed(KEY_MOUSE_LEFT)) {
+            if (!kq->isInAir()) {
+                spriteCode = KQ_NATK;
+            } else {
+                if (!isKeyPressed(KEY_S)) {
+                    spriteCode = KQ_AIR_NATK;
+                } else {
+                    spriteCode = KQ_AIR_PLUNGE;
+                }
+            }
+
+        } else if (isKeyPressed(KEY_SPACE)) {
+            if (!kq->isInAir()) {
+                spriteCode = KQ_JUMP_START;
+            } else {
+                spriteCode = KQ_AIR_DOUBLE_JUMP;
+            }
+
+        } else if (isKeyPressed(KEY_S)) {
+            if (!kq->isInAir()) {
+                spriteCode = KQ_CROUCH;
+            }
+        } else if (isKeyPressed(KEY_Q) ||
+                   isKeyPressed(KEY_D)) {
+            if (!isKeyPressed(KEY_MOUSE_RIGHT)) {
+                spriteCode = KQ_WALK;
+            } else {
+                spriteCode = KQ_RUN_START;
+            }
+
         }
 
+        // Keqing Action
         if (kq->canDoAction(spriteCode)) {
             kq->setSpriteAnimated(true, spriteCode);
         }
@@ -211,13 +181,14 @@ void runGame1() {
         kq->moveX();
         kq->moveY();
 
+        kq->airAnimate();
+        kq->animateSprite();
+
+        // Background Translation
         kqX = kq->getX();
         double xDiff = kqX - kqLastX;
         if (xDiff != 0) gWorld->getBackground()->translate(kq);
         kqLastX = kqX;
-
-        kq->airAnimate();
-        kq->animateSprite();
 
         // FPS Text
         if (accumulatedFPSTime > 1000) {

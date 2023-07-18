@@ -6,6 +6,7 @@
 #define GLOBAL_H
 
 #include "World/World.hpp"
+#include "Utils/Events.hpp"
 
 class Global {
 

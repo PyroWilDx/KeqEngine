@@ -14,29 +14,11 @@
 #define SCREEN_BASE_WIDTH 1280
 #define SCREEN_BASE_HEIGHT 720
 
-#define MIN_X (-40)
-#define MAX_X (3000 - 20)
-
 #define HUD_SB_CIRCLE_M 4.0
 #define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74)
 
 #define RGB_FULL 255, 255, 255
 #define RGBA_FULL 255, 255, 255, 255
-
-enum {
-    KEY_MOUSE_LEFT,
-    KEY_MOUSE_RIGHT,
-    KEY_Z,
-    KEY_Q,
-    KEY_S,
-    KEY_D,
-    KEY_A,
-    KEY_E,
-    KEY_R,
-    KEY_SPACE,
-    KEY_SHIFT,
-    KEY_ENUM_N
-};
 
 void myAssert(bool expr, const char *msg, const char *err);
 

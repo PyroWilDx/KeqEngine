@@ -64,10 +64,12 @@ void onWindowResize(int newW, int newH) {
                           pRenderClipper);
 }
 
-void handleBasicEvents(SDL_Event *event, bool *pGRunning) {
+void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
+    int SDLKey;
+
     switch (event->type) {
         case SDL_QUIT:
-            *pGRunning = false;
+            gInfo->gRunning = false;
             break;
 
         case SDL_WINDOWEVENT:
@@ -79,10 +81,11 @@ void handleBasicEvents(SDL_Event *event, bool *pGRunning) {
             break;
 
         case SDL_KEYDOWN:
-            switch (event->key.keysym.sym) {
+            SDLKey = event->key.keysym.sym;
+            switch (SDLKey) {
                 case SDLK_ESCAPE:
                     runHomeMenu();
-                    *pGRunning = false;
+                    gInfo->gRunning = false;
                     break;
 
                 case SDLK_F11: {
@@ -96,11 +99,39 @@ void handleBasicEvents(SDL_Event *event, bool *pGRunning) {
                     onWindowResize(newW, newH);
                     break;
                 }
+
+                case SDLK_BACKSPACE:
+                    gInfo->gPaused = !gInfo->gPaused;
+                    if (!gInfo->gPaused) Global::currentTime = getTime();
+                    break;
+
+                case SDLK_RETURN:
+                    if (gInfo->gPaused) {
+                        gInfo->runFrame = true;
+                        Global::dt = 10;
+                    }
+                    break;
+
+                default:
+                    if (pKey != nullptr)
+                        *pKey = updatePressedKeys(SDLKey, true, true);
+                    break;
             }
+            break;
+
+        case SDL_KEYUP:
+            SDLKey = event->key.keysym.sym;
+            if (pKey != nullptr)
+                *pKey = updatePressedKeys(SDLKey, false, true);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
+            SDLKey = event->button.button;
+            if (pKey != nullptr)
+                *pKey = updatePressedKeys(SDLKey,
+                                          (event->type == SDL_MOUSEBUTTONDOWN),
+                                          false);
             int mouseX = event->button.x;
             int mouseY = event->button.y;
             getMouseAbsoluteXY(&mouseX, &mouseY);
@@ -111,4 +142,5 @@ void handleBasicEvents(SDL_Event *event, bool *pGRunning) {
         default:
             break;
     }
+
 }
