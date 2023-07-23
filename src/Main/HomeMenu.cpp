@@ -50,10 +50,14 @@ void runHomeMenu() {
             handleBasicEvents(&event, nullptr, &gInfo);
         }
 
+        if (!gInfo.gRunning) break;
+
         gWindow->clear();
 
         gWorld->renderSelf();
 
         gWindow->display();
     }
+
+    delete gWorld;
 }

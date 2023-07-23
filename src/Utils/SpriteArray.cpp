@@ -8,3 +8,7 @@ SpriteArray::SpriteArray(int spriteArrayLength) {
     this->spriteArrayLength = spriteArrayLength;
     spriteArray = new Sprite[spriteArrayLength];
 }
+
+SpriteArray::~SpriteArray() {
+    delete[] spriteArray;
+}

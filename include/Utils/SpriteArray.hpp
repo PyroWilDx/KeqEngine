@@ -29,6 +29,8 @@ class SpriteArray {
 public:
     explicit SpriteArray(int spriteArrayLength);
 
+    ~SpriteArray();
+
     Sprite &operator[](int index) {
         return spriteArray[index];
     }

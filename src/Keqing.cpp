@@ -212,6 +212,7 @@ void Keqing::colorTexture(Uint8 r, Uint8 g, Uint8 b) {
 
         SDL_Texture *mTexture = SDL_CreateTextureFromSurface(gRenderer, img);
         currSprite->sTexture = mTexture;
+        SDL_FreeSurface(img);
     }
 }
 

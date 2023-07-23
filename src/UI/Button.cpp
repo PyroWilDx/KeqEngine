@@ -18,6 +18,10 @@ Button::Button(double x, double y, int renderW, int renderH)
     buttonText = nullptr;
 }
 
+Button::~Button() {
+    delete buttonText;
+}
+
 void Button::changeColor(Uint8 r, Uint8 g, Uint8 b) {
     buttonColor.r = r;
     buttonColor.g = g;
@@ -26,6 +30,7 @@ void Button::changeColor(Uint8 r, Uint8 g, Uint8 b) {
 
 void Button::addText(const char *text, const SDL_Color *color,
                      const char *fontPath, int fontSize) {
+    if (buttonText != nullptr) delete buttonText;
     buttonText = new Text();
     buttonText->loadTextTexture(x, y, text, color,
                                 fontPath, fontSize, false);

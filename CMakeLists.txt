@@ -31,7 +31,7 @@ if (WIN32)
 
 elseif (UNIX AND NOT APPLE)
     set(LIB_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf")
-    
+
     set(HEADER_DIRS ${HEADER_DIRS} "/usr/include/SDL2")
     set(PLATFORM_LIB_FLAGS ${LIB_FLAGS})
 
