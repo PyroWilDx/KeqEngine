@@ -100,6 +100,8 @@ void runGame1() {
             handleBasicEvents(&event, &key, &gInfo);
         }
 
+        if (!gInfo.gRunning) break;
+
         // Dev Mode
         if (gInfo.gPaused) {
             if (!gInfo.runFrame) continue;

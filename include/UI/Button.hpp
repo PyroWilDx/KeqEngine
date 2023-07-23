@@ -18,6 +18,8 @@ class Button : public WorldEntity {
 public:
     Button(double x, double y, int renderW, int renderH);
 
+    ~Button() override;
+
     void changeColor(Uint8 r, Uint8 g, Uint8 b);
 
     void addText(const char *text, const SDL_Color *color,

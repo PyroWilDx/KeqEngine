@@ -47,6 +47,8 @@ void runColorKeqing() {
             handleBasicEvents(&event, nullptr, &gInfo);
         }
 
+        if (!gInfo.gRunning) break;
+
         kq->animateSprite();
 
         gWindow->clear();
@@ -57,4 +59,7 @@ void runColorKeqing() {
 
         gWindow->display();
     }
+
+    delete gWorld;
+
 }

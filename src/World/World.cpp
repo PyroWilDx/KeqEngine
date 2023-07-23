@@ -26,9 +26,17 @@ World::~World() {
     for (Block *block: blockVector) {
         delete block;
     }
+
     for (std::pair<const int, Button *> it: buttonHashMap) {
         delete it.second;
     }
+
+    for (int i = 0; i < background->getTotalW(); i++) {
+        delete[] pixels[i];
+    }
+    delete[] pixels;
+
+    delete background;
 }
 
 void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntity) {
