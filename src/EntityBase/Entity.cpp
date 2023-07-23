@@ -252,7 +252,12 @@ void Entity::getSelfCenter(double *pX, double *pY) {
 
 void Entity::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
     double realW, realH;
-    this->getRealSize(&realW, &realH);
+    if (hitBox.w != 0 && hitBox.h != 0) {
+        realW = hitBox.w;
+        realH = hitBox.h;
+    } else {
+        this->getRealSize(&realW, &realH);
+    }
 
     double vX = centerEntity->getX();
     double vY = centerEntity->getY();

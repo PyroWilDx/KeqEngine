@@ -23,13 +23,18 @@ enum {
     KQ_JUMP,
     KQ_NATK,
     KQ_CATK,
+    KQ_UP_NATK,
+    KQ_UP_CATK,
     KQ_DASH,
     KQ_SKILL,
     KQ_SKILL_AIMING,
     KQ_SKILL_SLASH,
     KQ_BURST,
+    KQ_CROUCH_NATK,
+    KQ_CROUCH_CATK,
     KQ_AIR_DOUBLE_JUMP,
     KQ_AIR_NATK,
+    KQ_AIR_UP_NATK,
     KQ_AIR_PLUNGE,
     KQ_AIR_DASH,
     KQ_HURT,
@@ -83,11 +88,19 @@ public:
 
     void moveLR();
 
+    void airAnimate();
+
     void crouch();
+
+    void jump();
 
     void NAtk();
 
     void CAtk();
+
+    void upNAtk();
+
+    void upCAtk();
 
     void dash();
 
@@ -95,17 +108,21 @@ public:
 
     void ESkillAiming();
 
+    void moveToLStiletto();
+
     void ESkillSlash();
 
     void RBurst();
 
-    void airAnimate();
+    void crouchNAtk();
 
-    void jump();
+    void crouchCAtk();
 
     void airDoubleJump();
 
     void airNAtk();
+
+    void airUpNAtk();
 
     void airPlunge();
 
@@ -126,6 +143,8 @@ public:
     }
 
     // TODO may need isInvincible
+
+    [[nodiscard]] inline bool isCrouching() { return isCurrentSprite(KQ_CROUCH); }
 
     [[nodiscard]] inline int getHp() const { return hp; }
 

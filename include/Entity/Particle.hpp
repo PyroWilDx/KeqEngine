@@ -10,6 +10,8 @@
 enum {
     PARTICLE_KQ_NATK_4 = 0,
     PARTICLE_KQ_CATK,
+    PARTICLE_KQ_UP_CATK,
+    PARTICLE_KQ_CROUCH_CATK,
     PARTICLE_KQ_AIR_PLUNGE,
     PARTICLE_KQ_AIR_PLUNGE_GROUND,
     PARTICLE_KQ_SKILL_SPAWN,
@@ -90,6 +92,8 @@ public:
 
     Particle *copy();
 
+    inline void setOnRender(void (*onRender_)(Particle *)) { onRender = onRender_; }
+
     inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
 
     [[nodiscard]] inline int getCode() const { return particleCode; }
@@ -105,6 +109,8 @@ private:
     Entity *entity;
     double entityLastX, entityLastY;
     FadeAwayParams fadeParams;
+
+    void (*onRender)(Particle *);
 
     void (*onRemove)(Particle *);
 };

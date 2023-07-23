@@ -20,6 +20,7 @@ Particle::Particle(bool isBaseParticle)
     entity = nullptr;
     entityLastX = 0;
     entityLastY = 0;
+    onRender = nullptr;
     onRemove = nullptr;
 }
 
@@ -48,6 +49,14 @@ void Particle::initParticle() {
     baseParticle->initSprite(PARTICLE_KQ_CATK, "res/gfx/particle/KQCAtk.png",
                              160, 96, 6);
     particleMaxActives[PARTICLE_KQ_CATK] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_UP_CATK, "res/gfx/particle/KQUpCAtk.png",
+                             96, 160, 6);
+    particleMaxActives[PARTICLE_KQ_UP_CATK] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_CROUCH_CATK, "res/gfx/particle/KQCrouchCAtk.png",
+                             224, 64, 6);
+    particleMaxActives[PARTICLE_KQ_CROUCH_CATK] = 1;
 
     baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE, "res/gfx/particle/KQAirNAtk.png",
                              32, 80, 4);
@@ -243,9 +252,12 @@ void Particle::animateAll() {
 
 void Particle::renderAll() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
+    Particle *currParticle;
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
-            gWindow->renderEntity(activeParticles[spriteCode][i]);
+            currParticle = activeParticles[spriteCode][i];
+            gWindow->renderEntity(currParticle);
+            if (currParticle->onRender != nullptr) currParticle->onRender(currParticle);
         }
     }
 }
