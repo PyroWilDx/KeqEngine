@@ -108,49 +108,63 @@ void runGame1() {
 
         // Handling Keys
         int spriteCode = KQ_IDLE;
+
         if (isKeyPressed(KEY_R)) {
-            spriteCode = KQ_BURST;
+            if (!kq->isInAir()) {
+                spriteCode = KQ_BURST;
+            }
 
         } else if (isKeyPressed(KEY_E)) {
-            if (!Keqing::isLightningStilettoExisting()) {
-                spriteCode = KQ_SKILL;
-            } else {
-                spriteCode = KQ_SKILL_SLASH;
+            if (!kq->isInAir()) {
+                if (!Keqing::isLightningStilettoExisting()) {
+                    spriteCode = KQ_SKILL;
+                } else {
+                    spriteCode = KQ_SKILL_SLASH;
+                }
             }
 
         } else if (isKeyPressed(KEY_SHIFT)) {
-            if (!kq->isInAir()) {
+            if (kq->isInAir()) {
+                spriteCode = KQ_AIR_DASH;
+            } else {
                 if (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D)) {
                     if (isKeyPressedShort(KEY_SHIFT)) {
                         spriteCode = KQ_DASH;
                     }
                 }
-            } else {
-                spriteCode = KQ_AIR_DASH;
             }
 
         } else if (isKeyPressed(KEY_MOUSE_LEFT)) {
-            if (!kq->isInAir()) {
-                spriteCode = KQ_NATK;
-            } else {
-                if (!isKeyPressed(KEY_S)) {
-                    spriteCode = KQ_AIR_NATK;
-                } else {
+            if (kq->isCrouching()) {
+                spriteCode = KQ_CROUCH_NATK;
+            } else if (kq->isInAir()) {
+                if (isKeyPressed(KEY_S)) {
                     spriteCode = KQ_AIR_PLUNGE;
+                } else if (isKeyPressed(KEY_Z)) {
+                    spriteCode = KQ_AIR_UP_NATK;
+                } else {
+                    spriteCode = KQ_AIR_NATK;
+                }
+            } else {
+                if (isKeyPressed(KEY_Z)) {
+                    spriteCode = KQ_UP_NATK;
+                } else {
+                    spriteCode = KQ_NATK;
                 }
             }
 
         } else if (isKeyPressed(KEY_SPACE)) {
-            if (!kq->isInAir()) {
-                spriteCode = KQ_JUMP_START;
-            } else {
+            if (kq->isInAir()) {
                 spriteCode = KQ_AIR_DOUBLE_JUMP;
+            } else {
+                spriteCode = KQ_JUMP_START;
             }
 
         } else if (isKeyPressed(KEY_S)) {
             if (!kq->isInAir()) {
                 spriteCode = KQ_CROUCH;
             }
+
         } else if (isKeyPressed(KEY_Q) ||
                    isKeyPressed(KEY_D)) {
             if (!isKeyPressed(KEY_MOUSE_RIGHT)) {

@@ -85,5 +85,4 @@ void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {
                           cursorSize, cursorSize};
     SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(gRenderer, &cursorDst);
-
 }
