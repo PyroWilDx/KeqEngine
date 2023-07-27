@@ -43,6 +43,8 @@ public:
     static void onWindowResize(int newW, int newH);
 
     static void onMouse(SDL_Event *event);
+
+    static void onQuit(gStateInfo *gInfo);
     
     static void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo);
 
