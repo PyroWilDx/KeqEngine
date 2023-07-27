@@ -8,13 +8,14 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
+#include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
 void runHomeMenu() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     auto *gWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                              SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                             "res/gfx/background/Keqing.png");
+                             "res/gfx/background/HomeMenu.png");
     Global::currentWorld = gWorld;
 
     auto *runGame1Button = new Button(400, 0, 200, 100);

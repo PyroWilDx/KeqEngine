@@ -4,20 +4,24 @@
 
 #include "World/World.hpp"
 #include "Utils/Events.hpp"
+#include "Keqing.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
              const char *backgroundImgPath) {
-    background = new Background(screenW, screenH,
-                                backgroundTotalW, backgroundTotalH,
-                                backgroundImgPath);
-    activeButton = nullptr;
+    this->background = new Background(screenW, screenH,
+                                      backgroundTotalW, backgroundTotalH,
+                                      backgroundImgPath);
+    this->activeButton = nullptr;
 
-    pixels = (Pixel **) new Pixel[backgroundTotalW];
+    this->monsterAtkLL = nullptr;
+    this->kqAtkLL = nullptr;
+
+    this->pixels = (Pixel **) new Pixel[backgroundTotalW];
     for (int i = 0; i < background->getTotalW(); i++) {
-        pixels[i] = new Pixel[backgroundTotalH];
+        (this->pixels)[i] = new Pixel[backgroundTotalH];
         for (int j = 0; j < backgroundTotalH; j++) {
-            pixels[i][j] = {-1, -1};
+            (this->pixels)[i][j] = {-1, -1};
         }
     }
 }
@@ -30,6 +34,17 @@ World::~World() {
     for (std::pair<const int, Button *> it: buttonHashMap) {
         delete it.second;
     }
+
+    for (Monster *monster: monsterVector) {
+        delete monster;
+    }
+
+    auto freeAtkValF = [](void *value) {
+        auto *atk = (Attack *) value;
+        delete atk;
+    };
+    LLFree(monsterAtkLL, freeAtkValF);
+    LLFree(kqAtkLL, freeAtkValF);
 
     for (int i = 0; i < background->getTotalW(); i++) {
         delete[] pixels[i];
@@ -70,6 +85,32 @@ void World::addBlock(int blockCode, double x, double y, int renderW, int renderH
 void World::addButton(Button *button) {
     buttonHashMap[button->getWorldCode()] = button;
     addWorldEntity(button);
+}
+
+void World::addMonster(Monster *monster) {
+    monsterVector.push_back(monster);
+}
+
+void World::addMonsterAtk(Attack *atk) {
+    monsterAtkLL = LLInsertHead(monsterAtkLL, (void *) atk);
+}
+
+void World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                          int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addMonsterAtk(atk);
+}
+
+void World::addKQAtk(Attack *atk) {
+    kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
+}
+
+void World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                     int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addKQAtk(atk);
 }
 
 Pixel World::getPixel(double x, double y) {
@@ -151,6 +192,28 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
     }
 }
 
+void World::onGameFrame() {
+    for (Monster *monster: monsterVector) {
+        monster->AI();
+        monster->animateSprite();
+    }
+
+    LLIterate(monsterAtkLL, [](void *value, void *fParams) {
+        auto *atk = (Attack *) value;
+        auto *kq = (Keqing *) fParams;
+        atk->checkEntityHit(kq);
+    }, (void *) Keqing::getInstance());
+
+
+    LLIterate(kqAtkLL, [](void *value, void *fParams) {
+        auto *atk = (Attack *) value;
+        auto *monsters = (std::vector<Monster *> *) fParams;
+        for (Monster *monster: *monsters) {
+            atk->checkEntityHit(monster);
+        }
+    }, (void *) &monsterVector);
+}
+
 void World::renderSelf() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
     gWindow->renderEntity(background);
@@ -159,5 +222,8 @@ void World::renderSelf() {
     }
     for (std::pair<const int, Button *> it: buttonHashMap) {
         gWindow->renderEntity(it.second);
+    }
+    for (Monster *monster: monsterVector) {
+        gWindow->renderEntity(monster);
     }
 }

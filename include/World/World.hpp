@@ -10,6 +10,9 @@
 #include "Background.hpp"
 #include "UI/Button.hpp"
 #include "Block.hpp"
+#include "EntityBase/Monster.hpp"
+#include "Utils/LinkedList.hpp"
+#include "Attack.hpp"
 
 typedef struct Pixel {
     int worldType;
@@ -33,6 +36,18 @@ public:
 
     void addButton(Button *button);
 
+    void addMonster(Monster *monster);
+
+    void addMonsterAtk(Attack *atk);
+
+    void addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                       int damage, double kbXVelocity, double kbYVelocity);
+
+    void addKQAtk(Attack *atk);
+
+    void addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                  int damage, double kbXVelocity, double kbYVelocity);
+
     Pixel getPixel(double x, double y);
 
     bool isPixelBlock(double x, double y);
@@ -47,6 +62,8 @@ public:
 
     void clickPixel(double x, double y, Uint32 eventType);
 
+    void onGameFrame();
+
     void renderSelf();
 
     inline Background *getBackground() { return background; }
@@ -58,6 +75,9 @@ private:
     std::vector<Block *> blockVector;
     std::unordered_map<int, Button *> buttonHashMap;
     Button *activeButton;
+    std::vector<Monster *> monsterVector;
+    LinkedList *monsterAtkLL;
+    LinkedList *kqAtkLL;
     Pixel **pixels;
 
 };

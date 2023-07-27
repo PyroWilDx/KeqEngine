@@ -11,23 +11,13 @@
 #define SKILL_TP_DISTANCE 400
 
 Keqing *Keqing::instance = nullptr;
-int Keqing::spriteXShifts[KQ_ENUM_N];
-int Keqing::spriteYShifts[KQ_ENUM_N];
-int Keqing::spriteXRShifts[KQ_ENUM_N];
 
 const int NAtkMax = 4;
 const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 
-void Keqing::setXYShift(int xShift, int yShift, int xRShift, int spriteCode) {
-    spriteXShifts[spriteCode] = xShift;
-    spriteYShifts[spriteCode] = yShift;
-    spriteXRShifts[spriteCode] = xRShift;
-}
-
 Keqing::Keqing()
-        : AnimatedEntity(KQ_ENUM_N) {
-    gravityWeight = 0.0024;
-    hp = 1;
+        : LivingEntity(0.0024, KQ_ENUM_N,
+                       1, KQ_HURT) {
     jumpPressTime = 0;
     doubleJumped = false;
     airDashed = false;
@@ -39,7 +29,7 @@ Keqing::Keqing()
 
     initSprite(KQ_RUN_END, "res/gfx/keqing/RunEnd.png",
                96, 96, 5, 60);
-    setXYShift(0, 0, -36, KQ_RUN_END);
+    setXYShift(-16, 0, -16, KQ_RUN_END);
 
     initSprite(KQ_JUMP_END, "res/gfx/keqing/JumpEnd.png",
                96, 96, 2, 100);
@@ -53,10 +43,11 @@ Keqing::Keqing()
     initSprite(KQ_WALK_TURN, "res/gfx/keqing/WalkTurn.png",
                96, 96, 3, 40);
     setXYShift(-16, 0, -20, KQ_WALK_TURN);
+    setSpriteNext(KQ_WALK, KQ_WALK_TURN);
 
     initSprite(KQ_RUN_START, "res/gfx/keqing/RunStart.png",
                96, 96, 3, 60);
-    setXYShift(-4, 0, -32, KQ_RUN_START);
+    setXYShift(-16, 0, -20, KQ_RUN_START);
     setSpriteNext(KQ_RUN, KQ_RUN_START);
 
     initSprite(KQ_RUN, "res/gfx/keqing/Run.png",
@@ -65,8 +56,9 @@ Keqing::Keqing()
     setSpriteNext(KQ_RUN, KQ_RUN);
 
     initSprite(KQ_RUN_TURN, "res/gfx/keqing/RunTurn.png",
-               96, 96, 3, 60);
+               96, 96, 3, 30);
     setXYShift(-20, 0, -20, KQ_RUN_TURN);
+    setSpriteNext(KQ_RUN, KQ_RUN_TURN);
 
     initSprite(KQ_CROUCH, "res/gfx/keqing/Crouch.png",
                96, 96, 5, 60);
@@ -90,6 +82,14 @@ Keqing::Keqing()
                128, 128, 15, 60);
     setXYShift(-32, -16, -32, KQ_UP_CATK);
 
+    initSprite(KQ_CROUCH_NATK, "res/gfx/keqing/CrouchNAtk.png",
+               160, 64, 6, 60);
+    setXYShift(0, 32, -100, KQ_CROUCH_NATK);
+
+    initSprite(KQ_CROUCH_CATK, "res/gfx/keqing/CrouchCAtk.png",
+               128, 160, 15, 60);
+    setXYShift(-32, -48, -36, KQ_CROUCH_CATK);
+
     initSprite(KQ_DASH, "res/gfx/keqing/Dash.png",
                128, 96, 9, 30);
     setXYShift(-24, 0, -42, KQ_DASH);
@@ -108,18 +108,14 @@ Keqing::Keqing()
                192, 128, 14, 60);
     setXYShift(-48, -16, -84, KQ_SKILL_SLASH);
 
+    initSprite(KQ_SKILL_SLASH_AIR, "res/gfx/keqing/SkillSlashAir.png",
+               192, 128, 14, 60);
+    setXYShift(-40, -16, -84, KQ_SKILL_SLASH_AIR);
+
     initSprite(KQ_BURST, "res/gfx/keqing/Burst.png",
                128, 96, 30, 70);
     setXYShift(-24, 0, -44, KQ_BURST);
     setSpriteFrameLengthFromTo(INT32_MAX, 13, 13, KQ_BURST);
-
-    initSprite(KQ_CROUCH_NATK, "res/gfx/keqing/CrouchNAtk.png",
-               160, 64, 6, 60);
-    setXYShift(0, 32, -100, KQ_CROUCH_NATK);
-
-    initSprite(KQ_CROUCH_CATK, "res/gfx/keqing/CrouchCAtk.png",
-               128, 160, 15, 60);
-    setXYShift(-32, -48, -36, KQ_CROUCH_CATK);
 
     initSprite(KQ_JUMP_START, "res/gfx/keqing/JumpStart.png",
                96, 96, 2, 20);
@@ -154,10 +150,9 @@ Keqing::Keqing()
     setXYShift(-10, 2, -26, KQ_AIR_DASH);
 
     initSprite(KQ_HURT, "res/gfx/keqing/Hurt.png",
-               96, 96, 6, 60);
+               96, 96, 6, INT32_MAX);
     setXYShift(0, 0, 0, KQ_HURT);
 }
-
 
 void Keqing::initKeqing() {
     if (instance == nullptr) {
@@ -166,7 +161,6 @@ void Keqing::initKeqing() {
         SDL_Log("Keqing already initialized!\n");
     }
 }
-
 
 void Keqing::colorTexture(Uint8 r, Uint8 g, Uint8 b) {
     SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
@@ -216,7 +210,6 @@ void Keqing::colorTexture(Uint8 r, Uint8 g, Uint8 b) {
     }
 }
 
-
 void Keqing::moveX() {
     if (!isSpriteAnimated(KQ_NATK) &&
         !isSpriteAnimated(KQ_CATK) &&
@@ -236,25 +229,9 @@ void Keqing::moveX() {
     }
 }
 
-
-SDL_Rect Keqing::getRenderRect() {
-    SDL_Rect dst = Entity::getRenderRect();
-
-    double xCoeff, yCoeff;
-    getScreenXYCoeff(&xCoeff, &yCoeff);
-    if (facingEast) dst.x += (int) ((double) spriteXShifts[getCurrentSpriteCode()] * xCoeff);
-    else dst.x += (int) ((double) spriteXRShifts[getCurrentSpriteCode()] * xCoeff);
-
-    dst.y += (int) ((double) spriteYShifts[getCurrentSpriteCode()] * yCoeff);
-
-    return dst;
-}
-
-
 void Keqing::setSpriteAnimated(bool animated, int spriteCode) {
-    AnimatedEntity::setSpriteAnimated(animated, spriteCode, &preAction, &xVelocity);
+    AnimatedEntity::setSpriteAnimated(animated, spriteCode, &preAction, (void *) this);
 }
-
 
 bool Keqing::shouldUpdateDirection() {
     if (isCurrentSprite(KQ_WALK) ||
@@ -272,6 +249,11 @@ bool Keqing::shouldUpdateDirection() {
                 return true;
             }
         }
+    }
+
+    int currSpriteCode = getCurrentSpriteCode();
+    if (willFrameFinish(-1, currSpriteCode)) {
+        return true;
     }
 
     return false;
@@ -302,25 +284,26 @@ void Keqing::moveLR() {
         setSpriteAnimated(false, KQ_RUN);
     } else {
         if (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D)) {
-            if (isCurrentSprite(KQ_JUMP)) {
-                xVelocity = (facingEast) ? KQ_WALK_VELOCITY : -KQ_WALK_VELOCITY;
-                if (isKeyPressed(KEY_Q)) xVelocity = -xVelocity;
+            if (isCurrentSprite(KQ_JUMP) ||
+                isCurrentSprite(KQ_AIR_DOUBLE_JUMP) ||
+                isCurrentSprite(KQ_AIR_NATK)) {
+                xVelocity = KQ_AIR_WALK_VELOCITY;
             } else if (isCurrentSprite(KQ_RUN)) {
                 xVelocity = KQ_RUN_VELOCITY;
             } else if (isCurrentSprite(KQ_WALK)) {
                 xVelocity = KQ_WALK_VELOCITY;
             }
         } else {
-            xVelocity = 0;
-            setSpriteAnimated(false, KQ_WALK);
-            setSpriteAnimated(false, KQ_RUN);
             if (isSpriteAnimated(KQ_RUN)) {
+                setSpriteAnimated(false, KQ_RUN);
                 setSpriteAnimated(true, KQ_RUN_END);
+            } else {
+                xVelocity = 0;
+                setSpriteAnimated(false, KQ_WALK);
             }
         }
     }
 }
-
 
 const double lowFallVelocity = 0.1;
 const double averageFallVelocity = 0.2;
@@ -330,9 +313,9 @@ void Keqing::airAnimate() {
         if (isSpriteAnimated(KQ_JUMP)) {
             setSpriteAnimated(false, KQ_JUMP);
             setSpriteAnimated(true, KQ_JUMP_END);
-            doubleJumped = false;
-            airDashed = false;
         }
+        doubleJumped = false;
+        airDashed = false;
         return;
     }
 
@@ -366,6 +349,14 @@ void Keqing::airAnimate() {
     }
 }
 
+void Keqing::run() {
+    if (isSpriteAnimated(KQ_RUN_END)) {
+        if (isNewestFrame(0, KQ_RUN_END)) {
+            xVelocity = 0.26;
+        }
+        xVelocity = std::max(xVelocity - 0.006, 0.0);
+    }
+}
 
 void Keqing::crouch() {
     if (isFrameBetween(0, 2, KQ_CROUCH)) {
@@ -374,7 +365,6 @@ void Keqing::crouch() {
         }
     }
 }
-
 
 void Keqing::jump() {
     if (isNewestFrame(0, KQ_JUMP_START)) {
@@ -394,7 +384,6 @@ void Keqing::jump() {
         }
     }
 }
-
 
 const double NAtkVelocity[NAtkMax + 1] = {0.1, 0, 0.2,
                                           0, 0.4};
@@ -425,13 +414,12 @@ void Keqing::NAtk() {
 
     } else if (isNewestFrame(30, KQ_NATK)) { // NAtk 4
         Particle *NAtk4Particle =
-                Particle::push(PARTICLE_KQ_NATK_4,
-                               60, 2.4, 2.6);
+                Particle::pushParticle(PARTICLE_KQ_NATK_4,
+                                       60, 2.4, 2.6);
         NAtk4Particle->setEntity(this);
         NAtk4Particle->xyShift(32, 20);
     }
 }
-
 
 void Keqing::CAtk() {
     if (isNewestFrame(0, KQ_CATK)) {
@@ -439,14 +427,14 @@ void Keqing::CAtk() {
 
     } else if (isNewestFrame(6, KQ_CATK)) {
         Particle *CAtkParticle =
-                Particle::push(PARTICLE_KQ_CATK, 60);
+                Particle::pushParticle(PARTICLE_KQ_CATK, 60);
         CAtkParticle->moveToEntityCenter(this);
         CAtkParticle->xyShift(30, 10);
 
         Particle *skillIdleParticle =
                 Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
         if (skillIdleParticle != nullptr) {
-            Particle::remove(PARTICLE_HUD_SKILL_ICON_2);
+            Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_2);
         }
     }
 
@@ -454,7 +442,6 @@ void Keqing::CAtk() {
         xVelocity = std::min(xVelocity + 0.001 * Global::dt, 0.0);
     }
 }
-
 
 void Keqing::upNAtk() {
     if (isFrameBetween(6, -1, KQ_UP_NATK)) {
@@ -465,16 +452,32 @@ void Keqing::upNAtk() {
     }
 }
 
-
 void Keqing::upCAtk() {
     if (isNewestFrame(7, KQ_UP_CATK)) {
         Particle *upCAtkPartcle =
-                Particle::push(PARTICLE_KQ_UP_CATK, 40);
+                Particle::pushParticle(PARTICLE_KQ_UP_CATK, 40);
         upCAtkPartcle->moveToEntityCenter(this);
         upCAtkPartcle->xyShift(0, -24);
     }
 }
 
+void Keqing::crouchNAtk() {
+    if (isFrameBetween(4, -1, KQ_CROUCH_NATK)) {
+        if (isKeyPressedLong(KEY_MOUSE_LEFT)) {
+            setSpriteAnimated(false, KQ_CROUCH_NATK);
+            setSpriteAnimated(true, KQ_CROUCH_CATK);
+        }
+    }
+}
+
+void Keqing::crouchCAtk() {
+    if (isNewestFrame(7, KQ_CROUCH_CATK)) {
+        Particle *crouchCAtkPartcle =
+                Particle::pushParticle(PARTICLE_KQ_CROUCH_CATK, 40);
+        crouchCAtkPartcle->moveToEntityCenter(this);
+        crouchCAtkPartcle->xyShift(0, 24);
+    }
+}
 
 void Keqing::dash() {
     if (isNewestFrame(0, KQ_DASH)) {
@@ -491,17 +494,15 @@ void Keqing::dash() {
     }
 }
 
-
 Particle *newSkillCircleHud = nullptr;
-
 int skillUseTime;
 
 static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1) {
     Particle *skillCircleHud = Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE);
     Particle *skillIcon2 =
-            Particle::push(PARTICLE_HUD_SKILL_ICON_2,
-                           KQ_LIGHTNING_STILETTO_DURATION,
-                           HUB_SB_ICON_M, HUB_SB_ICON_M);
+            Particle::pushParticle(PARTICLE_HUD_SKILL_ICON_2,
+                                   KQ_LIGHTNING_STILETTO_DURATION,
+                                   HUB_SB_ICON_M, HUB_SB_ICON_M);
     skillIcon2->moveToEntityCenter(skillCircleHud);
     skillIcon2->setOnRemove([](Particle *removedParticle) {
         Particle *skillCircleHud = Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE);
@@ -509,18 +510,18 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
         newSkillCircleHud->setRGBAMod(KQ_SKILL_CIRCLE_RGBA);
 
         Particle *skillIcon1 =
-                Particle::push(PARTICLE_HUD_SKILL_ICON_1,
-                               INT32_MAX,
-                               HUB_SB_ICON_M, HUB_SB_ICON_M);
+                Particle::pushParticle(PARTICLE_HUD_SKILL_ICON_1,
+                                       INT32_MAX,
+                                       HUB_SB_ICON_M, HUB_SB_ICON_M);
         skillIcon1->moveToEntityCenter(skillCircleHud);
         skillIcon1->setRGBAMod(RGB_FULL, HUD_SB_USED_ALPHA);
 
         int elapsedTime = getTime() - skillUseTime;
         Particle *timerHud =
-                Particle::push(PARTICLE_HUD_SKILL_BURST_TIMER,
-                               (KQ_SKILL_COOLDOWN - elapsedTime) / HUD_SB_TIMER_FRAME_N,
-                               HUD_SB_CIRCLE_M * 1.0,
-                               HUD_SB_CIRCLE_M * 1.0);
+                Particle::pushParticle(PARTICLE_HUD_SKILL_BURST_TIMER,
+                                       (KQ_SKILL_COOLDOWN - elapsedTime) / HUD_SB_TIMER_FRAME_N,
+                                       HUD_SB_CIRCLE_M * 1.0,
+                                       HUD_SB_CIRCLE_M * 1.0);
         timerHud->moveToEntityCenter(skillCircleHud);
         timerHud->setOnRemove([](Particle *removedParticle) {
             Particle::pushFast(newSkillCircleHud);
@@ -529,33 +530,44 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
             skillIcon1Hud->setRGBAMod(RGBA_FULL);
         });
 
-        Particle::remove(PARTICLE_HUD_SKILL_CIRCLE);
+        Particle::removeParticle(PARTICLE_HUD_SKILL_CIRCLE);
 
-        Particle::remove(PARTICLE_KQ_SKILL_IDLE);
+        Particle::removeParticle(PARTICLE_KQ_SKILL_IDLE);
     });
 
-    Particle::remove(PARTICLE_HUD_SKILL_ICON_1);
+    Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_1);
     skillCircleHud->setRGBAMod(238, 10, 238, 255);
 
     Particle *spawnParticle =
-            Particle::push(PARTICLE_KQ_SKILL_SPAWN, 60);
+            Particle::pushParticle(PARTICLE_KQ_SKILL_SPAWN, 60);
     if (mouseX == -1 || mouseY == -1) {
         spawnParticle->moveToEntityCenter(kq);
         double distance = SKILL_TP_DISTANCE;
         if (!kq->isFacingEast()) distance = -distance;
-        spawnParticle->moveTo(kq, distance, 0);
+        spawnParticle->moveAdd(distance, 0);
     } else {
         spawnParticle->moveToCenter(mouseX, mouseY);
     }
 
+    double spawnParticleW, spawnParticleH;
+    spawnParticle->getRealSize(&spawnParticleW, &spawnParticleH);
+
+    int kqHitBoxW = kq->getHitBox().w;
+    int kqHitBoxH = kq->getHitBox().h;
+    spawnParticle->setHitbox({(int) ((spawnParticleW - (double) kqHitBoxW) / 2.0),
+                              (int) ((spawnParticleH - (double) kqHitBoxH) / 2.0),
+                              kqHitBoxW, kqHitBoxH});
+    spawnParticle->checkXCollision((kq->getX() < spawnParticle->getX()));
+    spawnParticle->checkYCollision(true);
+
     skillUseTime = getTime();
 }
 
-#define IDLE_PARTICLE_GAP 18
+#define IDLE_PARTICLE_GAP 12
 
 void Keqing::ESkill() {
     if (isNewestFrame(4, KQ_SKILL)) { // Lightning Stiletto
-        if (!isKeyPressed(KEY_E)) {
+        if (!isKeyPressedLong(KEY_E)) {
             createLightningStelitto(this);
         } else {
             pauseSprite(true, KQ_SKILL);
@@ -568,8 +580,8 @@ void Keqing::ESkill() {
     if (spawnParticle != nullptr) { // Lightning Stiletto Idle
         if (spawnParticle->isNewestFrame(6)) {
             Particle *idleParticle =
-                    Particle::push(PARTICLE_KQ_SKILL_IDLE,
-                                   200, 2.0, 2.0);
+                    Particle::pushParticle(PARTICLE_KQ_SKILL_IDLE,
+                                           200, 2.0, 2.0);
             idleParticle->moveToEntityCenter(spawnParticle);
             idleParticle->setOnRender([](Particle *particle) {
                 SDL_Rect dstParticle = particle->getRenderRect();
@@ -593,8 +605,8 @@ void Keqing::ESkillAiming() {
             Particle::getParticle(PARTICLE_KQ_SKILL_AIMING_IDLE);
     if (cursorIdleParticle == nullptr) {
         cursorIdleParticle =
-                Particle::push(PARTICLE_KQ_SKILL_AIMING_IDLE,
-                               60, 2.0, 2.0);
+                Particle::pushParticle(PARTICLE_KQ_SKILL_AIMING_IDLE,
+                                       60, 2.22, 2.22);
         wasFacingEast = facingEast;
         setFacingEast(true);
     }
@@ -622,7 +634,7 @@ void Keqing::ESkillAiming() {
     goToFrame(frameIndex, KQ_SKILL_AIMING);
 
     if (!isKeyPressed(KEY_E)) {
-        Particle::remove(PARTICLE_KQ_SKILL_AIMING_IDLE);
+        Particle::removeParticle(PARTICLE_KQ_SKILL_AIMING_IDLE);
         setSpriteAnimated(false, KQ_SKILL_AIMING);
         setFacingEast(wasFacingEast);
         createLightningStelitto(this, mouseX, mouseY);
@@ -632,12 +644,11 @@ void Keqing::ESkillAiming() {
     }
 }
 
-
 void Keqing::moveToLStiletto() {
     Particle *idleParticle =
             Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
     if (idleParticle != nullptr) {
-        this->moveToEntityCenter(idleParticle);
+        this->moveToEntityCenter(idleParticle, false);
         double idleParticleHeight;
         idleParticle->getRealSize(nullptr, &idleParticleHeight);
         y = idleParticle->getY() - (hitBox.h - idleParticleHeight) - hitBox.y - 2 + IDLE_PARTICLE_GAP;
@@ -649,28 +660,52 @@ void Keqing::moveToLStiletto() {
 void Keqing::ESkillSlash() {
     yVelocity = 0;
 
-    if (isNewestFrame(0, KQ_SKILL_SLASH)) {
-        Particle *idleParticle =
-                Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
-        if (x <= idleParticle->getX()) setFacingEast(true);
-        else setFacingEast(false);
+    if (isSpriteAnimated(KQ_SKILL_SLASH)) {
+        if (isNewestFrame(0, KQ_SKILL_SLASH)) {
+            Particle *idleParticle =
+                    Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
+            if (x <= idleParticle->getX()) setFacingEast(true);
+            else setFacingEast(false);
 
-    } else if (isNewestFrame(6, KQ_SKILL_SLASH)) {
+            World *gWorld = Global::currentWorld;
+            double idleParticleW, idleParticleH;
+            idleParticle->getRealSize(&idleParticleW, &idleParticleH);
+            double idleParticleBottom = idleParticle->getY() + idleParticleH + IDLE_PARTICLE_GAP;
+            if (!gWorld->isPixelSurface(idleParticle->getX(), idleParticleBottom) &&
+                !gWorld->isPixelSurface(idleParticle->getX() + idleParticleW, idleParticleBottom)) {
+                setSpriteAnimated(false, KQ_SKILL_SLASH);
+                setSpriteAnimated(true, KQ_SKILL_SLASH_AIR);
+            }
+
+        } else if (isNewestFrame(6, KQ_SKILL_SLASH)) {
+            goto SkillTP;
+        }
+    }
+
+    if (isSpriteAnimated(KQ_SKILL_SLASH_AIR)) {
+        if (isNewestFrame(6, KQ_SKILL_SLASH_AIR)) {
+            goto SkillTP;
+        }
+    }
+
+    return;
+
+    SkillTP:
+    {
         Particle *tpStartParticle =
-                Particle::push(PARTICLE_KQ_BURST_VANISH, 60);
+                Particle::pushParticle(PARTICLE_KQ_BURST_VANISH, 60);
         tpStartParticle->moveToEntityCenter(this);
 
         this->moveToLStiletto();
 
         Particle *tpEndParticle =
-                Particle::push(PARTICLE_KQ_SKILL_TP_END,
-                               60, 0.64, 0.64);
+                Particle::pushParticle(PARTICLE_KQ_SKILL_TP_END,
+                                       60, 0.64, 0.64);
         tpEndParticle->moveToEntityCenter(this);
 
-        Particle::remove(PARTICLE_HUD_SKILL_ICON_2);
+        Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_2);
     }
 }
-
 
 const int cSlashFrameDuration = 16;
 const int cSlashRotations[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
@@ -688,10 +723,10 @@ int cSlashCount = 0;
 static void pushCloneSlashParticle(Particle *removedParticle) {
     if (cSlashCount < KQ_BURST_NUMBER_OF_CLONE_SLASH) {
         auto *cSlashParticle =
-                Particle::push(PARTICLE_KQ_BURST_CLONE_SLASH,
-                               cSlashFrameDuration,
-                               cSlashWM[cSlashCount],
-                               cSlashHM[cSlashCount]);
+                Particle::pushParticle(PARTICLE_KQ_BURST_CLONE_SLASH,
+                                       cSlashFrameDuration,
+                                       cSlashWM[cSlashCount],
+                                       cSlashHM[cSlashCount]);
         cSlashParticle->moveToEntityCenter(Keqing::getInstance());
         cSlashParticle->xyShift(cSlashXShift[cSlashCount], cSlashYShift[cSlashCount]);
         cSlashParticle->setRotation(cSlashRotations[cSlashCount]);
@@ -711,9 +746,9 @@ static void pushSlashParticle() {
             Particle::getParticle(PARTICLE_KQ_BURST_AOE);
     for (int i = 0; i < KQ_BURST_NUMBER_OF_SLASH; i++) {
         Particle *slashParticle =
-                Particle::push(PARTICLE_KQ_BURST_SLASH,
-                               slashDuration,
-                               1.2, 1.2);
+                Particle::pushParticle(PARTICLE_KQ_BURST_SLASH,
+                                       slashDuration,
+                                       1.2, 1.2);
         slashParticle->moveToEntityCenter(aoeParticle);
         slashParticle->setRotation(slashRotations[i]);
         slashParticle->delaySprite(2 * slashDuration * i);
@@ -731,9 +766,9 @@ static void pushCloneVanishParticle(Particle *aoeParticle) {
             Particle::getParticle(PARTICLE_KQ_BURST_CLONE);
     for (int i = 0; i < KQ_BURST_NUMBER_OF_CLONE; i++) {
         Particle *cloneVanishParticle =
-                Particle::push(PARTICLE_KQ_BURST_CLONE_VANISH,
-                               cVanishDuration,
-                               1.2, 1.2);
+                Particle::pushParticle(PARTICLE_KQ_BURST_CLONE_VANISH,
+                                       cVanishDuration,
+                                       1.2, 1.2);
         cloneVanishParticle->moveToEntityCenter(aoeParticle);
         cloneVanishParticle->xyShift(cVanishXShift[i], cVanishYShift[i]);
     }
@@ -749,33 +784,33 @@ const double cAppearYShift[KQ_BURST_NUMBER_OF_CLONE] =
 
 void Keqing::RBurst() {
     if (isNewestFrame(0, KQ_BURST)) { // Burst Start
-        Particle::remove(PARTICLE_HUD_BURST_CIRCLE);
+        Particle::removeParticle(PARTICLE_HUD_BURST_CIRCLE);
         Particle *burstIconHud =
                 Particle::getParticle(PARTICLE_HUD_BURST_ICON);
         burstIconHud->setRGBAMod(RGB_FULL, HUD_SB_USED_ALPHA);
 
-        Particle::push(PARTICLE_KQ_BURST_AOE,
-                       80, aoeBaseWHM, aoeBaseWHM);
+        Particle::pushParticle(PARTICLE_KQ_BURST_AOE,
+                               80, aoeBaseWHM, aoeBaseWHM);
 
         Particle *aoeWaveParticle =
-                Particle::push(PARTICLE_KQ_BURST_AOE_WAVE,
-                               60, aoeBaseWHM, aoeBaseWHM);
+                Particle::pushParticle(PARTICLE_KQ_BURST_AOE_WAVE,
+                                       60, aoeBaseWHM, aoeBaseWHM);
         aoeWaveParticle->setRGBAMod(RGB_FULL, 128);
 
     } else if (isNewestFrame(12, KQ_BURST)) { // Vanish
         Particle *vanishParticle =
-                Particle::push(PARTICLE_KQ_BURST_VANISH, 60);
+                Particle::pushParticle(PARTICLE_KQ_BURST_VANISH, 60);
         vanishParticle->setEntity(this);
 
     } else if (isNewestFrame(13, KQ_BURST)) { // Clone Slash Start
         pushCloneSlashParticle(nullptr);
         Particle *cloneParticle =
-                Particle::push(PARTICLE_KQ_BURST_CLONE,
-                               (int) (cSlashFrameDuration * 1.8),
-                               2.0, 2.0);
-        cloneParticle->delaySprite(cSlashFrameDuration);
+                Particle::pushParticle(PARTICLE_KQ_BURST_CLONE,
+                                       (int) (cSlashFrameDuration * 1.8),
+                                       2.0, 2.0);
         cloneParticle->moveToEntityCenter(this);
         cloneParticle->xyShift(0, -46);
+        cloneParticle->delaySprite(cSlashFrameDuration);
         cloneParticle->stopOnFrame(-1);
 
     } else if (isNewestFrame(24, KQ_BURST)) { // Final Slash
@@ -785,7 +820,7 @@ void Keqing::RBurst() {
                 Particle::getParticle(PARTICLE_KQ_BURST_AOE_WAVE);
 
         Particle *finalSlashParticle =
-                Particle::push(PARTICLE_KQ_BURST_FINAL_SLASH, 80);
+                Particle::pushParticle(PARTICLE_KQ_BURST_FINAL_SLASH, 80);
         finalSlashParticle->moveToEntityCenter(aoeParticle);
 
         pushCloneVanishParticle(aoeParticle);
@@ -793,7 +828,7 @@ void Keqing::RBurst() {
         aoeParticle->fadeAway();
         aoeWaveParticle->fadeAway();
 
-        Particle::remove(PARTICLE_KQ_BURST_CLONE);
+        Particle::removeParticle(PARTICLE_KQ_BURST_CLONE);
     }
 
     // Enlarge Circle
@@ -820,8 +855,8 @@ void Keqing::RBurst() {
             // 0, 5, 10, 15, 20
             if (cloneParticle->isNewestFrame(5 * i)) {
                 Particle *cloneAppearParticle =
-                        Particle::push(PARTICLE_KQ_BURST_CLONE_APPEAR,
-                                       cAppearDuration);
+                        Particle::pushParticle(PARTICLE_KQ_BURST_CLONE_APPEAR,
+                                               cAppearDuration);
                 cloneAppearParticle->moveToEntityCenter(this);
                 cloneAppearParticle->xyShift(cAppearXShift[i], cAppearYShift[i]);
             }
@@ -834,27 +869,6 @@ void Keqing::RBurst() {
     }
 }
 
-
-void Keqing::crouchNAtk() {
-    if (isFrameBetween(4, -1, KQ_CROUCH_NATK)) {
-        if (isKeyPressedLong(KEY_MOUSE_LEFT)) {
-            setSpriteAnimated(false, KQ_CROUCH_NATK);
-            setSpriteAnimated(true, KQ_CROUCH_CATK);
-        }
-    }
-}
-
-
-void Keqing::crouchCAtk() {
-    if (isNewestFrame(7, KQ_CROUCH_CATK)) {
-        Particle *crouchCAtkPartcle =
-                Particle::push(PARTICLE_KQ_CROUCH_CATK, 40);
-        crouchCAtkPartcle->moveToEntityCenter(this);
-        crouchCAtkPartcle->xyShift(0, 24);
-    }
-}
-
-
 void Keqing::airDoubleJump() {
     if (isNewestFrame(0, KQ_AIR_DOUBLE_JUMP)) {
         doubleJumped = true;
@@ -862,20 +876,17 @@ void Keqing::airDoubleJump() {
     }
 }
 
-
 void Keqing::airNAtk() {
     if (yVelocity == 0) {
         setSpriteAnimated(false, KQ_AIR_NATK);
     }
 }
 
-
 void Keqing::airUpNAtk() {
     if (yVelocity == 0) {
         setSpriteAnimated(false, KQ_AIR_UP_NATK);
     }
 }
-
 
 void Keqing::airPlunge() { // Plunge Attack in Genshin
     if (isNewestFrame(0, KQ_AIR_PLUNGE)) {
@@ -886,8 +897,8 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
 
     } else if (isNewestFrame(6, KQ_AIR_PLUNGE)) {
         Particle *airNAttackParticle =
-                Particle::push(PARTICLE_KQ_AIR_PLUNGE,
-                               60, 3.2, 0.1);
+                Particle::pushParticle(PARTICLE_KQ_AIR_PLUNGE,
+                                       60, 3.2, 0.1);
         airNAttackParticle->setEntity(this);
         airNAttackParticle->xyShift(26, 52);
 
@@ -913,9 +924,9 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
     if (isFrameBetween(6, 7, KQ_AIR_PLUNGE)) {
         if (yVelocity == 0) {
             goToFrame(8, KQ_AIR_PLUNGE);
-            Particle::remove(PARTICLE_KQ_AIR_PLUNGE);
+            Particle::removeParticle(PARTICLE_KQ_AIR_PLUNGE);
             Particle *airNAtkGroundParticle =
-                    Particle::push(PARTICLE_KQ_AIR_PLUNGE_GROUND, 60);
+                    Particle::pushParticle(PARTICLE_KQ_AIR_PLUNGE_GROUND, 60);
             airNAtkGroundParticle->moveToEntityCenter(this);
             airNAtkGroundParticle->xyShift(20, -6);
         }
@@ -938,11 +949,9 @@ void Keqing::airDash() {
     }
 }
 
-
-void Keqing::damage() {
-    // TODO
+void Keqing::hurt() {
+    LivingEntity::hurt();
 }
-
 
 void Keqing::setFacingEast(bool value) {
     if (facingEast != value) {
@@ -1019,7 +1028,7 @@ bool Keqing::canDoAction(int spriteCode) {
 }
 
 void Keqing::preAction(int spriteCode, void *fParams) {
-    auto *pXVeclocity = (double *) fParams;
+    auto *kq = (Keqing *) fParams;
     if (spriteCode != KQ_WALK &&
         spriteCode != KQ_RUN_START &&
         spriteCode != KQ_RUN &&
@@ -1029,18 +1038,29 @@ void Keqing::preAction(int spriteCode, void *fParams) {
         spriteCode != KQ_JUMP_END &&
         spriteCode != KQ_AIR_DOUBLE_JUMP &&
         spriteCode != KQ_AIR_NATK) {
-        *pXVeclocity = 0;
+        kq->xVelocity = 0;
     }
 }
 
-void Keqing::updateAction() {
+void Keqing::updateAction() { // TODO MAYBE PUT THIS IN LIVING ENTITY IN THE FUTURE
+    int currSpriteCode = getCurrentSpriteCode();
+    for (int i = 1; i < currSpriteCode; i++) {
+        setSpriteAnimated(false, i);
+    }
+
     // State Changer
+    if (isSpriteAnimated(KQ_RUN_START) ||
+        isSpriteAnimated(KQ_RUN) ||
+        isSpriteAnimated(KQ_RUN_TURN) ||
+        isSpriteAnimated(KQ_RUN_END)) {
+        this->run();
+    }
     if (isSpriteAnimated(KQ_CROUCH)) this->crouch();
     if (isSpriteAnimated(KQ_JUMP_START) ||
         isSpriteAnimated(KQ_JUMP)) {
         this->jump();
     }
-    if (isSpriteAnimated(KQ_HURT)) this->damage();
+    if (isSpriteAnimated(KQ_HURT)) this->hurt();
 
     // Ground
     if (isSpriteAnimated(KQ_NATK)) this->NAtk();
@@ -1050,7 +1070,10 @@ void Keqing::updateAction() {
     if (isSpriteAnimated(KQ_DASH)) this->dash();
     if (isSpriteAnimated(KQ_SKILL)) this->ESkill();
     if (isSpriteAnimated(KQ_SKILL_AIMING)) this->ESkillAiming();
-    if (isSpriteAnimated(KQ_SKILL_SLASH)) this->ESkillSlash();
+    if (isSpriteAnimated(KQ_SKILL_SLASH) ||
+        isSpriteAnimated(KQ_SKILL_SLASH_AIR)) {
+        this->ESkillSlash();
+    }
     if (isSpriteAnimated(KQ_BURST)) this->RBurst();
 
     // Crouch

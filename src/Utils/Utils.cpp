@@ -7,9 +7,6 @@
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
 
-#define DOUBLE_EPSILON 0.001
-#define KEY_PRESS_SHORT_DURATION 100
-
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {
         SDL_Log("Message : %s\n", msg);
@@ -22,9 +19,9 @@ int roundToInt(double x) {
     return ((int) (x));
 }
 
-bool areDoubleEpsilonEqual(double a, double b) {
-    return (abs(a - b) < DOUBLE_EPSILON);
-}
+//bool areDoubleEpsilonEqual(double a, double b) {
+//    return (abs(a - b) < DOUBLE_EPSILON);
+//}
 
 int getTime() {
     return ((int) SDL_GetTicks());

@@ -57,11 +57,13 @@ public:
 
     void delaySprite(int ms, int spriteCode = 0);
 
-    void animateSprite();
+    virtual void animateSprite();
 
     inline Sprite *getSprite(int spriteCode = 0) { return (&spriteArray[spriteCode]); }
 
     inline int getCurrentSpriteCode() { return currentSprite->sCode; }
+
+    [[nodiscard]] inline Sprite *getCurrentSprite() const { return currentSprite; }
 
 private:
     SpriteArray spriteArray;

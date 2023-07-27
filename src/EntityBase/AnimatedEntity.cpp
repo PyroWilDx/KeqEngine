@@ -40,10 +40,8 @@ void AnimatedEntity::initSprite(int spriteCode, const char *imgPath,
 void AnimatedEntity::setSpriteAnimated(bool animated, int spriteCode,
                                        void (*preAction)(int spriteCode, void *fParams),
                                        void *fParams) {
-    if (preAction != nullptr) {
-        if (animated && !isSpriteAnimated(spriteCode)) {
-            preAction(spriteCode, fParams);
-        }
+    if (animated && !isSpriteAnimated(spriteCode)) {
+        if (preAction != nullptr) preAction(spriteCode, fParams);
     }
     spriteArray[spriteCode].sAnimated = animated;
     if (animated) currentSprite = &spriteArray[spriteCode];
@@ -137,6 +135,9 @@ void AnimatedEntity::resetSprite(int spriteCode) {
 
 void AnimatedEntity::delaySprite(int ms, int spriteCode) {
     spriteArray[spriteCode].sTimer -= ms;
+    if (spriteArray[spriteCode].sTimer < 0) {
+        imgTexture = nullptr;
+    }
 }
 
 void AnimatedEntity::animateSprite() {
@@ -147,7 +148,9 @@ void AnimatedEntity::animateSprite() {
         if (sprite->sAnimated) {
             sprite->sTimer += Global::dt;
 
-            if (sprite->sTimer < 0) continue;
+            if (sprite->sTimer < 0) {
+                continue;
+            }
 
             int currentFrame = sprite->sCurrentFrame;
             if (sprite->sTimer > sprite->sFrameLengths[currentFrame]) {

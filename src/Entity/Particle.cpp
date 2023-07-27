@@ -39,6 +39,7 @@ Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double h
     renderWMultiplier = wMultiplier;
     renderHMultiplier = hMultiplier;
     imgFrame = {0, 0, currentSprite->sFrameW, currentSprite->sFrameH};
+    imgTexture = currentSprite->sTexture;
 }
 
 void Particle::initParticle() {
@@ -174,7 +175,8 @@ void Particle::initParticle() {
     }
 }
 
-Particle *Particle::push(int spriteCode, int frameLength, double wMultiplier, double hMultiplier) {
+Particle *Particle::pushParticle(int spriteCode, int frameLength,
+                                 double wMultiplier, double hMultiplier) {
     auto *particle = new Particle(spriteCode, frameLength, wMultiplier, hMultiplier);
     pushFast(particle);
     return particle;
@@ -188,15 +190,15 @@ void Particle::pushFast(Particle *particle) {
         i = count;
     } else { // Replace existing Particle (last one)
         i = count - 1;
-        remove(spriteCode, i);
+        removeParticle(spriteCode, i);
     }
     activeParticles[spriteCode][i] = particle;
     activeCounts[spriteCode]++;
 }
 
-void Particle::remove(int spriteCode, int i) {
+void Particle::removeParticle(int spriteCode, int i) {
     if (i < 0 || i >= particleMaxActives[spriteCode]) {
-        SDL_Log("WARNING, invalid index for removedParticle remove!\n");
+        SDL_Log("WARNING, invalid index for removedParticle removeParticle!\n");
         return;
     }
     Particle *removedParticle = activeParticles[spriteCode][i];
@@ -217,17 +219,6 @@ void Particle::animateAll() {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
             currParticle = activeParticles[spriteCode][i];
 
-            if (currParticle->entity != nullptr) { // Translate Particle
-                double entityX = currParticle->entity->getX();
-                double entityY = currParticle->entity->getY();
-                currParticle->x += entityX - currParticle->entityLastX;
-                currParticle->y += entityY - currParticle->entityLastY;
-                currParticle->entityLastX = entityX;
-                currParticle->entityLastY = entityY;
-
-                currParticle->facingEast = currParticle->entity->isFacingEast();
-            }
-
             currParticle->animateSprite();
 
             if (currParticle->fadeParams.baseAlpha != -1) {
@@ -236,7 +227,7 @@ void Particle::animateAll() {
                 alpha -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
                                 ((double) currParticle->fadeParams.baseAlpha / 255.0));
                 if (alpha < 20) {
-                    remove(spriteCode, i);
+                    removeParticle(spriteCode, i);
                     continue;
                 }
                 currParticle->setRGBAMod(RGB_FULL, alpha);
@@ -244,8 +235,9 @@ void Particle::animateAll() {
             }
 
             if (currParticle->isFinished()) {
-                remove(spriteCode, i);
+                removeParticle(spriteCode, i);
             }
+
         }
     }
 }
@@ -282,12 +274,6 @@ void Particle::cleanUp() {
     }
 }
 
-void Particle::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-    SDL_Texture *currTexture = getSprite()->sTexture;
-    SDL_SetTextureColorMod(currTexture, r, g, b);
-    SDL_SetTextureAlphaMod(currTexture, a);
-}
-
 void Particle::setEntity(Entity *newEntity) {
     moveToEntityCenter(newEntity);
     facingEast = newEntity->isFacingEast();
@@ -310,13 +296,30 @@ bool Particle::shouldTranslate() {
     return (particleCode < PARTICLE_HUD_START);
 }
 
-void Particle::xyShift(double xShift, double yShift) {
-    if ((entity != nullptr && !entity->isFacingEast()) ||
-        !isFacingEast()) {
-        x -= xShift;
-    } else {
-        x += xShift;
+void Particle::animateSprite() {
+    if (entity != nullptr) { // Translate Particle
+        double entityX = entity->getX();
+        double entityY = entity->getY();
+        x += entityX - entityLastX;
+        y += entityY - entityLastY;
+        entityLastX = entityX;
+        entityLastY = entityY;
+
+        facingEast = entity->isFacingEast();
     }
+
+    AnimatedEntity::animateSprite();
+}
+
+void Particle::xyShift(double xShift, double yShift) {
+    if (entity != nullptr) {
+        xShift *= entity->getRenderWMultiplier();
+        yShift *= entity->getRenderHMultiplier();
+        if (!entity->isFacingEast()) xShift = -xShift;
+    } else {
+        if (!isFacingEast()) xShift = -xShift;
+    }
+    x += xShift;
     y += yShift;
 }
 
