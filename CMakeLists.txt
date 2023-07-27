@@ -12,7 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 
 if (WIN32)
-    set(LIB_FLAGS -LC:/C/SDL2/lib -lmingw32 -lrpcrt4 -lSDL2main -lSDL2.dll -lSDL2_image -lSDL2_ttf -lm)
+    set(LIB_FLAGS -LC:/C/SDL2/lib -lmingw32 -lrpcrt4 -lSDL2main -lSDL2.dll -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm)
 
     set(SDL2 "C:/C/SDL2")
     set(RPCRT4 "C:/C/rpcrt4")
@@ -25,6 +25,7 @@ if (WIN32)
             ${SDL2}/lib/libSDL2.dll.a
             ${SDL2}/lib/libSDL2_image.a
             ${SDL2}/lib/libSDL2_ttf.a
+            ${SDL2}/lib/libSDL2_gfx.a
             ${RPCRT4}/lib/librpcrt4.a)
 
     set(BOOST_ROOT "C:/C/boost")
@@ -32,12 +33,13 @@ if (WIN32)
     message(STATUS "Building for Windows")
 
 elseif (UNIX AND NOT APPLE)
-    set(LIB_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf")
+    set(LIB_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx")
 
     set(HEADER_DIRS ${HEADER_DIRS} "/usr/include/SDL2")
     set(PLATFORM_LIB_FLAGS ${LIB_FLAGS})
 
-#    set(BOOST_ROOT "C:/C/boost") # TODO
+    #set(BOOST_ROOT "C:/C/boost") # TODO
+    # TODO add .a of SDL2_gfx...
 
     message(STATUS "Building for Linux")
 
@@ -62,3 +64,13 @@ file(GLOB_RECURSE ALL_SRC
 
 target_sources(main PRIVATE ${ALL_SRC})
 target_link_libraries(main ${PLATFORM_LIB_FLAGS})
+
+#To Create a Static Library
+#set(LIB_SRC
+#        ${SRC_DIR}/SDL2_gfx/SDL2_framerate.c
+#        ${SRC_DIR}/SDL2_gfx/SDL2_gfxPrimitives.c
+#        ${SRC_DIR}/SDL2_gfx/SDL2_imageFilter.c
+#        ${SRC_DIR}/SDL2_gfx/SDL2_rotozoom.c)
+#
+#add_library(libSDL2_gfx STATIC ${LIB_SRC})
+#set_target_properties(libSDL2_gfx PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
