@@ -147,7 +147,8 @@ public:
     static Particle *pushParticleOnSkillBlink(Entity *centerEntity);
 
     static void pushElectroAura(Entity *srcEntity, Particle *srcParticle,
-                                double renderWM = 1.0, double renderHM = 1.0);
+                                double renderWM = 1.0, double renderHM = 1.0,
+                                int frameLength = 100);
 
     void ASkillFlip();
 

@@ -23,4 +23,3 @@ isInvincible() for keqing ? and for every living entities in generaL... virtualf
 
 for coloring keqing
      FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
-     reset color buttn

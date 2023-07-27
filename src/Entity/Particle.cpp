@@ -357,6 +357,8 @@ void Particle::removeAllParticles() {
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         int count = activeCounts[spriteCode];
         for (int i = 0; i < count; i++) {
+            Particle *removedParticle = activeParticles[spriteCode][i];
+            if (removedParticle->onRenderParams != nullptr) removedParticle->onRemove(removedParticle);
             delete activeParticles[spriteCode][i];
             activeParticles[spriteCode][i] = nullptr;
         }

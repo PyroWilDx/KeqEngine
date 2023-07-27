@@ -795,7 +795,7 @@ void Keqing::CAtk() {
         CAtkParticle->xyShift(30, 10);
 
         soundSheet->playRandomSound(KQ_CATK);
-        Sound::playAudioChunk("res/sfx/particle/KQCAtK.ogg");
+        Sound::playAudioChunk("res/sfx/particle/KQCAtk.ogg");
 
         checkESkillOnCAtk();
     }
@@ -883,7 +883,7 @@ void Keqing::upCAtk() {
         upCAtkPartcle->xyShift(0, -40);
 
         soundSheet->playRandomSound(KQ_UP_CATK);
-        Sound::playAudioChunk("res/sfx/particle/KQCAtK.ogg");
+        Sound::playAudioChunk("res/sfx/particle/KQCAtk.ogg");
 
         checkESkillOnCAtk();
     }
@@ -951,7 +951,7 @@ void Keqing::crouchCAtk() {
         crouchCAtkParticle->xyShift(0, 24);
 
         soundSheet->playRandomSound(KQ_CROUCH_CATK);
-        Sound::playAudioChunk("res/sfx/particle/KQCAtK.ogg");
+        Sound::playAudioChunk("res/sfx/particle/KQCAtk.ogg");
 
         checkESkillOnCAtk();
     }
@@ -1071,14 +1071,15 @@ Particle *Keqing::pushParticleOnSkillBlink(Entity *centerEntity) {
 }
 
 void Keqing::pushElectroAura(Entity *srcEntity, Particle *srcParticle,
-                             double renderWM, double renderHM) {
+                             double renderWM, double renderHM,
+                             int frameLength) {
     // One of the Parameters should be nullptr
     if (srcEntity != nullptr && srcParticle != nullptr) return;
 
     if (srcEntity != nullptr) {
         Particle *auraParticle =
                 Particle::pushParticle(PARTICLE_KQ_ELECTRO_AURA,
-                                       100,
+                                       frameLength,
                                        renderWM, renderHM);
         auraParticle->setRGBAMod(100);
         auraParticle->moveToEntityCenter(srcEntity);
@@ -1657,7 +1658,8 @@ void Keqing::ESkillSlashGeneral() {
         tpStartParticle->moveToEntityCenter(this);
 
         Keqing::pushElectroAura(this, nullptr,
-                                1.42, 1.42);
+                                1.42, 1.42,
+                                60);
 
         moveTo(ESkillX, ESkillY);
 
@@ -1895,7 +1897,7 @@ void Keqing::RBurst() {
                     if (particle->isNewestFrame(0)) {
                         // Push Atk
                         pushBurstSlashAtk(10, 0.1, -0.1,
-                                          particle->getSpriteLengthFromTo(0, -1));
+                                          particle->getSpriteLengthFromTo(0, 2));
                     }
                 });
             }

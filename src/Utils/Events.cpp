@@ -83,19 +83,27 @@ void Events::onMouse(SDL_Event *event) {
     Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
 }
 
+void Events::onQuit(gStateInfo *gInfo) {
+    Events::callMainFunc(&gInfo->gRunning, nullptr);
+}
+
 void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
     int SDLKey;
     int key;
 
     switch (event->type) {
         case SDL_QUIT:
-            Events::callMainFunc(&gInfo->gRunning, nullptr);
+            onQuit(gInfo);
             break;
 
         case SDL_WINDOWEVENT:
             switch (event->window.event) {
                 case SDL_WINDOWEVENT_RESIZED:
                     Events::onWindowResize(event->window.data1, event->window.data2);
+                    break;
+
+                case SDL_WINDOWEVENT_CLOSE:
+                    onQuit(gInfo);
                     break;
             }
             break;
