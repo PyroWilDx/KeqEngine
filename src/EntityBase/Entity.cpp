@@ -58,21 +58,41 @@ void Entity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     SDL_SetTextureAlphaMod(imgTexture, a);
 }
 
+std::vector<double> *Entity::getXArrayToCheck() const {
+    const int N = 4;
+    auto *xToCheck = new std::vector<double>;
+    double xLeft = x + (double) hitBox.x;
+    xToCheck->push_back(xLeft + 1);
+    const double tmpDiv = N - 1;
+    for (int i = 1; i < N - 1; i++) {
+        xToCheck->push_back(xLeft + (double) (hitBox.w * i) / tmpDiv);
+    }
+    xToCheck->push_back(xLeft + (double) (hitBox.w - 1));
+    return xToCheck;
+}
+
+std::vector<double> *Entity::getYArrayToCheck() const {
+    const int N = 8;
+    auto *yToCheck = new std::vector<double>;
+    double yUp = y + (double) hitBox.y;
+    yToCheck->push_back(yUp + 1);
+    const double tmpDiv = N - 1;
+    for (int i = 1; i < N - 1; i++) {
+        yToCheck->push_back(yUp + (double) (hitBox.h * i) / tmpDiv);
+    }
+    yToCheck->push_back(yUp + (double) (hitBox.h - 1));
+    return yToCheck;
+}
+
 void Entity::checkXCollision(bool checkRight) {
-    double yHitbox = y + hitBox.y;
-    const double yToCheck[5] = {
-            yHitbox + 1, // 0%
-            yHitbox + (double) hitBox.h / 4.0, // 25%
-            yHitbox + (double) hitBox.h / 2.0, // 50%
-            yHitbox + (double) hitBox.h / (4.0 / 3.0), // 75%
-            yHitbox + (double) hitBox.h - 1 // 100%
-    };
+    World *gWorld = Global::currentWorld;
+    std::vector<double> *yToCheck = getYArrayToCheck();
 
     if (checkRight) {
         double xRight = x + hitBox.x + hitBox.w;
         double xWall = INT32_MAX;
-        for (double vY: yToCheck) {
-            xWall = std::min(xWall, Global::currentWorld->getNearestWallFrom(
+        for (double vY: *yToCheck) {
+            xWall = std::min(xWall, gWorld->getNearestWallFrom(
                     xRight, vY, KEY_Q));
         }
         if (xRight > xWall) {
@@ -82,14 +102,47 @@ void Entity::checkXCollision(bool checkRight) {
     } else {
         double xLeft = x + hitBox.x;
         double xWall = -INT32_MAX;
-        for (double vY: yToCheck) {
-            xWall = std::max(xWall, Global::currentWorld->getNearestWallFrom(
+        for (double vY: *yToCheck) {
+            xWall = std::max(xWall, gWorld->getNearestWallFrom(
                     xLeft, vY, KEY_D));
         }
         if (xLeft < xWall) {
             x = xWall - hitBox.x;
         }
     }
+
+    delete yToCheck;
+}
+
+void Entity::checkYCollision(bool checkDown) {
+    World *gWorld = Global::currentWorld;
+    std::vector<double> *xToCheck = getXArrayToCheck();
+
+    if (checkDown) {
+        double yDown = y + hitBox.y + hitBox.h;
+        double yWall = INT32_MAX;
+        for (double vX: *xToCheck) {
+            yWall = std::min(yWall, gWorld->getNearestWallFrom(
+                    vX, yDown, KEY_Z));
+        }
+        if (yDown > yWall) {
+            y = yWall - hitBox.h - hitBox.y;
+        }
+
+    } else {
+        double yUp = y + hitBox.y;
+        double yWall = -INT32_MAX;
+        for (double vX: *xToCheck) {
+            yWall = std::max(yWall, gWorld->getNearestWallFrom(
+                    vX, yUp, KEY_S));
+        }
+        if (yUp < yWall) {
+            y = yWall - hitBox.y;
+            yVelocity = 0;
+        }
+    }
+
+    delete xToCheck;
 }
 
 void Entity::moveX() {
@@ -103,33 +156,6 @@ void Entity::moveX() {
     checkXCollision((addX > 0));
 }
 
-void Entity::checkYCollision(bool checkDown) {
-    double xLeft = x + hitBox.x + 1;
-    double xRight = x + hitBox.x + hitBox.w - 1;
-
-    if (checkDown) {
-        double yDown = y + hitBox.y + hitBox.h;
-        double yWall = Global::currentWorld->getNearestWallFrom(
-                xLeft, yDown, KEY_Z);
-        yWall = std::min(yWall, Global::currentWorld->getNearestWallFrom(
-                xRight, yDown, KEY_Z));
-        if (yDown > yWall) {
-            y = yWall - hitBox.h - hitBox.y;
-        }
-
-    } else {
-        double yUp = y + hitBox.y;
-        double yWall = Global::currentWorld->getNearestWallFrom(
-                xLeft, yUp, KEY_S);
-        yWall = std::max(yWall, Global::currentWorld->getNearestWallFrom(
-                xRight, yUp, KEY_S));
-        if (yUp < yWall) {
-            y = yWall - hitBox.y;
-            yVelocity = 0;
-        }
-    }
-}
-
 void Entity::moveY() {
     if (yVelocity == 0) return;
 
@@ -138,12 +164,44 @@ void Entity::moveY() {
     checkYCollision((yVelocity > 0));
 }
 
+bool Entity::isHittingWallHorizontallySide(bool sideLeft) const {
+    World *gWorld = Global::currentWorld;
+
+    double xCheck = x + (double) hitBox.x;
+    if (!sideLeft) xCheck += (double) hitBox.w;
+    std::vector<double> *yToCheck = getYArrayToCheck();
+
+    for (double vY: *yToCheck) {
+        if (gWorld->isPixelSurface(xCheck, vY)) return true;
+    }
+
+    return false;
+}
+
+bool Entity::isHittingWallHorizontally() const {
+    return (isHittingWallHorizontallySide(true) || isHittingWallHorizontallySide(false));
+}
+
+bool Entity::isHittingWallVerticallySide(bool sideUp) const {
+    World *gWorld = Global::currentWorld;
+
+    double yCheck = y + hitBox.y;
+    if (!sideUp) yCheck += hitBox.h;
+    std::vector<double> *xToCheck = getXArrayToCheck();
+
+    for (double vX: *xToCheck) {
+        if (gWorld->isPixelSurface(vX, yCheck)) return true;
+    }
+
+    return false;
+}
+
 bool Entity::isInAir() const {
-    double xLeft = x + hitBox.x + 1;
-    double xRight = x + hitBox.x + hitBox.w - 1;
-    double yDown = y + hitBox.y + hitBox.h;
-    return (!Global::currentWorld->isPixelSurface(xLeft, yDown) &&
-            !Global::currentWorld->isPixelSurface(xRight, yDown));
+    return !isHittingWallVerticallySide(false);
+}
+
+bool Entity::isHittingCeiling() const {
+    return isHittingWallVerticallySide(true);
 }
 
 void Entity::fallGravity() {
@@ -161,20 +219,29 @@ void Entity::moveTo(double x_, double y_) {
     y = y_;
 }
 
-void Entity::moveTo(Entity *entity) {
-    moveTo(entity->x, entity->y);
-}
-
-void Entity::moveTo(Entity *entity, double addX, double addY) {
-    moveTo(entity);
-    x += addX;
-    y += addY;
-}
-
 void Entity::moveToCenter(double x_, double y_) {
     double realW, realH;
     getRealSize(&realW, &realH);
     moveTo(x_ - realW / 2.0, y_ - realH / 2.0);
+}
+
+void Entity::moveToDownLeft(double xLeft, double yDown) {
+    double yUp;
+    if (hitBox.w == 0 && hitBox.h == 0) {
+        double realH;
+        getRealSize(nullptr, &realH);
+        yUp = yDown - realH;
+    } else {
+        yUp = yDown - hitBox.h;
+    }
+    xLeft -= (hitBox.x - x);
+    yUp -= (hitBox.y - y);
+    moveTo(xLeft, yUp);
+}
+
+void Entity::moveAdd(double addX, double addY) {
+    x += addX;
+    y += addY;
 }
 
 void Entity::getRealSize(double *pW, double *pH) {
@@ -278,8 +345,8 @@ void Entity::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
     *pY = vY + addY + (addH / 2.0 - (double) realH / 2.0);
 }
 
-void Entity::moveToEntityCenter(Entity *centerEntity) {
-    facingEast = centerEntity->isFacingEast();
+void Entity::moveToEntityCenter(Entity *centerEntity, bool takeFaceEast) {
+    if (takeFaceEast) facingEast = centerEntity->isFacingEast();
     getToEntityCenterXY(centerEntity, &x, &y);
 }
 
@@ -315,15 +382,15 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
     SDL_RenderDrawRect(gRenderer, &dstHitBox);
 }
 
-bool Entity::collides(Entity *entity, SDL_Rect addRect) const {
-    double x1 = x + hitBox.x + addRect.x;
-    double y1 = y + hitBox.y + addRect.y;
-    int maxX1 = x1 + hitBox.w + addRect.w;
-    int maxY1 = y1 + hitBox.h + addRect.h;
-    int x2 = entity->x + entity->hitBox.x;
-    int y2 = entity->y + entity->hitBox.y;
-    int maxX2 = x2 + entity->hitBox.w;
-    int maxY2 = y2 + entity->hitBox.h;
+bool Entity::hitBoxCollision(Entity *entity) const {
+    double x1 = x + (double) hitBox.x;
+    double y1 = y + (double) hitBox.y;
+    double maxX1 = x1 + (double) hitBox.w;
+    double maxY1 = y1 + (double) hitBox.h;
+    double x2 = entity->x + (double) entity->hitBox.x;
+    double y2 = entity->y + (double) entity->hitBox.y;
+    double maxX2 = x2 + (double) entity->hitBox.w;
+    double maxY2 = y2 + (double) entity->hitBox.h;
 
     if (maxX1 < x2 || x1 > maxX2) return false;
     if (maxY1 < y2 || y1 > maxY2) return false;

@@ -7,7 +7,7 @@
 
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
-#include "EntityBase/AnimatedEntity.hpp"
+#include "EntityBase/LivingEntity.hpp"
 
 enum {
     KQ_IDLE = 0,
@@ -25,13 +25,14 @@ enum {
     KQ_CATK,
     KQ_UP_NATK,
     KQ_UP_CATK,
+    KQ_CROUCH_NATK,
+    KQ_CROUCH_CATK,
     KQ_DASH,
     KQ_SKILL,
     KQ_SKILL_AIMING,
     KQ_SKILL_SLASH,
+    KQ_SKILL_SLASH_AIR,
     KQ_BURST,
-    KQ_CROUCH_NATK,
-    KQ_CROUCH_CATK,
     KQ_AIR_DOUBLE_JUMP,
     KQ_AIR_NATK,
     KQ_AIR_UP_NATK,
@@ -46,6 +47,7 @@ enum {
 
 #define KQ_WALK_VELOCITY 0.4
 #define KQ_RUN_VELOCITY 0.6
+#define KQ_AIR_WALK_VELOCITY 0.38
 #define KQ_DASH_VELOCITY 0.8
 
 #define KQ_JUMP_BASE_VELOCITY 1.0
@@ -63,7 +65,7 @@ enum {
 #define KQ_BURST_COOLDOWN 10000
 #define KQ_SKILL_CIRCLE_RGBA 10, 255, 10, 255
 
-class Keqing : public AnimatedEntity {
+class Keqing : public LivingEntity {
 
 public:
     ~Keqing() override = default;
@@ -75,8 +77,6 @@ public:
     void colorTexture(Uint8 r, Uint8 g, Uint8 b);
 
     void moveX() override;
-
-    SDL_Rect getRenderRect() override;
 
     void setSpriteAnimated(bool animated, int spriteCode);
 
@@ -90,6 +90,8 @@ public:
 
     void airAnimate();
 
+    void run();
+
     void crouch();
 
     void jump();
@@ -101,6 +103,10 @@ public:
     void upNAtk();
 
     void upCAtk();
+
+    void crouchNAtk();
+
+    void crouchCAtk();
 
     void dash();
 
@@ -114,10 +120,6 @@ public:
 
     void RBurst();
 
-    void crouchNAtk();
-
-    void crouchCAtk();
-
     void airDoubleJump();
 
     void airNAtk();
@@ -128,7 +130,7 @@ public:
 
     void airDash();
 
-    void damage();
+    void hurt() override;
 
     void setFacingEast(bool value);
 
@@ -144,24 +146,15 @@ public:
 
     // TODO may need isInvincible
 
-    [[nodiscard]] inline bool isCrouching() { return isCurrentSprite(KQ_CROUCH); }
-
-    [[nodiscard]] inline int getHp() const { return hp; }
-
 private:
     explicit Keqing();
 
     static Keqing *instance;
-    static int spriteXShifts[KQ_ENUM_N];
-    static int spriteYShifts[KQ_ENUM_N];
-    static int spriteXRShifts[KQ_ENUM_N];
 
-    static void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
-
-    int hp;
     int jumpPressTime;
     bool doubleJumped;
     bool airDashed;
+
 };
 
 #endif

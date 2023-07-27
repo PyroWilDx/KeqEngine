@@ -1,2 +1,6 @@
 Custom HashTable for Buttons.
-Diminuer la size que prend une particule psq c'est là c'est trop
+
+    // TODO OVERRIDE ANIMATESPRITE FOR A SINGLE PARTICLE
+    // TODO DO A VECTOR OF APRTICLE AND RENEDR ALL IN WORLD
+
+         // TODO VECTOR OF  MONSTERS IN WORLD THAT CALL AI AND REDER

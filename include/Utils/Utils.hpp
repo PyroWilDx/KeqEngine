@@ -10,21 +10,24 @@
 #include "EntityBase/AnimatedEntity.hpp"
 #include "Entity/Particle.hpp"
 
-//Screen dimension constants
 #define SCREEN_BASE_WIDTH 1280
 #define SCREEN_BASE_HEIGHT 720
 
 #define HUD_SB_CIRCLE_M 4.0
 #define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74)
 
+#define KEY_PRESS_SHORT_DURATION 100
+
 #define RGB_FULL 255, 255, 255
 #define RGBA_FULL 255, 255, 255, 255
+
+// #define DOUBLE_EPSILON 0.001
 
 void myAssert(bool expr, const char *msg, const char *err);
 
 int roundToInt(double value);
 
-bool areDoubleEpsilonEqual(double a, double b);
+//bool areDoubleEpsilonEqual(double a, double b);
 
 int getTime();
 

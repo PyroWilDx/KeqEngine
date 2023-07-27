@@ -5,6 +5,7 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
+#include <vector>
 #include <SDL2/SDL.h>
 
 class WindowRenderer;
@@ -29,25 +30,37 @@ public:
 
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
-    void checkXCollision(bool checkRight);
+    [[nodiscard]] std::vector<double> *getXArrayToCheck() const;
 
-    virtual void moveX();
+    [[nodiscard]] std::vector<double> *getYArrayToCheck() const;
+
+    void checkXCollision(bool checkRight);
 
     void checkYCollision(bool checkDown);
 
+    virtual void moveX();
+
     void moveY();
 
-    bool isInAir() const;
+    [[nodiscard]] bool isHittingWallHorizontallySide(bool sideLeft) const;
+
+    [[nodiscard]] bool isHittingWallHorizontally() const;
+
+    [[nodiscard]] bool isHittingWallVerticallySide(bool sideUp) const;
+
+    [[nodiscard]] bool isInAir() const;
+
+    [[nodiscard]] bool isHittingCeiling() const;
 
     virtual void fallGravity();
 
     void moveTo(double x_, double y_);
 
-    void moveTo(Entity *entity);
-
-    void moveTo(Entity *entity, double addX, double addY);
-
     void moveToCenter(double x_, double y_);
+
+    void moveToDownLeft(double xLeft, double yDown);
+
+    void moveAdd(double addX, double addY);
 
     virtual void getRealSize(double *pW, double *pH);
 
@@ -63,11 +76,11 @@ public:
 
     void getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY);
 
-    void moveToEntityCenter(Entity *centerEntity);
+    void moveToEntityCenter(Entity *centerEntity, bool takeFaceEast = true);
 
     virtual void renderSelf(SDL_Renderer *gRenderer);
 
-    bool collides(Entity *entity, SDL_Rect addRect) const;
+    bool hitBoxCollision(Entity *entity) const;
 
     void clearTexture();
 
@@ -76,6 +89,14 @@ public:
     inline void setRenderWHMultiplier(double wMultiplier, double hMultiplier) {
         renderWMultiplier = wMultiplier;
         renderHMultiplier = hMultiplier;
+        if (hitBox.w != 0) {
+            hitBox.x = (int) ((double) hitBox.x * wMultiplier);
+            hitBox.w = (int) ((double) hitBox.w * wMultiplier);
+        }
+        if (hitBox.h != 0) {
+            hitBox.y = (int) ((double) hitBox.y * hMultiplier);
+            hitBox.h = (int) ((double) hitBox.h * hMultiplier);
+        }
     }
 
     inline void setRotation(double rotation_) { degRotation = rotation_; }

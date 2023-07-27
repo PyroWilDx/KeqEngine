@@ -60,11 +60,12 @@ public:
 
     static void initParticle();
 
-    static Particle *push(int spriteCode, int frameLength, double wMultiplier = 1.0, double hMultiplier = 1.0);
+    static Particle *pushParticle(int spriteCode, int frameLength,
+                                  double wMultiplier = 1.0, double hMultiplier = 1.0);
 
     static void pushFast(Particle *particle);
 
-    static void remove(int spriteCode, int i = 0);
+    static void removeParticle(int spriteCode, int i = 0);
 
     static void animateAll();
 
@@ -76,11 +77,11 @@ public:
 
     static void cleanUp();
 
-    void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
-
     void getRealSize(double *pW, double *pH) override;
 
     bool shouldTranslate() override;
+
+    void animateSprite() override;
 
     void setEntity(Entity *newEntity);
 
