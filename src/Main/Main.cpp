@@ -21,7 +21,7 @@
 int main(int argc, char *argv[]) {
 
 #ifdef __unix__
-    ProfilerStart("Profiler.prof");
+//    ProfilerStart("Profiler.prof");
 #endif
 
     std::string path = std::filesystem::current_path().string();
