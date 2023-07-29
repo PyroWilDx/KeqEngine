@@ -1,6 +1,4 @@
-Custom HashTable for Buttons.
+Custom HashTable for Buttons ?
 
-    // TODO OVERRIDE ANIMATESPRITE FOR A SINGLE PARTICLE
-    // TODO DO A VECTOR OF APRTICLE AND RENEDR ALL IN WORLD
-
-         // TODO VECTOR OF  MONSTERS IN WORLD THAT CALL AI AND REDER
+Maybe put keqing in world, then do a "ongameframe" for every entity (virtual and may be nullptr) and put a vector of other entities...
+if that's the case I need to not forget to put fps text also

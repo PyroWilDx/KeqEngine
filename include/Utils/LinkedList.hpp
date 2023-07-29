@@ -13,9 +13,12 @@ typedef struct LinkedList {
 
 [[nodiscard]] LinkedList *LLInsertHead(LinkedList *ll, void *value);
 
-[[nodiscard]] LinkedList *LLRemoveCell(LinkedList *rmCell);
+[[nodiscard]] LinkedList *LLRemoveCell(LinkedList *rmCell, void (*freeValueF)(void *));
 
 void LLIterate(LinkedList *ll, void (*f)(void *, void *), void *fParams);
+
+[[nodiscard]] LinkedList *LLIterateMayRemove(LinkedList *ll, bool (*doRM)(void *, void *), void *fParams,
+                                             void (*freeValueF)(void *));
 
 void LLFree(LinkedList *llHead, void (*freeValueF)(void *));
 

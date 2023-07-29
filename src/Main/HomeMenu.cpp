@@ -8,7 +8,6 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
-#include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
 void runHomeMenu() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();

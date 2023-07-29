@@ -2,6 +2,7 @@
 // Created by pyrowildx on 30/05/23.
 //
 
+#include <numeric>
 #include "EntityBase/AnimatedEntity.hpp"
 #include "Utils/Global.hpp"
 
@@ -176,4 +177,11 @@ void AnimatedEntity::animateSprite() {
         imgFrame.h = lastAnimatedSprite->sFrameH;
         currentSprite = lastAnimatedSprite;
     }
+}
+
+int AnimatedEntity::getSpriteLengthFromTo(int startFrame, int endFrame, int spriteCode) {
+    Sprite *sprite = &spriteArray[spriteCode];
+    if (endFrame == -1) endFrame = sprite->sFrameN - 1;
+    return std::accumulate(sprite->sFrameLengths + startFrame,
+                           sprite->sFrameLengths + endFrame + 1, 0);
 }

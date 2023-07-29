@@ -80,6 +80,18 @@ public:
 
     virtual void renderSelf(SDL_Renderer *gRenderer);
 
+    [[nodiscard]] double getBaseHitBoxX() const;
+
+    [[nodiscard]] double getBaseHitBoxY() const;
+
+    [[nodiscard]] double getBaseHitBoxW() const;
+
+    [[nodiscard]] double getBaseHitBoxH() const;
+
+    [[nodiscard]] double getHalfBaseHitBoxW() const;
+
+    [[nodiscard]] double getHalfBaseHitBoxH() const;
+
     bool hitBoxCollision(Entity *entity) const;
 
     void clearTexture();

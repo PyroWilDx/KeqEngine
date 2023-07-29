@@ -13,7 +13,7 @@ LinkedList *LLInsertHead(LinkedList *ll, void *value) {
     return newCell;
 }
 
-LinkedList *LLRemoveCell(LinkedList *rmCell) {
+LinkedList *LLRemoveCell(LinkedList *rmCell, void (*freeValueF)(void *)) {
     LinkedList *newHead = (rmCell->prev != nullptr) ? rmCell->prev : rmCell->next;
 
     if (rmCell->prev != nullptr) { // Not First
@@ -22,6 +22,7 @@ LinkedList *LLRemoveCell(LinkedList *rmCell) {
     if (rmCell->next != nullptr) { // Not Last
         rmCell->next->prev = rmCell->prev;
     }
+    if (freeValueF != nullptr) freeValueF(rmCell->value);
     delete rmCell;
 
     return newHead;
@@ -35,12 +36,27 @@ void LLIterate(LinkedList *ll, void (*f)(void *, void *), void *fParams) {
     }
 }
 
+LinkedList *LLIterateMayRemove(LinkedList *ll, bool (*doRM)(void *, void *), void *fParams,
+                               void (*freeValueF)(void *)) {
+    LinkedList *newHead = ll;
+    LinkedList *currCell = ll;
+    LinkedList *nextCell;
+    while (currCell != nullptr) {
+        nextCell = currCell->next;
+        if (doRM(currCell->value, fParams)) {
+            newHead = LLRemoveCell(currCell, freeValueF);
+        }
+        currCell = nextCell;
+    }
+    return newHead;
+}
+
 void LLFree(LinkedList *llHead, void (*freeValueF)(void *)) {
     LinkedList *ll = llHead;
     LinkedList *llNext;
     while (ll != nullptr) {
         llNext = ll->next;
-        freeValueF(ll->value);
+        if (freeValueF != nullptr) freeValueF(ll->value);
         delete ll;
         ll = llNext;
     }

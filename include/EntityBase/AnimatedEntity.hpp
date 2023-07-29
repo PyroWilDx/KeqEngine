@@ -59,6 +59,8 @@ public:
 
     virtual void animateSprite();
 
+    int getSpriteLengthFromTo(int startFrame, int endFrame, int spriteCode = 0);
+
     inline Sprite *getSprite(int spriteCode = 0) { return (&spriteArray[spriteCode]); }
 
     inline int getCurrentSpriteCode() { return currentSprite->sCode; }

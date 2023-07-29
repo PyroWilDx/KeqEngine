@@ -44,18 +44,16 @@ void Slime::AI() {
     if (abs(kq->getX() - x) < 110) {
         setSpriteAnimated(true, SLIME_ATK);
     }
-    double x1 = x + hitBox.x - 10;
-    double x2 = x1 + hitBox.w + 20;
-    double y1 = y + hitBox.y - 10;
-    double y2 = y1 + hitBox.h + 20;
-    double xyArray[4][2] = {{x1, y1},
-                            {x2, y1},
-                            {x2, y2},
-                            {x1, y2}};
+    double xyArray[4][2] = {{-10,                    -10},
+                            {(double) hitBox.w + 10, -10},
+                            {(double) hitBox.w + 10, (double) hitBox.h + 10},
+                            {-10,                    (double) hitBox.h + 10}};
     if (isSpriteAnimated(SLIME_ATK)) {
         if (isNewestFrame(0, SLIME_ATK)) {
-            Global::currentWorld->addMonsterAtk(this, xyArray, 4,
-                                                10, -1.0, -0.4);
+            Attack *atk =
+                    Global::currentWorld->addMonsterAtk(this, xyArray, 4,
+                                                        10, -1.0, -0.4);
+            atk->setAtkDuration(INT32_MAX);
         }
     }
 }

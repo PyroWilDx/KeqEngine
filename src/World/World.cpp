@@ -14,10 +14,11 @@ World::World(int screenW, int screenH,
                                       backgroundImgPath);
     this->activeButton = nullptr;
 
-    this->monsterAtkLL = nullptr;
     this->kqAtkLL = nullptr;
+    this->monsterAtkLL = nullptr;
 
-    this->pixels = (Pixel **) new Pixel[backgroundTotalW];
+    this->pixels = (Pixel **)
+            new Pixel[backgroundTotalW];
     for (int i = 0; i < background->getTotalW(); i++) {
         (this->pixels)[i] = new Pixel[backgroundTotalH];
         for (int j = 0; j < backgroundTotalH; j++) {
@@ -25,6 +26,11 @@ World::World(int screenW, int screenH,
         }
     }
 }
+
+auto LLFreeAtkF = [](void *value) {
+    auto *atk = (Attack *) value;
+    delete atk;
+};
 
 World::~World() {
     for (Block *block: blockVector) {
@@ -39,12 +45,9 @@ World::~World() {
         delete monster;
     }
 
-    auto freeAtkValF = [](void *value) {
-        auto *atk = (Attack *) value;
-        delete atk;
-    };
-    LLFree(monsterAtkLL, freeAtkValF);
-    LLFree(kqAtkLL, freeAtkValF);
+
+    LLFree(monsterAtkLL, LLFreeAtkF);
+    LLFree(kqAtkLL, LLFreeAtkF);
 
     for (int i = 0; i < background->getTotalW(); i++) {
         delete[] pixels[i];
@@ -91,26 +94,28 @@ void World::addMonster(Monster *monster) {
     monsterVector.push_back(monster);
 }
 
-void World::addMonsterAtk(Attack *atk) {
-    monsterAtkLL = LLInsertHead(monsterAtkLL, (void *) atk);
-}
-
-void World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                          int damage, double kbXVelocity, double kbYVelocity) {
-    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
-                           damage, kbXVelocity, kbYVelocity);
-    addMonsterAtk(atk);
-}
-
 void World::addKQAtk(Attack *atk) {
     kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
 }
 
-void World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                     int damage, double kbXVelocity, double kbYVelocity) {
+Attack *World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                        int damage, double kbXVelocity, double kbYVelocity) {
     auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
                            damage, kbXVelocity, kbYVelocity);
     addKQAtk(atk);
+    return atk;
+}
+
+void World::addMonsterAtk(Attack *atk) {
+    monsterAtkLL = LLInsertHead(monsterAtkLL, (void *) atk);
+}
+
+Attack *World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                             int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addMonsterAtk(atk);
+    return atk;
 }
 
 Pixel World::getPixel(double x, double y) {
@@ -198,12 +203,22 @@ void World::onGameFrame() {
         monster->animateSprite();
     }
 
-    LLIterate(monsterAtkLL, [](void *value, void *fParams) {
+    // Attacks
+    auto fAtkShouldRemove = [](void *value, void *fParams) {
         auto *atk = (Attack *) value;
-        auto *kq = (Keqing *) fParams;
-        atk->checkEntityHit(kq);
-    }, (void *) Keqing::getInstance());
+        return atk->shouldSelfRemove();
+    };
+    kqAtkLL = LLIterateMayRemove(kqAtkLL, fAtkShouldRemove, nullptr,
+                                 LLFreeAtkF);
+    monsterAtkLL = LLIterateMayRemove(monsterAtkLL, fAtkShouldRemove, nullptr,
+                                      LLFreeAtkF);
 
+    auto fAtkOnGameFrame = [](void *value, void *fParams) {
+        auto *atk = (Attack *) value;
+        atk->onGameFrame();
+    };
+    LLIterate(kqAtkLL, fAtkOnGameFrame, nullptr);
+    LLIterate(monsterAtkLL, fAtkOnGameFrame, nullptr);
 
     LLIterate(kqAtkLL, [](void *value, void *fParams) {
         auto *atk = (Attack *) value;
@@ -212,6 +227,12 @@ void World::onGameFrame() {
             atk->checkEntityHit(monster);
         }
     }, (void *) &monsterVector);
+
+    LLIterate(monsterAtkLL, [](void *value, void *fParams) {
+        auto *atk = (Attack *) value;
+        auto *kq = (Keqing *) fParams;
+        atk->checkEntityHit(kq);
+    }, (void *) Keqing::getInstance());
 }
 
 void World::renderSelf() {
@@ -220,10 +241,21 @@ void World::renderSelf() {
     for (Block *block: blockVector) {
         gWindow->renderEntity(block);
     }
-    for (std::pair<const int, Button *> it: buttonHashMap) {
+    for (std::pair<const int, Button *> &it: buttonHashMap) {
         gWindow->renderEntity(it.second);
     }
     for (Monster *monster: monsterVector) {
         gWindow->renderEntity(monster);
     }
+}
+
+void World::renderDebugMode() {
+    WindowRenderer *gWindow = WindowRenderer::getInstance();
+    auto fRenderAtk = [](void *value, void *fParams) {
+        auto *atk = (Attack *) value;
+        auto *gRenderer = (SDL_Renderer *) fParams;
+        atk->renderSelf(gRenderer);
+    };
+    LLIterate(monsterAtkLL, fRenderAtk, gWindow->getRenderer());
+    LLIterate(kqAtkLL, fRenderAtk, gWindow->getRenderer());
 }
