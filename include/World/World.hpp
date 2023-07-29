@@ -38,15 +38,15 @@ public:
 
     void addMonster(Monster *monster);
 
-    void addMonsterAtk(Attack *atk);
-
-    void addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                       int damage, double kbXVelocity, double kbYVelocity);
-
     void addKQAtk(Attack *atk);
 
-    void addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                  int damage, double kbXVelocity, double kbYVelocity);
+    Attack *addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                     int damage, double kbXVelocity, double kbYVelocity);
+
+    void addMonsterAtk(Attack *atk);
+
+    Attack *addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                       int damage, double kbXVelocity, double kbYVelocity);
 
     Pixel getPixel(double x, double y);
 
@@ -66,6 +66,8 @@ public:
 
     void renderSelf();
 
+    void renderDebugMode();
+
     inline Background *getBackground() { return background; }
 
 private:
@@ -76,8 +78,8 @@ private:
     std::unordered_map<int, Button *> buttonHashMap;
     Button *activeButton;
     std::vector<Monster *> monsterVector;
-    LinkedList *monsterAtkLL;
     LinkedList *kqAtkLL;
+    LinkedList *monsterAtkLL;
     Pixel **pixels;
 
 };

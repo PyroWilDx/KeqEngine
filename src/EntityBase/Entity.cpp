@@ -382,6 +382,30 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
     SDL_RenderDrawRect(gRenderer, &dstHitBox);
 }
 
+double Entity::getBaseHitBoxX() const {
+    return ((double) hitBox.x / renderWMultiplier);
+}
+
+double Entity::getBaseHitBoxY() const {
+    return ((double) hitBox.y / renderHMultiplier);
+}
+
+double Entity::getBaseHitBoxW() const {
+    return ((double) hitBox.w / renderWMultiplier);
+}
+
+double Entity::getBaseHitBoxH() const {
+    return ((double) hitBox.h / renderHMultiplier);
+}
+
+double Entity::getHalfBaseHitBoxW() const {
+    return (getBaseHitBoxW() / 2.0);
+}
+
+double Entity::getHalfBaseHitBoxH() const {
+    return (getBaseHitBoxH() / 2.0);
+}
+
 bool Entity::hitBoxCollision(Entity *entity) const {
     double x1 = x + (double) hitBox.x;
     double y1 = y + (double) hitBox.y;

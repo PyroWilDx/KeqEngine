@@ -236,6 +236,8 @@ void runGame1() {
 
         Particle::renderAll();
 
+        gWorld->renderDebugMode();
+
         gWindow->display();
     }
 

@@ -27,12 +27,35 @@ public:
 
     void checkEntityHit(LivingEntity *dstEntity);
 
+    void onGameFrame();
+
+    void renderSelf(SDL_Renderer *gRenderer);
+
+    bool shouldSelfRemove();
+
+    inline void setAtkIssuerDependant(bool atkIssuerDependant_) { atkIssuerDependant = atkIssuerDependant_; }
+
+    inline void setShouldRemove(bool (*shouldRemove_)(Attack *self, void *fParams), void *fParams) {
+        shouldRemove = shouldRemove_;
+        shouldRemoveParams = fParams;
+    }
+
+    inline void setAtkDuration(int atkDuration_) { atkDuration = atkDuration_; }
+
 private:
     LivingEntity *atkIssuer;
+    bool atkIssuerDependant;
+    double atkIssuerLastX, atkIssuerLastY;
     BoostPolygon atkPolygon;
     int damage;
     double kbXVelocity;
     double kbYVelocity;
+    int atkTimeAcc;
+    int atkDuration;
+
+    bool (*shouldRemove)(Attack *self, void *fParams);
+
+    void *shouldRemoveParams;
 
 };
 

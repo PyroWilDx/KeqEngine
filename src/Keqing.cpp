@@ -419,6 +419,19 @@ void Keqing::NAtk() {
         NAtk4Particle->setEntity(this);
         NAtk4Particle->xyShift(32, 20);
     }
+
+    // Push Atk
+    if (isNewestFrame(1, KQ_NATK)) {
+        const int n = 3;
+        double atkPolyPts[n][2] =
+                {{getHalfBaseHitBoxW(),      -12},
+                 {getHalfBaseHitBoxW() + 80, -18},
+                 {getHalfBaseHitBoxW() - 14,      20}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, n,
+                                               10, 0.4, 0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
+    }
 }
 
 void Keqing::CAtk() {
