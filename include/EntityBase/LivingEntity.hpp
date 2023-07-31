@@ -15,13 +15,17 @@ public:
 
     ~LivingEntity() override;
 
+    void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
+
     SDL_Rect getRenderRect() override;
+
+    virtual void setDmgFacingEast(double kbVX);
 
     void damageSelf(int damage, double kbVX, double kbVY);
 
     virtual void hurt() = 0;
 
-    void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
+    virtual void updateAction() = 0;
 
     [[nodiscard]] inline int getHp() const { return hp; }
 

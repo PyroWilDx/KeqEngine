@@ -24,10 +24,6 @@ void runColorKeqing() {
     });
     gWorld->addButton(colorPicker);
 
-    // TODO FAIRE UN BOUTON SET COLOR POUR EVITER LE LAG.
-    // TODO FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
-    // TODO CURSEUR QUI SUIT LA SOURIS QUAND CLIQUEE
-
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(100, 100);
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);

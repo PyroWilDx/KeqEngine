@@ -23,9 +23,13 @@ class Slime : public Monster {
 public:
     explicit Slime(const std::string &colorString);
 
+    void onGameFrame() override;
+
     void AI() override;
 
     void hurt() override;
+
+    void updateAction() override;
 
 private:
 

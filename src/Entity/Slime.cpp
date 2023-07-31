@@ -8,7 +8,7 @@
 #include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
 Slime::Slime(const std::string &colorString) :
-        Monster(0.0012, SLIME_ENUM_N, 1, SLIME_DEATH) {
+        Monster(0.002, SLIME_ENUM_N, 1, SLIME_DEATH) {
     hitBox = {0, 0, 16, 16};
 
     std::string pathStart = "res/gfx/slime/" + colorString;
@@ -35,6 +35,22 @@ Slime::Slime(const std::string &colorString) :
 
     initSprite(SLIME_DEATH, (pathStart + "Death.png").c_str(),
                16, 16, 5, 60);
+    setSpriteFrameLengthFromTo(INT32_MAX, -1, -1, SLIME_DEATH);
+}
+
+void Slime::onGameFrame() {
+    Monster::onGameFrame();
+
+    fallGravity();
+
+    AI();
+
+    updateAction();
+
+    moveX();
+    moveY();
+
+    animateSprite();
 }
 
 void Slime::AI() {
@@ -52,7 +68,7 @@ void Slime::AI() {
         if (isNewestFrame(0, SLIME_ATK)) {
             Attack *atk =
                     Global::currentWorld->addMonsterAtk(this, xyArray, 4,
-                                                        10, -1.0, -0.4);
+                                                        10, 1.0, -0.4);
             atk->setAtkDuration(INT32_MAX);
         }
     }
@@ -60,5 +76,10 @@ void Slime::AI() {
 
 void Slime::hurt() {
     LivingEntity::hurt();
-    SDL_Log("hello, je suis un slime et j'ai mal!!!! :(\n");
+}
+
+void Slime::updateAction() {
+    LivingEntity::updateAction();
+
+    if (isSpriteAnimated(SLIME_DEATH)) this->hurt();
 }
