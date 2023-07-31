@@ -52,6 +52,7 @@ void AnimatedEntity::setSpriteAnimated(bool animated, int spriteCode,
 void AnimatedEntity::setSpriteFrameLengthFromTo(int spriteFrameLength, int startFrame, int endFrame,
                                                 int spriteCode) {
     Sprite *sprite = &spriteArray[spriteCode];
+    if (startFrame == -1) startFrame = sprite->sFrameN - 1;
     if (endFrame == -1) endFrame = sprite->sFrameN - 1;
     for (int i = startFrame; i <= endFrame; i++) {
         sprite->sFrameLengths[i] = spriteFrameLength;

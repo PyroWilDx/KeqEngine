@@ -1,4 +1,26 @@
-Custom HashTable for Buttons ?
-
 Maybe put keqing in world, then do a "ongameframe" for every entity (virtual and may be nullptr) and put a vector of other entities...
 if that's the case I need to not forget to put fps text also
+
+hitlag
+
+damaging kb should take into account the weight of the entity
+
+create class fps text with its own on game frame
+
+need to delete world before to delete all particle (maybe return a function to call at the end after delete gworld)
+
+comment les textures de slime et keqing sont elles deletes ??? verif valgrind
+
+maybe in attacks, add the attack sprite used, and check if the sprite if still animated in theonremove func
+
+isInvincible() for keqing ? and for every living entities in generaL... virtualfunc
+
+BUGS WHEN CLOSING APPLICATION BEAUCOUP
+
+for coloring keqing
+    // TODO FAIRE UN BOUTON SET COLOR POUR EVITER LE LAG.
+    // TODO FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
+    // TODO CURSEUR QUI SUIT LA SOURIS QUAND CLIQUEE
+
+for hurtstarttime in living entity
+    // todo may need to change to time acc for debug

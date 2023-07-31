@@ -372,14 +372,23 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
                          &src, &dst,
                          renderRotation, nullptr, renderFlip);
     }
+}
 
+void Entity::renderHitBox(SDL_Renderer *gRenderer) {
     SDL_Rect dstHitBox = hitBox;
-    dstHitBox.x += getX() - Global::currentWorld->getBackground()->getFrame().x;
-    dstHitBox.y += getY() - Global::currentWorld->getBackground()->getFrame().y;
-//    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-//    SDL_RenderDrawRect(gRenderer, &dst);
-    SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
-    SDL_RenderDrawRect(gRenderer, &dstHitBox);
+    if (dstHitBox.w != 0 && dstHitBox.h != 0) {
+        dstHitBox.x += getX() - Global::currentWorld->getBackground()->getFrame().x;
+        dstHitBox.y += getY() - Global::currentWorld->getBackground()->getFrame().y;
+        double xCoeff, yCoeff;
+        getScreenXYCoeff(&xCoeff, &yCoeff);
+        dstHitBox.x = (int) ((double) dstHitBox.x * xCoeff);
+        dstHitBox.y = (int) ((double) dstHitBox.y * yCoeff);
+        dstHitBox.w = (int) ((double) dstHitBox.w * xCoeff);
+        dstHitBox.h = (int) ((double) dstHitBox.h * yCoeff);
+        shiftXYFromScreenPosition(&dstHitBox.x, &dstHitBox.y);
+        SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
+        SDL_RenderDrawRect(gRenderer, &dstHitBox);
+    }
 }
 
 double Entity::getBaseHitBoxX() const {
@@ -423,6 +432,8 @@ bool Entity::hitBoxCollision(Entity *entity) const {
 }
 
 void Entity::clearTexture() {
-    SDL_DestroyTexture(imgTexture);
-    imgTexture = nullptr;
+    if (imgTexture != nullptr) {
+        SDL_DestroyTexture(imgTexture);
+        imgTexture = nullptr;
+    }
 }

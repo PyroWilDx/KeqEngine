@@ -21,6 +21,7 @@ Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
         bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
     }
     this->damage = damage;
+    if (!atkIssuer->isFacingEast()) kbXVelocity = -kbXVelocity;
     this->kbXVelocity = kbXVelocity;
     this->kbYVelocity = kbYVelocity;
     this->atkTimeAcc = 0;
@@ -70,12 +71,21 @@ void Attack::onGameFrame() {
 }
 
 void Attack::renderSelf(SDL_Renderer *gRenderer) {
+    double xCoeff, yCoeff;
+    getScreenXYCoeff(&xCoeff, &yCoeff);
     const size_t length = bst_geo::num_points(atkPolygon);
     Sint16 xArray[length], yArray[length];
     int i = 0;
     for (const BoostPoint &point: atkPolygon.outer()) {
-        xArray[i] = (Sint16) (point.x() - Global::currentWorld->getBackground()->getFrame().x);
-        yArray[i] = (Sint16) (point.y() - Global::currentWorld->getBackground()->getFrame().y);
+        double xDouble = point.x() - (double) Global::currentWorld->getBackground()->getFrame().x;
+        double yDouble = point.y() - (double) Global::currentWorld->getBackground()->getFrame().y;
+        xDouble *= xCoeff;
+        yDouble *= yCoeff;
+        int xInt = (int) xDouble;
+        int yInt = (int) yDouble;
+        shiftXYFromScreenPosition(&xInt, &yInt);
+        xArray[i] = (Sint16) xInt;
+        yArray[i] = (Sint16) yInt;
         i++;
     }
     filledPolygonRGBA(gRenderer,

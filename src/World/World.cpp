@@ -12,6 +12,8 @@ World::World(int screenW, int screenH,
     this->background = new Background(screenW, screenH,
                                       backgroundTotalW, backgroundTotalH,
                                       backgroundImgPath);
+    this->translateBackgroundEntity = nullptr;
+
     this->activeButton = nullptr;
 
     this->kqAtkLL = nullptr;
@@ -33,18 +35,19 @@ auto LLFreeAtkF = [](void *value) {
 };
 
 World::~World() {
-    for (Block *block: blockVector) {
-        delete block;
-    }
-
     for (std::pair<const int, Button *> it: buttonHashMap) {
         delete it.second;
     }
 
+    for (Block *block: blockVector) {
+        delete block;
+    }
     for (Monster *monster: monsterVector) {
         delete monster;
     }
-
+    for (Entity *entity: otherEntityVecotr) {
+        delete entity;
+    }
 
     LLFree(monsterAtkLL, LLFreeAtkF);
     LLFree(kqAtkLL, LLFreeAtkF);
@@ -55,6 +58,8 @@ World::~World() {
     delete[] pixels;
 
     delete background;
+
+    Particle::removeAllParticles();
 }
 
 void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntity) {
@@ -63,6 +68,18 @@ void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntit
             pixels[i][j] = {worldEntity->getWorldEntityType(), worldEntity->getWorldCode()};
         }
     }
+}
+
+Pixel World::getPixel(double x, double y) {
+    if (x < 0 || x >= background->getTotalW() ||
+        y < 0 || y >= background->getTotalH()) {
+        return {WORLD_BLOCK, BLOCK_WALL_INVISIBLE};
+    }
+    return pixels[roundToInt(x)][roundToInt(y)];
+}
+
+bool World::isPixelCode(double x, double y, int worldCode) {
+    return (getPixel(x, y).worldCode == worldCode);
 }
 
 void World::addWorldEntity(WorldEntity *worldEntity) {
@@ -75,101 +92,13 @@ void World::addWorldEntity(WorldEntity *worldEntity) {
     updatePixels(minX, minY, maxX, maxY, worldEntity);
 }
 
-void World::addBlock(Block *block) {
-    blockVector.push_back(block);
-    addWorldEntity(block);
-}
-
-void World::addBlock(int blockCode, double x, double y, int renderW, int renderH) {
-    auto *block = new Block(blockCode, x, y, renderW, renderH);
-    addBlock(block);
-}
-
 void World::addButton(Button *button) {
     buttonHashMap[button->getWorldCode()] = button;
     addWorldEntity(button);
 }
 
-void World::addMonster(Monster *monster) {
-    monsterVector.push_back(monster);
-}
-
-void World::addKQAtk(Attack *atk) {
-    kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
-}
-
-Attack *World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                        int damage, double kbXVelocity, double kbYVelocity) {
-    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
-                           damage, kbXVelocity, kbYVelocity);
-    addKQAtk(atk);
-    return atk;
-}
-
-void World::addMonsterAtk(Attack *atk) {
-    monsterAtkLL = LLInsertHead(monsterAtkLL, (void *) atk);
-}
-
-Attack *World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                             int damage, double kbXVelocity, double kbYVelocity) {
-    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
-                           damage, kbXVelocity, kbYVelocity);
-    addMonsterAtk(atk);
-    return atk;
-}
-
-Pixel World::getPixel(double x, double y) {
-    if (x < 0 || x >= background->getTotalW() ||
-        y < 0 || y >= background->getTotalH()) {
-        return {WORLD_BLOCK, BLOCK_WALL_INVISIBLE};
-    }
-    return pixels[roundToInt(x)][roundToInt(y)];
-}
-
-bool World::isPixelBlock(double x, double y) {
-    return (getPixel(x, y).worldType == WORLD_BLOCK);
-}
-
 bool World::isPixelButton(double x, double y) {
     return (getPixel(x, y).worldType == WORLD_BUTTON);
-}
-
-bool World::isPixelSurface(double x, double y) {
-    return (isPixelBlock(x, y));
-}
-
-bool World::isPixelCode(double x, double y, int worldCode) {
-    return (getPixel(x, y).worldCode == worldCode);
-}
-
-double World::getNearestWallFrom(double x, double y, int direction) {
-    int addX, addY;
-    if (direction == KEY_Z) {
-        addX = 0;
-        addY = -1;
-    } else if (direction == KEY_Q) {
-        addX = -1;
-        addY = 0;
-    } else if (direction == KEY_S) {
-        addX = 0;
-        addY = 1;
-    } else if (direction == KEY_D) {
-        addX = 1;
-        addY = 0;
-    }
-
-    if (x < 0) x = 0;
-    if (x >= background->getTotalW()) x = background->getTotalW() - 1;
-    if (y < 0) y = 0;
-    if (y > background->getTotalH()) y = background->getTotalH() - 1;
-    int i = (int) x;
-    int j = (int) y;
-    while (pixels[i][j].worldCode != -1) {
-        i += addX;
-        j += addY;
-    }
-    if (addX == 0) return (j - addY);
-    else return (i - addX);
 }
 
 void World::clickPixel(double x, double y, Uint32 eventType) {
@@ -197,10 +126,94 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
     }
 }
 
+void World::addBlock(Block *block) {
+    blockVector.push_back(block);
+    addWorldEntity(block);
+}
+
+void World::addBlock(int blockCode, double x, double y, int renderW, int renderH) {
+    auto *block = new Block(blockCode, x, y, renderW, renderH);
+    addBlock(block);
+}
+
+bool World::isPixelBlock(double x, double y) {
+    return (getPixel(x, y).worldType == WORLD_BLOCK);
+}
+
+bool World::isPixelSurface(double x, double y) {
+    return (isPixelBlock(x, y));
+}
+
+double World::getNearestWallFrom(double x, double y, int direction) {
+    int addX, addY;
+    if (direction == KEY_Z) {
+        addX = 0;
+        addY = -1;
+    } else if (direction == KEY_Q) {
+        addX = -1;
+        addY = 0;
+    } else if (direction == KEY_S) {
+        addX = 0;
+        addY = 1;
+    } else if (direction == KEY_D) {
+        addX = 1;
+        addY = 0;
+    }
+
+    if (x < 0) x = 0;
+    if (x >= background->getTotalW()) x = background->getTotalW() - 1;
+    if (y < 0) y = 0;
+    if (y > background->getTotalH()) y = background->getTotalH() - 1;
+    int i = (int) x;
+    int j = (int) y;
+    while (isPixelSurface(i, j)) {
+        i += addX;
+        j += addY;
+    }
+    if (addX == 0) return (j - addY);
+    else return (i - addX);
+}
+
+void World::addMonster(Monster *monster) {
+    monsterVector.push_back(monster);
+}
+
+void World::addOtherEntity(Entity *entity) {
+    otherEntityVecotr.push_back(entity);
+}
+
+void World::addKQAtk(Attack *atk) {
+    kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
+}
+
+Attack *World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                        int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addKQAtk(atk);
+    return atk;
+}
+
+void World::addMonsterAtk(Attack *atk) {
+    monsterAtkLL = LLInsertHead(monsterAtkLL, (void *) atk);
+}
+
+Attack *World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                             int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addMonsterAtk(atk);
+    return atk;
+}
+
 void World::onGameFrame() {
+    Particle::animateAll();
+
     for (Monster *monster: monsterVector) {
-        monster->AI();
-        monster->animateSprite();
+        monster->onGameFrame();
+    }
+    for (Entity *entity: otherEntityVecotr) {
+        entity->onGameFrame();
     }
 
     // Attacks
@@ -233,6 +246,10 @@ void World::onGameFrame() {
         auto *kq = (Keqing *) fParams;
         atk->checkEntityHit(kq);
     }, (void *) Keqing::getInstance());
+
+    if (translateBackgroundEntity != nullptr) {
+        background->translate(translateBackgroundEntity);
+    }
 }
 
 void World::renderSelf() {
@@ -247,15 +264,28 @@ void World::renderSelf() {
     for (Monster *monster: monsterVector) {
         gWindow->renderEntity(monster);
     }
+    for (Entity *entity: otherEntityVecotr) {
+        gWindow->renderEntity(entity);
+    }
+
+    Particle::renderAll();
 }
 
 void World::renderDebugMode() {
-    WindowRenderer *gWindow = WindowRenderer::getInstance();
+    SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
+
+    for (Monster *monster: monsterVector) {
+        monster->renderHitBox(gRenderer);
+    }
+    for (Entity *entity: otherEntityVecotr) {
+        entity->renderHitBox(gRenderer);
+    }
+
     auto fRenderAtk = [](void *value, void *fParams) {
         auto *atk = (Attack *) value;
         auto *gRenderer = (SDL_Renderer *) fParams;
         atk->renderSelf(gRenderer);
     };
-    LLIterate(monsterAtkLL, fRenderAtk, gWindow->getRenderer());
-    LLIterate(kqAtkLL, fRenderAtk, gWindow->getRenderer());
+    LLIterate(monsterAtkLL, fRenderAtk, gRenderer);
+    LLIterate(kqAtkLL, fRenderAtk, gRenderer);
 }

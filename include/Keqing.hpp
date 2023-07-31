@@ -68,7 +68,7 @@ enum {
 class Keqing : public LivingEntity {
 
 public:
-    ~Keqing() override = default;
+    ~Keqing() override;
 
     static void initKeqing();
 
@@ -130,6 +130,8 @@ public:
 
     void airDash();
 
+    void onGameFrame() override;
+
     void hurt() override;
 
     void setFacingEast(bool value);
@@ -138,13 +140,13 @@ public:
 
     static void preAction(int spriteCode, void *fParams);
 
-    void updateAction();
+    void updateActionFromKey();
+
+    void updateAction() override;
 
     static inline bool isLightningStilettoExisting() {
         return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE) != nullptr);
     }
-
-    // TODO may need isInvincible
 
 private:
     explicit Keqing();

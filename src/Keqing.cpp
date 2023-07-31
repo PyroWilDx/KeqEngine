@@ -151,7 +151,11 @@ Keqing::Keqing()
 
     initSprite(KQ_HURT, "res/gfx/keqing/Hurt.png",
                96, 96, 6, INT32_MAX);
-    setXYShift(0, 0, 0, KQ_HURT);
+    setXYShift(-4, 0, -32, KQ_HURT);
+}
+
+Keqing::~Keqing() {
+    instance = nullptr;
 }
 
 void Keqing::initKeqing() {
@@ -426,10 +430,10 @@ void Keqing::NAtk() {
         double atkPolyPts[n][2] =
                 {{getHalfBaseHitBoxW(),      -12},
                  {getHalfBaseHitBoxW() + 80, -18},
-                 {getHalfBaseHitBoxW() - 14,      20}};
+                 {getHalfBaseHitBoxW() - 14, 20}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, n,
-                                               10, 0.4, 0.4);
+                                               10, 0.4, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
     }
 }
@@ -458,7 +462,7 @@ void Keqing::CAtk() {
 
 void Keqing::upNAtk() {
     if (isFrameBetween(6, -1, KQ_UP_NATK)) {
-        if (isKeyPressedLong(KEY_MOUSE_LEFT)) {
+        if (isKeyPressed(KEY_Z) && isKeyPressedLong(KEY_MOUSE_LEFT)) {
             setSpriteAnimated(false, KQ_UP_NATK);
             setSpriteAnimated(true, KQ_UP_CATK);
         }
@@ -476,7 +480,7 @@ void Keqing::upCAtk() {
 
 void Keqing::crouchNAtk() {
     if (isFrameBetween(4, -1, KQ_CROUCH_NATK)) {
-        if (isKeyPressedLong(KEY_MOUSE_LEFT)) {
+        if (isKeyPressed(KEY_S) && isKeyPressedLong(KEY_MOUSE_LEFT)) {
             setSpriteAnimated(false, KQ_CROUCH_NATK);
             setSpriteAnimated(true, KQ_CROUCH_CATK);
         }
@@ -962,6 +966,25 @@ void Keqing::airDash() {
     }
 }
 
+void Keqing::onGameFrame() {
+    LivingEntity::onGameFrame();
+
+    updateActionFromKey();
+
+    fallGravity();
+
+    if (shouldUpdateDirection()) updateDirection();
+    if (canMoveLR()) moveLR();
+
+    updateAction();
+
+    moveX();
+    moveY();
+
+    airAnimate();
+    animateSprite();
+}
+
 void Keqing::hurt() {
     LivingEntity::hurt();
 }
@@ -1055,11 +1078,80 @@ void Keqing::preAction(int spriteCode, void *fParams) {
     }
 }
 
-void Keqing::updateAction() { // TODO MAYBE PUT THIS IN LIVING ENTITY IN THE FUTURE
-    int currSpriteCode = getCurrentSpriteCode();
-    for (int i = 1; i < currSpriteCode; i++) {
-        setSpriteAnimated(false, i);
+void Keqing::updateActionFromKey() {
+    int spriteCode = KQ_IDLE;
+
+    if (isKeyPressed(KEY_R)) {
+        if (!isInAir()) {
+            spriteCode = KQ_BURST;
+        }
+
+    } else if (isKeyPressed(KEY_E)) {
+        if (!isInAir()) {
+            if (!Keqing::isLightningStilettoExisting()) {
+                spriteCode = KQ_SKILL;
+            } else {
+                spriteCode = KQ_SKILL_SLASH;
+            }
+        }
+
+    } else if (isKeyPressed(KEY_SHIFT)) {
+        if (isInAir()) {
+            spriteCode = KQ_AIR_DASH;
+        } else {
+            if (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D)) {
+                if (isKeyPressedShort(KEY_SHIFT)) {
+                    spriteCode = KQ_DASH;
+                }
+            }
+        }
+
+    } else if (isKeyPressed(KEY_MOUSE_LEFT)) {
+        if (isInAir()) {
+            if (isKeyPressed(KEY_S)) {
+                spriteCode = KQ_AIR_PLUNGE;
+            } else if (isKeyPressed(KEY_Z)) {
+                spriteCode = KQ_AIR_UP_NATK;
+            } else {
+                spriteCode = KQ_AIR_NATK;
+            }
+        } else {
+            if (isKeyPressed(KEY_Z)) {
+                spriteCode = KQ_UP_NATK;
+            } else if (isKeyPressed(KEY_S)) {
+                spriteCode = KQ_CROUCH_NATK;
+            } else {
+                spriteCode = KQ_NATK;
+            }
+        }
+
+    } else if (isKeyPressed(KEY_SPACE)) {
+        if (isInAir()) {
+            spriteCode = KQ_AIR_DOUBLE_JUMP;
+        } else {
+            spriteCode = KQ_JUMP_START;
+        }
+
+    } else if (isKeyPressed(KEY_S)) {
+        if (!isInAir()) {
+            spriteCode = KQ_CROUCH;
+        }
+
+    } else if (isKeyPressed(KEY_Q) ||
+               isKeyPressed(KEY_D)) {
+        if (!isKeyPressed(KEY_MOUSE_RIGHT)) {
+            spriteCode = KQ_WALK;
+        } else {
+            spriteCode = KQ_RUN;
+        }
+
     }
+
+    if (canDoAction(spriteCode)) setSpriteAnimated(true, spriteCode);
+}
+
+void Keqing::updateAction() {
+    LivingEntity::updateAction();
 
     // State Changer
     if (isSpriteAnimated(KQ_RUN_START) ||

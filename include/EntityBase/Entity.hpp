@@ -78,7 +78,11 @@ public:
 
     void moveToEntityCenter(Entity *centerEntity, bool takeFaceEast = true);
 
+    virtual inline void onGameFrame() {};
+
     virtual void renderSelf(SDL_Renderer *gRenderer);
+
+    void renderHitBox(SDL_Renderer *gRenderer);
 
     [[nodiscard]] double getBaseHitBoxX() const;
 

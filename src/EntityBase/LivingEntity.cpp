@@ -29,6 +29,12 @@ LivingEntity::~LivingEntity() {
     delete[] xRShifts;
 }
 
+void LivingEntity::setXYShift(int xShift, int yShift, int xRShift, int spriteCode) {
+    xShifts[spriteCode] = xShift;
+    yShifts[spriteCode] = yShift;
+    xRShifts[spriteCode] = xRShift;
+}
+
 SDL_Rect LivingEntity::getRenderRect() {
     SDL_Rect dst = Entity::getRenderRect();
 
@@ -45,13 +51,19 @@ SDL_Rect LivingEntity::getRenderRect() {
     return dst;
 }
 
+void LivingEntity::setDmgFacingEast(double kbVX) {
+    if (kbVX != 0) facingEast = (kbVX < 0);
+}
+
 void LivingEntity::damageSelf(int damage, double kbVX, double kbVY) {
     hp -= damage;
-    hurtKbVX = kbVX;
     hurtKbVY = kbVY;
-    hurtStartTime = Global::currentTime;
-    xVelocity = kbVX;
     yVelocity = kbVY;
+    setDmgFacingEast(kbVX);
+    if (!isFacingEast()) kbVX = -kbVX;
+    hurtKbVX = kbVX;
+    xVelocity = kbVX;
+    hurtStartTime = Global::currentTime;
     setSpriteAnimated(true, hurtSpriteCode);
 }
 
@@ -64,7 +76,7 @@ void LivingEntity::hurt() {
     double (*fY)(double, double) = (yVelocity < 0) ? minF : maxF;
     double addX = (xVelocity < 0) ? 0.001 : -0.001;
     double addY = (yVelocity < 0) ? 0.001 : -0.001;
-    //TODO SHOULD TAKE INTO ACCOUNT THE WEIGHT OF ENTITY
+
     xVelocity = fX(xVelocity + addX * Global::dt, 0.0);
     yVelocity = fY(yVelocity + addY * Global::dt, 0.0);
 
@@ -87,8 +99,9 @@ void LivingEntity::hurt() {
     }
 }
 
-void LivingEntity::setXYShift(int xShift, int yShift, int xRShift, int spriteCode) {
-    xShifts[spriteCode] = xShift;
-    yShifts[spriteCode] = yShift;
-    xRShifts[spriteCode] = xRShift;
+void LivingEntity::updateAction() {
+    int currSpriteCode = getCurrentSpriteCode();
+    for (int i = 1; i < currSpriteCode; i++) {
+        setSpriteAnimated(false, i);
+    }
 }

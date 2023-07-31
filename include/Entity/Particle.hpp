@@ -75,6 +75,8 @@ public:
 
     static bool isActive(int spriteCode, int i = 0);
 
+    static void removeAllParticles();
+
     static void cleanUp();
 
     void getRealSize(double *pW, double *pH) override;
