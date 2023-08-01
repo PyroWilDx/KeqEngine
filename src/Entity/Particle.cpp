@@ -5,7 +5,6 @@
 #include "Entity/Particle.hpp"
 #include "Keqing.hpp"
 #include "Utils/Global.hpp"
-#include "Utils/Events.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
 
@@ -265,8 +264,10 @@ bool Particle::isActive(int spriteCode, int i) {
 void Particle::removeAllParticles() {
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         int count = activeCounts[spriteCode];
+        activeCounts[spriteCode] = 0;
         for (int i = 0; i < count; i++) {
-            removeParticle(spriteCode, 0);
+            delete activeParticles[spriteCode][i];
+            activeParticles[spriteCode][i] = nullptr;
         }
     }
 }

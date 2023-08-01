@@ -63,7 +63,7 @@ Keqing::Keqing()
     initSprite(KQ_CROUCH, "res/gfx/keqing/Crouch.png",
                96, 96, 5, 60);
     setSpriteFrameLengthFromTo(INT32_MAX, 2, 2, KQ_CROUCH);
-    setXYShift(0, 0, -32, KQ_CROUCH);
+    setXYShift(-2, 0, -32, KQ_CROUCH);
 
     initSprite(KQ_NATK, "res/gfx/keqing/NAtk.png",
                192, 160, 34, 60);
@@ -98,11 +98,11 @@ Keqing::Keqing()
 
     initSprite(KQ_SKILL, "res/gfx/keqing/Skill.png",
                128, 96, 13, 60);
-    setXYShift(-26, 0, -40, KQ_SKILL);
+    setXYShift(-32, 0, -36, KQ_SKILL);
 
     initSprite(KQ_SKILL_AIMING, "res/gfx/keqing/SkillAiming.png",
                128, 96, 8, INT32_MAX);
-    setXYShift(-26, 0, -40, KQ_SKILL_AIMING);
+    setXYShift(-32, 0, -36, KQ_SKILL_AIMING);
 
     initSprite(KQ_SKILL_SLASH, "res/gfx/keqing/SkillSlash.png",
                192, 128, 14, 60);
@@ -163,6 +163,12 @@ void Keqing::initKeqing() {
         instance = new Keqing();
     } else {
         SDL_Log("Keqing already initialized!\n");
+    }
+}
+
+void Keqing::reset() {
+    for (int i = 0; i < KQ_ENUM_N; i++) {
+        setSpriteAnimated(false, i);
     }
 }
 
@@ -583,7 +589,8 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
 #define IDLE_PARTICLE_GAP 12
 
 void Keqing::ESkill() {
-    if (isNewestFrame(4, KQ_SKILL)) { // Lightning Stiletto
+    if (willFrameFinish(3, KQ_SKILL)) {
+//    if (isNewestFrame(4, KQ_SKILL)) {
         if (!isKeyPressedLong(KEY_E)) {
             createLightningStelitto(this);
         } else {
@@ -615,8 +622,6 @@ void Keqing::ESkill() {
     }
 }
 
-bool wasFacingEast;
-
 void Keqing::ESkillAiming() {
     Particle *cursorIdleParticle =
             Particle::getParticle(PARTICLE_KQ_SKILL_AIMING_IDLE);
@@ -624,8 +629,6 @@ void Keqing::ESkillAiming() {
         cursorIdleParticle =
                 Particle::pushParticle(PARTICLE_KQ_SKILL_AIMING_IDLE,
                                        60, 2.22, 2.22);
-        wasFacingEast = facingEast;
-        setFacingEast(true);
     }
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
@@ -635,17 +638,12 @@ void Keqing::ESkillAiming() {
 
     double kqCenterX, kqCenterY;
     getSelfCenter(&kqCenterX, &kqCenterY);
-    double xDiff = abs(mouseX - kqCenterX);
-    double yDiff = abs(mouseY - kqCenterY);
-    double angle;
-    if ((mouseX > kqCenterX && mouseY < kqCenterY) || (mouseX < kqCenterX && mouseY > kqCenterY)) {
-        angle = atan(yDiff / xDiff);
-    } else {
-        angle = atan(xDiff / yDiff);
-    }
-    if (mouseX < kqCenterX && mouseY > kqCenterY) angle += M_PI;
-    else if (mouseX < kqCenterX) angle += M_PI / 2.0;
-    else if (mouseY > kqCenterY) angle += (3.0 * M_PI) / 2.0;
+    double xDiff = mouseX - kqCenterX;
+    if (!isFacingEast()) xDiff = -xDiff;
+    double yDiff = kqCenterY - mouseY;
+    double angle = atan2(yDiff, xDiff);
+    if (angle < 0) angle += 2 * M_PI;
+    SDL_Log("%f\n", angle);
 
     int frameIndex = (int) ((angle / (2.0 * M_PI)) * 8);
     goToFrame(frameIndex, KQ_SKILL_AIMING);
@@ -653,7 +651,6 @@ void Keqing::ESkillAiming() {
     if (!isKeyPressed(KEY_E)) {
         Particle::removeParticle(PARTICLE_KQ_SKILL_AIMING_IDLE);
         setSpriteAnimated(false, KQ_SKILL_AIMING);
-        setFacingEast(wasFacingEast);
         createLightningStelitto(this, mouseX, mouseY);
         pauseSprite(false, KQ_SKILL);
         goToFrame(5, KQ_SKILL);

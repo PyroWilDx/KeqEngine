@@ -16,6 +16,8 @@ World::World(int screenW, int screenH,
 
     this->activeButton = nullptr;
 
+    this->renderKeqing = false;
+
     this->kqAtkLL = nullptr;
     this->monsterAtkLL = nullptr;
 
@@ -49,6 +51,8 @@ World::~World() {
         delete entity;
     }
 
+    if (renderKeqing) Keqing::getInstance()->reset();
+
     LLFree(monsterAtkLL, LLFreeAtkF);
     LLFree(kqAtkLL, LLFreeAtkF);
 
@@ -58,8 +62,6 @@ World::~World() {
     delete[] pixels;
 
     delete background;
-
-    Particle::removeAllParticles();
 }
 
 void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntity) {
@@ -215,6 +217,7 @@ void World::onGameFrame() {
     for (Entity *entity: otherEntityVecotr) {
         entity->onGameFrame();
     }
+    if (renderKeqing) Keqing::getInstance()->onGameFrame();
 
     // Attacks
     auto fAtkShouldRemove = [](void *value, void *fParams) {
@@ -243,8 +246,8 @@ void World::onGameFrame() {
 
     LLIterate(monsterAtkLL, [](void *value, void *fParams) {
         auto *atk = (Attack *) value;
-        auto *kq = (Keqing *) fParams;
-        atk->checkEntityHit(kq);
+        auto *kq_ = (Keqing *) fParams;
+        atk->checkEntityHit(kq_);
     }, (void *) Keqing::getInstance());
 
     if (translateBackgroundEntity != nullptr) {
@@ -267,6 +270,7 @@ void World::renderSelf() {
     for (Entity *entity: otherEntityVecotr) {
         gWindow->renderEntity(entity);
     }
+    if (renderKeqing) gWindow->renderEntity(Keqing::getInstance());
 
     Particle::renderAll();
 }
@@ -280,6 +284,7 @@ void World::renderDebugMode() {
     for (Entity *entity: otherEntityVecotr) {
         entity->renderHitBox(gRenderer);
     }
+    if (renderKeqing) Keqing::getInstance()->renderHitBox(gRenderer);
 
     auto fRenderAtk = [](void *value, void *fParams) {
         auto *atk = (Attack *) value;

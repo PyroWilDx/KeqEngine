@@ -13,6 +13,7 @@
 #include "EntityBase/Monster.hpp"
 #include "Utils/LinkedList.hpp"
 #include "Attack.hpp"
+#include "Keqing.hpp"
 
 typedef struct Pixel {
     int worldType;
@@ -72,6 +73,8 @@ public:
 
     inline void setTranslateEntity(Entity *translateEntity) { translateBackgroundEntity = translateEntity; }
 
+    inline void setRenderKeqing(bool renderKeqing_) { renderKeqing = renderKeqing_; }
+
     inline Background *getBackground() { return background; }
 
 private:
@@ -84,6 +87,7 @@ private:
     std::vector<Block *> blockVector;
     std::vector<Monster *> monsterVector;
     std::vector<Entity *> otherEntityVecotr;
+    bool renderKeqing;
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;
     Pixel **pixels;
