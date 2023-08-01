@@ -31,6 +31,7 @@ void runColorKeqing() {
                    (int) (12.0 * KQ_HEIGHT_MULTIPLIER),
                    (int) (60.0 * KQ_WIDTH_MULTIPLIER),
                    (int) (84.0 * KQ_HEIGHT_MULTIPLIER)});
+    gWorld->setRenderKeqing(true);
 
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
@@ -42,20 +43,14 @@ void runColorKeqing() {
         while (SDL_PollEvent(&event)) {
             handleBasicEvents(&event, nullptr, &gInfo);
         }
-
         if (!gInfo.gRunning) break;
 
-        kq->animateSprite();
+        gWorld->onGameFrame();
 
         gWindow->clear();
 
         gWorld->renderSelf();
 
-        gWindow->renderEntity(kq);
-
         gWindow->display();
     }
-
-    delete gWorld;
-
 }

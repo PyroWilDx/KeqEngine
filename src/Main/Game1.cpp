@@ -32,7 +32,7 @@ void runGame1() {
     kq->moveTo(0, 0);
     kq->setHitbox({0, 12, 60, 84});
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
-    gWorld->addOtherEntity(kq);
+    gWorld->setRenderKeqing(true);
     gWorld->setTranslateEntity(kq);
 
     const int hudSBCircleY = SCREEN_BASE_HEIGHT - 130;
@@ -96,6 +96,7 @@ void runGame1() {
         while (SDL_PollEvent(&event)) {
             handleBasicEvents(&event, &key, &gInfo);
         }
+        if (!gInfo.gRunning) break;
 
         // Dev Mode
         if (gInfo.gPaused) {
@@ -115,6 +116,4 @@ void runGame1() {
 
         gWindow->display();
     }
-
-    delete gWorld;
 }

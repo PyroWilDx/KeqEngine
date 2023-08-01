@@ -66,10 +66,11 @@ void onWindowResize(int newW, int newH) {
 
 void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
     int SDLKey;
+    int key;
 
     switch (event->type) {
         case SDL_QUIT:
-            gInfo->gRunning = false;
+            callMainFunc(&gInfo->gRunning, nullptr);
             break;
 
         case SDL_WINDOWEVENT:
@@ -84,8 +85,7 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
             SDLKey = event->key.keysym.sym;
             switch (SDLKey) {
                 case SDLK_ESCAPE:
-                    runHomeMenu();
-                    gInfo->gRunning = false;
+                    callMainFunc(&gInfo->gRunning, &runHomeMenu);
                     break;
 
                 case SDLK_F11: {
@@ -113,25 +113,22 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
                     break;
 
                 default:
-                    if (pKey != nullptr)
-                        *pKey = updatePressedKeys(SDLKey, true, true);
+                    key = updatePressedKeys(SDLKey, true, true);
                     break;
             }
             break;
 
         case SDL_KEYUP:
             SDLKey = event->key.keysym.sym;
-            if (pKey != nullptr)
-                *pKey = updatePressedKeys(SDLKey, false, true);
+            key = updatePressedKeys(SDLKey, false, true);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP: {
             SDLKey = event->button.button;
-            if (pKey != nullptr)
-                *pKey = updatePressedKeys(SDLKey,
-                                          (event->type == SDL_MOUSEBUTTONDOWN),
-                                          false);
+            key = updatePressedKeys(SDLKey,
+                                    (event->type == SDL_MOUSEBUTTONDOWN),
+                                    false);
             int mouseX = event->button.x;
             int mouseY = event->button.y;
             getMouseAbsoluteXY(&mouseX, &mouseY);
@@ -143,4 +140,12 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
             break;
     }
 
+    if (pKey != nullptr) *pKey = key;
+}
+
+void callMainFunc(bool *gRunningLastMain, void (*gMain)()) {
+    *gRunningLastMain = false;
+    Particle::removeAllParticles();
+    delete Global::currentWorld;
+    if (gMain != nullptr) gMain();
 }

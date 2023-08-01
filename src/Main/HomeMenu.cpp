@@ -20,8 +20,7 @@ void runHomeMenu() {
     auto *runGame1Button = new Button(400, 0, 200, 100);
     runGame1Button->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
         bool *pGRunning = (bool *) onClickParams;
-        *pGRunning = false;
-        runGame1();
+        callMainFunc(pGRunning, &runGame1);
     });
     SDL_Color tmpColor = {255, 255, 255, 255};
     runGame1Button->addText("RRUN GAME 1", &tmpColor, "res/fonts/JetBrainsMono-Regular.ttf", 16);
@@ -31,8 +30,7 @@ void runHomeMenu() {
     auto *runColorKQButton = new Button(400, 200, 200, 100);
     runColorKQButton->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
         bool *pGRunning = (bool *) onClickParams;
-        *pGRunning = false;
-        runColorKeqing();
+        callMainFunc(pGRunning, &runColorKeqing);
     });
     tmpColor = {255, 255, 255, 255};
     runColorKQButton->addText("RRUN CUSTOM MENU 1", &tmpColor, "res/fonts/JetBrainsMono-Regular.ttf", 16);
@@ -49,8 +47,9 @@ void runHomeMenu() {
         while (SDL_PollEvent(&event)) {
             handleBasicEvents(&event, nullptr, &gInfo);
         }
-
         if (!gInfo.gRunning) break;
+
+        gWorld->onGameFrame();
 
         gWindow->clear();
 
@@ -58,6 +57,4 @@ void runHomeMenu() {
 
         gWindow->display();
     }
-
-    delete gWorld;
 }

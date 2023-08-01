@@ -5,8 +5,6 @@ hitlag
 
 damaging kb should take into account the weight of the entity
 
-create class fps text with its own on game frame
-
 need to delete world before to delete all particle (maybe return a function to call at the end after delete gworld)
 
 comment les textures de slime et keqing sont elles deletes ??? verif valgrind

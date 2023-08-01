@@ -74,6 +74,8 @@ public:
 
     static inline Keqing *getInstance() { return instance; }
 
+    void reset();
+
     void colorTexture(Uint8 r, Uint8 g, Uint8 b);
 
     void moveX() override;

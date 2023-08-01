@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     runHomeMenu();
 
     Particle::cleanUp();
+    delete Keqing::getInstance();
     WindowRenderer::getInstance()->cleanUp();
     SDL_Quit();
 
