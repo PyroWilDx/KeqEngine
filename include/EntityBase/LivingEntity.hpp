@@ -10,8 +10,9 @@
 class LivingEntity : public AnimatedEntity {
 
 public:
-    LivingEntity(double gravityWeight, int spriteArrayLength,
-                 int baseHp, int hurtSpriteCode);
+    LivingEntity(double gravityWeight, int baseHp,
+                 int spriteArrayLength, int hurtSpriteCode,
+                 int stateChangerEndSpriteCode);
 
     ~LivingEntity() override;
 
@@ -35,6 +36,7 @@ protected:
     double hurtKbVX;
     double hurtKbVY;
     int hurtStartTime;
+    int stateChangerEndSpriteCode;
     int *xShifts, *yShifts, *xRShifts;
 
 };

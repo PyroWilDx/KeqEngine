@@ -6,8 +6,9 @@
 #include "EntityBase/LivingEntity.hpp"
 #include "Utils/Global.hpp"
 
-LivingEntity::LivingEntity(double gravityWeight, int spriteArrayLength,
-                           int baseHp, int hurtSpriteCode)
+LivingEntity::LivingEntity(double gravityWeight, int baseHp,
+                           int spriteArrayLength, int hurtSpriteCode,
+                           int stateChangerEndSpriteCode)
         : AnimatedEntity(spriteArrayLength) {
     this->gravityWeight = gravityWeight;
     this->hp = baseHp;
@@ -15,6 +16,7 @@ LivingEntity::LivingEntity(double gravityWeight, int spriteArrayLength,
     this->hurtKbVX = 0;
     this->hurtKbVY = 0;
     this->hurtStartTime = 0;
+    this->stateChangerEndSpriteCode = stateChangerEndSpriteCode;
     this->xShifts = new int[spriteArrayLength];
     this->yShifts = new int[spriteArrayLength];
     this->xRShifts = new int[spriteArrayLength];
@@ -101,7 +103,7 @@ void LivingEntity::hurt() {
 
 void LivingEntity::updateAction() {
     int currSpriteCode = getCurrentSpriteCode();
-    for (int i = 1; i < currSpriteCode; i++) {
+    for (int i = stateChangerEndSpriteCode + 1; i < currSpriteCode; i++) {
         setSpriteAnimated(false, i);
     }
 }

@@ -9,10 +9,12 @@
 AnimatedEntity::AnimatedEntity(int spriteArrayLength)
         : Entity(), spriteArray(spriteArrayLength) {
     currentSprite = &spriteArray[0];
+    soundSheet = new SoundSheet(spriteArrayLength);
 }
 
 AnimatedEntity::~AnimatedEntity() {
     imgTexture = nullptr;
+    delete soundSheet;
 }
 
 void AnimatedEntity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {

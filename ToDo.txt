@@ -15,10 +15,15 @@ isInvincible() for keqing ? and for every living entities in generaL... virtualf
 
 BUGS WHEN CLOSING APPLICATION BEAUCOUP
 
+keqing skill : when in a wall, go to the shortest non wall
+
 for coloring keqing
-    // TODO FAIRE UN BOUTON SET COLOR POUR EVITER LE LAG.
-    // TODO FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
-    // TODO CURSEUR QUI SUIT LA SOURIS QUAND CLIQUEE
+     FAIRE UN BOUTON SET COLOR POUR EVITER LE LAG.
+     FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
+     CURSEUR QUI SUIT LA SOURIS QUAND CLIQUEE
 
 for hurtstarttime in living entity
-    // todo may need to change to time acc for debug
+    may need to change to time acc for debug
+
+cmakelists
+    for linux, add boost, sdl2_gfx, sdl2_mixer

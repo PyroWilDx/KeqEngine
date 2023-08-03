@@ -32,12 +32,22 @@ WindowRenderer::WindowRenderer(const char *title, int w, int h) {
     myAssert(gRenderer != nullptr, "Error Creating Renderer.", SDL_GetError());
 }
 
+WindowRenderer::~WindowRenderer() {
+    SDL_DestroyRenderer(gRenderer);
+    SDL_DestroyWindow(gWindow);
+}
+
 void WindowRenderer::initWindowRenderer(const char *title, int w, int h) {
     if (instance == nullptr) {
         instance = new WindowRenderer(title, w, h);
     } else {
         SDL_Log("WindowRenderer already initialized!\n");
     }
+}
+
+void WindowRenderer::cleanUp() {
+    delete instance;
+    instance = nullptr;
 }
 
 SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
@@ -58,7 +68,3 @@ void WindowRenderer::clear() {
     SDL_RenderClear(gRenderer);
 }
 
-void WindowRenderer::cleanUp() {
-    SDL_DestroyRenderer(gRenderer);
-    SDL_DestroyWindow(gWindow);
-}

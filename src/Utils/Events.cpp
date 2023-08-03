@@ -146,6 +146,6 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
 void callMainFunc(bool *gRunningLastMain, void (*gMain)()) {
     *gRunningLastMain = false;
     Particle::removeAllParticles();
-    delete Global::currentWorld;
+    Global::deleteWorld();
     if (gMain != nullptr) gMain();
 }

@@ -11,10 +11,9 @@
 void runColorKeqing() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    auto *gWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                              SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                              "res/gfx/background/ColorKeqing.png");
-    Global::currentWorld = gWorld;
 
     auto *colorPicker = new ColorPicker(600, 200, 300, 400);
     colorPicker->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {

@@ -5,6 +5,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include <SDL2/SDL_mixer.h>
 #include "World/World.hpp"
 #include "Utils/Events.hpp"
 
@@ -14,6 +15,22 @@ public:
     Global() = delete;
 
     static void initGlobal();
+
+    static void cleanUp();
+
+    [[nodiscard]] static World *setWorld(int screenW, int screenH,
+                                         int backgroundTotalW, int backgroundTotalH,
+                                         const char *backgroundImgPath);
+
+    static void deleteWorld();
+
+    [[nodiscard]] static Mix_Chunk *setAudioChunk(const char *chunkPath);
+
+    static void deleteAudioChunk();
+
+    [[nodiscard]] static Mix_Music *setAudioMusic(const char *musicPath);
+
+    static void deleteAudioMusic();
 
     static int windowWidth;
     static int windowHeight;
@@ -29,6 +46,9 @@ public:
     static int dt;
 
     static World *currentWorld;
+
+    static Mix_Chunk *currentAudioChunk;
+    static Mix_Music *currentAudioMusic;
 
 private:
 
