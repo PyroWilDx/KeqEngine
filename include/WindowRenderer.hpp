@@ -13,9 +13,13 @@ class Block;
 class WindowRenderer {
 
 public:
+    ~WindowRenderer();
+
     static void initWindowRenderer(const char *title, int w, int h);
 
     static inline WindowRenderer *getInstance() { return instance; }
+
+    static void cleanUp();
 
     SDL_Texture *loadTexture(const char *imgPath);
 
@@ -24,8 +28,6 @@ public:
     void display();
 
     void clear();
-
-    void cleanUp();
 
     inline SDL_Window *getWindow() { return gWindow; }
 

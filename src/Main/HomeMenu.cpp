@@ -8,14 +8,14 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
+#include "Utils/Sound.hpp"
 
 void runHomeMenu() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    auto *gWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                              SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                              "res/gfx/background/HomeMenu.png");
-    Global::currentWorld = gWorld;
 
     auto *runGame1Button = new Button(400, 0, 200, 100);
     runGame1Button->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
@@ -36,6 +36,8 @@ void runHomeMenu() {
     runColorKQButton->addText("RRUN CUSTOM MENU 1", &tmpColor, "res/fonts/JetBrainsMono-Regular.ttf", 16);
     runColorKQButton->changeColor(255, 0, 0);
     gWorld->addButton(runColorKQButton);
+
+//    playAudioMusic("res/sound/music/NimbleAsLightning.ogg");
 
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;

@@ -23,7 +23,7 @@
 
 // #define DOUBLE_EPSILON 0.001
 
-void myAssert(bool expr, const char *msg, const char *err);
+void myAssert(bool expr, const char *msg = nullptr, const char *err = nullptr);
 
 int roundToInt(double value);
 

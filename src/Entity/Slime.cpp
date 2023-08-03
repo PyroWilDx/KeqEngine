@@ -8,7 +8,8 @@
 #include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
 Slime::Slime(const std::string &colorString) :
-        Monster(0.002, SLIME_ENUM_N, 1, SLIME_DEATH) {
+        Monster(0.002, 1, SLIME_ENUM_N,
+                SLIME_DEATH, SLIME_JUMP) {
     hitBox = {0, 0, 16, 16};
 
     std::string pathStart = "res/gfx/slime/" + colorString;

@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <filesystem>
 #include <iostream>
 #include "Main/HomeMenu.hpp"
@@ -12,9 +13,16 @@ int main(int argc, char *argv[]) {
     std::string path = std::filesystem::current_path().string();
     std::filesystem::current_path(path + "/..");
 
-    myAssert(SDL_Init(SDL_INIT_VIDEO) >= 0, "SDL_Init FAILED.", SDL_GetError());
-    myAssert(IMG_Init(IMG_INIT_PNG) != 0, "IMG_Init FAILED.", SDL_GetError());
-    myAssert(TTF_Init() != -1, "TTF_Init FAILED.", SDL_GetError());
+    myAssert(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) >= 0,
+             "SDL_Init FAILED.", SDL_GetError());
+    int imgFlags = IMG_INIT_PNG;
+    myAssert(IMG_Init(imgFlags) & imgFlags,
+             "IMG_Init FAILED.", IMG_GetError());
+    myAssert(TTF_Init() != -1,
+             "TTF_Init FAILED.", TTF_GetError());
+    myAssert(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT,
+                           2, 2048) >= 0,
+             "Mix_OpenAudio FAILED.", Mix_GetError());
 
     WindowRenderer::initWindowRenderer("Keqing", SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT);
     Global::initGlobal();
@@ -24,8 +32,12 @@ int main(int argc, char *argv[]) {
     runHomeMenu();
 
     Particle::cleanUp();
-    delete Keqing::getInstance();
-    WindowRenderer::getInstance()->cleanUp();
+    Keqing::cleanUp();
+    Global::cleanUp();
+    WindowRenderer::cleanUp();
+    Mix_Quit();
+    TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 
     return EXIT_SUCCESS;

@@ -9,8 +9,9 @@
 
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {
-        SDL_Log("Message : %s\n", msg);
-        SDL_Log("Error : %s\n", err);
+        SDL_Log("Assertion FAILED.\n");
+        if (msg != nullptr) SDL_Log("Message : %s\n", msg);
+        if (err != nullptr) SDL_Log("Error : %s\n", err);
         assert(expr);
     }
 }

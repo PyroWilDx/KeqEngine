@@ -16,8 +16,8 @@ const int NAtkMax = 4;
 const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 
 Keqing::Keqing()
-        : LivingEntity(0.0024, KQ_ENUM_N,
-                       1, KQ_HURT) {
+        : LivingEntity(0.0024, 1, KQ_ENUM_N,
+                       KQ_HURT, KQ_JUMP) {
     jumpPressTime = 0;
     doubleJumped = false;
     airDashed = false;
@@ -116,6 +116,10 @@ Keqing::Keqing()
                128, 96, 30, 70);
     setXYShift(-24, 0, -44, KQ_BURST);
     setSpriteFrameLengthFromTo(INT32_MAX, 13, 13, KQ_BURST);
+    soundSheet->initSoundSheetElement(KQ_BURST,
+                                      "res/sound/keqing/JpBurst0.ogg",
+                                      "res/sound/keqing/JpBurst1.ogg",
+                                      "res/sound/keqing/JpBurst2.ogg");
 
     initSprite(KQ_JUMP_START, "res/gfx/keqing/JumpStart.png",
                96, 96, 2, 20);
@@ -154,16 +158,17 @@ Keqing::Keqing()
     setXYShift(-4, 0, -32, KQ_HURT);
 }
 
-Keqing::~Keqing() {
-    instance = nullptr;
-}
-
 void Keqing::initKeqing() {
     if (instance == nullptr) {
         instance = new Keqing();
     } else {
         SDL_Log("Keqing already initialized!\n");
     }
+}
+
+void Keqing::cleanUp() {
+    delete instance;
+    instance = nullptr;
 }
 
 void Keqing::reset() {
@@ -590,7 +595,6 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
 
 void Keqing::ESkill() {
     if (willFrameFinish(3, KQ_SKILL)) {
-//    if (isNewestFrame(4, KQ_SKILL)) {
         if (!isKeyPressedLong(KEY_E)) {
             createLightningStelitto(this);
         } else {
@@ -643,7 +647,6 @@ void Keqing::ESkillAiming() {
     double yDiff = kqCenterY - mouseY;
     double angle = atan2(yDiff, xDiff);
     if (angle < 0) angle += 2 * M_PI;
-    SDL_Log("%f\n", angle);
 
     int frameIndex = (int) ((angle / (2.0 * M_PI)) * 8);
     goToFrame(frameIndex, KQ_SKILL_AIMING);
@@ -810,6 +813,8 @@ void Keqing::RBurst() {
                 Particle::pushParticle(PARTICLE_KQ_BURST_AOE_WAVE,
                                        60, aoeBaseWHM, aoeBaseWHM);
         aoeWaveParticle->setRGBAMod(RGB_FULL, 128);
+
+        soundSheet->playRandomSoundFromCode(KQ_BURST);
 
     } else if (isNewestFrame(12, KQ_BURST)) { // Vanish
         Particle *vanishParticle =

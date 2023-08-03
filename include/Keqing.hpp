@@ -68,11 +68,11 @@ enum {
 class Keqing : public LivingEntity {
 
 public:
-    ~Keqing() override;
-
     static void initKeqing();
 
     static inline Keqing *getInstance() { return instance; }
+
+    static void cleanUp();
 
     void reset();
 

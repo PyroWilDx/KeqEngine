@@ -13,10 +13,10 @@
 void runGame1() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    auto *gWorld = new World(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                             3000, 720,
-                             "res/gfx/background/Game1.png");
-    Global::currentWorld = gWorld;
+    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                                     3000, 720,
+                                     "res/gfx/background/Game1.png");
+
     gWorld->addBlock(BLOCK_DIRT,
                      300, 720 - 200, 400, 500);
     gWorld->addBlock(BLOCK_DIRT,
@@ -81,7 +81,7 @@ void runGame1() {
     slime->moveToDownLeft(400, 720 - 200);
     gWorld->addMonster(slime);
 
-    FPSText *gFPSText = new FPSText();
+    auto *gFPSText = new FPSText();
     gWorld->addOtherEntity(gFPSText);
 
     SDL_Event event;
