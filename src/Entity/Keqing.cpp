@@ -21,6 +21,8 @@ Keqing::Keqing()
     std::string soundStartPath = "res/sfx/keqing/" + Global::userData[DATA_KQ_VOICE_LANG];
     soundSheet->setSoundStartPath(soundStartPath);
 
+    skillUseTime = 0;
+    burstCloneSlashCount = 0;
     jumpPressTime = 0;
     doubleJumped = false;
     airDashed = false;
@@ -229,6 +231,14 @@ void Keqing::reset() {
     for (int i = 0; i < KQ_ENUM_N; i++) {
         setSpriteAnimated(false, i);
     }
+    facingEast = true;
+    xVelocity = 0;
+    yVelocity = 0;
+    skillUseTime = 0;
+    burstCloneSlashCount = 0;
+    jumpPressTime = 0;
+    doubleJumped = false;
+    airDashed = false;
 }
 
 void Keqing::colorTexture(Uint32 rgba) {
@@ -606,8 +616,6 @@ void Keqing::dash() {
     }
 }
 
-int skillUseTime;
-
 static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1) {
     Particle *skillCircleHud = Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE);
     Particle *skillIcon2 =
@@ -625,7 +633,7 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
         skillIcon1->moveToEntityCenter(skillCircleHud);
         skillIcon1->setRGBAMod(COLOR_WHITE, HUD_SB_USED_ALPHA);
 
-        int elapsedTime = getTime() - skillUseTime;
+        int elapsedTime = getTime() - Keqing::getInstance()->getSkillUseTime();
         Particle *timerHud =
                 Particle::pushParticle(PARTICLE_HUD_SKILL_BURST_TIMER,
                                        (KQ_SKILL_COOLDOWN - elapsedTime) / HUD_SB_TIMER_FRAME_N,
@@ -675,7 +683,7 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
 
     kq->getSoundSheet()->playRandomSound(KQ_SKILL);
 
-    skillUseTime = Global::currentTime;
+    kq->setSkillUseTime(Global::currentTime);
 }
 
 #define IDLE_PARTICLE_GAP 12
@@ -825,9 +833,14 @@ const double cSlashWM[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
         {0.88, 1.6, 1.2, 1.52, 1.32, 1.0};
 const double cSlashHM[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
         {1.0, 1.2, 1.2, 1.2, 1.2, 1.2};
-int cSlashCount = 0;
 
 static void pushCloneSlashParticle(Particle *removedParticle) {
+    Keqing *kq = Keqing::getInstance();
+    if (removedParticle == nullptr) {
+        kq->setBurstCloneSlashCount(0);
+    }
+
+    int cSlashCount = kq->getBurstCloneSlashCount();
     if (cSlashCount < KQ_BURST_NUMBER_OF_CLONE_SLASH) {
         auto *cSlashParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_CLONE_SLASH,
@@ -838,9 +851,8 @@ static void pushCloneSlashParticle(Particle *removedParticle) {
         cSlashParticle->xyShift(cSlashXShift[cSlashCount], cSlashYShift[cSlashCount]);
         cSlashParticle->setRotation(cSlashRotations[cSlashCount]);
         cSlashParticle->setOnRemove(&pushCloneSlashParticle);
-        cSlashCount++;
-    } else {
-        cSlashCount = 0;
+
+        kq->setBurstCloneSlashCount(cSlashCount + 1);
     }
 }
 

@@ -8,8 +8,6 @@ maybe in attacks, add the attack sprite used, and check if the sprite if still a
 
 isInvincible() for keqing ? and for every living entities in generaL... virtualfunc
 
-BUGS WHEN CLOSING APPLICATION BEAUCOUP (WINDOWS SEULEMENT...)
-
 keqing skill : when in a wall, go to the shortest non wall
 
 for coloring keqing

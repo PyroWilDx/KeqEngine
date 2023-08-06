@@ -7,7 +7,7 @@
 
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
-#include "EntityBase/LivingEntity.hpp"
+#include "BaseEntity/LivingEntity.hpp"
 
 enum {
     KQ_IDLE = 0,
@@ -42,7 +42,7 @@ enum {
     KQ_ENUM_N
 };
 
-#define KQ_BASE_COLOR 2962947839
+#define KQ_BASE_COLOR 2861694463
 
 #define KQ_WIDTH_MULTIPLIER 1.0
 #define KQ_HEIGHT_MULTIPLIER 1.0
@@ -152,11 +152,21 @@ public:
         return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE) != nullptr);
     }
 
+    inline void setSkillUseTime(int skillUseTime_) { skillUseTime = skillUseTime_; }
+
+    inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { burstCloneSlashCount = burstCloneSlashCount_; }
+
+    [[nodiscard]] inline int getSkillUseTime() const { return skillUseTime; }
+
+    [[nodiscard]] inline int getBurstCloneSlashCount() const { return burstCloneSlashCount; }
+
 private:
     explicit Keqing();
 
     static Keqing *instance;
 
+    int skillUseTime;
+    int burstCloneSlashCount;
     int jumpPressTime;
     bool doubleJumped;
     bool airDashed;

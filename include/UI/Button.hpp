@@ -5,7 +5,7 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
-#include "EntityBase/WorldEntity.hpp"
+#include "BaseEntity/WorldEntity.hpp"
 #include "Entity/Text.hpp"
 
 typedef enum {

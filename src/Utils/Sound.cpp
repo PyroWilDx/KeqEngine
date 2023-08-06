@@ -2,14 +2,15 @@
 // Created by pyrow on 03/08/2023.
 //
 
-#include "EntityRes/Sound.hpp"
+#include "Utils/Sound.hpp"
 #include "Utils/Global.hpp"
 
 Mix_Chunk *Sound::currentAudioChunk = nullptr;
 Mix_Music *Sound::currentAudioMusic = nullptr;
 
 void Sound::initSound() {
-
+    currentAudioChunk = nullptr;
+    currentAudioMusic = nullptr;
 }
 
 void Sound::cleanUp() {

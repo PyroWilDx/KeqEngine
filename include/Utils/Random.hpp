@@ -12,6 +12,10 @@ class Random {
 public:
     Random() = delete;
 
+    static void initRandom();
+
+    static void cleanUp();
+
     static int getRandomInt(int start, int end);
 
     static int getRandomIntEndExcl(int start, int end);

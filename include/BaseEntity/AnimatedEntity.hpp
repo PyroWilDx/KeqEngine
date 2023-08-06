@@ -7,8 +7,8 @@
 
 #include "Entity.hpp"
 #include "WindowRenderer.hpp"
-#include "EntityRes/SpriteArray.hpp"
-#include "EntityRes/SoundSheet.hpp"
+#include "StructForEntity/SpriteArray.hpp"
+#include "StructForEntity/SoundSheet.hpp"
 
 class AnimatedEntity : public Entity {
 

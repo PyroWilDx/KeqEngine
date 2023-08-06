@@ -5,7 +5,7 @@
 #ifndef TEXT_HPP
 #define TEXT_HPP
 
-#include "EntityBase/Entity.hpp"
+#include "BaseEntity/Entity.hpp"
 
 class Text : public Entity {
 

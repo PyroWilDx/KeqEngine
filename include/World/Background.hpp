@@ -5,7 +5,7 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include "EntityBase/WorldEntity.hpp"
+#include "BaseEntity/WorldEntity.hpp"
 
 class Background : public WorldEntity {
 

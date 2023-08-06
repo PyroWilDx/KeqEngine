@@ -6,7 +6,7 @@
 #define BLOCK_HPP
 
 #include <cmath>
-#include "EntityBase/WorldEntity.hpp"
+#include "BaseEntity/WorldEntity.hpp"
 #include "Utils/Utils.hpp"
 
 enum {

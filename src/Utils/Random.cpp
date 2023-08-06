@@ -5,9 +5,17 @@
 #include "Utils/Random.hpp"
 
 std::random_device Random::rd;
-std::mt19937 Random::generator = std::mt19937(rd());
+std::mt19937 Random::generator;
 std::uniform_int_distribution<int> Random::randomInt;
 std::uniform_real_distribution<double> Random::randomReal;
+
+void Random::initRandom() {
+    generator = std::mt19937(rd());
+}
+
+void Random::cleanUp() {
+
+}
 
 int Random::getRandomInt(int start, int end) {
     randomInt = std::uniform_int_distribution<int>(start, end);
