@@ -5,6 +5,17 @@
 #ifndef HOMEMENU_HPP
 #define HOMEMENU_HPP
 
-void runHomeMenu();
+#include "MainInterface.hpp"
+
+class MainHomeMenu : public MainInterface<MainHomeMenu> {
+
+public:
+    MainHomeMenu() = delete;
+
+    static void RunImpl();
+
+private:
+
+};
 
 #endif

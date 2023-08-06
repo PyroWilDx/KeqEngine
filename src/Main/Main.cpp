@@ -7,7 +7,8 @@
 #include "Main/HomeMenu.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
-#include "Keqing.hpp"
+#include "Entity/Keqing.hpp"
+#include "EntityRes/Sound.hpp"
 
 int main(int argc, char *argv[]) {
     std::string path = std::filesystem::current_path().string();
@@ -23,16 +24,19 @@ int main(int argc, char *argv[]) {
     myAssert(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT,
                            2, 2048) >= 0,
              "Mix_OpenAudio FAILED.", Mix_GetError());
+    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
     WindowRenderer::initWindowRenderer("Keqing", SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT);
     Global::initGlobal();
+    Sound::initSound();
     Keqing::initKeqing();
     Particle::initParticle();
 
-    runHomeMenu();
+    MainHomeMenu::Run();
 
     Particle::cleanUp();
     Keqing::cleanUp();
+    Sound::cleanUp();
     Global::cleanUp();
     WindowRenderer::cleanUp();
     Mix_Quit();

@@ -5,12 +5,12 @@
 #include "Main/Game1.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
-#include "Keqing.hpp"
+#include "Entity/Keqing.hpp"
 #include "Utils/Events.hpp"
 #include "Entity/Slime.hpp"
 #include "Entity/FPSText.hpp"
 
-void runGame1() {
+void MainGame1::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
@@ -43,7 +43,7 @@ void runGame1() {
             Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE_BG, INT32_MAX,
                                    HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
     skillCircleBG->moveTo(hudSkillCircleX, hudSBCircleY);
-    skillCircleBG->setRGBAMod(RGB_FULL, hudSBCircleBGAlpha);
+    skillCircleBG->setRGBAMod(COLOR_WHITE, hudSBCircleBGAlpha);
 
     Particle *skillCircle =
             Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE, INT32_MAX,
@@ -58,7 +58,7 @@ void runGame1() {
     skillCircle->getRealSize(&hudSCW, nullptr);
     burstCircleBG->moveTo(hudSkillCircleX + hudSCW,
                           hudSBCircleY);
-    burstCircleBG->setRGBAMod(RGB_FULL, hudSBCircleBGAlpha);
+    burstCircleBG->setRGBAMod(COLOR_WHITE, hudSBCircleBGAlpha);
 
     Particle *burstCircle =
             Particle::pushParticle(PARTICLE_HUD_BURST_CIRCLE, INT32_MAX,
@@ -94,7 +94,7 @@ void runGame1() {
         // Events
         int key = KEY_UNDEFINED;
         while (SDL_PollEvent(&event)) {
-            handleBasicEvents(&event, &key, &gInfo);
+            Events::handleBasicEvents(&event, &key, &gInfo);
         }
         if (!gInfo.gRunning) break;
 

@@ -5,21 +5,22 @@
 #include "Main/ColorKeqing.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
-#include "Keqing.hpp"
+#include "Entity/Keqing.hpp"
 #include "UI/ColorPicker.hpp"
 
-void runColorKeqing() {
+void MainColorKeqing::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                             SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                             "res/gfx/background/ColorKeqing.png");
+                                     SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                                     "res/gfx/background/ColorKeqing.png");
 
-    auto *colorPicker = new ColorPicker(600, 200, 300, 400);
+    Uint32 currRGBA = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
+    auto *colorPicker = new ColorPicker(0, 0, 400, 400, currRGBA);
     colorPicker->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
         auto *selfColorPicker = (ColorPicker *) self;
         Uint32 rgba = selfColorPicker->getCurrentRGBA();
-        Keqing::getInstance()->colorTexture(rgba >> 24, rgba >> 16, rgba >> 8);
+        Keqing::getInstance()->colorTexture(rgba);
     });
     gWorld->addButton(colorPicker);
 
@@ -40,7 +41,7 @@ void runColorKeqing() {
         handleTime();
 
         while (SDL_PollEvent(&event)) {
-            handleBasicEvents(&event, nullptr, &gInfo);
+            Events::handleBasicEvents(&event, nullptr, &gInfo);
         }
         if (!gInfo.gRunning) break;
 
