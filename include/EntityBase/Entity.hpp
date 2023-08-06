@@ -102,6 +102,16 @@ public:
 
     inline void setHitbox(SDL_Rect collisionRect_) { hitBox = collisionRect_; }
 
+    inline void setTexture(SDL_Texture *imgTexture_, int frameW = 0, int frameH = 0) {
+        imgTexture = imgTexture_;
+        if (frameW != 0 && frameH != 0) {
+            imgFrame.w = frameW;
+            imgFrame.h = frameH;
+        } else {
+            SDL_QueryTexture(imgTexture, nullptr, nullptr, &imgFrame.w, &imgFrame.h);
+        }
+    }
+
     inline void setRenderWHMultiplier(double wMultiplier, double hMultiplier) {
         renderWMultiplier = wMultiplier;
         renderHMultiplier = hMultiplier;

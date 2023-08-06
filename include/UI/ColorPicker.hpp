@@ -10,7 +10,15 @@
 class ColorPicker : public Button {
 
 public:
-    ColorPicker(double x, double y, int renderW, int renderH);
+    ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA = 0);
+
+    ~ColorPicker() override;
+
+//    SDL_Rect getRenderRect() override;
+
+    void fillPixels(Uint32 currRGBA);
+
+    [[nodiscard]] Uint32 getCurrentRGBA() const;
 
     void onClick(int mouseX, int mouseY) override;
 
@@ -18,11 +26,9 @@ public:
 
     void renderSelf(SDL_Renderer *gRenderer) override;
 
-    inline Uint32 getCurrentRGBA() { return currentRGBA; }
-
 private:
+    Uint32 **absPixels;
     int pickerX, pickerY;
-    Uint32 currentRGBA;
 
 };
 

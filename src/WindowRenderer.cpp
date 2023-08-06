@@ -56,6 +56,30 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
     return texture;
 }
 
+void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled, bool shifted,
+                                Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+                                SDL_Renderer *gRenderer_) {
+    SDL_Rect dstRect = *pDstRect;
+    if (!shifted) {
+        dstRect.x -= Global::currentWorld->getBackground()->getFrame().x;
+        dstRect.y -= Global::currentWorld->getBackground()->getFrame().y;
+        double xCoeff, yCoeff;
+        getScreenXYCoeff(&xCoeff, &yCoeff);
+        dstRect.x = (int) ((double) dstRect.x * xCoeff);
+        dstRect.y = (int) ((double) dstRect.y * yCoeff);
+        dstRect.w = (int) ((double) dstRect.w * xCoeff);
+        dstRect.h = (int) ((double) dstRect.h * yCoeff);
+        shiftXYFromScreenPosition(&dstRect.x, &dstRect.y);
+    }
+
+    SDL_SetRenderDrawColor(gRenderer_, r, g, b, a);
+
+    if (filled) SDL_RenderFillRect(gRenderer_, &dstRect);
+    else SDL_RenderDrawRect(gRenderer_, &dstRect);
+
+    SDL_SetRenderDrawColor(gRenderer_, COLOR_BLACK_FULL);
+}
+
 void WindowRenderer::renderEntity(Entity *entity) {
     entity->renderSelf(gRenderer);
 }

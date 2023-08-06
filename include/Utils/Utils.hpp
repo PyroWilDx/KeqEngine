@@ -5,6 +5,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <string>
 #include <SDL2/SDL.h>
 #include "EntityBase/Entity.hpp"
 #include "EntityBase/AnimatedEntity.hpp"
@@ -18,16 +19,22 @@
 
 #define KEY_PRESS_SHORT_DURATION 100
 
-#define RGB_FULL 255, 255, 255
-#define RGBA_FULL 255, 255, 255, 255
-
-// #define DOUBLE_EPSILON 0.001
+#define COLOR_WHITE 255, 255, 255
+#define COLOR_WHITE_FULL COLOR_WHITE, 255
+#define COLOR_BLACK 0, 0, 0
+#define COLOR_BLACK_FULL COLOR_BLACK, 255
+#define COLOR_RED 255, 0, 0
+#define COLOR_RED_FULL COLOR_RED, 255
+#define COLOR_GREEN 0, 255, 0
+#define COLOR_GREEN_FULL COLOR_GREEN, 255
+#define COLOR_BLUE 0, 0, 255
+#define COLOR_BLUE_FULL COLOR_BLUE, 255
 
 void myAssert(bool expr, const char *msg = nullptr, const char *err = nullptr);
 
 int roundToInt(double value);
 
-//bool areDoubleEpsilonEqual(double a, double b);
+Uint32 cvStringToUint32(std::string &valStr);
 
 int getTime();
 
@@ -59,10 +66,12 @@ bool isMouseLeftLong();
 
 bool isKeyDoublePressed(int key);
 
-void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
+void Uint32RGBAToUint8RGBA(Uint32 rgba, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
+
+void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
               double *pH, double *pS, double *pV);
 
-void HSVtoRGB(double h, double s, double v,
+void HSVToRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB);
 
 #endif

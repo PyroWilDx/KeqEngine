@@ -18,6 +18,8 @@ class Button : public WorldEntity {
 public:
     Button(double x, double y, int renderW, int renderH);
 
+    Button(double x, double y, int renderW, int renderH, int outlineThickness);
+
     ~Button() override;
 
     void changeColor(Uint8 r, Uint8 g, Uint8 b);
@@ -50,6 +52,7 @@ protected:
     ButtonState buttonState;
     SDL_Color buttonColor;
     Text *buttonText;
+    int outlineThickness;
 
 };
 

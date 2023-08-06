@@ -31,8 +31,19 @@ typedef struct gStateInfo {
 
 #define DEFAULT_GAME_STATE_INFO {true, false, false}
 
-void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo);
+class Events {
 
-void callMainFunc(bool *gRunningLastMain, void (*gMain)());
+public:
+    Events() = delete;
+
+    static void onWindowResize(int newW, int newH);
+    
+    static void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo);
+
+    static void callMainFunc(bool *gRunningLastMain, void (*gMain)());
+
+private:
+
+};
 
 #endif

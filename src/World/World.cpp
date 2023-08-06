@@ -4,7 +4,7 @@
 
 #include "World/World.hpp"
 #include "Utils/Events.hpp"
-#include "Keqing.hpp"
+#include "Entity/Keqing.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
@@ -21,8 +21,7 @@ World::World(int screenW, int screenH,
     this->kqAtkLL = nullptr;
     this->monsterAtkLL = nullptr;
 
-    this->pixels = (Pixel **)
-            new Pixel[backgroundTotalW];
+    this->pixels = new Pixel *[backgroundTotalW];
     for (int i = 0; i < background->getTotalW(); i++) {
         (this->pixels)[i] = new Pixel[backgroundTotalH];
         for (int j = 0; j < backgroundTotalH; j++) {

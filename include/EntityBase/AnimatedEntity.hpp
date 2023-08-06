@@ -7,8 +7,8 @@
 
 #include "Entity.hpp"
 #include "WindowRenderer.hpp"
-#include "Utils/SpriteArray.hpp"
-#include "Utils/SoundSheet.hpp"
+#include "EntityRes/SpriteArray.hpp"
+#include "EntityRes/SoundSheet.hpp"
 
 class AnimatedEntity : public Entity {
 
@@ -67,6 +67,8 @@ public:
     inline int getCurrentSpriteCode() { return currentSprite->sCode; }
 
     [[nodiscard]] inline Sprite *getCurrentSprite() const { return currentSprite; }
+
+    [[nodiscard]] inline SoundSheet *getSoundSheet() const { return soundSheet; }
 
 protected:
     SoundSheet *soundSheet;

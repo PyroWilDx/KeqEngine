@@ -6,7 +6,7 @@
 #include "Utils/Global.hpp"
 #include "Main/HomeMenu.hpp"
 
-void onWindowResize(int newW, int newH) {
+void Events::onWindowResize(int newW, int newH) {
     Global::windowWidth = newW;
     Global::windowHeight = newH;
 
@@ -34,7 +34,7 @@ void onWindowResize(int newW, int newH) {
         int resizeH = (hDiff > 1 && hDiff < epsilonDiff) ? newRenderH : newH;
         SDL_SetWindowSize(WindowRenderer::getInstance()->getWindow(),
                           resizeW, resizeH);
-        onWindowResize(resizeW, resizeH);
+        Events::onWindowResize(resizeW, resizeH);
         return;
     }
 
@@ -64,19 +64,19 @@ void onWindowResize(int newW, int newH) {
                           pRenderClipper);
 }
 
-void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
+void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
     int SDLKey;
     int key;
 
     switch (event->type) {
         case SDL_QUIT:
-            callMainFunc(&gInfo->gRunning, nullptr);
+            Events::callMainFunc(&gInfo->gRunning, nullptr);
             break;
 
         case SDL_WINDOWEVENT:
             switch (event->window.event) {
                 case SDL_WINDOWEVENT_RESIZED:
-                    onWindowResize(event->window.data1, event->window.data2);
+                    Events::onWindowResize(event->window.data1, event->window.data2);
                     break;
             }
             break;
@@ -85,7 +85,7 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
             SDLKey = event->key.keysym.sym;
             switch (SDLKey) {
                 case SDLK_ESCAPE:
-                    callMainFunc(&gInfo->gRunning, &runHomeMenu);
+                    Events::callMainFunc(&gInfo->gRunning, &MainHomeMenu::Run);
                     break;
 
                 case SDLK_F11: {
@@ -96,7 +96,7 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
                     Global::isWindowFullscreen = !Global::isWindowFullscreen;
                     int newW, newH;
                     SDL_GetWindowSize(gWindow, &newW, &newH);
-                    onWindowResize(newW, newH);
+                    Events::onWindowResize(newW, newH);
                     break;
                 }
 
@@ -143,7 +143,7 @@ void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
     if (pKey != nullptr) *pKey = key;
 }
 
-void callMainFunc(bool *gRunningLastMain, void (*gMain)()) {
+void Events::callMainFunc(bool *gRunningLastMain, void (*gMain)()) {
     *gRunningLastMain = false;
     Particle::removeAllParticles();
     Global::deleteWorld();
