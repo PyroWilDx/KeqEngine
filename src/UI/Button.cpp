@@ -57,10 +57,11 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
         outlineRectColor.r = std::max(outlineRectColor.r - darkerCoeff, 0);
         outlineRectColor.g = std::max(outlineRectColor.g - darkerCoeff, 0);
         outlineRectColor.b = std::max(outlineRectColor.b - darkerCoeff, 0);
-        WindowRenderer::renderRect(&outlineRect, true, true,
+        WindowRenderer::renderRect(&outlineRect, true,
                                    outlineRectColor.r, outlineRectColor.g,
                                    outlineRectColor.b, outlineRectColor.a,
-                                   gRenderer);
+                                   gRenderer,
+                                   true);
 
         SDL_Color renderColor = buttonColor;
         if (buttonState == BUTTON_CLICKED) {
@@ -70,10 +71,11 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
                 renderColor.b = renderColor.b / 2;
             }
         }
-        WindowRenderer::renderRect(&dst, true, true,
+        WindowRenderer::renderRect(&dst, true,
                                    renderColor.r, renderColor.g,
                                    renderColor.b, renderColor.a,
-                                   gRenderer);
+                                   gRenderer,
+                                   true);
     }
     if (buttonText != nullptr) buttonText->renderSelf(gRenderer);
 }
@@ -83,11 +85,11 @@ void Button::performCallBack(int mouseX, int mouseY) {
 }
 
 void Button::onClick(int mouseX, int mouseY) {
-    if (!fCallOnRelease) performCallBack(mouseX, mouseY);
     buttonState = BUTTON_CLICKED;
+    if (!fCallOnRelease) performCallBack(mouseX, mouseY);
 }
 
 void Button::onClickRelease(int mouseX, int mouseY, bool isMouseOnButton) {
-    if (isMouseOnButton && fCallOnRelease) performCallBack(mouseX, mouseY);
     buttonState = BUTTON_IDLE;
+    if (isMouseOnButton && fCallOnRelease) performCallBack(mouseX, mouseY);
 }

@@ -56,7 +56,7 @@ public:
 
     Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
 
-    ~Particle() override = default;
+    ~Particle() override;
 
     static void initParticle();
 
@@ -92,8 +92,6 @@ public:
     bool isFinished();
 
     void fadeAway(double speed = 1);
-
-    Particle *copy();
 
     inline void setOnRender(void (*onRender_)(Particle *)) { onRender = onRender_; }
 

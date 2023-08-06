@@ -2,8 +2,17 @@
 // Created by pyrow on 27/07/2023.
 //
 
+#ifdef _WIN32
+
+#include <SDL2_gfx/SDL2_gfxPrimitives.h>
+
+#else
+
+#include <SDL2/SDL2_gfxPrimitives.h>
+
+#endif
+
 #include "EntityRes/Attack.hpp"
-#include "SDL2_gfx/SDL2_gfxPrimitives.h"
 #include "Utils/Global.hpp"
 
 Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
@@ -46,7 +55,9 @@ BoostPolygon *Attack::getPolygonFromEntity(Entity *dstEntity) {
 
 bool Attack::isHittingEntity(LivingEntity *dstEntity) {
     BoostPolygon *dstHitBoxPoly = getPolygonFromEntity(dstEntity);
-    return bst_geo::intersects(atkPolygon, *dstHitBoxPoly);
+    bool res = bst_geo::intersects(atkPolygon, *dstHitBoxPoly);
+    delete dstHitBoxPoly;
+    return res;
 }
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {

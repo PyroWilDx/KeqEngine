@@ -5,7 +5,6 @@
 #include "Entity/Slime.hpp"
 #include "Entity/Keqing.hpp"
 #include "Utils/Global.hpp"
-#include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
 Slime::Slime(const std::string &colorString) :
         Monster(0.002, 1, SLIME_ENUM_N,

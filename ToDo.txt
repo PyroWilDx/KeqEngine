@@ -1,6 +1,3 @@
-Maybe put keqing in world, then do a "ongameframe" for every entity (virtual and may be nullptr) and put a vector of other entities...
-if that's the case I need to not forget to put fps text also
-
 hitlag
 
 damaging kb should take into account the weight of the entity
@@ -11,7 +8,7 @@ maybe in attacks, add the attack sprite used, and check if the sprite if still a
 
 isInvincible() for keqing ? and for every living entities in generaL... virtualfunc
 
-BUGS WHEN CLOSING APPLICATION BEAUCOUP
+BUGS WHEN CLOSING APPLICATION BEAUCOUP (WINDOWS SEULEMENT...)
 
 keqing skill : when in a wall, go to the shortest non wall
 
@@ -22,6 +19,3 @@ for coloring keqing
 
 for hurtstarttime in living entity
     may need to change to time acc for debug
-
-cmakelists
-    for linux, add boost, sdl2_gfx, sdl2_mixer

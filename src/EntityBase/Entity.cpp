@@ -171,11 +171,17 @@ bool Entity::isHittingWallHorizontallySide(bool sideLeft) const {
     if (!sideLeft) xCheck += (double) hitBox.w;
     std::vector<double> *yToCheck = getYArrayToCheck();
 
+    bool res = false;
     for (double vY: *yToCheck) {
-        if (gWorld->isPixelSurface(xCheck, vY)) return true;
+        if (gWorld->isPixelSurface(xCheck, vY)) {
+            res = true;
+            break;
+        }
     }
 
-    return false;
+    delete yToCheck;
+
+    return res;
 }
 
 bool Entity::isHittingWallHorizontally() const {
@@ -189,11 +195,17 @@ bool Entity::isHittingWallVerticallySide(bool sideUp) const {
     if (!sideUp) yCheck += hitBox.h;
     std::vector<double> *xToCheck = getXArrayToCheck();
 
+    bool res = false;
     for (double vX: *xToCheck) {
-        if (gWorld->isPixelSurface(vX, yCheck)) return true;
+        if (gWorld->isPixelSurface(vX, yCheck)) {
+            res = true;
+            break;
+        }
     }
 
-    return false;
+    delete xToCheck;
+
+    return res;
 }
 
 bool Entity::isInAir() const {
@@ -379,9 +391,10 @@ void Entity::renderHitBox(SDL_Renderer *gRenderer) {
     if (dstHitBox.w != 0 && dstHitBox.h != 0) {
         dstHitBox.x += roundToInt(this->getX());
         dstHitBox.y += roundToInt(this->getY());
-        WindowRenderer::renderRect(&dstHitBox, false, false,
+        WindowRenderer::renderRect(&dstHitBox, false,
                                    COLOR_RED_FULL,
-                                   gRenderer);
+                                   gRenderer,
+                                   false, true);
     }
 }
 
