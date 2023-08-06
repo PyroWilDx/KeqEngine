@@ -5,6 +5,17 @@
 #ifndef COLORKEQING_HPP
 #define COLORKEQING_HPP
 
-void runColorKeqing();
+#include "MainInterface.hpp"
+
+class MainColorKeqing : public MainInterface<MainColorKeqing> {
+
+public:
+    MainColorKeqing() = delete;
+
+    static void RunImpl();
+
+private:
+
+};
 
 #endif
