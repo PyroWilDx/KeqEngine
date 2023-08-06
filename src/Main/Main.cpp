@@ -1,3 +1,9 @@
+#ifdef __unix__
+
+#include <gperftools/profiler.h>
+
+#endif
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -11,6 +17,11 @@
 #include "EntityRes/Sound.hpp"
 
 int main(int argc, char *argv[]) {
+
+#ifdef __unix__
+    ProfilerStart("Profiler.prof");
+#endif
+
     std::string path = std::filesystem::current_path().string();
     std::filesystem::current_path(path + "/..");
 
@@ -43,6 +54,10 @@ int main(int argc, char *argv[]) {
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
+
+#ifdef __unix__
+    ProfilerStop();
+#endif
 
     return EXIT_SUCCESS;
 }

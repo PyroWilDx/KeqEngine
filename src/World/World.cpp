@@ -121,8 +121,9 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
     if (eventType == SDL_MOUSEBUTTONUP) {
         if (activeButton != nullptr) {
             bool isMouseOnButton = isPixelCode(x, y, activeButton->getWorldCode());
-            activeButton->onClickRelease((int) x, (int) y, isMouseOnButton);
+            Button *tmpButton = activeButton; // Because World May be Deleted !
             activeButton = nullptr;
+            tmpButton->onClickRelease((int) x, (int) y, isMouseOnButton);
         }
     }
 }

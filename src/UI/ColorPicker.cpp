@@ -105,6 +105,7 @@ void ColorPicker::fillPixels(Uint32 currRGBA) {
     SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
     SDL_Texture* cpTexture = SDL_CreateTextureFromSurface(gRenderer, cpSurface);
     setTexture(cpTexture);
+    SDL_FreeSurface(cpSurface);
 }
 
 Uint32 ColorPicker::getCurrentRGBA() const {
@@ -129,7 +130,8 @@ void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {
     int cursorSize = getPickerSize();
     SDL_Rect cursorDst = {pickerX - cursorSize / 2, pickerY - cursorSize / 2,
                           cursorSize, cursorSize};
-    WindowRenderer::renderRect(&cursorDst, false, false,
+    WindowRenderer::renderRect(&cursorDst, false,
                                COLOR_BLACK_FULL,
-                               gRenderer);
+                               gRenderer,
+                               false, false);
 }

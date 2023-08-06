@@ -13,7 +13,15 @@ AnimatedEntity::AnimatedEntity(int spriteArrayLength)
 }
 
 AnimatedEntity::~AnimatedEntity() {
+    if (imgTexture != nullptr) {
+        for (int i = 0; i < spriteArray.getSpriteArrayLength(); i++) {
+            imgTexture = spriteArray[i].sTexture;
+            clearTexture();
+            delete[] spriteArray[i].sFrameLengths;
+        }
+    }
     imgTexture = nullptr;
+
     delete soundSheet;
 }
 
@@ -28,6 +36,14 @@ void AnimatedEntity::setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 void AnimatedEntity::initSprite(int spriteCode, const char *imgPath,
                                 int spriteFrameW, int spriteFrameH, int spriteFrameN,
                                 int spriteFrameLength) {
+    if (imgPath == nullptr) {
+        spriteArray[spriteCode] = {spriteCode, nullptr,
+                                   nullptr, false,
+                                   0, 0, 0, 0,
+                                   nullptr, 0, nullptr};
+        return;
+    }
+
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     spriteArray[spriteCode] =

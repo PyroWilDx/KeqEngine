@@ -1,1 +1,4 @@
 .idea/
+gmon.out
+Profiler.*
+!Profiler.py

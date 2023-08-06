@@ -56,13 +56,16 @@ SDL_Texture *WindowRenderer::loadTexture(const char *imgPath) {
     return texture;
 }
 
-void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled, bool shifted,
+void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled,
                                 Uint8 r, Uint8 g, Uint8 b, Uint8 a,
-                                SDL_Renderer *gRenderer_) {
+                                SDL_Renderer *gRenderer_,
+                                bool shifted, bool translate) {
     SDL_Rect dstRect = *pDstRect;
     if (!shifted) {
-        dstRect.x -= Global::currentWorld->getBackground()->getFrame().x;
-        dstRect.y -= Global::currentWorld->getBackground()->getFrame().y;
+        if (translate) {
+            dstRect.x -= Global::currentWorld->getBackground()->getFrame().x;
+            dstRect.y -= Global::currentWorld->getBackground()->getFrame().y;
+        }
         double xCoeff, yCoeff;
         getScreenXYCoeff(&xCoeff, &yCoeff);
         dstRect.x = (int) ((double) dstRect.x * xCoeff);

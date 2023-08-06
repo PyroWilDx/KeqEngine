@@ -15,7 +15,7 @@ int Particle::activeCounts[PARTICLE_ENUM_N];
 Particle::Particle(bool isBaseParticle)
         : AnimatedEntity((isBaseParticle) ? PARTICLE_ENUM_N : 1),
           fadeParams({-1, 1}) {
-    particleCode = 0;
+    particleCode = -1;
     entity = nullptr;
     entityLastX = 0;
     entityLastY = 0;
@@ -39,6 +39,14 @@ Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double h
     renderHMultiplier = hMultiplier;
     imgFrame = {0, 0, currentSprite->sFrameW, currentSprite->sFrameH};
     imgTexture = currentSprite->sTexture;
+}
+
+Particle::~Particle() {
+    if (particleCode == -1) {
+        baseParticle->imgTexture = (SDL_Texture *) 42; // Delete Texture (Clean Up)
+    } else {
+        imgTexture = nullptr; // Don't Delete Texture (Not the End)
+    }
 }
 
 void Particle::initParticle() {
@@ -127,6 +135,8 @@ void Particle::initParticle() {
                              800, 320, 10);
     particleMaxActives[PARTICLE_KQ_BURST_FINAL_SLASH] = 1;
 
+    baseParticle->initSprite(PARTICLE_HUD_START, nullptr,
+                             0, 0, 0);
     particleMaxActives[PARTICLE_HUD_START] = 0;
 
     baseParticle->initSprite(PARTICLE_HUD_SKILL_CIRCLE_BG, "res/gfx/hud/SkillBurstCircleBG.png",
@@ -264,24 +274,22 @@ bool Particle::isActive(int spriteCode, int i) {
 void Particle::removeAllParticles() {
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         int count = activeCounts[spriteCode];
-        activeCounts[spriteCode] = 0;
         for (int i = 0; i < count; i++) {
             delete activeParticles[spriteCode][i];
             activeParticles[spriteCode][i] = nullptr;
         }
+        activeCounts[spriteCode] = 0;
     }
 }
 
 void Particle::cleanUp() {
-    for (int i = 0; i < PARTICLE_ENUM_N; i++) {
-        if (particleMaxActives[i] == 0) continue;
-        SDL_DestroyTexture(baseParticle->getSprite(i)->sTexture);
-    }
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
             delete activeParticles[spriteCode][i];
         }
     }
+
+    delete baseParticle;
 }
 
 void Particle::setEntity(Entity *newEntity) {
@@ -342,19 +350,4 @@ void Particle::fadeAway(double speed) {
     SDL_GetTextureAlphaMod(imgTexture, &alpha);
     fadeParams.baseAlpha = alpha;
     fadeParams.speed = speed;
-}
-
-Particle *Particle::copy() {
-    auto *newParticle = new Particle(particleCode,
-                                     getSprite()->sFrameLengths[0],
-                                     renderWMultiplier,
-                                     renderHMultiplier);
-    newParticle->x = x;
-    newParticle->y = y;
-    newParticle->imgFrame = imgFrame;
-    newParticle->degRotation = degRotation;
-    newParticle->entity = entity;
-    newParticle->facingEast = facingEast;
-
-    return newParticle;
 }

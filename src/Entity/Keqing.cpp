@@ -280,8 +280,9 @@ void Keqing::colorTexture(Uint32 rgba) {
         }
 
         SDL_Texture *mTexture = SDL_CreateTextureFromSurface(gRenderer, img);
-        currSprite->sTexture = mTexture;
         SDL_FreeSurface(img);
+        SDL_DestroyTexture(currSprite->sTexture);
+        currSprite->sTexture = mTexture;
     }
 }
 
@@ -605,7 +606,6 @@ void Keqing::dash() {
     }
 }
 
-Particle *newSkillCircleHud = nullptr;
 int skillUseTime;
 
 static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1) {
@@ -617,8 +617,6 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
     skillIcon2->moveToEntityCenter(skillCircleHud);
     skillIcon2->setOnRemove([](Particle *removedParticle) {
         Particle *skillCircleHud = Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE);
-        newSkillCircleHud = skillCircleHud->copy();
-        newSkillCircleHud->setRGBAMod(KQ_SKILL_CIRCLE_RGBA);
 
         Particle *skillIcon1 =
                 Particle::pushParticle(PARTICLE_HUD_SKILL_ICON_1,
@@ -635,8 +633,12 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
                                        HUD_SB_CIRCLE_M * 1.0);
         timerHud->moveToEntityCenter(skillCircleHud);
         timerHud->setOnRemove([](Particle *removedParticle) {
-            Particle::pushFast(newSkillCircleHud);
-            newSkillCircleHud->setRGBAMod(KQ_SKILL_CIRCLE_RGBA);
+            Particle *skillCircleHud =
+                    Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE, INT32_MAX,
+                                           HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
+            skillCircleHud->moveToEntityCenter(
+                    Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE_BG));
+            skillCircleHud->setRGBAMod(KQ_SKILL_CIRCLE_RGBA);
             Particle *skillIcon1Hud = Particle::getParticle(PARTICLE_HUD_SKILL_ICON_1);
             skillIcon1Hud->setRGBAMod(COLOR_WHITE_FULL);
         });
@@ -704,9 +706,10 @@ void Keqing::ESkill() {
                                     dstParticle.y + dstParticle.h + IDLE_PARTICLE_GAP - rectH,
                                     dstParticle.w,
                                     rectH - 2};
-                WindowRenderer::renderRect(&dstRect, true, false,
+                WindowRenderer::renderRect(&dstRect, true,
                                            COLOR_BLACK_FULL,
-                                           gRenderer);
+                                           gRenderer,
+                                           false, false);
             });
         }
     }

@@ -24,9 +24,10 @@ public:
 
     SDL_Texture *loadTexture(const char *imgPath);
 
-    static void renderRect(SDL_Rect *pDstRect, bool filled, bool shifted,
+    static void renderRect(SDL_Rect *pDstRect, bool filled,
                            Uint8 r, Uint8 g, Uint8 b, Uint8 a,
-                           SDL_Renderer *gRenderer_);
+                           SDL_Renderer *gRenderer_,
+                           bool shifted, bool translate = true);
 
     void renderEntity(Entity *entity);
 
