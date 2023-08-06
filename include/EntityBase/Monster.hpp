@@ -12,8 +12,6 @@ class Monster : public LivingEntity {
     using LivingEntity::LivingEntity;
 
 public:
-    Monster() : LivingEntity(0, 0, 0, 0, 0) {}
-
     virtual void AI() = 0;
 
 private:

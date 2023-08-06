@@ -3,7 +3,7 @@
 //
 
 #include "Entity/Particle.hpp"
-#include "Keqing.hpp"
+#include "Entity/Keqing.hpp"
 #include "Utils/Global.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
@@ -205,7 +205,7 @@ void Particle::removeParticle(int spriteCode, int i) {
     if (removedParticle->onRemove != nullptr) removedParticle->onRemove(removedParticle);
 
     int lastIndex = activeCounts[spriteCode] - 1;
-    removedParticle->setRGBAMod(RGBA_FULL);
+    removedParticle->setRGBAMod(COLOR_WHITE_FULL);
     delete removedParticle;
     activeCounts[spriteCode]--;
     activeParticles[spriteCode][i] = activeParticles[spriteCode][lastIndex];
@@ -229,7 +229,7 @@ void Particle::animateAll() {
                     removeParticle(spriteCode, i);
                     continue;
                 }
-                currParticle->setRGBAMod(RGB_FULL, alpha);
+                currParticle->setRGBAMod(COLOR_WHITE, alpha);
                 continue;
             }
 

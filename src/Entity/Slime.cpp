@@ -3,7 +3,7 @@
 //
 
 #include "Entity/Slime.hpp"
-#include "Keqing.hpp"
+#include "Entity/Keqing.hpp"
 #include "Utils/Global.hpp"
 #include "SDL2_gfx/SDL2_gfxPrimitives.h"
 
@@ -26,11 +26,11 @@ Slime::Slime(const std::string &colorString) :
 
     initSprite(SLIME_JUMP, (pathStart + "Jump.png").c_str(),
                32, 32, 10, 60);
-    setXYShift(-8, -16, -16, SLIME_JUMP);
+    setXYShift(-8, -16, -8, SLIME_JUMP);
 
     initSprite(SLIME_ATK, (pathStart + "Atk.png").c_str(),
                32, 32, 5, 60);
-    setXYShift(-8, -16, -16, SLIME_ATK);
+    setXYShift(-8, -16, -8, SLIME_ATK);
     setSpriteFrameLengthFromTo(100, 0, 2, SLIME_ATK);
     setSpriteFrameLengthFromTo(INT32_MAX, 4, 4, SLIME_ATK);
 

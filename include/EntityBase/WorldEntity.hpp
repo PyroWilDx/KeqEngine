@@ -24,6 +24,8 @@ public:
 
     void addImage(const char *imgPath, int frameW = 0, int frameH = 0);
 
+    bool isPixelInSelfRect(double pixelX, double pixelY);
+
     inline int getX() { return roundToInt(x); }
 
     inline int getY() { return roundToInt(y); }
@@ -31,6 +33,10 @@ public:
     [[nodiscard]] inline int getWorldEntityType() const { return worldEntityType; }
 
     [[nodiscard]] inline int getWorldCode() const { return worldCode; }
+
+    [[nodiscard]] inline int getRenderW() const { return renderW; }
+
+    [[nodiscard]] inline int getRenderH() const { return renderH; }
 
 private:
     static int entityCount;

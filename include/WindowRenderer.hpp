@@ -8,6 +8,7 @@
 #include <SDL2/SDL.h>
 
 class Entity;
+
 class Block;
 
 class WindowRenderer {
@@ -22,6 +23,10 @@ public:
     static void cleanUp();
 
     SDL_Texture *loadTexture(const char *imgPath);
+
+    static void renderRect(SDL_Rect *pDstRect, bool filled, bool shifted,
+                           Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+                           SDL_Renderer *gRenderer_);
 
     void renderEntity(Entity *entity);
 

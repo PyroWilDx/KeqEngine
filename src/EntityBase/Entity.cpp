@@ -377,17 +377,11 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
 void Entity::renderHitBox(SDL_Renderer *gRenderer) {
     SDL_Rect dstHitBox = hitBox;
     if (dstHitBox.w != 0 && dstHitBox.h != 0) {
-        dstHitBox.x += getX() - Global::currentWorld->getBackground()->getFrame().x;
-        dstHitBox.y += getY() - Global::currentWorld->getBackground()->getFrame().y;
-        double xCoeff, yCoeff;
-        getScreenXYCoeff(&xCoeff, &yCoeff);
-        dstHitBox.x = (int) ((double) dstHitBox.x * xCoeff);
-        dstHitBox.y = (int) ((double) dstHitBox.y * yCoeff);
-        dstHitBox.w = (int) ((double) dstHitBox.w * xCoeff);
-        dstHitBox.h = (int) ((double) dstHitBox.h * yCoeff);
-        shiftXYFromScreenPosition(&dstHitBox.x, &dstHitBox.y);
-        SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
-        SDL_RenderDrawRect(gRenderer, &dstHitBox);
+        dstHitBox.x += roundToInt(this->getX());
+        dstHitBox.y += roundToInt(this->getY());
+        WindowRenderer::renderRect(&dstHitBox, false, false,
+                                   COLOR_RED_FULL,
+                                   gRenderer);
     }
 }
 

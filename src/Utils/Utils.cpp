@@ -20,9 +20,11 @@ int roundToInt(double x) {
     return ((int) (x));
 }
 
-//bool areDoubleEpsilonEqual(double a, double b) {
-//    return (abs(a - b) < DOUBLE_EPSILON);
-//}
+Uint32 cvStringToUint32(std::string &valStr) {
+    unsigned long tmpL = std::stoul(valStr);
+    auto res = (Uint32) tmpL;
+    return res;
+}
 
 int getTime() {
     return ((int) SDL_GetTicks());
@@ -123,7 +125,14 @@ bool isKeyDoublePressed(int key) {
     return (Global::pressedTime[key] - Global::lastPressedTime[key] < 200);
 }
 
-void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
+void Uint32RGBAToUint8RGBA(Uint32 rgba, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a) {
+    if (r != nullptr) *r = (Uint8) (rgba >> 24);
+    if (g != nullptr) *g = (Uint8) (rgba >> 16);
+    if (b != nullptr) *b = (Uint8) (rgba >> 8);
+    if (a != nullptr) *a = (Uint8) (rgba >> 0);
+}
+
+void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
               double *pH, double *pS, double *pV) {
     double fr = (double) r / 255.0;
     double fg = (double) g / 255.0;
@@ -165,7 +174,7 @@ void RGBtoHSV(Uint8 r, Uint8 g, Uint8 b,
     if (pV != nullptr) *pV = v;
 }
 
-void HSVtoRGB(double h, double s, double v,
+void HSVToRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB) {
     if (s == 0) {
         *pR = *pG = *pB = (Uint8) (v * 255.0);

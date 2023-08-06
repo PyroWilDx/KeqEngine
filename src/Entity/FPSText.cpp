@@ -7,7 +7,7 @@
 #include "Utils/Global.hpp"
 
 const char *fontPath = "res/fonts/JetBrainsMono-Regular.ttf";
-const SDL_Color FPSTextColor = {RGBA_FULL};
+const SDL_Color FPSTextColor = {COLOR_WHITE_FULL};
 const int FPSFontSize = 40;
 
 void FPSText::onGameFrame() {

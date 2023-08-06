@@ -10,6 +10,8 @@
 class Random {
 
 public:
+    Random() = delete;
+
     static int getRandomInt(int start, int end);
 
     static int getRandomIntEndExcl(int start, int end);
@@ -17,8 +19,6 @@ public:
     static double getRandomReal();
 
 private:
-    Random() = default;
-
     static std::random_device rd;
     static std::mt19937 generator;
     static std::uniform_int_distribution<int> randomInt;

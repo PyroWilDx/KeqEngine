@@ -12,8 +12,8 @@
 #include "Block.hpp"
 #include "EntityBase/Monster.hpp"
 #include "Utils/LinkedList.hpp"
-#include "Attack.hpp"
-#include "Keqing.hpp"
+#include "EntityRes/Attack.hpp"
+#include "Entity/Keqing.hpp"
 
 typedef struct Pixel {
     int worldType;
