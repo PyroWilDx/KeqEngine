@@ -2,7 +2,7 @@
 // Created by pyrowildx on 13/05/23.
 //
 
-#include "EntityBase/Entity.hpp"
+#include "BaseEntity/Entity.hpp"
 #include "Utils/Global.hpp"
 
 Entity::Entity()

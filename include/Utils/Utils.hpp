@@ -7,8 +7,8 @@
 
 #include <string>
 #include <SDL2/SDL.h>
-#include "EntityBase/Entity.hpp"
-#include "EntityBase/AnimatedEntity.hpp"
+#include "BaseEntity/Entity.hpp"
+#include "BaseEntity/AnimatedEntity.hpp"
 #include "Entity/Particle.hpp"
 
 #define SCREEN_BASE_WIDTH 1280

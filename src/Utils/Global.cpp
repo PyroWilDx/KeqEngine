@@ -8,29 +8,40 @@
 
 std::unordered_map<std::string, std::string> Global::userData;
 
-int Global::windowWidth = SCREEN_BASE_WIDTH;
-int Global::windowHeight = SCREEN_BASE_HEIGHT;
-int Global::renderWindowWidth = SCREEN_BASE_WIDTH;
-int Global::renderWindowHeight = SCREEN_BASE_HEIGHT;
-bool Global::isWindowFullscreen = false;
+int Global::windowWidth;
+int Global::windowHeight;
+int Global::renderWindowWidth;
+int Global::renderWindowHeight;
+bool Global::isWindowFullscreen;
 
 bool Global::pressedKeys[KEY_ENUM_N];
 int Global::pressedTime[KEY_ENUM_N];
 int Global::lastPressedTime[KEY_ENUM_N];
 
-int Global::currentTime = 0;
-int Global::dt = 0;
+int Global::currentTime;
+int Global::dt;
 
-World *Global::currentWorld = nullptr;
+World *Global::currentWorld;
 
 void Global::initGlobal() {
     readUserData();
+
+    windowWidth = SCREEN_BASE_WIDTH;
+    windowHeight = SCREEN_BASE_HEIGHT;
+    renderWindowWidth = SCREEN_BASE_WIDTH;
+    renderWindowHeight = SCREEN_BASE_HEIGHT;
+    isWindowFullscreen = false;
 
     for (int i = 0; i < KEY_ENUM_N; i++) {
         pressedKeys[i] = false;
         pressedTime[i] = 0;
         lastPressedTime[i] = 0;
     }
+
+    currentTime = 0;
+    dt = 0;
+
+    currentWorld = nullptr;
 }
 
 void Global::cleanUp() {

@@ -3,7 +3,7 @@
 //
 
 #include <numeric>
-#include "EntityBase/AnimatedEntity.hpp"
+#include "BaseEntity/AnimatedEntity.hpp"
 #include "Utils/Global.hpp"
 
 AnimatedEntity::AnimatedEntity(int spriteArrayLength)

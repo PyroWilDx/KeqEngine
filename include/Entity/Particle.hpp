@@ -5,7 +5,7 @@
 #ifndef PARTICLE_HPP
 #define PARTICLE_HPP
 
-#include "EntityBase/AnimatedEntity.hpp"
+#include "BaseEntity/AnimatedEntity.hpp"
 
 enum {
     PARTICLE_KQ_NATK_4 = 0,

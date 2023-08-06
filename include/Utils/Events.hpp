@@ -36,6 +36,10 @@ class Events {
 public:
     Events() = delete;
 
+    static void initEvents();
+
+    static void cleanUp();
+
     static void onWindowResize(int newW, int newH);
     
     static void handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo);

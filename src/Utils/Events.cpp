@@ -6,6 +6,14 @@
 #include "Utils/Global.hpp"
 #include "Main/HomeMenu.hpp"
 
+void Events::initEvents() {
+
+}
+
+void Events::cleanUp() {
+
+}
+
 void Events::onWindowResize(int newW, int newH) {
     Global::windowWidth = newW;
     Global::windowHeight = newH;

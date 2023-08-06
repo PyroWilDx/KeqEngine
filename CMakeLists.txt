@@ -21,8 +21,6 @@ if (WIN32)
     set(SDL2 "C:/C/SDL2")
 
     set(HEADER_DIRS ${HEADER_DIRS} ${SDL2}/include)
-    set(HEADER_DIRS ${HEADER_DIRS} ${RPCRT4}/include) # PLUS BESOIN NON ? TODO FAST
-    set(HEADER_DIRS ${HEADER_DIRS} ${WINMM}/include)
 
     set(PLATFORM_LIB_FLAGS ${LIB_FLAGS}
             ${SDL2}/lib/libSDL2main.a

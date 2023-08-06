@@ -6,7 +6,7 @@
 #define SLIME_HPP
 
 #include <string>
-#include "EntityBase/Monster.hpp"
+#include "BaseEntity/Monster.hpp"
 
 enum {
     SLIME_IDLE,

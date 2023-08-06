@@ -3,7 +3,7 @@
 //
 
 #include <algorithm>
-#include "EntityBase/LivingEntity.hpp"
+#include "BaseEntity/LivingEntity.hpp"
 #include "Utils/Global.hpp"
 
 LivingEntity::LivingEntity(double gravityWeight, int baseHp,

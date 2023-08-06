@@ -12,7 +12,7 @@
 
 #endif
 
-#include "EntityRes/Attack.hpp"
+#include "StructForEntity/Attack.hpp"
 #include "Utils/Global.hpp"
 
 Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,

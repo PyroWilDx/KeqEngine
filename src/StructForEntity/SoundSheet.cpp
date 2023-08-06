@@ -3,9 +3,9 @@
 //
 
 #include <string>
-#include "EntityRes/SoundSheet.hpp"
+#include "StructForEntity/SoundSheet.hpp"
 #include "Utils/Random.hpp"
-#include "EntityRes/Sound.hpp"
+#include "Utils/Sound.hpp"
 #include "Utils/Utils.hpp"
 
 SoundSheet::SoundSheet(int soundSheetLength) {

@@ -11,7 +11,7 @@
 #include <SDL2/SDL_image.h>
 #include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
-#include "EntityBase/Entity.hpp"
+#include "BaseEntity/Entity.hpp"
 #include "Utils/Global.hpp"
 
 WindowRenderer *WindowRenderer::instance = nullptr;

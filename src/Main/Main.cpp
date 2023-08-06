@@ -9,12 +9,12 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include <filesystem>
-#include <iostream>
 #include "Main/HomeMenu.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Entity/Keqing.hpp"
-#include "EntityRes/Sound.hpp"
+#include "Utils/Sound.hpp"
+#include "Utils/Random.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -40,6 +40,8 @@ int main(int argc, char *argv[]) {
     WindowRenderer::initWindowRenderer("Keqing", SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT);
     Global::initGlobal();
     Sound::initSound();
+    Events::initEvents();
+    Random::initRandom();
     Keqing::initKeqing();
     Particle::initParticle();
 
@@ -47,6 +49,8 @@ int main(int argc, char *argv[]) {
 
     Particle::cleanUp();
     Keqing::cleanUp();
+    Random::cleanUp();
+    Events::cleanUp();
     Sound::cleanUp();
     Global::cleanUp();
     WindowRenderer::cleanUp();

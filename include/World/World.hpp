@@ -10,9 +10,9 @@
 #include "Background.hpp"
 #include "UI/Button.hpp"
 #include "Block.hpp"
-#include "EntityBase/Monster.hpp"
+#include "BaseEntity/Monster.hpp"
 #include "Utils/LinkedList.hpp"
-#include "EntityRes/Attack.hpp"
+#include "StructForEntity/Attack.hpp"
 #include "Entity/Keqing.hpp"
 
 typedef struct Pixel {

@@ -5,7 +5,7 @@
 #ifndef WORLDENTITY_HPP
 #define WORLDENTITY_HPP
 
-#include "EntityBase/Entity.hpp"
+#include "Entity.hpp"
 #include "Utils/Utils.hpp"
 
 typedef enum {

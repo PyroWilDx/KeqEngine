@@ -8,7 +8,7 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
-#include "EntityRes/Sound.hpp"
+#include "Utils/Sound.hpp"
 
 void MainHomeMenu::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
