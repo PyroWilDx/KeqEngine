@@ -246,8 +246,8 @@ void Entity::moveToDownLeft(double xLeft, double yDown) {
     } else {
         yUp = yDown - hitBox.h;
     }
-    xLeft -= (hitBox.x - x);
-    yUp -= (hitBox.y - y);
+    xLeft -= hitBox.x;
+    yUp -= hitBox.y;
     moveTo(xLeft, yUp);
 }
 

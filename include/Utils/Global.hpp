@@ -13,6 +13,7 @@
 #define DATA_PATH "data/.dat"
 #define DATA_KQ_VOICE_LANG "KeqingVoiceLang"
 #define DATA_KQ_COLOR "KeqingColor"
+#define DATA_GAME_VOLUME "GameVolume"
 
 class Global {
 

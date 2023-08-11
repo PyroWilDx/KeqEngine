@@ -103,7 +103,8 @@ void LivingEntity::hurt() {
 
 void LivingEntity::updateAction() {
     int currSpriteCode = getCurrentSpriteCode();
-    int startIndex = (currSpriteCode > stateChangerEndSpriteCode) ? stateChangerEndSpriteCode + 1 : 1;
+//    int startIndex = (currSpriteCode > stateChangerEndSpriteCode) ? stateChangerEndSpriteCode + 1 : 0;
+    int startIndex = 0;
 
     for (int i = startIndex; i < currSpriteCode; i++) {
         setSpriteAnimated(false, i);

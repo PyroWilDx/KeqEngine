@@ -7,10 +7,10 @@
 
 #include "MainInterface.hpp"
 
-class MainConfigKeqing : public MainInterface<MainConfigKeqing> {
+class ConfigKeqing : public MainInterface<ConfigKeqing> {
 
 public:
-    MainConfigKeqing() = delete;
+    ConfigKeqing() = delete;
 
     static void RunImpl();
 

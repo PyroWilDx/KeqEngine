@@ -70,6 +70,8 @@ enum {
 class Keqing : public LivingEntity {
 
 public:
+    void setSoundSheet();
+
     static void initKeqing();
 
     static inline Keqing *getInstance() { return instance; }
@@ -78,7 +80,11 @@ public:
 
     void reset();
 
-    void colorTexture(Uint32 rgba);
+    void colorSprite(Uint32 rgba, Sprite *sprite);
+
+    void colorCurrSprite(Uint32 rgba);
+
+    void colorAllSprites(Uint32 rgba);
 
     void moveX() override;
 
@@ -93,6 +99,10 @@ public:
     void moveLR();
 
     void airAnimate();
+
+    void idle();
+
+    void walk();
 
     void run();
 
@@ -148,6 +158,10 @@ public:
 
     void updateAction() override;
 
+    void lock();
+
+    void unlock();
+
     static inline bool isLightningStilettoExisting() {
         return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE) != nullptr);
     }
@@ -160,8 +174,10 @@ public:
 
     [[nodiscard]] inline int getBurstCloneSlashCount() const { return burstCloneSlashCount; }
 
+    [[nodiscard]] inline int isLocked() const { return locked; }
+
 private:
-    explicit Keqing();
+    Keqing();
 
     static Keqing *instance;
 
@@ -170,6 +186,7 @@ private:
     int jumpPressTime;
     bool doubleJumped;
     bool airDashed;
+    bool locked;
 
 };
 

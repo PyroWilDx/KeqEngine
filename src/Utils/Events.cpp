@@ -72,6 +72,13 @@ void Events::onWindowResize(int newW, int newH) {
                           pRenderClipper);
 }
 
+void Events::onMouse(SDL_Event *event) {
+    int mouseX = event->button.x;
+    int mouseY = event->button.y;
+    getMouseAbsoluteXY(&mouseX, &mouseY);
+    Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
+}
+
 void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
     int SDLKey;
     int key;
@@ -93,7 +100,7 @@ void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
             SDLKey = event->key.keysym.sym;
             switch (SDLKey) {
                 case SDLK_ESCAPE:
-                    Events::callMainFunc(&gInfo->gRunning, &MainHomeMenu::Run);
+                    Events::callMainFunc(&gInfo->gRunning, &HomeMenu::Run);
                     break;
 
                 case SDLK_F11: {
@@ -131,18 +138,18 @@ void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
             key = updatePressedKeys(SDLKey, false, true);
             break;
 
+        case SDL_MOUSEMOTION:
+            onMouse(event);
+            break;
+
         case SDL_MOUSEBUTTONDOWN:
-        case SDL_MOUSEBUTTONUP: {
+        case SDL_MOUSEBUTTONUP:
             SDLKey = event->button.button;
             key = updatePressedKeys(SDLKey,
                                     (event->type == SDL_MOUSEBUTTONDOWN),
                                     false);
-            int mouseX = event->button.x;
-            int mouseY = event->button.y;
-            getMouseAbsoluteXY(&mouseX, &mouseY);
-            Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
+            onMouse(event);
             break;
-        }
 
         default:
             break;

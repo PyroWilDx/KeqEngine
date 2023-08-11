@@ -48,6 +48,8 @@ public:
 
     void goToFrame(int frameIndex, int spriteCode = 0);
 
+    void goToFrameNoNew(int frameIndex, int spriteCode = 0);
+
     void goToNextFrame(int spriteCode = 0);
 
     void stopOnFrame(int frameIndex, int spriteCode = 0);

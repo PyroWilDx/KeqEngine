@@ -9,9 +9,9 @@
 
 class FPSText : public Text {
 
-    using Text::Text;
-
 public:
+    FPSText();
+
     ~FPSText() override = default;
 
     void onGameFrame() override;

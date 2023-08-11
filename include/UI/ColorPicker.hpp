@@ -14,13 +14,13 @@ public:
 
     ~ColorPicker() override;
 
-//    SDL_Rect getRenderRect() override;
-
     void fillPixels(Uint32 currRGBA);
 
     [[nodiscard]] Uint32 getCurrentRGBA() const;
 
     void onClick(int mouseX, int mouseY) override;
+
+    void onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) override;
 
     int getPickerSize();
 

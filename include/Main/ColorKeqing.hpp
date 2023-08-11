@@ -7,10 +7,10 @@
 
 #include "MainInterface.hpp"
 
-class MainColorKeqing : public MainInterface<MainColorKeqing> {
+class ColorKeqing : public MainInterface<ColorKeqing> {
 
 public:
-    MainColorKeqing() = delete;
+    ColorKeqing() = delete;
 
     static void RunImpl();
 

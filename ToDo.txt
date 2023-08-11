@@ -1,8 +1,8 @@
 hitlag
 
-damaging kb should take into account the weight of the entity
+global volume
 
-comment les textures de slime et keqing sont elles deletes ??? verif valgrind
+damaging kb should take into account the weight of the entity
 
 maybe in attacks, add the attack sprite used, and check if the sprite if still animated in theonremove func
 
@@ -11,9 +11,8 @@ isInvincible() for keqing ? and for every living entities in generaL... virtualf
 keqing skill : when in a wall, go to the shortest non wall
 
 for coloring keqing
-     FAIRE UN BOUTON SET COLOR POUR EVITER LE LAG.
      FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
-     CURSEUR QUI SUIT LA SOURIS QUAND CLIQUEE
+     reset color buttn
 
 for hurtstarttime in living entity
     may need to change to time acc for debug

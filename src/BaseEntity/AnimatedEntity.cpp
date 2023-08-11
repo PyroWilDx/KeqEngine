@@ -131,6 +131,11 @@ void AnimatedEntity::goToFrame(int frameIndex, int spriteCode) {
     spriteArray[spriteCode].sCurrentFrame = frameIndex;
 }
 
+void AnimatedEntity::goToFrameNoNew(int frameIndex, int spriteCode) {
+    goToFrame(frameIndex, spriteCode);
+    spriteArray[spriteCode].sTimer = 1;
+}
+
 void AnimatedEntity::goToNextFrame(int spriteCode) {
     goToFrame(spriteArray[spriteCode].sCurrentFrame + 1, spriteCode);
     spriteArray[spriteCode].sTimer = 0;

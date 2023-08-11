@@ -18,14 +18,14 @@ const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 Keqing::Keqing()
         : LivingEntity(0.0024, 1, KQ_ENUM_N,
                        KQ_HURT, KQ_JUMP) {
-    std::string soundStartPath = "res/sfx/keqing/" + Global::userData[DATA_KQ_VOICE_LANG];
-    soundSheet->setSoundStartPath(soundStartPath);
+    setHitbox({0, 12, 60, 84});
 
     skillUseTime = 0;
     burstCloneSlashCount = 0;
     jumpPressTime = 0;
     doubleJumped = false;
     airDashed = false;
+    locked = false;
 
     initSprite(KQ_IDLE, "res/gfx/keqing/Idle.png",
                96, 96, 18, 60);
@@ -70,9 +70,114 @@ Keqing::Keqing()
     setSpriteFrameLengthFromTo(INT32_MAX, 2, 2, KQ_CROUCH);
     setXYShift(-2, 0, -32, KQ_CROUCH);
 
+    initSprite(KQ_JUMP_START, "res/gfx/keqing/JumpStart.png",
+               96, 96, 2, 20);
+    setXYShift(0, 0, -36, KQ_JUMP_START);
+    setSpriteNext(KQ_JUMP, KQ_JUMP_START);
+
+    initSprite(KQ_JUMP, "res/gfx/keqing/Jump.png",
+               96, 128, 7, 100);
+    setXYShift(0, -34, -34, KQ_JUMP);
+    setSpriteFrameLengthFromTo(INT32_MAX, 2, 4, KQ_JUMP);
+    setSpriteNext(KQ_JUMP_END, KQ_JUMP);
+
     initSprite(KQ_NATK, "res/gfx/keqing/NAtk.png",
                192, 160, 34, 60);
     setXYShift(-38, -32, -92, KQ_NATK);
+
+    initSprite(KQ_CATK, "res/gfx/keqing/CAtk.png",
+               128, 96, 15, 60);
+    setXYShift(-34, 0, -32, KQ_CATK);
+    setSpriteFrameLengthFromTo(30, 0, 5, KQ_CATK);
+
+    initSprite(KQ_UP_NATK, "res/gfx/keqing/UpNAtk.png",
+               128, 128, 8, 60);
+    setXYShift(-22, -32, -46, KQ_UP_NATK);
+
+    initSprite(KQ_UP_CATK, "res/gfx/keqing/UpCAtk.png",
+               128, 128, 15, 60);
+    setXYShift(-32, -16, -32, KQ_UP_CATK);
+    setSpriteFrameLengthFromTo(30, 0, 6, KQ_UP_CATK);
+
+    initSprite(KQ_CROUCH_NATK, "res/gfx/keqing/CrouchNAtk.png",
+               160, 64, 6, 60);
+    setXYShift(0, 32, -100, KQ_CROUCH_NATK);
+
+    initSprite(KQ_CROUCH_CATK, "res/gfx/keqing/CrouchCAtk.png",
+               128, 160, 15, 60);
+    setXYShift(-32, -48, -36, KQ_CROUCH_CATK);
+    setSpriteFrameLengthFromTo(30, 0, 6, KQ_CROUCH_CATK);
+
+    initSprite(KQ_DASH, "res/gfx/keqing/Dash.png",
+               128, 96, 9, 30);
+    setXYShift(-24, 0, -42, KQ_DASH);
+    setSpriteFrameLengthFromTo(42, 2, 4, KQ_DASH); // Invisible
+    setSpriteFrameLengthFromTo(54, 6, -1, KQ_DASH); // End
+
+    initSprite(KQ_SKILL, "res/gfx/keqing/Skill.png",
+               128, 96, 13, 60);
+    setXYShift(-32, 0, -36, KQ_SKILL);
+
+    initSprite(KQ_SKILL_AIMING, "res/gfx/keqing/SkillAiming.png",
+               128, 96, 8, INT32_MAX);
+    setXYShift(-32, 0, -36, KQ_SKILL_AIMING);
+
+    initSprite(KQ_SKILL_SLASH, "res/gfx/keqing/SkillSlash.png",
+               192, 128, 14, 60);
+    setXYShift(-48, -16, -84, KQ_SKILL_SLASH);
+
+    initSprite(KQ_BURST, "res/gfx/keqing/Burst.png",
+               128, 96, 30, 70);
+    setXYShift(-24, 0, -44, KQ_BURST);
+    setSpriteFrameLengthFromTo(INT32_MAX, 13, 13, KQ_BURST);
+
+    initSprite(KQ_AIR_DOUBLE_JUMP, "res/gfx/keqing/AirDoubleJump.png",
+               96, 96, 8, 40);
+    setXYShift(-6, 0, -26, KQ_AIR_DOUBLE_JUMP);
+
+    initSprite(KQ_AIR_NATK, "res/gfx/keqing/AirNAtk.png",
+               160, 128, 11, 40);
+    setXYShift(-48, -8, -48, KQ_AIR_NATK);
+
+    initSprite(KQ_AIR_UP_NATK, "res/gfx/keqing/AirUpNAtk.png",
+               94, 160, 7, 60);
+    setXYShift(-16, -64, -16, KQ_AIR_UP_NATK);
+    setSpriteFrameLengthFromTo(30, 0, 1, KQ_AIR_UP_NATK);
+
+    initSprite(KQ_AIR_PLUNGE, "res/gfx/keqing/AirPlunge.png",
+               128, 128, 14, 60);
+    setXYShift(-30, -32, -38, KQ_AIR_PLUNGE);
+
+    initSprite(KQ_AIR_DASH, "res/gfx/keqing/AirDash.png",
+               96, 96, 6, 40);
+    setXYShift(-10, 2, -26, KQ_AIR_DASH);
+
+    initSprite(KQ_AIR_SKILL_SLASH, "res/gfx/keqing/SkillSlashAir.png",
+               192, 128, 14, 60);
+    setXYShift(-40, -16, -84, KQ_AIR_SKILL_SLASH);
+
+    initSprite(KQ_HURT, "res/gfx/keqing/Hurt.png",
+               96, 96, 6, INT32_MAX);
+    setXYShift(-4, 0, -32, KQ_HURT);
+
+    setSoundSheet();
+
+    Uint32 rgba = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
+    colorAllSprites(rgba);
+}
+
+void Keqing::setSoundSheet() {
+    std::string soundStartPath = "res/sfx/keqing/" + Global::userData[DATA_KQ_VOICE_LANG];
+    soundSheet->setSoundStartPath(soundStartPath);
+
+    soundSheet->pushSoundPaths(KQ_JUMP_START,
+                               "Jump0.ogg",
+                               "Jump1.ogg",
+                               "Jump2.ogg",
+                               "Jump3.ogg",
+                               "Jump4.ogg");
+    soundSheet->copySoundPaths(KQ_AIR_DOUBLE_JUMP, KQ_JUMP_START);
+
     soundSheet->pushSoundPaths(KQ_NATK,
                                "AtkWeak0.ogg",
                                "AtkWeak1.ogg",
@@ -84,134 +189,44 @@ Keqing::Keqing()
                                "AtkMid0.ogg",
                                "AtkMid1.ogg",
                                "AtkMid2.ogg");
+    soundSheet->copySoundPathsStartString(KQ_UP_NATK, KQ_NATK,
+                                          "AtkWeak");
+    soundSheet->copySoundPathsStartString(KQ_CROUCH_NATK, KQ_NATK,
+                                          "AtkWeak");
+    soundSheet->copySoundPathsStartString(KQ_AIR_NATK, KQ_NATK,
+                                          "AtkWeak");
+    soundSheet->copySoundPathsStartString(KQ_AIR_UP_NATK, KQ_NATK,
+                                          "AtkWeak");
+    soundSheet->copySoundPathsStartString(KQ_AIR_PLUNGE, KQ_NATK,
+                                          "AtkMid");
 
-    initSprite(KQ_CATK, "res/gfx/keqing/CAtk.png",
-               128, 96, 15, 60);
-    setXYShift(-34, 0, -32, KQ_CATK);
-    setSpriteFrameLengthFromTo(30, 0, 5, KQ_CATK);
     soundSheet->pushSoundPaths(KQ_CATK,
                                "AtkStrong0.ogg",
                                "AtkStrong1.ogg",
                                "AtkStrong2.ogg");
-
-    initSprite(KQ_UP_NATK, "res/gfx/keqing/UpNAtk.png",
-               128, 128, 8, 60);
-    setXYShift(-22, -32, -46, KQ_UP_NATK);
-    soundSheet->copySoundPathsStartString(KQ_UP_NATK, KQ_NATK,
-                                          "AtkWeak");
-
-    initSprite(KQ_UP_CATK, "res/gfx/keqing/UpCAtk.png",
-               128, 128, 15, 60);
-    setXYShift(-32, -16, -32, KQ_UP_CATK);
     soundSheet->copySoundPaths(KQ_UP_CATK, KQ_CATK);
-    setSpriteFrameLengthFromTo(30, 0, 6, KQ_UP_CATK);
-
-    initSprite(KQ_CROUCH_NATK, "res/gfx/keqing/CrouchNAtk.png",
-               160, 64, 6, 60);
-    setXYShift(0, 32, -100, KQ_CROUCH_NATK);
-    soundSheet->copySoundPaths(KQ_CROUCH_NATK, KQ_UP_NATK);
-
-    initSprite(KQ_CROUCH_CATK, "res/gfx/keqing/CrouchCAtk.png",
-               128, 160, 15, 60);
-    setXYShift(-32, -48, -36, KQ_CROUCH_CATK);
     soundSheet->copySoundPaths(KQ_CROUCH_CATK, KQ_CATK);
-    setSpriteFrameLengthFromTo(30, 0, 6, KQ_CROUCH_CATK);
 
-
-    initSprite(KQ_DASH, "res/gfx/keqing/Dash.png",
-               128, 96, 9, 30);
-    setXYShift(-24, 0, -42, KQ_DASH);
-    setSpriteFrameLengthFromTo(42, 2, 4, KQ_DASH); // Invisible
-    setSpriteFrameLengthFromTo(54, 6, -1, KQ_DASH); // End
     soundSheet->pushSoundPaths(KQ_DASH,
                                "Sprint0.ogg",
                                "Sprint1.ogg",
                                "Sprint2.ogg");
+    soundSheet->copySoundPaths(KQ_AIR_DASH, KQ_DASH);
 
-    initSprite(KQ_SKILL, "res/gfx/keqing/Skill.png",
-               128, 96, 13, 60);
-    setXYShift(-32, 0, -36, KQ_SKILL);
     soundSheet->pushSoundPaths(KQ_SKILL,
                                "Skill0.ogg",
                                "Skill1.ogg",
                                "Skill2.ogg");
-
-    initSprite(KQ_SKILL_AIMING, "res/gfx/keqing/SkillAiming.png",
-               128, 96, 8, INT32_MAX);
-    setXYShift(-32, 0, -36, KQ_SKILL_AIMING);
-
-    initSprite(KQ_SKILL_SLASH, "res/gfx/keqing/SkillSlash.png",
-               192, 128, 14, 60);
-    setXYShift(-48, -16, -84, KQ_SKILL_SLASH);
     soundSheet->pushSoundPaths(KQ_SKILL_SLASH,
                                "SkillSlash0.ogg",
                                "SkillSlash1.ogg",
                                "SkillSlash2.ogg");
+    soundSheet->copySoundPaths(KQ_AIR_SKILL_SLASH, KQ_SKILL_SLASH);
 
-    initSprite(KQ_BURST, "res/gfx/keqing/Burst.png",
-               128, 96, 30, 70);
-    setXYShift(-24, 0, -44, KQ_BURST);
-    setSpriteFrameLengthFromTo(INT32_MAX, 13, 13, KQ_BURST);
     soundSheet->pushSoundPaths(KQ_BURST,
                                "Burst0.ogg",
                                "Burst1.ogg",
                                "Burst2.ogg");
-
-    initSprite(KQ_JUMP_START, "res/gfx/keqing/JumpStart.png",
-               96, 96, 2, 20);
-    setXYShift(0, 0, -36, KQ_JUMP_START);
-    setSpriteNext(KQ_JUMP, KQ_JUMP_START);
-    soundSheet->pushSoundPaths(KQ_JUMP_START,
-                               "Jump0.ogg",
-                               "Jump1.ogg",
-                               "Jump2.ogg",
-                               "Jump3.ogg",
-                               "Jump4.ogg");
-
-    initSprite(KQ_JUMP, "res/gfx/keqing/Jump.png",
-               96, 128, 7, 100);
-    setXYShift(0, -34, -34, KQ_JUMP);
-    setSpriteFrameLengthFromTo(INT32_MAX, 2, 4, KQ_JUMP);
-    setSpriteNext(KQ_JUMP_END, KQ_JUMP);
-
-    initSprite(KQ_AIR_DOUBLE_JUMP, "res/gfx/keqing/AirDoubleJump.png",
-               96, 96, 8, 40);
-    setXYShift(-6, 0, -26, KQ_AIR_DOUBLE_JUMP);
-    soundSheet->copySoundPaths(KQ_AIR_DOUBLE_JUMP, KQ_JUMP_START);
-
-    initSprite(KQ_AIR_NATK, "res/gfx/keqing/AirNAtk.png",
-               160, 128, 11, 40);
-    setXYShift(-48, -8, -48, KQ_AIR_NATK);
-    soundSheet->copySoundPaths(KQ_AIR_NATK, KQ_UP_NATK);
-
-    initSprite(KQ_AIR_UP_NATK, "res/gfx/keqing/AirUpNAtk.png",
-               94, 160, 7, 60);
-    setXYShift(-16, -64, -16, KQ_AIR_UP_NATK);
-    setSpriteFrameLengthFromTo(30, 0, 1, KQ_AIR_UP_NATK);
-    soundSheet->copySoundPaths(KQ_AIR_UP_NATK, KQ_UP_NATK);
-
-    initSprite(KQ_AIR_PLUNGE, "res/gfx/keqing/AirPlunge.png",
-               128, 128, 14, 60);
-    setXYShift(-30, -32, -38, KQ_AIR_PLUNGE);
-    soundSheet->copySoundPathsStartString(KQ_AIR_PLUNGE, KQ_NATK,
-                                          "AtkMid");
-
-    initSprite(KQ_AIR_DASH, "res/gfx/keqing/AirDash.png",
-               96, 96, 6, 40);
-    setXYShift(-10, 2, -26, KQ_AIR_DASH);
-    soundSheet->copySoundPaths(KQ_AIR_DASH, KQ_DASH);
-
-    initSprite(KQ_AIR_SKILL_SLASH, "res/gfx/keqing/SkillSlashAir.png",
-               192, 128, 14, 60);
-    setXYShift(-40, -16, -84, KQ_AIR_SKILL_SLASH);
-    soundSheet->copySoundPaths(KQ_AIR_SKILL_SLASH, KQ_SKILL_SLASH);
-
-    initSprite(KQ_HURT, "res/gfx/keqing/Hurt.png",
-               96, 96, 6, INT32_MAX);
-    setXYShift(-4, 0, -32, KQ_HURT);
-
-    Uint32 rgba = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
-    colorTexture(rgba);
 }
 
 void Keqing::initKeqing() {
@@ -241,58 +256,65 @@ void Keqing::reset() {
     airDashed = false;
 }
 
-void Keqing::colorTexture(Uint32 rgba) {
-    std::string valStr = std::to_string(rgba);
-    Global::saveUserData(DATA_KQ_COLOR, valStr);
-
+void Keqing::colorSprite(Uint32 rgba, Sprite *sprite) {
     Uint8 r, g, b;
     Uint32RGBAToUint8RGBA(rgba, &r, &g, &b, nullptr);
 
     SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
 
-    for (int spriteCode = 0; spriteCode < KQ_ENUM_N; spriteCode++) {
-        Sprite *currSprite = getSprite(spriteCode);
-        SDL_Surface *img = IMG_Load(currSprite->imgPath);
+    SDL_Surface *img = IMG_Load(sprite->imgPath);
 
-        auto *pixel0 = (Uint8 *) img->pixels;
-        for (Uint8 *pixel = pixel0; pixel < pixel0 + (img->w * img->h) * 4; pixel += 4) {
+    auto *pixel0 = (Uint8 *) img->pixels;
+    for (Uint8 *pixel = pixel0; pixel < pixel0 + (img->w * img->h) * 4; pixel += 4) {
 
-            double h, s, v;
-            RGBToHSV(pixel[0], pixel[1], pixel[2],
-                     &h, &s, &v);
+        double h, s, v;
+        RGBToHSV(pixel[0], pixel[1], pixel[2],
+                 &h, &s, &v);
 
-            double rgbH, rgbS, rgbV;
-            RGBToHSV(r, g, b,
-                     &rgbH, &rgbS, &rgbV);
+        double rgbH, rgbS, rgbV;
+        RGBToHSV(r, g, b,
+                 &rgbH, &rgbS, &rgbV);
 
 
-            bool change = false;
-            // Hair (Green)
-            if (h >= 120 && h <= 180) {
-                h = rgbH + (h - 120);
+        bool change = false;
+        // Hair (Green)
+        if (h >= 120 && h <= 180) {
+            h = rgbH + (h - 120);
 
-                change = true;
-            }
-
-            // Outfit & Gloves (Red)
-            if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
-                if (h >= 330 && h <= 360)
-                    h = rgbH + (h - 330);
-                else if (h >= 0 && h <= 30)
-                    h = rgbH + (h - 0);
-
-                change = true;
-            }
-
-            if (change)
-                HSVToRGB(h, rgbS, v,
-                         &pixel[0], &pixel[1], &pixel[2]);
+            change = true;
         }
 
-        SDL_Texture *mTexture = SDL_CreateTextureFromSurface(gRenderer, img);
-        SDL_FreeSurface(img);
-        SDL_DestroyTexture(currSprite->sTexture);
-        currSprite->sTexture = mTexture;
+        // Outfit & Gloves (Red)
+        if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
+            if (h >= 330 && h <= 360)
+                h = rgbH + (h - 330);
+            else if (h >= 0 && h <= 30)
+                h = rgbH + (h - 0);
+
+            change = true;
+        }
+
+        if (change)
+            HSVToRGB(h, rgbS, v,
+                     &pixel[0], &pixel[1], &pixel[2]);
+    }
+
+    SDL_Texture *mTexture = SDL_CreateTextureFromSurface(gRenderer, img);
+    SDL_FreeSurface(img);
+    SDL_DestroyTexture(sprite->sTexture);
+    sprite->sTexture = mTexture;
+}
+
+void Keqing::colorCurrSprite(Uint32 rgba) {
+    colorSprite(rgba, getCurrentSprite());
+}
+
+void Keqing::colorAllSprites(Uint32 rgba) {
+    std::string valStr = std::to_string(rgba);
+    Global::saveUserData(DATA_KQ_COLOR, valStr);
+
+    for (int spriteCode = 0; spriteCode < KQ_ENUM_N; spriteCode++) {
+        colorSprite(rgba, getSprite(spriteCode));
     }
 }
 
@@ -435,6 +457,15 @@ void Keqing::airAnimate() {
     }
 }
 
+void Keqing::idle() {
+    xVelocity = 0;
+    yVelocity = 0;
+}
+
+void Keqing::walk() {
+
+}
+
 void Keqing::run() {
     if (isSpriteAnimated(KQ_RUN_END)) {
         if (isNewestFrame(0, KQ_RUN_END)) {
@@ -470,6 +501,11 @@ void Keqing::jump() {
             yVelocity += gravityWeight * (double) Global::dt;
             yVelocity -= gravityWeight * (double) Global::dt; // Cancel Gravity
         }
+    }
+
+    if (isSpriteAnimated(KQ_JUMP_END)) {
+        xVelocity = 0;
+        yVelocity = 0;
     }
 }
 
@@ -509,22 +545,133 @@ void Keqing::NAtk() {
 
         Particle *NAtk4Particle =
                 Particle::pushParticle(PARTICLE_KQ_NATK_4,
-                                       60, 2.4, 2.6);
+                                       48, 2.4, 2.6);
         NAtk4Particle->setEntity(this);
         NAtk4Particle->xyShift(32, 20);
     }
 
     // Push Atk
     if (isNewestFrame(1, KQ_NATK)) {
-        const int n = 3;
-        double atkPolyPts[n][2] =
-                {{getHalfBaseHitBoxW(),      -12},
-                 {getHalfBaseHitBoxW() + 80, -18},
-                 {getHalfBaseHitBoxW() - 14, 20}};
+        const int N = 4;
+        double atkPolyPts[N][2] =
+                {{30,  -12},
+                 {110, -18},
+                 {16,  20},
+                 {30,  0}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, n,
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
                                                10, 0.4, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
+
+    } else if (isNewestFrame(7, KQ_NATK)) {
+        const int N = 16;
+        double atkPolyPts[N][2] =
+                {{16,  -12},
+                 {36,  -50},
+                 {62,  -46},
+                 {86,  -32},
+                 {98,  -14},
+                 {100, 4},
+                 {90,  22},
+                 {72,  36},
+                 {46,  44},
+                 {12,  44},
+                 {-16, 34},
+                 {-30, 16},
+                 {-4,  28},
+                 {30,  28},
+                 {50,  14},
+                 {54,  -12}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(7, 8, KQ_NATK));
+
+    } else if (isNewestFrame(13, KQ_NATK)) {
+        const int N = 12;
+        double atkPolyPts[N][2] =
+                {{-16, -18},
+                 {52,  -16},
+                 {100, -4},
+                 {116, 6},
+                 {110, 16},
+                 {84,  22},
+                 {26,  24},
+                 {-42, 12},
+                 {-56, 6},
+                 {-68, -10},
+                 {76,  8},
+                 {72,  4}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(13, 14, KQ_NATK));
+
+    } else if (isNewestFrame(21, KQ_NATK)) {
+        const int N = 16;
+        double atkPolyPts[N][2] =
+                {{-16, -48},
+                 {-12, -82},
+                 {22,  -80},
+                 {58,  -64},
+                 {76,  -46},
+                 {86,  -22},
+                 {88,  4},
+                 {74,  30},
+                 {48,  52},
+                 {14,  62},
+                 {-20, 58},
+                 {-48, 38},
+                 {-6,  52},
+                 {34,  42},
+                 {54,  6},
+                 {32,  -34}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(21, 22, KQ_NATK));
+
+    } else if (isNewestFrame(24, KQ_NATK)) {
+        const int N = 20;
+        double atkPolyPts[N][2] =
+                {{20,  -28},
+                 {66,  -52},
+                 {86,  -50},
+                 {114, -42},
+                 {124, -28},
+                 {124, -14},
+                 {114, 2},
+                 {82,  16},
+                 {46,  24},
+                 {-24, 26},
+                 {-60, 18},
+                 {-68, 10},
+                 {-68, 2},
+                 {-48, -10},
+                 {-58, -2},
+                 {-58, 8},
+                 {-24, 16},
+                 {52,  6},
+                 {74,  -8},
+                 {70,  -22}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(24, 25, KQ_NATK));
+
+    } else if (isNewestFrame(30, KQ_NATK)) {
+        const int N = 6;
+        double atkPolyPts[N][2] =
+                {{8,   16},
+                 {84,  2},
+                 {114, 10},
+                 {126, 16},
+                 {114, 22},
+                 {84,  30}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 2.6, -0.1);
+        atk->setAtkDuration(getSpriteLengthFromTo(30, 32, KQ_NATK));
     }
 }
 
@@ -1008,6 +1155,114 @@ void Keqing::airNAtk() {
     if (isNewestFrame(0, KQ_AIR_NATK)) {
         soundSheet->playRandomSound(KQ_AIR_NATK);
     }
+
+    // Push Atk
+    if (isNewestFrame(2, KQ_AIR_NATK)) {
+        const int N = 10;
+        double atkPolyPts[N][2] =
+                {{28,  30},
+                 {-32, 30},
+                 {-54, 26},
+                 {-72, 12},
+                 {-76, -6},
+                 {-42, -14},
+                 {-26, -8},
+                 {-44, 0},
+                 {-40, 12},
+                 {-32, 20}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(2, 2, KQ_AIR_NATK));
+
+    } else if (isNewestFrame(3, KQ_AIR_NATK)) {
+        const int N = 12;
+        double atkPolyPts[N][2] =
+                {{-42, 24},
+                 {-58, 20},
+                 {-70, 12},
+                 {-76, 2},
+                 {-72, -6},
+                 {-62, -18},
+                 {-32, -26},
+                 {6,   -28},
+                 {-10, -12},
+                 {-58, -2},
+                 {-62, 6},
+                 {-60, 14}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(3, 3, KQ_AIR_NATK));
+
+    } else if (isNewestFrame(4, KQ_AIR_NATK)) {
+        const int N = 10;
+        double atkPolyPts[N][2] =
+                {{-64, -14},
+                 {-46, -24},
+                 {-16, -30},
+                 {40,  -28},
+                 {62,  -22},
+                 {74,  -14},
+                 {84,  -2},
+                 {42,  8},
+                 {40,  -10},
+                 {22,  -20}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(4, 4, KQ_AIR_NATK));
+
+    } else if (isNewestFrame(5, KQ_AIR_NATK)) {
+        const int N = 14;
+        double atkPolyPts[N][2] =
+                {{0,  -28},
+                 {26, -28},
+                 {50, -24},
+                 {72, -14},
+                 {84, 0},
+                 {78, 10},
+                 {62, 22},
+                 {34, 28},
+                 {0,  18},
+                 {10, 8},
+                 {30, 12},
+                 {56, 0},
+                 {60, 8},
+                 {48, -16}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(5, 5, KQ_AIR_NATK));
+
+    } else if (isNewestFrame(6, KQ_AIR_NATK)) {
+        const int N = 20;
+        double atkPolyPts[N][2] =
+                {{68,  -16},
+                 {78,  -8},
+                 {82,  6},
+                 {70,  18},
+                 {46,  26},
+                 {-12, 28},
+                 {-46, 22},
+                 {-70, 10},
+                 {-78, 0},
+                 {-76, -12},
+                 {-66, -24},
+                 {-44, -30},
+                 {-30, -32},
+                 {-8,  -6},
+                 {-32, -8},
+                 {-38, 0},
+                 {-24, 14},
+                 {16,  16},
+                 {52,  12},
+                 {70,  2}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setAtkDuration(getSpriteLengthFromTo(6, 7, KQ_AIR_NATK));
+    }
 }
 
 void Keqing::airUpNAtk() {
@@ -1052,7 +1307,7 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
 
     if (willFrameFinish(7, KQ_AIR_PLUNGE)) {
         if (yVelocity != 0) {
-            goToFrame(6, KQ_AIR_PLUNGE);
+            goToFrameNoNew(6, KQ_AIR_PLUNGE);
         }
     }
 
@@ -1067,6 +1322,23 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
         }
     }
 
+    // Push Atk
+    if (isNewestFrame(6, KQ_AIR_PLUNGE)) {
+        const int N = 6;
+        double atkPolyPts[N][2] =
+                {{28, 42},
+                 {18, 34},
+                 {20, -16},
+                 {28, -20},
+                 {36, -16},
+                 {38, 34}};
+        Attack *atk =
+                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
+                                               10, 0.4, -0.4);
+        atk->setShouldRemove([](Attack *self, void *fParams) {
+            return (Particle::getParticle(PARTICLE_KQ_AIR_PLUNGE) == nullptr);
+        }, nullptr);
+    }
 }
 
 void Keqing::airDash() {
@@ -1087,21 +1359,24 @@ void Keqing::airDash() {
 }
 
 void Keqing::onGameFrame() {
-    LivingEntity::onGameFrame();
+    if (!locked) {
+        LivingEntity::onGameFrame();
 
-    updateActionFromKey();
+        updateActionFromKey();
 
-    fallGravity();
+        fallGravity();
 
-    if (shouldUpdateDirection()) updateDirection();
-    if (canMoveLR()) moveLR();
+        if (shouldUpdateDirection()) updateDirection();
+        if (canMoveLR()) moveLR();
 
-    updateAction();
+        updateAction();
 
-    moveX();
-    moveY();
+        moveX();
+        moveY();
 
-    airAnimate();
+        airAnimate();
+    }
+
     animateSprite();
 }
 
@@ -1274,6 +1549,8 @@ void Keqing::updateAction() {
     LivingEntity::updateAction();
 
     // State Changer
+    if (isSpriteAnimated(KQ_IDLE)) this->idle();
+    if (isSpriteAnimated(KQ_WALK)) this->walk();
     if (isSpriteAnimated(KQ_RUN_START) ||
         isSpriteAnimated(KQ_RUN) ||
         isSpriteAnimated(KQ_RUN_TURN) ||
@@ -1282,7 +1559,8 @@ void Keqing::updateAction() {
     }
     if (isSpriteAnimated(KQ_CROUCH)) this->crouch();
     if (isSpriteAnimated(KQ_JUMP_START) ||
-        isSpriteAnimated(KQ_JUMP)) {
+        isSpriteAnimated(KQ_JUMP) ||
+        isSpriteAnimated(KQ_JUMP_END)) {
         this->jump();
     }
     if (isSpriteAnimated(KQ_HURT)) this->hurt();
@@ -1311,4 +1589,16 @@ void Keqing::updateAction() {
     if (isSpriteAnimated(KQ_AIR_UP_NATK)) this->airUpNAtk();
     if (isSpriteAnimated(KQ_AIR_PLUNGE)) this->airPlunge();
     if (isSpriteAnimated(KQ_AIR_DASH)) this->airDash();
+}
+
+void Keqing::lock() {
+    locked = true;
+    for (int i = KQ_IDLE + 1; i < KQ_ENUM_N; i++) {
+        setSpriteAnimated(false, i);
+    }
+    setSpriteAnimated(true, KQ_IDLE);
+}
+
+void Keqing::unlock() {
+    locked = false;
 }

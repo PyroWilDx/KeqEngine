@@ -75,6 +75,8 @@ public:
 
     inline void setRenderKeqing(bool renderKeqing_) { renderKeqing = renderKeqing_; }
 
+    inline void setOnQuit(void (*onQuit_)()) { onQuit = onQuit_; }
+
     inline Background *getBackground() { return background; }
 
 private:
@@ -91,6 +93,8 @@ private:
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;
     Pixel **pixels;
+
+    void (*onQuit)();
 
 };
 

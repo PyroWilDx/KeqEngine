@@ -28,6 +28,8 @@ World::World(int screenW, int screenH,
             (this->pixels)[i][j] = {-1, -1};
         }
     }
+
+    onQuit = nullptr;
 }
 
 auto LLFreeAtkF = [](void *value) {
@@ -36,6 +38,8 @@ auto LLFreeAtkF = [](void *value) {
 };
 
 World::~World() {
+    if (onQuit != nullptr) onQuit();
+
     for (std::pair<const int, Button *> it: buttonHashMap) {
         delete it.second;
     }
@@ -112,10 +116,19 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
                 if (button->getWorldCode() == worldCode) {
                     button->onClick((int) x, (int) y);
                     activeButton = button;
-                    return;
+                    break;
                 }
             }
         }
+        return;
+    }
+
+    if (eventType == SDL_MOUSEMOTION) {
+        if (activeButton != nullptr) {
+            bool isMouseOnButton = isPixelCode(x, y, activeButton->getWorldCode());
+            activeButton->onClickedMove((int) x, (int) y, isMouseOnButton);
+        }
+        return;
     }
 
     if (eventType == SDL_MOUSEBUTTONUP) {
@@ -125,6 +138,7 @@ void World::clickPixel(double x, double y, Uint32 eventType) {
             activeButton = nullptr;
             tmpButton->onClickRelease((int) x, (int) y, isMouseOnButton);
         }
+        return;
     }
 }
 

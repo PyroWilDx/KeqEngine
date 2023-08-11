@@ -28,6 +28,8 @@ public:
 
     virtual void updateAction() = 0;
 
+    [[nodiscard]] inline bool isHurt() { return isSpriteAnimated(hurtSpriteCode); };
+
     [[nodiscard]] inline int getHp() const { return hp; }
 
 protected:

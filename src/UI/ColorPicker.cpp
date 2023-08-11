@@ -7,7 +7,6 @@
 
 ColorPicker::ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA)
         : Button(x, y, renderW, renderH) {
-    fCallOnRelease = false;
     swapColorOnClick = false;
     pickerX = this->getX();
     pickerY = this->getY();
@@ -25,15 +24,6 @@ ColorPicker::~ColorPicker() {
     }
     delete[] absPixels;
 }
-
-//SDL_Rect ColorPicker::getRenderRect() {
-//    SDL_Rect dst = {this->getX(), this->getY(),
-//                    getRenderW(), getRenderH()};
-//
-//    shiftXYFromScreenPosition(&dst.x, &dst.y);
-//
-//    return dst;
-//}
 
 static void setRGB(double *pRGB, double value) {
     *pRGB = value;
@@ -88,7 +78,7 @@ void ColorPicker::fillPixels(Uint32 currRGBA) {
 
             Uint32 *surfacePixel =
                     (Uint32 *) cpSurface->pixels + j * (cpSurface->pitch / cpSurface->format->BytesPerPixel) + i;
-            *surfacePixel = SDL_MapRGB(cpSurface->format, r, g, b);
+            *surfacePixel = SDL_MapRGB(cpSurface->format, rInt, gInt, bInt);
 
             setRGB(&r, r + yAddR);
             setRGB(&g, g + yAddG);
@@ -103,7 +93,7 @@ void ColorPicker::fillPixels(Uint32 currRGBA) {
     }
 
     SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
-    SDL_Texture* cpTexture = SDL_CreateTextureFromSurface(gRenderer, cpSurface);
+    SDL_Texture *cpTexture = SDL_CreateTextureFromSurface(gRenderer, cpSurface);
     setTexture(cpTexture);
     SDL_FreeSurface(cpSurface);
 }
@@ -116,6 +106,14 @@ void ColorPicker::onClick(int mouseX, int mouseY) {
     pickerX = mouseX;
     pickerY = mouseY;
     Button::onClick(mouseX, mouseY);
+}
+
+void ColorPicker::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
+    if (isMouseOnButton) {
+        pickerX = mouseX;
+        pickerY = mouseY;
+    }
+    Button::onClickedMove(mouseX, mouseY, isMouseOnButton);
 }
 
 int ColorPicker::getPickerSize() {
