@@ -7,10 +7,10 @@
 
 #include "MainInterface.hpp"
 
-class MainHomeMenu : public MainInterface<MainHomeMenu> {
+class HomeMenu : public MainInterface<HomeMenu> {
 
 public:
-    MainHomeMenu() = delete;
+    HomeMenu() = delete;
 
     static void RunImpl();
 

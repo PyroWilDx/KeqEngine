@@ -7,10 +7,10 @@
 
 #include "MainInterface.hpp"
 
-class MainGame1 : public MainInterface<MainGame1> {
+class Game1 : public MainInterface<Game1> {
 
 public:
-    MainGame1() = delete;
+    Game1() = delete;
 
     static void RunImpl();
 

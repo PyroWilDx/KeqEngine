@@ -35,7 +35,6 @@ int main(int argc, char *argv[]) {
     myAssert(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT,
                            2, 2048) >= 0,
              "Mix_OpenAudio FAILED.", Mix_GetError());
-    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
     WindowRenderer::initWindowRenderer("Keqing", SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT);
     Global::initGlobal();
@@ -45,7 +44,11 @@ int main(int argc, char *argv[]) {
     Keqing::initKeqing();
     Particle::initParticle();
 
-    MainHomeMenu::Run();
+    double volumePercent = std::stod(Global::userData[DATA_GAME_VOLUME]);
+    int volume = (int) (MIX_MAX_VOLUME * (volumePercent / 100.0));
+    Mix_Volume(-1, volume);
+
+    HomeMenu::Run();
 
     Particle::cleanUp();
     Keqing::cleanUp();

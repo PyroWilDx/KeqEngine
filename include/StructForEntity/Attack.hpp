@@ -21,7 +21,7 @@ public:
     Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
            int damage, double kbXVelocity, double kbYVelocity);
 
-    static BoostPolygon *getPolygonFromEntity(Entity *dstEntity);
+    static BoostPolygon getPolygonFromEntity(Entity *dstEntity);
 
     bool isHittingEntity(LivingEntity *dstEntity);
 

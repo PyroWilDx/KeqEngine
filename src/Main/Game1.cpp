@@ -10,7 +10,7 @@
 #include "Entity/Slime.hpp"
 #include "Entity/FPSText.hpp"
 
-void MainGame1::RunImpl() {
+void Game1::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
@@ -30,7 +30,6 @@ void MainGame1::RunImpl() {
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, 0);
-    kq->setHitbox({0, 12, 60, 84});
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
     gWorld->setRenderKeqing(true);
     gWorld->setTranslateEntity(kq);

@@ -29,6 +29,13 @@ Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
                         atkIssuer->getHalfBaseHitBoxH() + xyArray[i][1];
         bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
     }
+    double xPoint = atkIssuer->getX() + atkIssuer->getBaseHitBoxX() + atkIssuer->getHalfBaseHitBoxW();
+    if (atkIssuer->isFacingEast()) xPoint += xyArray[0][0];
+    else xPoint -= xyArray[0][0];
+    double yPoint = atkIssuer->getY() + atkIssuer->getBaseHitBoxY() +
+                    atkIssuer->getHalfBaseHitBoxH() + xyArray[0][1];
+    bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
+
     this->damage = damage;
     if (!atkIssuer->isFacingEast()) kbXVelocity = -kbXVelocity;
     this->kbXVelocity = kbXVelocity;
@@ -39,29 +46,30 @@ Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
     this->shouldRemoveParams = nullptr;
 }
 
-BoostPolygon *Attack::getPolygonFromEntity(Entity *dstEntity) {
+BoostPolygon Attack::getPolygonFromEntity(Entity *dstEntity) {
     SDL_Rect hitBox = dstEntity->getHitBox();
     double x1 = dstEntity->getX() + (double) hitBox.x;
     double x2 = x1 + (double) hitBox.w;
     double y1 = dstEntity->getY() + (double) hitBox.y;
     double y2 = y1 + (double) hitBox.h;
-    auto *resPolygon = new BoostPolygon;
-    bst_geo::append(*resPolygon, BoostPoint(x1, y1));
-    bst_geo::append(*resPolygon, BoostPoint(x2, y1));
-    bst_geo::append(*resPolygon, BoostPoint(x2, y2));
-    bst_geo::append(*resPolygon, BoostPoint(x1, y2));
+    BoostPolygon resPolygon = BoostPolygon();
+    bst_geo::append(resPolygon, BoostPoint(x1, y1));
+    bst_geo::append(resPolygon, BoostPoint(x2, y1));
+    bst_geo::append(resPolygon, BoostPoint(x2, y2));
+    bst_geo::append(resPolygon, BoostPoint(x1, y2));
+    bst_geo::append(resPolygon, BoostPoint(x1, y1));
     return resPolygon;
 }
 
 bool Attack::isHittingEntity(LivingEntity *dstEntity) {
-    BoostPolygon *dstHitBoxPoly = getPolygonFromEntity(dstEntity);
-    bool res = bst_geo::intersects(atkPolygon, *dstHitBoxPoly);
-    delete dstHitBoxPoly;
+    BoostPolygon dstHitBoxPoly = getPolygonFromEntity(dstEntity);
+    bool res = bst_geo::intersects(atkPolygon, dstHitBoxPoly);
     return res;
 }
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
     if (isHittingEntity(dstEntity)) {
+        if (!dstEntity->isHurt())
         dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
     }
 }

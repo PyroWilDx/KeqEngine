@@ -100,7 +100,7 @@ public:
 
     void clearTexture();
 
-    inline void setHitbox(SDL_Rect collisionRect_) { hitBox = collisionRect_; }
+    inline void setHitbox(SDL_Rect hitBox_) { hitBox = hitBox_; }
 
     inline void setTexture(SDL_Texture *imgTexture_, int frameW = 0, int frameH = 0) {
         imgTexture = imgTexture_;

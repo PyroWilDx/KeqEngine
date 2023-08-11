@@ -9,9 +9,12 @@
 Button::Button(double x, double y, int renderW, int renderH)
         : WorldEntity(x, y, renderW, renderH, WORLD_BUTTON),
           buttonColor() {
-    fCallBack = nullptr;
+    fOnClick = nullptr;
+    fOnClickedMove = nullptr;
+    fOnClickRelease = nullptr;
     onClickParams = nullptr;
-    fCallOnRelease = true;
+    onClickedMoveParams = nullptr;
+    onClickReleaseParams = nullptr;
     swapColorOnClick = true;
     buttonState = BUTTON_IDLE;
     buttonColor = {COLOR_WHITE_FULL};
@@ -37,11 +40,15 @@ void Button::changeColor(Uint8 r, Uint8 g, Uint8 b) {
 
 void Button::addText(const char *text, const SDL_Color *color,
                      const char *fontPath, int fontSize) {
-    if (buttonText != nullptr) delete buttonText;
-    buttonText = new Text();
-    buttonText->loadTextTexture(x, y, text, color,
-                                fontPath, fontSize, false);
+    delete buttonText;
+
+    buttonText = new Text(text, color, fontPath,
+                          fontSize, false);
     buttonText->moveToEntityCenter(this);
+}
+
+void Button::changeText(const char *text) {
+    buttonText->changeText(text);
 }
 
 void Button::renderSelf(SDL_Renderer *gRenderer) {
@@ -80,16 +87,20 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
     if (buttonText != nullptr) buttonText->renderSelf(gRenderer);
 }
 
-void Button::performCallBack(int mouseX, int mouseY) {
-    if (fCallBack != nullptr) fCallBack(this, mouseX, mouseY, onClickParams);
-}
-
 void Button::onClick(int mouseX, int mouseY) {
     buttonState = BUTTON_CLICKED;
-    if (!fCallOnRelease) performCallBack(mouseX, mouseY);
+    if (fOnClick != nullptr) fOnClick(this, mouseX, mouseY, onClickParams);
+}
+
+void Button::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
+    if (isMouseOnButton && fOnClickedMove != nullptr) {
+        fOnClickedMove(this, mouseX, mouseY, onClickedMoveParams);
+    }
 }
 
 void Button::onClickRelease(int mouseX, int mouseY, bool isMouseOnButton) {
     buttonState = BUTTON_IDLE;
-    if (isMouseOnButton && fCallOnRelease) performCallBack(mouseX, mouseY);
+    if (isMouseOnButton && fOnClickRelease != nullptr) {
+        fOnClickRelease(this, mouseX, mouseY, onClickReleaseParams);
+    }
 }

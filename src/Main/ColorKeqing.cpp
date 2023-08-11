@@ -8,29 +8,69 @@
 #include "Entity/Keqing.hpp"
 #include "UI/ColorPicker.hpp"
 
-void MainColorKeqing::RunImpl() {
+void ColorKeqing::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      "res/gfx/background/ColorKeqing.png");
+    gWorld->setOnQuit([]() {
+        Keqing *kq = Keqing::getInstance();
+        if (kq->isLocked()) {
+            Uint32 rgba = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
+            kq->colorCurrSprite(rgba);
+            Keqing::getInstance()->unlock();
+        }
+    });
 
     Uint32 currRGBA = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
     auto *colorPicker = new ColorPicker(0, 0, 400, 400, currRGBA);
-    colorPicker->setCallBack([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+    colorPicker->setOnClick([](Button *self, int mouseX, int mouseY, void *onClickParams) {
         auto *selfColorPicker = (ColorPicker *) self;
         Uint32 rgba = selfColorPicker->getCurrentRGBA();
-        Keqing::getInstance()->colorTexture(rgba);
+        Keqing *kq = Keqing::getInstance();
+        kq->lock();
+        kq->moveToDownLeft(0, SCREEN_BASE_HEIGHT);
+        kq->colorCurrSprite(rgba);
+    });
+    colorPicker->setOnClickedMove([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+        auto *selfColorPicker = (ColorPicker *) self;
+        Uint32 rgba = selfColorPicker->getCurrentRGBA();
+        Keqing *kq = Keqing::getInstance();
+        kq->colorCurrSprite(rgba);
     });
     gWorld->addButton(colorPicker);
 
+    auto *setKqColorButton = new Button(600, 100, 200, 200);
+    setKqColorButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+        auto *colorPicker = (ColorPicker *) onClickParams;
+        Keqing *kq = Keqing::getInstance();
+        kq->colorAllSprites(colorPicker->getCurrentRGBA());
+        kq->unlock();
+    }, (void *) colorPicker);
+    SDL_Color tmpColor = {COLOR_WHITE_FULL};
+    setKqColorButton->addText("SET COLOR", &tmpColor,
+                              "res/fonts/JetBrainsMono-Regular.ttf", 20);
+    setKqColorButton->changeColor(COLOR_BLUE);
+    gWorld->addButton(setKqColorButton);
+
+    auto *resetKqColorButton = new Button(900, 100, 300, 200);
+    resetKqColorButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+        auto *colorPicker = (ColorPicker *) onClickParams;
+        Keqing *kq = Keqing::getInstance();
+        kq->colorAllSprites(KQ_BASE_COLOR);
+        kq->unlock();
+        colorPicker->fillPixels(KQ_BASE_COLOR);
+    }, (void *) colorPicker);
+    tmpColor = {COLOR_WHITE_FULL};
+    resetKqColorButton->addText("RESET TO BASE COLOR", &tmpColor,
+                                "res/fonts/JetBrainsMono-Regular.ttf", 20);
+    resetKqColorButton->changeColor(COLOR_BLUE);
+    gWorld->addButton(resetKqColorButton);
+
     Keqing *kq = Keqing::getInstance();
-    kq->moveTo(100, 100);
+    kq->moveToDownLeft(0, SCREEN_BASE_HEIGHT);
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
-    kq->setHitbox({(int) (0.0 * KQ_WIDTH_MULTIPLIER),
-                   (int) (12.0 * KQ_HEIGHT_MULTIPLIER),
-                   (int) (60.0 * KQ_WIDTH_MULTIPLIER),
-                   (int) (84.0 * KQ_HEIGHT_MULTIPLIER)});
     gWorld->setRenderKeqing(true);
 
     SDL_Event event;
