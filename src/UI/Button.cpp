@@ -49,6 +49,7 @@ void Button::addText(const char *text, const SDL_Color *color,
 
 void Button::changeText(const char *text) {
     buttonText->changeText(text);
+    buttonText->moveToEntityCenter(this);
 }
 
 void Button::renderSelf(SDL_Renderer *gRenderer) {

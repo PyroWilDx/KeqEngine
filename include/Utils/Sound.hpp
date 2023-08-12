@@ -7,6 +7,8 @@
 
 #include <SDL2/SDL_mixer.h>
 
+#define MIX_CHANNEL_N 64
+
 class Sound {
 
 public:
@@ -14,22 +16,19 @@ public:
 
     static void cleanUp();
 
-    static Mix_Chunk *playAudioChunk(const char *chunkPath, int repeatCount = 0);
+    static void onGameFrame();
+
+    static int playAudioChunk(const char *chunkPath, int repeatCount = 0);
+
+    static void deleteAudioChunk(int channel);
 
     static Mix_Music *playAudioMusic(const char *musicPath, int repeatCount = 0);
 
-    [[nodiscard]] static Mix_Chunk *setAudioChunk(const char *chunkPath);
-
-    static void deleteAudioChunk();
-
-    [[nodiscard]] static Mix_Music *setAudioMusic(const char *musicPath);
-
     static void deleteAudioMusic();
 
-    static Mix_Chunk *currentAudioChunk;
-    static Mix_Music *currentAudioMusic;
-
 private:
+    static Mix_Chunk *chunkArray[MIX_CHANNEL_N];
+    static Mix_Music *currentAudioMusic;
 
 };
 

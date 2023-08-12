@@ -19,8 +19,6 @@ public:
 
     void translate(Entity *entity);
 
-    [[nodiscard]] int getTotalPixels() const;
-
     [[nodiscard]] inline int getTotalW() const { return totalWidth; }
 
     [[nodiscard]] inline int getTotalH() const { return totalHeight; }

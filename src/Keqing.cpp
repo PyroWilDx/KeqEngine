@@ -4,11 +4,10 @@
 
 #include <cmath>
 #include <SDL2/SDL_image.h>
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 #include "Entity/Particle.hpp"
 #include "Utils/Global.hpp"
-
-#define SKILL_TP_DISTANCE 400
+#include "Utils/Sound.hpp"
 
 Keqing *Keqing::instance = nullptr;
 
@@ -18,14 +17,16 @@ const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 Keqing::Keqing()
         : LivingEntity(0.0024, 1, KQ_ENUM_N,
                        KQ_HURT, KQ_JUMP) {
-    setHitbox({0, 12, 60, 84});
+    setHitBox({0, 12, 60, 84});
 
-    skillUseTime = 0;
-    burstCloneSlashCount = 0;
-    jumpPressTime = 0;
-    doubleJumped = false;
-    airDashed = false;
-    locked = false;
+    this->burstCloneSlashCount = 0;
+    this->skillUseTime = 0;
+    this->jumpPressTime = 0;
+    this->doubleJumped = false;
+    this->airDashed = false;
+    this->skillAimingSoundChannel = 0;
+    this->airPlungeLoopSoundChannel = 0;
+    this->locked = false;
 
     initSprite(KQ_IDLE, "res/gfx/keqing/Idle.png",
                96, 96, 18, 60);
@@ -130,6 +131,7 @@ Keqing::Keqing()
                128, 96, 30, 70);
     setXYShift(-24, 0, -44, KQ_BURST);
     setSpriteFrameLengthFromTo(INT32_MAX, 13, 13, KQ_BURST);
+    setSpriteFrameLengthFromTo(80, 14, 24, KQ_BURST);
 
     initSprite(KQ_AIR_DOUBLE_JUMP, "res/gfx/keqing/AirDoubleJump.png",
                96, 96, 8, 40);
@@ -144,17 +146,17 @@ Keqing::Keqing()
     setXYShift(-16, -64, -16, KQ_AIR_UP_NATK);
     setSpriteFrameLengthFromTo(30, 0, 1, KQ_AIR_UP_NATK);
 
-    initSprite(KQ_AIR_PLUNGE, "res/gfx/keqing/AirPlunge.png",
-               128, 128, 14, 60);
-    setXYShift(-30, -32, -38, KQ_AIR_PLUNGE);
+    initSprite(KQ_AIR_SKILL_SLASH, "res/gfx/keqing/AirSkillSlash.png",
+               192, 128, 14, 60);
+    setXYShift(-40, -16, -84, KQ_AIR_SKILL_SLASH);
 
     initSprite(KQ_AIR_DASH, "res/gfx/keqing/AirDash.png",
                96, 96, 6, 40);
     setXYShift(-10, 2, -26, KQ_AIR_DASH);
 
-    initSprite(KQ_AIR_SKILL_SLASH, "res/gfx/keqing/SkillSlashAir.png",
-               192, 128, 14, 60);
-    setXYShift(-40, -16, -84, KQ_AIR_SKILL_SLASH);
+    initSprite(KQ_AIR_PLUNGE, "res/gfx/keqing/AirPlunge.png",
+               128, 128, 14, 60);
+    setXYShift(-30, -32, -38, KQ_AIR_PLUNGE);
 
     initSprite(KQ_HURT, "res/gfx/keqing/Hurt.png",
                96, 96, 6, INT32_MAX);
@@ -208,9 +210,9 @@ void Keqing::setSoundSheet() {
     soundSheet->copySoundPaths(KQ_CROUCH_CATK, KQ_CATK);
 
     soundSheet->pushSoundPaths(KQ_DASH,
-                               "Sprint0.ogg",
-                               "Sprint1.ogg",
-                               "Sprint2.ogg");
+                               "Dash0.ogg",
+                               "Dash1.ogg",
+                               "Dash2.ogg");
     soundSheet->copySoundPaths(KQ_AIR_DASH, KQ_DASH);
 
     soundSheet->pushSoundPaths(KQ_SKILL,
@@ -306,7 +308,7 @@ void Keqing::colorSprite(Uint32 rgba, Sprite *sprite) {
 }
 
 void Keqing::colorCurrSprite(Uint32 rgba) {
-    colorSprite(rgba, getCurrentSprite());
+    Keqing::colorSprite(rgba, getCurrentSprite());
 }
 
 void Keqing::colorAllSprites(Uint32 rgba) {
@@ -314,7 +316,7 @@ void Keqing::colorAllSprites(Uint32 rgba) {
     Global::saveUserData(DATA_KQ_COLOR, valStr);
 
     for (int spriteCode = 0; spriteCode < KQ_ENUM_N; spriteCode++) {
-        colorSprite(rgba, getSprite(spriteCode));
+        Keqing::colorSprite(rgba, getSprite(spriteCode));
     }
 }
 
@@ -352,8 +354,8 @@ bool Keqing::shouldUpdateDirection() {
     }
 
     if (isCurrentSprite(KQ_NATK)) {
-        for (int i = 0; i < NAtkMax; i++) {
-            if (isFrameBetween(NAtkEndFrame[i], NAtkEndFrame[i] + 1, KQ_NATK)) {
+        for (int endFrameIndex: NAtkEndFrame) {
+            if (isFrameBetween(endFrameIndex, endFrameIndex + 1, KQ_NATK)) {
                 return true;
             }
         }
@@ -467,11 +469,19 @@ void Keqing::walk() {
 }
 
 void Keqing::run() {
+    if (isSpriteAnimated(KQ_RUN_START)) {
+        if (isNewestFrame(0, KQ_RUN_START)) {
+            xVelocity = 0.2;
+
+            Sound::playAudioChunk("res/sfx/particle/KQRunStart.ogg");
+        }
+        xVelocity = std::min(xVelocity + 0.0032 * Global::dt, KQ_RUN_VELOCITY);
+    }
     if (isSpriteAnimated(KQ_RUN_END)) {
         if (isNewestFrame(0, KQ_RUN_END)) {
             xVelocity = 0.26;
         }
-        xVelocity = std::max(xVelocity - 0.006, 0.0);
+        xVelocity = std::max(xVelocity - 0.0008 * Global::dt, 0.0);
     }
 }
 
@@ -487,12 +497,13 @@ void Keqing::jump() {
     if (isSpriteAnimated(KQ_JUMP_START)) {
         if (isNewestFrame(0, KQ_JUMP_START)) {
             jumpPressTime = Global::pressedTime[KEY_SPACE];
-
-            soundSheet->playRandomSound(KQ_JUMP_START);
         }
 
         if (willFrameFinish(-1, KQ_JUMP_START)) {
             yVelocity = -KQ_JUMP_BASE_VELOCITY;
+
+            soundSheet->playRandomSound(KQ_JUMP_START);
+            Sound::playAudioChunk("res/sfx/particle/KQJump.ogg");
         }
     }
 
@@ -763,7 +774,7 @@ void Keqing::dash() {
     }
 }
 
-static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1) {
+void Keqing::createLightningStelitto(int mouseX, int mouseY) {
     Particle *skillCircleHud = Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE);
     Particle *skillIcon2 =
             Particle::pushParticle(PARTICLE_HUD_SKILL_ICON_2,
@@ -809,63 +820,126 @@ static void createLightningStelitto(Keqing *kq, int mouseX = -1, int mouseY = -1
     Particle *spawnParticle =
             Particle::pushParticle(PARTICLE_KQ_SKILL_SPAWN, 60);
     if (mouseX == -1 || mouseY == -1) {
-        spawnParticle->moveToEntityCenter(kq);
+        spawnParticle->moveToEntityCenter(this);
         double distance = SKILL_TP_DISTANCE;
-        if (!kq->isFacingEast()) distance = -distance;
+        if (!isFacingEast()) distance = -distance;
         spawnParticle->moveAdd(distance, 0);
     } else {
         spawnParticle->moveToCenter(mouseX, mouseY);
     }
 
-    double spawnParticleW, spawnParticleH;
-    spawnParticle->getRealSize(&spawnParticleW, &spawnParticleH);
-
-    int kqHitBoxW = kq->getHitBox().w;
-    int kqHitBoxH = kq->getHitBox().h;
-    spawnParticle->setHitbox({(int) ((spawnParticleW - (double) kqHitBoxW) / 2.0),
-                              (int) ((spawnParticleH - (double) kqHitBoxH) / 2.0),
-                              kqHitBoxW, kqHitBoxH});
-    spawnParticle->checkXCollision((kq->getX() < spawnParticle->getX()));
+    spawnParticle->setHitBoxCentered((int) getBaseHitBoxW(),
+                                     (int) getBaseHitBoxH());
+    spawnParticle->checkXCollision(x < spawnParticle->getX());
     spawnParticle->checkYCollision(true);
+    spawnParticle->delaySprite(INT32_MAX);
 
-    kq->getSoundSheet()->playRandomSound(KQ_SKILL);
-
-    kq->setSkillUseTime(Global::currentTime);
-}
-
-#define IDLE_PARTICLE_GAP 12
-
-void Keqing::ESkill() {
-    if (willFrameFinish(3, KQ_SKILL)) {
-        if (!isKeyPressedLong(KEY_E)) {
-            createLightningStelitto(this);
-        } else {
-            pauseSprite(true, KQ_SKILL);
-            setSpriteAnimated(true, KQ_SKILL_AIMING);
-        }
-    }
-
-    Particle *spawnParticle =
-            Particle::getParticle(PARTICLE_KQ_SKILL_SPAWN);
-    if (spawnParticle != nullptr) { // Lightning Stiletto Idle
-        if (spawnParticle->isNewestFrame(6)) {
+    spawnParticle->setOnRender([](Particle *particle) {
+        if (particle->isNewestFrame(6)) {
             Particle *idleParticle =
                     Particle::pushParticle(PARTICLE_KQ_SKILL_IDLE,
                                            200, 2.0, 2.0);
-            idleParticle->moveToEntityCenter(spawnParticle);
+            idleParticle->moveToEntityCenter(particle);
+            idleParticle->setHitBoxCentered(particle->getHitBox().w,
+                                            particle->getHitBox().h);
             idleParticle->setOnRender([](Particle *particle) {
-                SDL_Rect dstParticle = particle->getRenderRect();
+                SDL_Rect dstParticleRect = particle->getRenderRect();
                 SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
                 const int rectH = 6;
-                SDL_Rect dstRect = {dstParticle.x,
-                                    dstParticle.y + dstParticle.h + IDLE_PARTICLE_GAP - rectH,
-                                    dstParticle.w,
+                SDL_Rect dstRect = {dstParticleRect.x,
+                                    dstParticleRect.y + dstParticleRect.h + IDLE_PARTICLE_GAP - rectH,
+                                    dstParticleRect.w,
                                     rectH - 2};
                 WindowRenderer::renderRect(&dstRect, true,
                                            COLOR_BLACK_FULL,
                                            gRenderer,
                                            false, false);
             });
+        }
+    });
+
+    Particle *projParticle =
+            Particle::pushParticle(PARTICLE_KQ_SKILL_PROJ, INT32_MAX);
+    double kqCenterX, kqCenterY;
+    getSelfCenter(&kqCenterX, &kqCenterY);
+
+    double *spawnParticleCenterX = new double;
+    double *spawnParticleCenterY = new double;
+    spawnParticle->getSelfCenter(spawnParticleCenterX, spawnParticleCenterY);
+
+    double xDiff = *spawnParticleCenterX - kqCenterX;
+    if (!isFacingEast()) xDiff = -xDiff;
+    double yDiff = *spawnParticleCenterY - kqCenterY;
+
+    double angle = atan2Pos(yDiff, xDiff);
+    projParticle->setRotation(radToDegree(angle));
+
+    projParticle->moveToEntityCenter(this);
+
+    f2Params *fParams = new f2Params;
+    fParams->fParam0 = (void *) spawnParticleCenterX;
+    fParams->fParam1 = (void *) spawnParticleCenterY;
+
+    projParticle->setOnRender([](Particle *particle) {
+        double lastX = particle->getX();
+        double lastY = particle->getY();
+
+        double angleDeg = particle->getRotation();
+        double angle = degreeToRad(angleDeg);
+
+        Particle *projAftFxParticle =
+                Particle::pushParticle(PARTICLE_KQ_SKILL_PROJ_AFT_FX, 20);
+        projAftFxParticle->setRotation(angleDeg);
+        projAftFxParticle->moveToEntityCenter(particle);
+
+        double distance = LIGHTNING_STELITTO_VELOCITY * (double) Global::dt;
+        double addX = cos(angle) * distance;
+        if (!particle->isFacingEast()) addX = -addX;
+        double addY = sin(angle) * distance;
+        particle->moveAdd(addX, addY);
+
+        f2Params *fParams = (f2Params *) particle->getOnRenderParams();
+        double dstX = *((double *) fParams->fParam0);
+        double dstY = *((double *) fParams->fParam1);
+        if ((lastX < dstX && particle->getX() >= dstX) ||
+            (lastX > dstX && particle->getX() <= dstX) ||
+            (lastY < dstY && particle->getY() >= dstY) ||
+            (lastY > dstY && particle->getY() <= dstY)) {
+            Particle::removeParticle(PARTICLE_KQ_SKILL_PROJ);
+            
+            Particle *spawnParticle =
+                    Particle::getParticle(PARTICLE_KQ_SKILL_SPAWN);
+            spawnParticle->resetSprite();
+
+            Sound::playAudioChunk("res/sfx/particle/KQSkillShoot.ogg");
+        }
+    }, fParams);
+
+    projParticle->setOnRemove([](Particle *particle) {
+        f2Params *fParams = (f2Params *) particle->getOnRenderParams();
+        delete ((double *) fParams->fParam0);
+        delete ((double *) fParams->fParam1);
+        delete fParams;
+    });
+
+    skillUseTime = Global::currentTime;
+
+    Sound::deleteAudioChunk(skillAimingSoundChannel);
+    soundSheet->playRandomSound(KQ_SKILL);
+    Sound::playAudioChunk("res/sfx/particle/KQSkillShoot.ogg");
+}
+
+void Keqing::ESkill() {
+    if (isNewestFrame(0, KQ_SKILL)) {
+        Sound::playAudioChunk("res/sfx/particle/KQSkillStart.ogg");
+    }
+
+    if (willFrameFinish(3, KQ_SKILL)) {
+        if (!isKeyPressedLong(KEY_E)) {
+            createLightningStelitto();
+        } else {
+            pauseSprite(true, KQ_SKILL);
+            setSpriteAnimated(true, KQ_SKILL_AIMING);
         }
     }
 }
@@ -877,32 +951,50 @@ void Keqing::ESkillAiming() {
         cursorIdleParticle =
                 Particle::pushParticle(PARTICLE_KQ_SKILL_AIMING_IDLE,
                                        60, 2.22, 2.22);
+
+        skillAimingSoundChannel = Sound::playAudioChunk(
+                "res/sfx/particle/KQSkillAiming.ogg", INT32_MAX);
     }
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
-    getMouseAbsoluteXY(&mouseX, &mouseY);
-    mouseX += Global::currentWorld->getBackground()->getFrame().x;
-    cursorIdleParticle->moveToCenter(mouseX, mouseY);
+    getMouseAbsoluteXYNotTranslated(&mouseX, &mouseY);
 
     double kqCenterX, kqCenterY;
     getSelfCenter(&kqCenterX, &kqCenterY);
-    double xDiff = mouseX - kqCenterX;
+    double xDiff = (double) mouseX - kqCenterX;
     if (!isFacingEast()) xDiff = -xDiff;
-    double yDiff = kqCenterY - mouseY;
-    double angle = atan2(yDiff, xDiff);
-    if (angle < 0) angle += 2 * M_PI;
+    double yDiff = kqCenterY - (double) mouseY;
+    double angle = atan2Pos(yDiff, xDiff);
+
+    double dist = getDistance(kqCenterX, kqCenterY,
+                              (double) mouseX, (double) mouseY);
+    if (dist > SKILL_TP_DISTANCE) {
+        double absX = cos(angle) * SKILL_TP_DISTANCE;
+        if (!isFacingEast()) absX = -absX;
+        mouseX = (int) (kqCenterX + absX);
+        mouseY = (int) (kqCenterY - sin(angle) * SKILL_TP_DISTANCE);
+    }
 
     int frameIndex = (int) ((angle / (2.0 * M_PI)) * 8);
     goToFrame(frameIndex, KQ_SKILL_AIMING);
 
+    cursorIdleParticle->moveToCenter((double) mouseX, (double) mouseY);
+
     if (!isKeyPressed(KEY_E)) {
         Particle::removeParticle(PARTICLE_KQ_SKILL_AIMING_IDLE);
         setSpriteAnimated(false, KQ_SKILL_AIMING);
-        createLightningStelitto(this, mouseX, mouseY);
+        createLightningStelitto(mouseX, mouseY);
         pauseSprite(false, KQ_SKILL);
         goToFrame(5, KQ_SKILL);
         return;
     }
+}
+
+void Keqing::doSkillSlashFrame0() {
+    Particle *idleParticle =
+            Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
+    if (x <= idleParticle->getX()) setFacingEast(true);
+    else setFacingEast(false);
 }
 
 void Keqing::moveToLStiletto() {
@@ -913,22 +1005,24 @@ void Keqing::moveToLStiletto() {
         double idleParticleHeight;
         idleParticle->getRealSize(nullptr, &idleParticleHeight);
         y = idleParticle->getY() - (hitBox.h - idleParticleHeight) - hitBox.y - 2 + IDLE_PARTICLE_GAP;
+
+        Sound::playAudioChunk("res/sfx/particle/KQSkillTP.ogg");
     } else {
         SDL_Log("Lightning Stiletto doesn't exists!\n");
     }
 }
 
-static void skillTP(Keqing *kq) {
+void Keqing::doSkillTP() {
     Particle *tpStartParticle =
             Particle::pushParticle(PARTICLE_KQ_BURST_VANISH, 60);
-    tpStartParticle->moveToEntityCenter(kq);
+    tpStartParticle->moveToEntityCenter(this);
 
-    kq->moveToLStiletto();
+    moveToLStiletto();
 
     Particle *tpEndParticle =
             Particle::pushParticle(PARTICLE_KQ_SKILL_TP_END,
                                    60, 0.64, 0.64);
-    tpEndParticle->moveToEntityCenter(kq);
+    tpEndParticle->moveToEntityCenter(this);
 
     Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_2);
 }
@@ -936,35 +1030,22 @@ static void skillTP(Keqing *kq) {
 void Keqing::ESkillSlash() {
     yVelocity = 0;
 
-    if (isSpriteAnimated(KQ_SKILL_SLASH)) {
-        if (isNewestFrame(0, KQ_SKILL_SLASH)) {
-            Particle *idleParticle =
-                    Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
-            if (x <= idleParticle->getX()) setFacingEast(true);
-            else setFacingEast(false);
+    if (isNewestFrame(0, KQ_SKILL_SLASH)) {
+        doSkillSlashFrame0();
 
-            World *gWorld = Global::currentWorld;
-            double idleParticleW, idleParticleH;
-            idleParticle->getRealSize(&idleParticleW, &idleParticleH);
-            double idleParticleBottom = idleParticle->getY() + idleParticleH + IDLE_PARTICLE_GAP;
-            if (!gWorld->isPixelSurface(idleParticle->getX(), idleParticleBottom) &&
-                !gWorld->isPixelSurface(idleParticle->getX() + idleParticleW, idleParticleBottom)) {
-                setSpriteAnimated(false, KQ_SKILL_SLASH);
-                setSpriteAnimated(true, KQ_AIR_SKILL_SLASH);
-            }
+    } else if (isNewestFrame(6, KQ_SKILL_SLASH)) {
+        Particle *idleParticle =
+                Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
+        bool isIdleParticleInAir = idleParticle->isInAir();
 
-        } else if (isNewestFrame(6, KQ_SKILL_SLASH)) {
-            skillTP(this);
+        doSkillTP();
 
-            soundSheet->playRandomSound(KQ_SKILL_SLASH);
-        }
-    }
+        soundSheet->playRandomSound(KQ_SKILL_SLASH);
 
-    if (isSpriteAnimated(KQ_AIR_SKILL_SLASH)) {
-        if (isNewestFrame(6, KQ_AIR_SKILL_SLASH)) {
-            skillTP(this);
-
-            soundSheet->playRandomSound(KQ_AIR_SKILL_SLASH);
+        if (isIdleParticleInAir) {
+            setSpriteAnimated(false, KQ_SKILL_SLASH);
+            setSpriteAnimated(true, KQ_AIR_SKILL_SLASH);
+            goToFrameNoNew(6, KQ_AIR_SKILL_SLASH);
         }
     }
 }
@@ -981,8 +1062,9 @@ const double cSlashWM[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
 const double cSlashHM[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
         {1.0, 1.2, 1.2, 1.2, 1.2, 1.2};
 
-static void pushCloneSlashParticle(Particle *removedParticle) {
+void pushCloneSlashParticle(Particle *removedParticle) {
     Keqing *kq = Keqing::getInstance();
+
     if (removedParticle == nullptr) {
         kq->setBurstCloneSlashCount(0);
     }
@@ -1007,38 +1089,11 @@ const int slashDuration = 46;
 const int slashRotations[KQ_BURST_NUMBER_OF_SLASH] =
         {0, 20, 40, 60, 80, 100, 120, 140};
 
-static void pushSlashParticle() {
-    Particle *aoeParticle =
-            Particle::getParticle(PARTICLE_KQ_BURST_AOE);
-    for (int i = 0; i < KQ_BURST_NUMBER_OF_SLASH; i++) {
-        Particle *slashParticle =
-                Particle::pushParticle(PARTICLE_KQ_BURST_SLASH,
-                                       slashDuration,
-                                       1.2, 1.2);
-        slashParticle->moveToEntityCenter(aoeParticle);
-        slashParticle->setRotation(slashRotations[i]);
-        slashParticle->delaySprite(2 * slashDuration * i);
-    }
-}
-
 const int cVanishDuration = 40;
 const double cVanishXShift[KQ_BURST_NUMBER_OF_CLONE] =
         {100, -80, 74, -100, -14};
 const double cVanishYShift[KQ_BURST_NUMBER_OF_CLONE] =
         {26, -36, -48, 36, -80};
-
-static void pushCloneVanishParticle(Particle *aoeParticle) {
-    aoeParticle =
-            Particle::getParticle(PARTICLE_KQ_BURST_CLONE);
-    for (int i = 0; i < KQ_BURST_NUMBER_OF_CLONE; i++) {
-        Particle *cloneVanishParticle =
-                Particle::pushParticle(PARTICLE_KQ_BURST_CLONE_VANISH,
-                                       cVanishDuration,
-                                       1.2, 1.2);
-        cloneVanishParticle->moveToEntityCenter(aoeParticle);
-        cloneVanishParticle->xyShift(cVanishXShift[i], cVanishYShift[i]);
-    }
-}
 
 const double aoeBaseWHM = 0;
 const double aoeMaxWHM = 2.0;
@@ -1064,6 +1119,7 @@ void Keqing::RBurst() {
         aoeWaveParticle->setRGBAMod(COLOR_WHITE, 128);
 
         soundSheet->playRandomSound(KQ_BURST);
+        Sound::playAudioChunk("res/sfx/particle/KQBurstStart.ogg");
 
     } else if (isNewestFrame(12, KQ_BURST)) { // Vanish
         Particle *vanishParticle =
@@ -1081,7 +1137,9 @@ void Keqing::RBurst() {
         cloneParticle->delaySprite(cSlashFrameDuration);
         cloneParticle->stopOnFrame(-1);
 
-    } else if (isNewestFrame(24, KQ_BURST)) { // Final Slash
+        Sound::playAudioChunk("res/sfx/particle/KQBurstRapid.ogg");
+
+    } else if (isNewestFrame(26, KQ_BURST)) { // Final Slash
         Particle *aoeParticle =
                 Particle::getParticle(PARTICLE_KQ_BURST_AOE);
         Particle *aoeWaveParticle =
@@ -1091,12 +1149,23 @@ void Keqing::RBurst() {
                 Particle::pushParticle(PARTICLE_KQ_BURST_FINAL_SLASH, 80);
         finalSlashParticle->moveToEntityCenter(aoeParticle);
 
-        pushCloneVanishParticle(aoeParticle);
+        Particle *burstCloneParticle =
+                Particle::getParticle(PARTICLE_KQ_BURST_CLONE);
+        for (int i = 0; i < KQ_BURST_NUMBER_OF_CLONE; i++) {
+            Particle *cloneVanishParticle =
+                    Particle::pushParticle(PARTICLE_KQ_BURST_CLONE_VANISH,
+                                           cVanishDuration,
+                                           1.2, 1.2);
+            cloneVanishParticle->moveToEntityCenter(burstCloneParticle);
+            cloneVanishParticle->xyShift(cVanishXShift[i], cVanishYShift[i]);
+        }
 
         aoeParticle->fadeAway();
         aoeWaveParticle->fadeAway();
 
         Particle::removeParticle(PARTICLE_KQ_BURST_CLONE);
+
+        Sound::playAudioChunk("res/sfx/particle/KQBurstEnd.ogg");
     }
 
     // Enlarge Circle
@@ -1132,7 +1201,16 @@ void Keqing::RBurst() {
 
         if (!Particle::isActive(PARTICLE_KQ_BURST_CLONE_SLASH)) { // Clone Slash End
             goToNextFrame(KQ_BURST);
-            pushSlashParticle();
+
+            for (int i = 0; i < KQ_BURST_NUMBER_OF_SLASH; i++) {
+                Particle *slashParticle =
+                        Particle::pushParticle(PARTICLE_KQ_BURST_SLASH,
+                                               slashDuration,
+                                               1.2, 1.2);
+                slashParticle->moveToEntityCenter(aoeParticle);
+                slashParticle->setRotation(slashRotations[i]);
+                slashParticle->delaySprite(2 * slashDuration * i);
+            }
         }
     }
 }
@@ -1276,11 +1354,52 @@ void Keqing::airUpNAtk() {
     }
 }
 
+void Keqing::airESkillSlash() {
+    yVelocity = 0;
+
+    if (isNewestFrame(0, KQ_AIR_SKILL_SLASH)) {
+        doSkillSlashFrame0();
+
+    } else if (isNewestFrame(6, KQ_AIR_SKILL_SLASH)) {
+        Particle *idleParticle =
+                Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
+        bool isIdleParticleInAir = idleParticle->isInAir();
+
+        doSkillTP();
+
+        soundSheet->playRandomSound(KQ_AIR_SKILL_SLASH);
+
+        if (!isIdleParticleInAir) {
+            setSpriteAnimated(false, KQ_AIR_SKILL_SLASH);
+            setSpriteAnimated(true, KQ_SKILL_SLASH);
+            goToFrameNoNew(6, KQ_SKILL_SLASH);
+        }
+    }
+}
+
+void Keqing::airDash() {
+    yVelocity = 0;
+
+    if (isNewestFrame(0, KQ_AIR_DASH)) {
+        airDashed = true;
+        if (isKeyPressed(KEY_Q)) {
+            setFacingEast(true);
+            xVelocity = -KQ_AIR_DASH_VELOCITY;
+        } else if (isKeyPressed(KEY_D)) {
+            setFacingEast(false);
+            xVelocity = -KQ_AIR_DASH_VELOCITY;
+        } else xVelocity = 0;
+
+        soundSheet->playRandomSound(KQ_AIR_DASH);
+    }
+}
+
 void Keqing::airPlunge() { // Plunge Attack in Genshin
     if (isNewestFrame(0, KQ_AIR_PLUNGE)) {
         setSpriteAnimated(false, KQ_JUMP);
 
         soundSheet->playRandomSound(KQ_AIR_PLUNGE);
+        Sound::playAudioChunk("res/sfx/particle/KQPlungeStart.ogg");
 
     } else if (isNewestFrame(1, KQ_AIR_PLUNGE)) {
         yVelocity = -0.4;
@@ -1293,6 +1412,9 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
         airNAttackParticle->xyShift(26, 52);
 
         yVelocity = 0.2;
+
+        airPlungeLoopSoundChannel = Sound::playAudioChunk(
+                "res/sfx/particle/KQPlungeLoop.ogg", INT32_MAX);
     }
 
     Particle *airNAttackPaticle =
@@ -1319,6 +1441,9 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
                     Particle::pushParticle(PARTICLE_KQ_AIR_PLUNGE_GROUND, 60);
             airNAtkGroundParticle->moveToEntityCenter(this);
             airNAtkGroundParticle->xyShift(20, -6);
+
+            Sound::deleteAudioChunk(airPlungeLoopSoundChannel);
+            Sound::playAudioChunk("res/sfx/particle/KQPlungeEnd.ogg");
         }
     }
 
@@ -1338,23 +1463,6 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
         atk->setShouldRemove([](Attack *self, void *fParams) {
             return (Particle::getParticle(PARTICLE_KQ_AIR_PLUNGE) == nullptr);
         }, nullptr);
-    }
-}
-
-void Keqing::airDash() {
-    yVelocity = 0;
-
-    if (isNewestFrame(0, KQ_AIR_DASH)) {
-        airDashed = true;
-        if (isKeyPressed(KEY_Q)) {
-            setFacingEast(true);
-            xVelocity = -KQ_AIR_DASH_VELOCITY;
-        } else if (isKeyPressed(KEY_D)) {
-            setFacingEast(false);
-            xVelocity = -KQ_AIR_DASH_VELOCITY;
-        } else xVelocity = 0;
-
-        soundSheet->playRandomSound(KQ_AIR_DASH);
     }
 }
 
@@ -1442,7 +1550,6 @@ bool Keqing::canDoAction(int spriteCode) {
 
         case KQ_AIR_DASH:
             if (airDashed) return false;
-            if (isSpriteAnimated(KQ_AIR_PLUNGE)) return false;
             break;
 
         default:
@@ -1482,9 +1589,13 @@ void Keqing::updateActionFromKey() {
         }
 
     } else if (isKeyPressed(KEY_E)) {
-        if (!isInAir()) {
-            if (!Keqing::isLightningStilettoExisting()) {
+        if (!Particle::isActive(PARTICLE_KQ_SKILL_IDLE)) {
+            if (!isInAir()) {
                 spriteCode = KQ_SKILL;
+            }
+        } else {
+            if (isInAir()) {
+                spriteCode = KQ_AIR_SKILL_SLASH;
             } else {
                 spriteCode = KQ_SKILL_SLASH;
             }
@@ -1537,7 +1648,11 @@ void Keqing::updateActionFromKey() {
         if (!isKeyPressed(KEY_MOUSE_RIGHT)) {
             spriteCode = KQ_WALK;
         } else {
-            spriteCode = KQ_RUN;
+            if (!isSpriteAnimated(KQ_RUN_END)) {
+                spriteCode = KQ_RUN_START;
+            } else {
+                spriteCode = KQ_RUN;
+            }
         }
 
     }
@@ -1573,10 +1688,7 @@ void Keqing::updateAction() {
     if (isSpriteAnimated(KQ_DASH)) this->dash();
     if (isSpriteAnimated(KQ_SKILL)) this->ESkill();
     if (isSpriteAnimated(KQ_SKILL_AIMING)) this->ESkillAiming();
-    if (isSpriteAnimated(KQ_SKILL_SLASH) ||
-        isSpriteAnimated(KQ_AIR_SKILL_SLASH)) {
-        this->ESkillSlash();
-    }
+    if (isSpriteAnimated(KQ_SKILL_SLASH)) this->ESkillSlash();
     if (isSpriteAnimated(KQ_BURST)) this->RBurst();
 
     // Crouch
@@ -1587,8 +1699,9 @@ void Keqing::updateAction() {
     if (isSpriteAnimated(KQ_AIR_DOUBLE_JUMP)) this->airDoubleJump();
     if (isSpriteAnimated(KQ_AIR_NATK)) this->airNAtk();
     if (isSpriteAnimated(KQ_AIR_UP_NATK)) this->airUpNAtk();
-    if (isSpriteAnimated(KQ_AIR_PLUNGE)) this->airPlunge();
+    if (isSpriteAnimated(KQ_AIR_SKILL_SLASH)) this->airESkillSlash();
     if (isSpriteAnimated(KQ_AIR_DASH)) this->airDash();
+    if (isSpriteAnimated(KQ_AIR_PLUNGE)) this->airPlunge();
 }
 
 void Keqing::lock() {

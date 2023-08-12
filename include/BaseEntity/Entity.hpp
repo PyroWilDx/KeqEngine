@@ -84,6 +84,8 @@ public:
 
     void renderHitBox(SDL_Renderer *gRenderer);
 
+    void setHitBoxCentered(int hitBoxW, int hitBoxH);
+
     [[nodiscard]] double getBaseHitBoxX() const;
 
     [[nodiscard]] double getBaseHitBoxY() const;
@@ -100,7 +102,7 @@ public:
 
     void clearTexture();
 
-    inline void setHitbox(SDL_Rect hitBox_) { hitBox = hitBox_; }
+    inline void setHitBox(SDL_Rect hitBox_) { hitBox = hitBox_; }
 
     inline void setTexture(SDL_Texture *imgTexture_, int frameW = 0, int frameH = 0) {
         imgTexture = imgTexture_;

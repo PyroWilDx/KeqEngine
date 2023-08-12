@@ -5,50 +5,59 @@
 #include "Utils/Sound.hpp"
 #include "Utils/Global.hpp"
 
-Mix_Chunk *Sound::currentAudioChunk = nullptr;
+Mix_Chunk *Sound::chunkArray[MIX_CHANNEL_N];
 Mix_Music *Sound::currentAudioMusic = nullptr;
 
 void Sound::initSound() {
-    currentAudioChunk = nullptr;
+    Mix_AllocateChannels(MIX_CHANNEL_N);
+
+    double volumePercent = std::stod(Global::userData[DATA_GAME_VOLUME]);
+    int volume = (int) (MIX_MAX_VOLUME * (volumePercent / 100.0));
+    Mix_Volume(-1, volume);
+
+    for (int i = 0; i < MIX_CHANNEL_N; i++) {
+        chunkArray[i] = nullptr;
+    }
     currentAudioMusic = nullptr;
 }
 
 void Sound::cleanUp() {
-    Sound::deleteAudioChunk();
+    for (int i = 0; i < MIX_CHANNEL_N; i++) {
+        Sound::deleteAudioChunk(i);
+    }
     Sound::deleteAudioMusic();
 }
 
-Mix_Chunk *Sound::playAudioChunk(const char *chunkPath, int repeatCount) {
-    Mix_Chunk *currChunk = Sound::setAudioChunk(chunkPath);
-    Mix_PlayChannel(-1, currChunk, repeatCount);
-    return currChunk;
-}
-
-Mix_Music *Sound::playAudioMusic(const char *musicPath, int repeatCount) {
-    Mix_Music *currMusic = Sound::setAudioMusic(musicPath);
-    Mix_PlayMusic(currMusic, repeatCount);
-    return currMusic;
-}
-
-Mix_Chunk *Sound::setAudioChunk(const char *chunkPath) {
-    if (currentAudioChunk != nullptr) Sound::deleteAudioChunk();
-
-    currentAudioChunk = Mix_LoadWAV(chunkPath);
-    return currentAudioChunk;
-}
-
-void Sound::deleteAudioChunk() {
-    if (currentAudioChunk != nullptr) {
-        Mix_FreeChunk(currentAudioChunk);
-        currentAudioChunk = nullptr;
+void Sound::onGameFrame() {
+    for (int i = 0; i < MIX_CHANNEL_N; i++) {
+        if (chunkArray[i] != nullptr) {
+            if (Mix_Playing(i) == 0) {
+                deleteAudioChunk(i);
+            }
+        }
     }
 }
 
-Mix_Music *Sound::setAudioMusic(const char *musicPath) {
-    if (currentAudioMusic != nullptr) Sound::deleteAudioMusic();
+int Sound::playAudioChunk(const char *chunkPath, int repeatCount) {
+    Mix_Chunk *currChunk = Mix_LoadWAV(chunkPath);
+    int channel = Mix_PlayChannel(-1, currChunk, repeatCount);
+    chunkArray[channel] = currChunk;
+    return channel;
+}
 
+void Sound::deleteAudioChunk(int channel) {
+    if (chunkArray[channel] != nullptr) {
+        Mix_FreeChunk(chunkArray[channel]);
+        chunkArray[channel] = nullptr;
+    }
+}
+
+Mix_Music *Sound::playAudioMusic(const char *musicPath, int repeatCount) {
+    if (currentAudioMusic != nullptr) Sound::deleteAudioMusic();
+    Mix_Music *currMusic = Mix_LoadMUS(musicPath);
+    Mix_PlayMusic(currMusic, repeatCount);
     currentAudioMusic = Mix_LoadMUS(musicPath);
-    return currentAudioMusic;
+    return currMusic;
 }
 
 void Sound::deleteAudioMusic() {

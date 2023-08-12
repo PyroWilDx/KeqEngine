@@ -15,8 +15,9 @@ void ConfigKeqing::RunImpl() {
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      "res/gfx/background/ConfigKeqing.png");
 
-    auto *swapKqVAButton = new Button(400, 0, 200, 100);
-    swapKqVAButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+    auto *swapKqVAButton = new Button(600, 100, 200, 100);
+    swapKqVAButton->setOnClickRelease([](Button *self, int mouseX,
+                                         int mouseY, void *fParams) {
         const int nLang = 4;
         std::string allKqLangs[nLang] = {"jp", "en", "cn", "kr"};
         std::string currKqLang = Global::userData[DATA_KQ_VOICE_LANG];
@@ -36,9 +37,10 @@ void ConfigKeqing::RunImpl() {
     swapKqVAButton->changeColor(COLOR_BLUE);
     gWorld->addButton(swapKqVAButton);
 
-    auto *runColorKqButton = new Button(400, 200, 200, 100);
-    runColorKqButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
-        bool *pGRunning = (bool *) onClickParams;
+    auto *runColorKqButton = new Button(700, 400, 200, 100);
+    runColorKqButton->setOnClickRelease([](Button *self, int mouseX,
+                                           int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &ColorKeqing::Run);
     });
     tmpColor = {COLOR_WHITE_FULL};

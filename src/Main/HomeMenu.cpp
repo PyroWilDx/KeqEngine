@@ -9,6 +9,7 @@
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
 #include "Utils/Sound.hpp"
+#include "UI/VolumeSlider.hpp"
 
 void HomeMenu::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
@@ -18,8 +19,9 @@ void HomeMenu::RunImpl() {
                                      "res/gfx/background/HomeMenu.png");
 
     auto *runGame1Button = new Button(400, 0, 200, 100);
-    runGame1Button->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
-        bool *pGRunning = (bool *) onClickParams;
+    runGame1Button->setOnClickRelease([](Button *self, int mouseX,
+                                         int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &Game1::Run);
     });
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
@@ -29,8 +31,9 @@ void HomeMenu::RunImpl() {
     gWorld->addButton(runGame1Button);
 
     auto *runConfigKqButton = new Button(400, 200, 200, 100);
-    runConfigKqButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
-        bool *pGRunning = (bool *) onClickParams;
+    runConfigKqButton->setOnClickRelease([](Button *self, int mouseX,
+                                            int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &ConfigKeqing::Run);
     });
     tmpColor = {COLOR_WHITE_FULL};
@@ -39,7 +42,24 @@ void HomeMenu::RunImpl() {
     runConfigKqButton->changeColor(COLOR_RED);
     gWorld->addButton(runConfigKqButton);
 
-//    playAudioMusic("res/sfx/music/NimbleAsLightning.ogg");
+    int currVolume = std::stod(Global::userData[DATA_GAME_VOLUME]);
+    tmpColor = {COLOR_GREEN_FULL};
+    auto *volumeSlider = new VolumeSlider(400, 600, 400,
+                                          &tmpColor, currVolume);
+    auto fSetVolume = [](Button *self, int mouseX,
+                         int mouseY, void *fParams) {
+        auto *selfVolumeSlider = (VolumeSlider *) self;
+        int currVolumePercent = selfVolumeSlider->getCurrentVolume();
+        std::string volumeStr = std::to_string(currVolumePercent);
+        Global::saveUserData(DATA_GAME_VOLUME, volumeStr);
+        int currVolume = (int) (MIX_MAX_VOLUME * (currVolumePercent / 100.0));
+        Mix_Volume(-1, currVolume);
+    };
+    volumeSlider->setOnClick(fSetVolume);
+    volumeSlider->setOnClickedMove(fSetVolume);
+    gWorld->addButton(volumeSlider);
+
+//    Sound::playAudioMusic("res/sfx/music/NimbleAsLightning.ogg");
 
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;

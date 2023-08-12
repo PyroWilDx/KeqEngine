@@ -5,7 +5,7 @@
 #include "Main/ColorKeqing.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 #include "UI/ColorPicker.hpp"
 
 void ColorKeqing::RunImpl() {
@@ -25,7 +25,8 @@ void ColorKeqing::RunImpl() {
 
     Uint32 currRGBA = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
     auto *colorPicker = new ColorPicker(0, 0, 400, 400, currRGBA);
-    colorPicker->setOnClick([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+    colorPicker->setOnClick([](Button *self, int mouseX,
+                               int mouseY, void *fParams) {
         auto *selfColorPicker = (ColorPicker *) self;
         Uint32 rgba = selfColorPicker->getCurrentRGBA();
         Keqing *kq = Keqing::getInstance();
@@ -33,7 +34,8 @@ void ColorKeqing::RunImpl() {
         kq->moveToDownLeft(0, SCREEN_BASE_HEIGHT);
         kq->colorCurrSprite(rgba);
     });
-    colorPicker->setOnClickedMove([](Button *self, int mouseX, int mouseY, void *onClickParams) {
+    colorPicker->setOnClickedMove([](Button *self, int mouseX,
+                                     int mouseY, void *fParams) {
         auto *selfColorPicker = (ColorPicker *) self;
         Uint32 rgba = selfColorPicker->getCurrentRGBA();
         Keqing *kq = Keqing::getInstance();
@@ -42,8 +44,9 @@ void ColorKeqing::RunImpl() {
     gWorld->addButton(colorPicker);
 
     auto *setKqColorButton = new Button(600, 100, 200, 200);
-    setKqColorButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
-        auto *colorPicker = (ColorPicker *) onClickParams;
+    setKqColorButton->setOnClickRelease([](Button *self, int mouseX,
+                                           int mouseY, void *fParams) {
+        auto *colorPicker = (ColorPicker *) fParams;
         Keqing *kq = Keqing::getInstance();
         kq->colorAllSprites(colorPicker->getCurrentRGBA());
         kq->unlock();
@@ -55,8 +58,9 @@ void ColorKeqing::RunImpl() {
     gWorld->addButton(setKqColorButton);
 
     auto *resetKqColorButton = new Button(900, 100, 300, 200);
-    resetKqColorButton->setOnClickRelease([](Button *self, int mouseX, int mouseY, void *onClickParams) {
-        auto *colorPicker = (ColorPicker *) onClickParams;
+    resetKqColorButton->setOnClickRelease([](Button *self, int mouseX,
+                                             int mouseY, void *fParams) {
+        auto *colorPicker = (ColorPicker *) fParams;
         Keqing *kq = Keqing::getInstance();
         kq->colorAllSprites(KQ_BASE_COLOR);
         kq->unlock();

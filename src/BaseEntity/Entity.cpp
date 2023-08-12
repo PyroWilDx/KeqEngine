@@ -389,13 +389,23 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
 void Entity::renderHitBox(SDL_Renderer *gRenderer) {
     SDL_Rect dstHitBox = hitBox;
     if (dstHitBox.w != 0 && dstHitBox.h != 0) {
-        dstHitBox.x += roundToInt(this->getX());
-        dstHitBox.y += roundToInt(this->getY());
+        dstHitBox.x += (int) x;
+        dstHitBox.y += (int) y;
         WindowRenderer::renderRect(&dstHitBox, false,
                                    COLOR_RED_FULL,
                                    gRenderer,
                                    false, true);
     }
+}
+
+void Entity::setHitBoxCentered(int hitBoxW, int hitBoxH) {
+    double realW, realH;
+    getRealSize(&realW, &realH);
+
+    hitBox.x = (int) ((realW - (double) hitBoxW) / 2.0);
+    hitBox.y = (int) ((realH - (double) hitBoxH) / 2.0);
+    hitBox.w = hitBoxW;
+    hitBox.h = hitBoxH;
 }
 
 double Entity::getBaseHitBoxX() const {
