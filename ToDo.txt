@@ -1,6 +1,6 @@
 hitlag
 
-global volume
+for volumeslider, the ismouseonbutton can be larger, (just change the variable directly)
 
 damaging kb should take into account the weight of the entity
 

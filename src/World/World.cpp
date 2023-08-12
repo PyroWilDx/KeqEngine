@@ -4,7 +4,8 @@
 
 #include "World/World.hpp"
 #include "Utils/Events.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
+#include "Utils/Sound.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
@@ -80,7 +81,7 @@ Pixel World::getPixel(double x, double y) {
         y < 0 || y >= background->getTotalH()) {
         return {WORLD_BLOCK, BLOCK_WALL_INVISIBLE};
     }
-    return pixels[roundToInt(x)][roundToInt(y)];
+    return pixels[(int) x][(int) y];
 }
 
 bool World::isPixelCode(double x, double y, int worldCode) {
@@ -223,6 +224,7 @@ Attack *World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int a
 }
 
 void World::onGameFrame() {
+    Sound::onGameFrame();
     Particle::animateAll();
 
     for (Monster *monster: monsterVector) {
@@ -299,6 +301,8 @@ void World::renderDebugMode() {
         entity->renderHitBox(gRenderer);
     }
     if (renderKeqing) Keqing::getInstance()->renderHitBox(gRenderer);
+
+    Particle::renderAllDebug(gRenderer);
 
     auto fRenderAtk = [](void *value, void *fParams) {
         auto *atk = (Attack *) value;

@@ -78,11 +78,11 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
     double wLeftoverCoeff = (double) dstBaseW / (double) srcBaseW;
     double hLeftoverCoeff = (double) dstBaseH / (double) srcBaseH;
     if (xLeftover > epsilonLeftover) {
-        src.w = roundToInt(srcLeftoverW);
+        src.w = (int) srcLeftoverW;
         src.h = srcBaseH;
         blockDst.x = lastX;
         blockDst.y = baseY;
-        blockDst.w = roundToInt(srcLeftoverW * wLeftoverCoeff);
+        blockDst.w = (int) (srcLeftoverW * wLeftoverCoeff);
         blockDst.h = dstBaseH;
         for (int j = 0; j < (int) yCoeff; j++) {
             SDL_RenderCopyEx(gRenderer, this->getTexture(),
@@ -93,11 +93,11 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
     }
     if (yLeftover > epsilonLeftover) {
         src.w = srcBaseW;
-        src.h = roundToInt(srcLeftoverH);
+        src.h = (int) srcLeftoverH;
         blockDst.x = baseX;
         blockDst.y = lastY;
         blockDst.w = dstBaseW;
-        blockDst.h = roundToInt(srcLeftoverH * hLeftoverCoeff);
+        blockDst.h = (int) (srcLeftoverH * hLeftoverCoeff);
         for (int i = 0; i < (int) xCoeff; i++) {
             SDL_RenderCopyEx(gRenderer, this->getTexture(),
                              &src, &blockDst,
@@ -106,12 +106,12 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
         }
     }
     if (xLeftover > epsilonLeftover && yLeftover > epsilonLeftover) {
-        src.w = roundToInt(srcLeftoverW);
-        src.h = roundToInt(srcLeftoverH);
+        src.w = (int) srcLeftoverW;
+        src.h = (int) srcLeftoverH;
         blockDst.x = lastX;
         blockDst.y = lastY;
-        blockDst.w = roundToInt(srcLeftoverW * wLeftoverCoeff);
-        blockDst.h = roundToInt(srcLeftoverH * hLeftoverCoeff);
+        blockDst.w = (int) (srcLeftoverW * wLeftoverCoeff);
+        blockDst.h = (int) (srcLeftoverH * hLeftoverCoeff);
         SDL_RenderCopyEx(gRenderer, this->getTexture(),
                          &src, &blockDst,
                          renderRotation, nullptr, renderFlip);

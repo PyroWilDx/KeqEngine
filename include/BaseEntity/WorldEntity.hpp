@@ -26,9 +26,9 @@ public:
 
     bool isPixelInSelfRect(double pixelX, double pixelY);
 
-    inline int getX() { return roundToInt(x); }
+    inline int getX() { return (int) x; }
 
-    inline int getY() { return roundToInt(y); }
+    inline int getY() { return (int) y; }
 
     [[nodiscard]] inline int getWorldEntityType() const { return worldEntityType; }
 

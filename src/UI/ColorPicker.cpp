@@ -8,8 +8,8 @@
 ColorPicker::ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA)
         : Button(x, y, renderW, renderH) {
     swapColorOnClick = false;
-    pickerX = this->getX();
-    pickerY = this->getY();
+    pickerX = WorldEntity::getX();
+    pickerY = WorldEntity::getY();
 
     absPixels = new Uint32 *[renderW];
     for (int i = 0; i < renderW; i++) {

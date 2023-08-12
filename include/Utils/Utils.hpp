@@ -30,9 +30,20 @@
 #define COLOR_BLUE 0, 0, 255
 #define COLOR_BLUE_FULL COLOR_BLUE, 255
 
+typedef struct f2Params {
+    void *fParam0;
+    void *fParam1;
+} f2Params;
+
 void myAssert(bool expr, const char *msg = nullptr, const char *err = nullptr);
 
-int roundToInt(double value);
+double getDistance(double x1, double y1, double x2, double y2);
+
+double atan2Pos(double y, double x);
+
+double radToDegree(double rad);
+
+double degreeToRad(double degree);
 
 Uint32 cvStringToUint32(std::string &valStr);
 
@@ -45,6 +56,8 @@ void getScreenXYCoeff(double *pXCoeff, double *pYCoeff);
 void shiftXYFromScreenPosition(int *pX, int *pY);
 
 void getMouseAbsoluteXY(int *pMouseX, int *pMouseY);
+
+void getMouseAbsoluteXYNotTranslated(int *pMouseX, int *pMouseY);
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard);
 

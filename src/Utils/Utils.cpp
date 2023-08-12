@@ -16,8 +16,22 @@ void myAssert(bool expr, const char *msg, const char *err) {
     }
 }
 
-int roundToInt(double x) {
-    return ((int) (x));
+double getDistance(double x1, double y1, double x2, double y2) {
+    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+}
+
+double atan2Pos(double y, double x) {
+    double res = atan2(y, x);
+    if (res < 0) res += 2 * M_PI;
+    return res;
+}
+
+double radToDegree(double rad) {
+    return (rad * (180.0 / M_PI));
+}
+
+double degreeToRad(double degree) {
+    return (degree * (M_PI / 180.0));
 }
 
 Uint32 cvStringToUint32(std::string &valStr) {
@@ -56,6 +70,12 @@ void getMouseAbsoluteXY(int *pMouseX, int *pMouseY) {
     getScreenXYCoeff(&xCoeff, &yCoeff);
     *pMouseX = (int) ((double) *pMouseX / xCoeff);
     *pMouseY = (int) ((double) *pMouseY / yCoeff);
+}
+
+void getMouseAbsoluteXYNotTranslated(int *pMouseX, int *pMouseY) {
+    getMouseAbsoluteXY(pMouseX, pMouseY);
+    *pMouseX += Global::currentWorld->getBackground()->getFrame().x;
+    *pMouseY += Global::currentWorld->getBackground()->getFrame().y;
 }
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard) {

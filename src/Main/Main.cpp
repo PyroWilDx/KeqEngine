@@ -12,7 +12,7 @@
 #include "Main/HomeMenu.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/Random.hpp"
 
@@ -44,10 +44,6 @@ int main(int argc, char *argv[]) {
     Keqing::initKeqing();
     Particle::initParticle();
 
-    double volumePercent = std::stod(Global::userData[DATA_GAME_VOLUME]);
-    int volume = (int) (MIX_MAX_VOLUME * (volumePercent / 100.0));
-    Mix_Volume(-1, volume);
-
     HomeMenu::Run();
 
     Particle::cleanUp();
@@ -57,6 +53,7 @@ int main(int argc, char *argv[]) {
     Sound::cleanUp();
     Global::cleanUp();
     WindowRenderer::cleanUp();
+
     Mix_Quit();
     TTF_Quit();
     IMG_Quit();

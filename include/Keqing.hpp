@@ -35,9 +35,9 @@ enum {
     KQ_AIR_DOUBLE_JUMP,
     KQ_AIR_NATK,
     KQ_AIR_UP_NATK,
-    KQ_AIR_PLUNGE,
-    KQ_AIR_DASH,
     KQ_AIR_SKILL_SLASH,
+    KQ_AIR_DASH,
+    KQ_AIR_PLUNGE,
     KQ_HURT,
     KQ_ENUM_N
 };
@@ -56,7 +56,9 @@ enum {
 #define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
 #define KQ_AIR_DASH_VELOCITY 0.8
 
-#define KQ_KNOCKBACK_VELOCITY 0.6
+#define LIGHTNING_STELITTO_VELOCITY 2.4
+#define IDLE_PARTICLE_GAP 12
+#define SKILL_TP_DISTANCE 360
 
 #define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
 #define KQ_BURST_NUMBER_OF_SLASH 8
@@ -64,7 +66,7 @@ enum {
 
 #define KQ_SKILL_COOLDOWN 7000
 #define KQ_LIGHTNING_STILETTO_DURATION 6000
-#define KQ_BURST_COOLDOWN 10000
+//#define KQ_BURST_COOLDOWN 10000
 #define KQ_SKILL_CIRCLE_RGBA 10, 255, 10, 255
 
 class Keqing : public LivingEntity {
@@ -80,7 +82,7 @@ public:
 
     void reset();
 
-    void colorSprite(Uint32 rgba, Sprite *sprite);
+    static void colorSprite(Uint32 rgba, Sprite *sprite);
 
     void colorCurrSprite(Uint32 rgba);
 
@@ -124,11 +126,17 @@ public:
 
     void dash();
 
+    void createLightningStelitto(int mouseX = -1, int mouseY = -1);
+
     void ESkill();
 
     void ESkillAiming();
 
+    void doSkillSlashFrame0();
+
     void moveToLStiletto();
+
+    void doSkillTP();
 
     void ESkillSlash();
 
@@ -140,9 +148,11 @@ public:
 
     void airUpNAtk();
 
-    void airPlunge();
+    void airESkillSlash();
 
     void airDash();
+
+    void airPlunge();
 
     void onGameFrame() override;
 
@@ -162,12 +172,6 @@ public:
 
     void unlock();
 
-    static inline bool isLightningStilettoExisting() {
-        return (Particle::getParticle(PARTICLE_KQ_SKILL_IDLE) != nullptr);
-    }
-
-    inline void setSkillUseTime(int skillUseTime_) { skillUseTime = skillUseTime_; }
-
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { burstCloneSlashCount = burstCloneSlashCount_; }
 
     [[nodiscard]] inline int getSkillUseTime() const { return skillUseTime; }
@@ -181,11 +185,13 @@ private:
 
     static Keqing *instance;
 
-    int skillUseTime;
     int burstCloneSlashCount;
+    int skillUseTime;
     int jumpPressTime;
     bool doubleJumped;
     bool airDashed;
+    int skillAimingSoundChannel;
+    int airPlungeLoopSoundChannel;
     bool locked;
 
 };

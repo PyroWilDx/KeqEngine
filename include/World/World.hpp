@@ -13,7 +13,7 @@
 #include "BaseEntity/Monster.hpp"
 #include "Utils/LinkedList.hpp"
 #include "StructForEntity/Attack.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 
 typedef struct Pixel {
     int worldType;

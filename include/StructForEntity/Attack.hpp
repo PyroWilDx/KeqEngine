@@ -35,7 +35,7 @@ public:
 
     inline void setAtkIssuerDependant(bool atkIssuerDependant_) { atkIssuerDependant = atkIssuerDependant_; }
 
-    inline void setShouldRemove(bool (*shouldRemove_)(Attack *self, void *fParams), void *fParams) {
+    inline void setShouldRemove(bool (*shouldRemove_)(Attack *, void *), void *fParams) {
         shouldRemove = shouldRemove_;
         shouldRemoveParams = fParams;
     }
@@ -53,7 +53,7 @@ private:
     int atkTimeAcc;
     int atkDuration;
 
-    bool (*shouldRemove)(Attack *self, void *fParams);
+    bool (*shouldRemove)(Attack *, void *);
 
     void *shouldRemoveParams;
 

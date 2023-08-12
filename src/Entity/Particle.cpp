@@ -3,7 +3,7 @@
 //
 
 #include "Entity/Particle.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 #include "Utils/Global.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
@@ -20,6 +20,7 @@ Particle::Particle(bool isBaseParticle)
     entityLastX = 0;
     entityLastY = 0;
     onRender = nullptr;
+    onRenderParams = nullptr;
     onRemove = nullptr;
 }
 
@@ -74,6 +75,14 @@ void Particle::initParticle() {
     baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE_GROUND, "res/gfx/particle/KQAirNAtkGround.png",
                              192, 96, 6);
     particleMaxActives[PARTICLE_KQ_AIR_PLUNGE_GROUND] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_PROJ, "res/gfx/particle/KQSkillProj.png",
+                             64, 32, 1);
+    particleMaxActives[PARTICLE_KQ_SKILL_PROJ] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_PROJ_AFT_FX, "res/gfx/particle/KQSkillProjAftFx.png",
+                             64, 32, 6);
+    particleMaxActives[PARTICLE_KQ_SKILL_PROJ_AFT_FX] = 64;
 
     baseParticle->initSprite(PARTICLE_KQ_SKILL_SPAWN, "res/gfx/particle/KQSkillSpawn.png",
                              96, 96, 8);
@@ -259,6 +268,16 @@ void Particle::renderAll() {
             currParticle = activeParticles[spriteCode][i];
             gWindow->renderEntity(currParticle);
             if (currParticle->onRender != nullptr) currParticle->onRender(currParticle);
+        }
+    }
+}
+
+void Particle::renderAllDebug(SDL_Renderer *gRenderer) {
+    Particle *currParticle;
+    for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
+        for (int i = 0; i < activeCounts[spriteCode]; i++) {
+            currParticle = activeParticles[spriteCode][i];
+            currParticle->renderHitBox(gRenderer);
         }
     }
 }

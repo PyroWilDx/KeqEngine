@@ -28,7 +28,3 @@ void Background::translate(Entity *entity) {
     }
 
 }
-
-int Background::getTotalPixels() const {
-    return (totalWidth * totalHeight);
-}

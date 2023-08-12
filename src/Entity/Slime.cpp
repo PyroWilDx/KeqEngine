@@ -3,7 +3,7 @@
 //
 
 #include "Entity/Slime.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 #include "Utils/Global.hpp"
 
 Slime::Slime(const std::string &colorString) :

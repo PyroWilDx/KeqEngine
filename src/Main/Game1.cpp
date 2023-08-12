@@ -5,7 +5,7 @@
 #include "Main/Game1.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
-#include "Entity/Keqing.hpp"
+#include "Keqing.hpp"
 #include "Utils/Events.hpp"
 #include "Entity/Slime.hpp"
 #include "Entity/FPSText.hpp"
@@ -75,7 +75,7 @@ void Game1::RunImpl() {
     burstIcon->moveToEntityCenter(burstCircle);
 
     auto *slime = new Slime("Blue");
-    slime->setHitbox({1, 4, 14, 12});
+    slime->setHitBox({1, 4, 14, 12});
     slime->setRenderWHMultiplier(4.0, 4.0);
     slime->moveToDownLeft(400, 720 - 200);
     gWorld->addMonster(slime);
