@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 16/07/2023.
+// Created by pyrowildx on 16/07/2023.
 //
 
 #ifndef SPRITE_HPP
@@ -15,6 +15,7 @@ typedef struct Sprite {
     const char *imgPath;
     SDL_Texture *sTexture;
     bool sAnimated;
+    bool sPaused;
     int sFrameW;
     int sFrameH;
     int sFrameN;

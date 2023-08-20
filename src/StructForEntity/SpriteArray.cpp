@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 16/07/2023.
+// Created by pyrowildx on 16/07/2023.
 //
 
 #include "StructForEntity/SpriteArray.hpp"
@@ -13,6 +13,7 @@ SpriteArray::SpriteArray(int spriteArrayLength) {
         sprite->imgPath = nullptr;
         sprite->sTexture = nullptr;
         sprite->sAnimated = false;
+        sprite->sPaused = false;
         sprite->sFrameW = 0;
         sprite->sFrameH = 0;
         sprite->sFrameN = 0;

@@ -16,10 +16,10 @@ void ColorKeqing::RunImpl() {
                                      "res/gfx/background/ColorKeqing.png");
     gWorld->setOnQuit([]() {
         Keqing *kq = Keqing::getInstance();
-        if (kq->isLocked()) {
+        if (kq->getIsLocked()) {
             Uint32 rgba = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
             kq->colorCurrSprite(rgba);
-            Keqing::getInstance()->unlock();
+            Keqing::getInstance()->kqLock(false);
         }
     });
 
@@ -30,7 +30,7 @@ void ColorKeqing::RunImpl() {
         auto *selfColorPicker = (ColorPicker *) self;
         Uint32 rgba = selfColorPicker->getCurrentRGBA();
         Keqing *kq = Keqing::getInstance();
-        kq->lock();
+        kq->kqLock(true);
         kq->moveToDownLeft(0, SCREEN_BASE_HEIGHT);
         kq->colorCurrSprite(rgba);
     });
@@ -49,7 +49,7 @@ void ColorKeqing::RunImpl() {
         auto *colorPicker = (ColorPicker *) fParams;
         Keqing *kq = Keqing::getInstance();
         kq->colorAllSprites(colorPicker->getCurrentRGBA());
-        kq->unlock();
+        kq->kqLock(false);
     }, (void *) colorPicker);
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
     setKqColorButton->addText("SET COLOR", &tmpColor,
@@ -63,7 +63,7 @@ void ColorKeqing::RunImpl() {
         auto *colorPicker = (ColorPicker *) fParams;
         Keqing *kq = Keqing::getInstance();
         kq->colorAllSprites(KQ_BASE_COLOR);
-        kq->unlock();
+        kq->kqLock(false);
         colorPicker->fillPixels(KQ_BASE_COLOR);
     }, (void *) colorPicker);
     tmpColor = {COLOR_WHITE_FULL};

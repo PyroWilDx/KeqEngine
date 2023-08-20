@@ -67,14 +67,64 @@ void Particle::initParticle() {
                              224, 64, 6);
     particleMaxActives[PARTICLE_KQ_CROUCH_CATK] = 1;
 
-    baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE, "res/gfx/particle/KQAirNAtk.png",
+    baseParticle->initSprite(PARTICLE_KQ_DASH_VANISH, "res/gfx/particle/KQDashVanish.png",
+                             128, 128, 7);
+    particleMaxActives[PARTICLE_KQ_DASH_VANISH] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE, "res/gfx/particle/KQAirPlunge.png",
                              32, 80, 4);
     baseParticle->setSpriteNext(PARTICLE_KQ_AIR_PLUNGE, PARTICLE_KQ_AIR_PLUNGE);
     particleMaxActives[PARTICLE_KQ_AIR_PLUNGE] = 1;
 
-    baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE_GROUND, "res/gfx/particle/KQAirNAtkGround.png",
+    baseParticle->initSprite(PARTICLE_KQ_AIR_PLUNGE_GROUND, "res/gfx/particle/KQAirPlungeGround.png",
                              192, 96, 6);
     particleMaxActives[PARTICLE_KQ_AIR_PLUNGE_GROUND] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_ELECTRO_AURA, "res/gfx/particle/KQElectroAura.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_KQ_ELECTRO_AURA] = 256;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_BLINK_0, "res/gfx/particle/KQSkillBlink0.png",
+                             96, 96, 4);
+    particleMaxActives[PARTICLE_KQ_SKILL_BLINK_0] = 2;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_BLINK_1, "res/gfx/particle/KQSkillBlink1.png",
+                             96, 96, 4);
+    particleMaxActives[PARTICLE_KQ_SKILL_BLINK_1] = 2;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_FLIP_SLASH, "res/gfx/particle/KQSkillFlipSlash.png",
+                             128, 128, 5);
+    particleMaxActives[PARTICLE_KQ_SKILL_FLIP_SLASH] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_CLONE_FADE, "res/gfx/particle/KQSkillCloneFade.png",
+                             96, 96, 4);
+    particleMaxActives[PARTICLE_KQ_SKILL_CLONE_FADE] = 8;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_CLONE_SPAWN, "res/gfx/particle/KQSkillCloneSpawn.png",
+                             96, 96, 6);
+    particleMaxActives[PARTICLE_KQ_SKILL_CLONE_SPAWN] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_CLONE_IDLE, "res/gfx/particle/KQSkillCloneIdle.png",
+                             96, 96, 4);
+    particleMaxActives[PARTICLE_KQ_SKILL_CLONE_IDLE] = 1;
+    baseParticle->setSpriteNext(PARTICLE_KQ_SKILL_CLONE_IDLE, PARTICLE_KQ_SKILL_CLONE_IDLE);
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_CLONE_DESPAWN, "res/gfx/particle/KQSkillCloneDespawn.png",
+                             96, 96, 7);
+    particleMaxActives[PARTICLE_KQ_SKILL_CLONE_DESPAWN] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_CURSOR_SPAWN, "res/gfx/particle/KQSkillCursorSpawn.png",
+                             96, 96, 7);
+    particleMaxActives[PARTICLE_KQ_SKILL_CURSOR_SPAWN] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_CURSOR, "res/gfx/particle/KQSkillCursor.png",
+                             48, 48, 8);
+    baseParticle->setSpriteNext(PARTICLE_KQ_SKILL_CURSOR, PARTICLE_KQ_SKILL_CURSOR);
+    particleMaxActives[PARTICLE_KQ_SKILL_CURSOR] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_SHOOT, "res/gfx/particle/KQSkillShoot.png",
+                             64, 64, 8);
+    particleMaxActives[PARTICLE_KQ_SKILL_SHOOT] = 1;
 
     baseParticle->initSprite(PARTICLE_KQ_SKILL_PROJ, "res/gfx/particle/KQSkillProj.png",
                              64, 32, 1);
@@ -93,6 +143,14 @@ void Particle::initParticle() {
     baseParticle->setSpriteNext(PARTICLE_KQ_SKILL_IDLE, PARTICLE_KQ_SKILL_IDLE);
     particleMaxActives[PARTICLE_KQ_SKILL_IDLE] = 1;
 
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_DESPAWN, "res/gfx/particle/KQSkillDespawn.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_KQ_SKILL_DESPAWN] = 1;
+
+    baseParticle->initSprite(PARTICLE_KQ_SKILL_TP_START, "res/gfx/particle/KQSkillTPStart.png",
+                             192, 160, 8);
+    particleMaxActives[PARTICLE_KQ_SKILL_TP_START] = 1;
+
     baseParticle->initSprite(PARTICLE_KQ_SKILL_TP_END, "res/gfx/particle/KQSkillTPEnd.png",
                              192, 160, 7);
     particleMaxActives[PARTICLE_KQ_SKILL_TP_END] = 1;
@@ -100,11 +158,6 @@ void Particle::initParticle() {
     baseParticle->initSprite(PARTICLE_KQ_SKILL_EXPLOSION, "res/gfx/particle/KQSkillExplosion.png",
                              192, 160, 14);
     particleMaxActives[PARTICLE_KQ_SKILL_EXPLOSION] = 1;
-
-    baseParticle->initSprite(PARTICLE_KQ_SKILL_AIMING_IDLE, "res/gfx/particle/KQSkillAimingIdle.png",
-                             48, 48, 8);
-    baseParticle->setSpriteNext(PARTICLE_KQ_SKILL_AIMING_IDLE, PARTICLE_KQ_SKILL_AIMING_IDLE);
-    particleMaxActives[PARTICLE_KQ_SKILL_AIMING_IDLE] = 1;
 
     baseParticle->initSprite(PARTICLE_KQ_BURST_AOE, "res/gfx/particle/KQBurstAOE.png",
                              200, 200, 7);
@@ -237,6 +290,8 @@ void Particle::animateAll() {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
             currParticle = activeParticles[spriteCode][i];
 
+            currParticle->onGameFrame();
+
             currParticle->animateSprite();
 
             if (currParticle->fadeParams.baseAlpha != -1) {
@@ -288,6 +343,12 @@ Particle *Particle::getParticle(int spriteCode, int i) {
 
 bool Particle::isActive(int spriteCode, int i) {
     return (activeCounts[spriteCode] > i);
+}
+
+void Particle::hardResetOnRender(int spriteCode) {
+    for (int i = 0; i < activeCounts[spriteCode]; i++) {
+        activeParticles[spriteCode][i]->onRender = nullptr;
+    }
 }
 
 void Particle::removeAllParticles() {

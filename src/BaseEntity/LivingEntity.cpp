@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 24/07/2023.
+// Created by pyrowildx on 24/07/2023.
 //
 
 #include <algorithm>
@@ -15,7 +15,7 @@ LivingEntity::LivingEntity(double gravityWeight, int baseHp,
     this->hurtSpriteCode = hurtSpriteCode;
     this->hurtKbVX = 0;
     this->hurtKbVY = 0;
-    this->hurtStartTime = 0;
+    this->timeSinceHurt = 0;
     this->stateChangerEndSpriteCode = stateChangerEndSpriteCode;
     this->xShifts = new int[spriteArrayLength];
     this->yShifts = new int[spriteArrayLength];
@@ -37,6 +37,12 @@ void LivingEntity::setXYShift(int xShift, int yShift, int xRShift, int spriteCod
     xRShifts[spriteCode] = xRShift;
 }
 
+void LivingEntity::fallGravity() {
+    if (!isHurt()) {
+        Entity::fallGravity();
+    }
+}
+
 SDL_Rect LivingEntity::getRenderRect() {
     SDL_Rect dst = Entity::getRenderRect();
 
@@ -53,6 +59,12 @@ SDL_Rect LivingEntity::getRenderRect() {
     return dst;
 }
 
+void LivingEntity::onGameFrame() {
+    if (isHurt()) {
+        timeSinceHurt += Global::dt;
+    }
+}
+
 void LivingEntity::setDmgFacingEast(double kbVX) {
     if (kbVX != 0) facingEast = (kbVX < 0);
 }
@@ -65,7 +77,7 @@ void LivingEntity::damageSelf(int damage, double kbVX, double kbVY) {
     if (!isFacingEast()) kbVX = -kbVX;
     hurtKbVX = kbVX;
     xVelocity = kbVX;
-    hurtStartTime = Global::currentTime;
+    timeSinceHurt = 0;
     setSpriteAnimated(true, hurtSpriteCode);
 }
 
@@ -82,19 +94,23 @@ void LivingEntity::hurt() {
     xVelocity = fX(xVelocity + addX * Global::dt, 0.0);
     yVelocity = fY(yVelocity + addY * Global::dt, 0.0);
 
-    if (isHittingWallHorizontally()) {
-        xVelocity /= 2;
-        xVelocity = -xVelocity;
-    }
-
-    if (!isInAir()) {
-        xVelocity /= 1.06;
-    }
-
-    if (isHittingCeiling()) {
-        yVelocity /= 2;
-        yVelocity = -yVelocity;
-    }
+//    if (Global::currentTime != hurtStartTime) {
+//        if (isHittingWallHorizontally()) {
+//            xVelocity /= 2;
+//            xVelocity = -xVelocity;
+//        }
+//
+//        if (!isInAir()) {
+//            xVelocity /= 1.06;
+//            yVelocity /= 2;
+//            yVelocity = -yVelocity;
+//        }
+//
+//        if (isHittingCeiling()) {
+//            yVelocity /= 2;
+//            yVelocity = -yVelocity;
+//        }
+//    }
 
     if (xVelocity == 0 && yVelocity == 0) {
         setSpriteAnimated(false, hurtSpriteCode);
@@ -103,10 +119,10 @@ void LivingEntity::hurt() {
 
 void LivingEntity::updateAction() {
     int currSpriteCode = getCurrentSpriteCode();
-//    int startIndex = (currSpriteCode > stateChangerEndSpriteCode) ? stateChangerEndSpriteCode + 1 : 0;
-    int startIndex = 0;
 
-    for (int i = startIndex; i < currSpriteCode; i++) {
+    for (int i = 0; i < currSpriteCode; i++) {
         setSpriteAnimated(false, i);
     }
+
+    if (isHurt()) this->hurt();
 }

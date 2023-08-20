@@ -28,15 +28,21 @@ public:
 
     virtual ~Entity();
 
+    virtual void setRGBAMod(Uint8 a);
+
+    virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b);
+
     virtual void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 
     [[nodiscard]] std::vector<double> *getXArrayToCheck() const;
 
     [[nodiscard]] std::vector<double> *getYArrayToCheck() const;
 
-    void checkXCollision(bool checkRight);
+    bool checkXCollision(bool checkRight);
 
-    void checkYCollision(bool checkDown);
+    bool checkYCollision(bool checkDown);
+
+    void findNearestSurface();
 
     virtual void moveX();
 
@@ -52,7 +58,13 @@ public:
 
     [[nodiscard]] bool isHittingCeiling() const;
 
+    [[nodiscard]] bool isHittingWall() const;
+
+    [[nodiscard]] double getFallGravityAddVelocity() const;
+
     virtual void fallGravity();
+
+    void cancelGravity(double factor = 1);
 
     void moveTo(double x_, double y_);
 
@@ -78,7 +90,7 @@ public:
 
     void moveToEntityCenter(Entity *centerEntity, bool takeFaceEast = true);
 
-    virtual inline void onGameFrame() {};
+    virtual void onGameFrame();
 
     virtual void renderSelf(SDL_Renderer *gRenderer);
 
@@ -101,6 +113,13 @@ public:
     bool hitBoxCollision(Entity *entity) const;
 
     void clearTexture();
+
+    virtual inline void setFacingEast(bool facingEast_) { facingEast = facingEast_; }
+
+    inline void setXYVelocity(double xVelocity_, double yVelocity_) {
+        xVelocity = xVelocity_;
+        yVelocity = yVelocity_;
+    }
 
     inline void setHitBox(SDL_Rect hitBox_) { hitBox = hitBox_; }
 
@@ -135,6 +154,8 @@ public:
 
     [[nodiscard]] inline bool isFacingEast() const { return facingEast; }
 
+    [[nodiscard]] inline double getXVelocity() const { return xVelocity; }
+
     [[nodiscard]] inline double getYVelocity() const { return yVelocity; }
 
     [[nodiscard]] inline SDL_Rect getFrame() const { return imgFrame; }
@@ -149,6 +170,8 @@ public:
 
     [[nodiscard]] inline double getRotation() const { return degRotation; }
 
+    [[nodiscard]] inline int getTimeSinceCreation() const { return timeSinceCreation; }
+
 protected:
     double x, y;
     bool facingEast;
@@ -159,6 +182,7 @@ protected:
     SDL_Texture *imgTexture;
     double renderWMultiplier, renderHMultiplier;
     double degRotation;
+    int timeSinceCreation;
 
 private:
 

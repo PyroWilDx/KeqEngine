@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 06/08/2023.
+// Created by pyrowildx on 06/08/2023.
 //
 
 #include "Main/ConfigKeqing.hpp"
@@ -18,14 +18,14 @@ void ConfigKeqing::RunImpl() {
     auto *swapKqVAButton = new Button(600, 100, 200, 100);
     swapKqVAButton->setOnClickRelease([](Button *self, int mouseX,
                                          int mouseY, void *fParams) {
-        const int nLang = 4;
-        std::string allKqLangs[nLang] = {"jp", "en", "cn", "kr"};
+        const int nLang = 5;
+        std::string allKqLangs[nLang] = {"jp", "en", "cn", "kr", "muted"};
         std::string currKqLang = Global::userData[DATA_KQ_VOICE_LANG];
         for (int i = 0; i < nLang; i++) {
             if (currKqLang == allKqLangs[i]) {
                 currKqLang = allKqLangs[(i + 1) % nLang];
                 Global::saveUserData(DATA_KQ_VOICE_LANG, currKqLang);
-                Keqing::getInstance()->setSoundSheet();
+                Keqing::getInstance()->setSoundSheetStartPath();
                 self->changeText(currKqLang.c_str());
                 break;
             }

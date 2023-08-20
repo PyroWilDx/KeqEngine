@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 27/07/2023.
+// Created by pyrowildx on 27/07/2023.
 //
 
 #ifndef ATTACK_HPP
@@ -18,6 +18,10 @@ typedef bst_geo::model::polygon<BoostPoint> BoostPolygon;
 class Attack {
 
 public:
+    Attack(LivingEntity *atkIssuer_, Entity *followEntity,
+           double xyArray[][2], int arrayLength,
+           int damage, double kbXVelocity, double kbYVelocity);
+
     Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
            int damage, double kbXVelocity, double kbYVelocity);
 
@@ -33,7 +37,7 @@ public:
 
     bool shouldSelfRemove();
 
-    inline void setAtkIssuerDependant(bool atkIssuerDependant_) { atkIssuerDependant = atkIssuerDependant_; }
+    inline void setFollowEntity(Entity *followEntity_) { followEntity = followEntity_; }
 
     inline void setShouldRemove(bool (*shouldRemove_)(Attack *, void *), void *fParams) {
         shouldRemove = shouldRemove_;
@@ -44,8 +48,8 @@ public:
 
 private:
     LivingEntity *atkIssuer;
-    bool atkIssuerDependant;
-    double atkIssuerLastX, atkIssuerLastY;
+    Entity *followEntity;
+    double followEntityLastX, followEntityLastY;
     BoostPolygon atkPolygon;
     int damage;
     double kbXVelocity;

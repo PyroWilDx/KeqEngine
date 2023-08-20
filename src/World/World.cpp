@@ -76,9 +76,13 @@ void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntit
     }
 }
 
+bool World::xyOutOfBounds(double x, double y) {
+    return (x < 0 || x >= background->getTotalW() ||
+            y < 0 || y >= background->getTotalH());
+}
+
 Pixel World::getPixel(double x, double y) {
-    if (x < 0 || x >= background->getTotalW() ||
-        y < 0 || y >= background->getTotalH()) {
+    if (xyOutOfBounds(x, y)) {
         return {WORLD_BLOCK, BLOCK_WALL_INVISIBLE};
     }
     return pixels[(int) x][(int) y];
@@ -161,7 +165,7 @@ bool World::isPixelSurface(double x, double y) {
     return (isPixelBlock(x, y));
 }
 
-double World::getNearestWallFrom(double x, double y, int direction) {
+int World::getNearestWallFrom(double x, double y, int direction) {
     int addX, addY;
     if (direction == KEY_Z) {
         addX = 0;
@@ -186,6 +190,9 @@ double World::getNearestWallFrom(double x, double y, int direction) {
     while (isPixelSurface(i, j)) {
         i += addX;
         j += addY;
+        if (xyOutOfBounds(i, j)) {
+            return GET_NEAREST_WALL_RETURN_NONE;
+        }
     }
     if (addX == 0) return (j - addY);
     else return (i - addX);
@@ -211,6 +218,16 @@ Attack *World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayL
     return atk;
 }
 
+Attack *World::addKQAtk(LivingEntity *atkIssuer, Entity *followEntity,
+                        double (*xyArray)[2], int arrayLength,
+                        int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, followEntity,
+                           xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addKQAtk(atk);
+    return atk;
+}
+
 void World::addMonsterAtk(Attack *atk) {
     monsterAtkLL = LLInsertHead(monsterAtkLL, (void *) atk);
 }
@@ -218,6 +235,16 @@ void World::addMonsterAtk(Attack *atk) {
 Attack *World::addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
                              int damage, double kbXVelocity, double kbYVelocity) {
     auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
+                           damage, kbXVelocity, kbYVelocity);
+    addMonsterAtk(atk);
+    return atk;
+}
+
+Attack *World::addMonsterAtk(LivingEntity *atkIssuer, Entity *followEntity,
+                             double xyArray[][2], int arrayLength,
+                             int damage, double kbXVelocity, double kbYVelocity) {
+    auto *atk = new Attack(atkIssuer, followEntity,
+                           xyArray, arrayLength,
                            damage, kbXVelocity, kbYVelocity);
     addMonsterAtk(atk);
     return atk;

@@ -17,6 +17,10 @@ public:
 
     ~AnimatedEntity() override;
 
+    void setRGBAMod(Uint8 a) override;
+
+    void setRGBAMod(Uint8 r, Uint8 g, Uint8 b) override;
+
     void setRGBAMod(Uint8 r, Uint8 g, Uint8 b, Uint8 a) override;
 
     void initSprite(int spriteCode, const char *imgPath,
@@ -29,8 +33,6 @@ public:
 
     void setSpriteFrameLengthFromTo(int spriteFrameLength, int startFrame, int endFrame,
                                     int spriteCode = 0);
-
-//    void setSpriteFrameLengths(const int *spriteFrameLengths, int spriteCode = 0);
 
     void setSpriteNext(int nextSpriteCode, int spriteCode);
 
@@ -54,13 +56,17 @@ public:
 
     void stopOnFrame(int frameIndex, int spriteCode = 0);
 
-    void pauseSprite(bool pause, int spriteCode = 0);
+    void pauseSprite(bool shouldPause, int spriteCode = 0);
 
     void resetSprite(int spriteCode = 0);
 
     void delaySprite(int ms, int spriteCode = 0);
 
+    void relaySprite(int dstSpriteCode, int srcSpriteCode);
+
     virtual void animateSprite();
+
+    void renderSelf(SDL_Renderer *gRenderer) override;
 
     int getSpriteLengthFromTo(int startFrame, int endFrame, int spriteCode = 0);
 

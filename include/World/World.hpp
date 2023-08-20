@@ -15,6 +15,8 @@
 #include "StructForEntity/Attack.hpp"
 #include "Keqing.hpp"
 
+#define GET_NEAREST_WALL_RETURN_NONE -42
+
 typedef struct Pixel {
     int worldType;
     int worldCode;
@@ -30,6 +32,8 @@ public:
     ~World();
 
     void updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntity);
+
+    bool xyOutOfBounds(double x, double y);
 
     Pixel getPixel(double x, double y);
 
@@ -49,7 +53,7 @@ public:
 
     bool isPixelSurface(double x, double y);
 
-    double getNearestWallFrom(double x, double y, int direction);
+    int getNearestWallFrom(double x, double y, int direction);
 
     void addMonster(Monster *monster);
 
@@ -60,9 +64,17 @@ public:
     Attack *addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
                      int damage, double kbXVelocity, double kbYVelocity);
 
+    Attack *addKQAtk(LivingEntity *atkIssuer, Entity *followEntity,
+                     double xyArray[][2], int arrayLength,
+                     int damage, double kbXVelocity, double kbYVelocity);
+
     void addMonsterAtk(Attack *atk);
 
     Attack *addMonsterAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
+                          int damage, double kbXVelocity, double kbYVelocity);
+
+    Attack *addMonsterAtk(LivingEntity *atkIssuer, Entity *followEntity,
+                          double xyArray[][2], int arrayLength,
                           int damage, double kbXVelocity, double kbYVelocity);
 
     void onGameFrame();

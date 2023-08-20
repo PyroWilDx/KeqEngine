@@ -16,7 +16,8 @@ void myAssert(bool expr, const char *msg, const char *err) {
     }
 }
 
-double getDistance(double x1, double y1, double x2, double y2) {
+double getDistance(double x1, double y1,
+                   double x2, double y2) {
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
@@ -26,12 +27,66 @@ double atan2Pos(double y, double x) {
     return res;
 }
 
+double getAngle(double x1, double y1,
+                double x2, double y2,
+                bool clockWise, bool invX) {
+    double xDiff = (!invX) ? x2 - x1 : x1 - x2;
+    double yDiff = (clockWise) ? y2 - y1 : y1 - y2;
+    return atan2Pos(yDiff, xDiff);
+}
+
 double radToDegree(double rad) {
     return (rad * (180.0 / M_PI));
 }
 
 double degreeToRad(double degree) {
     return (degree * (M_PI / 180.0));
+}
+
+void rotatePoint(double x, double y, double *pResX, double *pResY,
+                 double xCenter, double yCenter, double angle, bool invert) {
+    // Translate to Origin
+    x -= xCenter;
+    y -= yCenter;
+
+    // Calc Rotation
+    *pResX = x * cos(angle) - y * sin(angle);
+    *pResY = x * sin(angle) + y * cos(angle);
+    if (invert) *pResY = -*pResY;
+
+    // Translate Back
+    *pResX += xCenter;
+    *pResY += yCenter;
+}
+
+void rotateXYArray(double xyArray[][2], const int N,
+                   double xCenter, double yCenter, double angle, bool invert) {
+    for (int i = 0; i < N; i++) {
+        rotatePoint(xyArray[i][0], xyArray[i][1],
+                    &xyArray[i][0], &xyArray[i][1],
+                    xCenter, yCenter, angle, invert);
+    }
+}
+
+void approxEllipse(double xyArray[][2], const int N,
+                   double x, double y, double a, double b) {
+    double delta = (2 * M_PI) / N;
+
+    for (int i = 0; i < N; i++) {
+        double angle = i * delta;
+        double approxX = x + a * cos(angle);
+        double approxY = y + b * sin(angle);
+        xyArray[i][0] = approxX;
+        xyArray[i][1] = approxY;
+    }
+}
+
+void shiftXYArray(double xyArray[][2], const int N,
+                  double xShift, double yShift) {
+    for (int i = 0; i < N; i++) {
+        xyArray[i][0] += xShift;
+        xyArray[i][1] += yShift;
+    }
 }
 
 Uint32 cvStringToUint32(std::string &valStr) {
@@ -90,6 +145,7 @@ int getSDLKeyRelation(int SDLKey, bool isKeyboard) {
     if (SDLKey == SDLK_q) return KEY_Q;
     if (SDLKey == SDLK_s) return KEY_S;
     if (SDLKey == SDLK_d) return KEY_D;
+    if (SDLKey == SDLK_a) return KEY_A;
     if (SDLKey == SDLK_e) return KEY_E;
     if (SDLKey == SDLK_r) return KEY_R;
     if (SDLKey == SDLK_SPACE) return KEY_SPACE;
@@ -143,6 +199,10 @@ bool isMouseLeftLong() {
 bool isKeyDoublePressed(int key) {
     if (!isKeyPressed(key)) return false;
     return (Global::pressedTime[key] - Global::lastPressedTime[key] < 200);
+}
+
+bool isDirectionalKeyPressed() {
+    return (isKeyPressed(KEY_Q) || isKeyPressed(KEY_D));
 }
 
 void Uint32RGBAToUint8RGBA(Uint32 rgba, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a) {

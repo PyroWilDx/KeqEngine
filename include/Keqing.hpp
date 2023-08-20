@@ -28,6 +28,10 @@ enum {
     KQ_CROUCH_NATK,
     KQ_CROUCH_CATK,
     KQ_DASH,
+    KQ_RUN_NATK,
+    KQ_SKILL_FLIP,
+    KQ_SKILL_FLIP_LAND,
+    KQ_SKILL_CLONE,
     KQ_SKILL,
     KQ_SKILL_AIMING,
     KQ_SKILL_SLASH,
@@ -35,8 +39,11 @@ enum {
     KQ_AIR_DOUBLE_JUMP,
     KQ_AIR_NATK,
     KQ_AIR_UP_NATK,
-    KQ_AIR_SKILL_SLASH,
     KQ_AIR_DASH,
+    KQ_AIR_SKILL_CLONE,
+    KQ_AIR_SKILL,
+    KQ_AIR_SKILL_AIMING,
+    KQ_AIR_SKILL_SLASH,
     KQ_AIR_PLUNGE,
     KQ_HURT,
     KQ_ENUM_N
@@ -56,22 +63,29 @@ enum {
 #define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
 #define KQ_AIR_DASH_VELOCITY 0.8
 
-#define LIGHTNING_STELITTO_VELOCITY 2.4
-#define IDLE_PARTICLE_GAP 12
-#define SKILL_TP_DISTANCE 360
+#define KQ_SKILL_FLIP_BASE_Y_VELOCITY 0.62
+#define KQ_SKILL_FLIP_BASE_X_VELOCITY 0.44
+
+#define KQ_SKILL_CLONE_X_VELOCITY 0.6
+#define KQ_SKILL_CLONE_DURATION 8000
+
+#define KQ_SKILL_AIR_AIMING_FLOAT_FRAME_N 120
+#define KQ_SKILL_AIR_AIMING_FLOAT_VELOCITY 0.024
+#define KQ_LIGHTNING_STELITTO_VELOCITY 2.4
+#define KQ_SKILL_TP_MAX_DISTANCE 360
+#define KQ_SKILL_COOLDOWN 7000
+#define KQ_LIGHTNING_STILETTO_DURATION 6000
 
 #define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
 #define KQ_BURST_NUMBER_OF_SLASH 8
 #define KQ_BURST_NUMBER_OF_CLONE 5
-
-#define KQ_SKILL_COOLDOWN 7000
-#define KQ_LIGHTNING_STILETTO_DURATION 6000
-//#define KQ_BURST_COOLDOWN 10000
-#define KQ_SKILL_CIRCLE_RGBA 10, 255, 10, 255
+#define KQ_BURST_COOLDOWN 10000
 
 class Keqing : public LivingEntity {
 
 public:
+    void setSoundSheetStartPath();
+
     void setSoundSheet();
 
     static void initKeqing();
@@ -114,6 +128,8 @@ public:
 
     void NAtk();
 
+    static void checkESkillOnCAtk();
+
     void CAtk();
 
     void upNAtk();
@@ -126,17 +142,37 @@ public:
 
     void dash();
 
-    void createLightningStelitto(int mouseX = -1, int mouseY = -1);
+    void runNAtk();
+
+    static Particle *pushParticleOnSkillBlink(Entity *centerEntity);
+
+    static Particle *pushElectroAura(Entity *srcEntity, Particle *srcParticle);
+
+    void ASkillFlip();
+
+    void ASkillCloneGeneral();
+
+    void ASkillClone();
+
+    static void updateSkillHudIcon();
+
+    static void createSkillSpawnParticle();
+
+    static void createLightningStelitto();
+
+    static void createSkillProjParticle();
+
+    void getESkillSpriteCodes(int *pSkill, int *pSkillAiming, int *pSkillSlash);
+
+    void ESkillGeneral();
 
     void ESkill();
 
+    void ESkillAimingGeneral();
+
     void ESkillAiming();
 
-    void doSkillSlashFrame0();
-
-    void moveToLStiletto();
-
-    void doSkillTP();
+    void ESkillSlashGeneral();
 
     void ESkillSlash();
 
@@ -148,9 +184,15 @@ public:
 
     void airUpNAtk();
 
-    void airESkillSlash();
-
     void airDash();
+
+    void airASkillClone();
+
+    void airESkill();
+
+    void airESkillAiming();
+
+    void airESkillSlash();
 
     void airPlunge();
 
@@ -158,7 +200,7 @@ public:
 
     void hurt() override;
 
-    void setFacingEast(bool value);
+    void setFacingEast(bool facingEast_) override;
 
     bool canDoAction(int spriteCode);
 
@@ -168,31 +210,42 @@ public:
 
     void updateAction() override;
 
-    void lock();
+    void kqLock(bool shouldLock);
 
-    void unlock();
+    inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }
 
-    inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { burstCloneSlashCount = burstCloneSlashCount_; }
+    [[nodiscard]] inline double getESkillX() const { return ESkillX; }
 
-    [[nodiscard]] inline int getSkillUseTime() const { return skillUseTime; }
+    [[nodiscard]] inline double getESkillY() const { return ESkillY; }
 
-    [[nodiscard]] inline int getBurstCloneSlashCount() const { return burstCloneSlashCount; }
+    [[nodiscard]] inline int getESkillUseTime() const { return ESkillUseTime; }
 
-    [[nodiscard]] inline int isLocked() const { return locked; }
+    [[nodiscard]] inline int getRBurstCloneSlashCount() const { return RBurstCloneSlashCount; }
+
+    [[nodiscard]] inline int getAirPlungeLoopSoundChannel() const { return airPlungeLoopSoundChannel; }
+
+    [[nodiscard]] inline int getIsLocked() const { return isLocked; }
 
 private:
     Keqing();
 
     static Keqing *instance;
 
-    int burstCloneSlashCount;
-    int skillUseTime;
     int jumpPressTime;
-    bool doubleJumped;
+    int ASkillFlipPressTime;
+    double ASkillCloneCenterX, ASkillCloneCenterY;
+    int ESkillPausedSpriteCode;
+    int ESkillCursorSoundChannel;
+    double ESkillX, ESkillY;
+    int ESkillUseTime;
+    bool isESkillParticleInAir;
+    int RBurstCloneSlashCount;
+    bool airDoubleJumped;
     bool airDashed;
-    int skillAimingSoundChannel;
+    bool airASkillCloned;
+    int airESkillFloatCpt;
     int airPlungeLoopSoundChannel;
-    bool locked;
+    bool isLocked;
 
 };
 
