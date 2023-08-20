@@ -12,15 +12,28 @@ enum {
     PARTICLE_KQ_CATK,
     PARTICLE_KQ_UP_CATK,
     PARTICLE_KQ_CROUCH_CATK,
+    PARTICLE_KQ_DASH_VANISH,
     PARTICLE_KQ_AIR_PLUNGE,
     PARTICLE_KQ_AIR_PLUNGE_GROUND,
+    PARTICLE_KQ_ELECTRO_AURA,
+    PARTICLE_KQ_SKILL_BLINK_0,
+    PARTICLE_KQ_SKILL_BLINK_1,
+    PARTICLE_KQ_SKILL_FLIP_SLASH,
+    PARTICLE_KQ_SKILL_CLONE_FADE,
+    PARTICLE_KQ_SKILL_CLONE_SPAWN,
+    PARTICLE_KQ_SKILL_CLONE_IDLE,
+    PARTICLE_KQ_SKILL_CLONE_DESPAWN,
+    PARTICLE_KQ_SKILL_CURSOR_SPAWN,
+    PARTICLE_KQ_SKILL_CURSOR,
+    PARTICLE_KQ_SKILL_SHOOT,
     PARTICLE_KQ_SKILL_PROJ,
     PARTICLE_KQ_SKILL_PROJ_AFT_FX,
     PARTICLE_KQ_SKILL_SPAWN,
     PARTICLE_KQ_SKILL_IDLE,
+    PARTICLE_KQ_SKILL_DESPAWN,
+    PARTICLE_KQ_SKILL_TP_START,
     PARTICLE_KQ_SKILL_TP_END,
     PARTICLE_KQ_SKILL_EXPLOSION,
-    PARTICLE_KQ_SKILL_AIMING_IDLE,
     PARTICLE_KQ_BURST_AOE,
     PARTICLE_KQ_BURST_AOE_WAVE,
     PARTICLE_KQ_BURST_VANISH,
@@ -43,6 +56,8 @@ enum {
     PARTICLE_ENUM_N
 };
 
+#define HUD_SKILL1_CIRCLE_RGBA 10, 254, 10
+#define HUD_SKILL2_CIRCLE_RGBA 238, 10, 238
 #define HUD_SB_TIMER_FRAME_N 25
 #define HUD_SB_USED_ALPHA 64
 
@@ -79,6 +94,8 @@ public:
 
     static bool isActive(int spriteCode, int i = 0);
 
+    static void hardResetOnRender(int spriteCode);
+
     static void removeAllParticles();
 
     static void cleanUp();
@@ -107,6 +124,8 @@ public:
     inline void setOnRemove(void (*onRemove_)(Particle *)) { onRemove = onRemove_; }
 
     [[nodiscard]] inline int getCode() const { return particleCode; }
+
+    [[nodiscard]] inline auto getOnRender() const { return onRender; }
 
     [[nodiscard]] inline void *getOnRenderParams() const { return onRenderParams; }
 

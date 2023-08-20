@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 31/07/2023.
+// Created by pyrowildx on 31/07/2023.
 //
 
 #include <cstdio>
@@ -18,6 +18,8 @@ FPSText::FPSText()
 }
 
 void FPSText::onGameFrame() {
+    Text::onGameFrame();
+
     if (accumulatedFPSTime > 1000) {
         char text[16];
         sprintf(text, "FPS : %d", accumulatedFrames);

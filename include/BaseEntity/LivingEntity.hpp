@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 24/07/2023.
+// Created by pyrowildx on 24/07/2023.
 //
 
 #ifndef LIVINGENTITY_HPP
@@ -18,9 +18,13 @@ public:
 
     void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
 
+    void fallGravity() override;
+
     SDL_Rect getRenderRect() override;
 
-    virtual void setDmgFacingEast(double kbVX);
+    void onGameFrame() override;
+
+    void setDmgFacingEast(double kbVX);
 
     void damageSelf(int damage, double kbVX, double kbVY);
 
@@ -37,7 +41,7 @@ protected:
     int hurtSpriteCode;
     double hurtKbVX;
     double hurtKbVY;
-    int hurtStartTime;
+    int timeSinceHurt;
     int stateChangerEndSpriteCode;
     int *xShifts, *yShifts, *xRShifts;
 

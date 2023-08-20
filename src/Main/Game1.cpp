@@ -48,7 +48,7 @@ void Game1::RunImpl() {
             Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE, INT32_MAX,
                                    HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
     skillCircle->moveToEntityCenter(skillCircleBG);
-    skillCircle->setRGBAMod(KQ_SKILL_CIRCLE_RGBA);
+    skillCircle->setRGBAMod(HUD_SKILL1_CIRCLE_RGBA);
 
     Particle *burstCircleBG =
             Particle::pushParticle(PARTICLE_HUD_BURST_CIRCLE_BG, INT32_MAX,

@@ -38,8 +38,8 @@ void Global::initGlobal() {
         lastPressedTime[i] = 0;
     }
 
-    currentTime = 0;
-    dt = 0;
+    currentTime = getTime();
+    dt = 10;
 
     currentWorld = nullptr;
 }

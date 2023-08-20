@@ -37,13 +37,30 @@ typedef struct f2Params {
 
 void myAssert(bool expr, const char *msg = nullptr, const char *err = nullptr);
 
-double getDistance(double x1, double y1, double x2, double y2);
+double getDistance(double x1, double y1,
+                   double x2, double y2);
 
 double atan2Pos(double y, double x);
+
+double getAngle(double x1, double y1,
+                double x2, double y2,
+                bool clockWise, bool invX);
 
 double radToDegree(double rad);
 
 double degreeToRad(double degree);
+
+void rotatePoint(double x, double y, double *pResX, double *pResY,
+                 double xCenter, double yCenter, double angle, bool invert);
+
+void rotateXYArray(double xyArray[][2], int N,
+                   double xCenter, double yCenter, double angle, bool invert);
+
+void approxEllipse(double xyArray[][2], int N,
+                   double x, double y, double a, double b);
+
+void shiftXYArray(double xyArray[][2], int N,
+                  double xShift, double yShift);
 
 Uint32 cvStringToUint32(std::string &valStr);
 
@@ -78,6 +95,8 @@ bool isMouseLeftShort();
 bool isMouseLeftLong();
 
 bool isKeyDoublePressed(int key);
+
+bool isDirectionalKeyPressed();
 
 void Uint32RGBAToUint8RGBA(Uint32 rgba, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
 

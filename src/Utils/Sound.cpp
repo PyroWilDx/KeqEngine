@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 03/08/2023.
+// Created by pyrowildx on 03/08/2023.
 //
 
 #include "Utils/Sound.hpp"
@@ -40,8 +40,11 @@ void Sound::onGameFrame() {
 
 int Sound::playAudioChunk(const char *chunkPath, int repeatCount) {
     Mix_Chunk *currChunk = Mix_LoadWAV(chunkPath);
-    int channel = Mix_PlayChannel(-1, currChunk, repeatCount);
-    chunkArray[channel] = currChunk;
+    int channel = -1;
+    if (currChunk != nullptr) {
+        channel = Mix_PlayChannel(-1, currChunk, repeatCount);
+        chunkArray[channel] = currChunk;
+    }
     return channel;
 }
 
@@ -55,8 +58,10 @@ void Sound::deleteAudioChunk(int channel) {
 Mix_Music *Sound::playAudioMusic(const char *musicPath, int repeatCount) {
     if (currentAudioMusic != nullptr) Sound::deleteAudioMusic();
     Mix_Music *currMusic = Mix_LoadMUS(musicPath);
-    Mix_PlayMusic(currMusic, repeatCount);
-    currentAudioMusic = Mix_LoadMUS(musicPath);
+    if (currMusic != nullptr) {
+        Mix_PlayMusic(currMusic, repeatCount);
+        currentAudioMusic = Mix_LoadMUS(musicPath);
+    }
     return currMusic;
 }
 

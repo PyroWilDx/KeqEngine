@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 24/07/2023.
+// Created by pyrowildx on 24/07/2023.
 //
 
 #include "Entity/Slime.hpp"
@@ -80,6 +80,4 @@ void Slime::hurt() {
 
 void Slime::updateAction() {
     LivingEntity::updateAction();
-
-    if (isSpriteAnimated(SLIME_DEATH)) this->hurt();
 }

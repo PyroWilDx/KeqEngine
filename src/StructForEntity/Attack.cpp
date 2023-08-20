@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 27/07/2023.
+// Created by pyrowildx on 27/07/2023.
 //
 
 #ifdef _WIN32
@@ -15,35 +15,65 @@
 #include "StructForEntity/Attack.hpp"
 #include "Utils/Global.hpp"
 
-Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
+void calcPoint(double *pX, double *pY,
+               Entity *followEntity, double xyArray[][2], int i) {
+    double fECenterX, fECenterY;
+    followEntity->getSelfCenter(&fECenterX, &fECenterY);
+
+    double xPoint = xyArray[i][0];
+    if (!followEntity->isFacingEast()) xPoint = -xPoint;
+    xPoint += fECenterX;
+    double yPoint = xyArray[i][1] + fECenterY;
+
+    double angle = followEntity->getRotation();
+    angle = degreeToRad(angle);
+    if (angle != 0) {
+        rotatePoint(xPoint, yPoint, pX, pY,
+                    fECenterX, fECenterY, angle, !followEntity->isFacingEast());
+
+    } else {
+        *pX = xPoint;
+        *pY = yPoint;
+    }
+}
+
+Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
+               double xyArray[][2], int arrayLength,
                int damage, double kbXVelocity, double kbYVelocity) {
     this->atkIssuer = atkIssuer_;
-    this->atkIssuerDependant = true;
-    this->atkIssuerLastX = atkIssuer->getX();
-    this->atkIssuerLastY = atkIssuer->getY();
+    this->followEntity = followEntity;
+
+    if (followEntity == nullptr) followEntity = atkIssuer_;
+
+    this->followEntityLastX = followEntity->getX();
+    this->followEntityLastY = followEntity->getY();
+
+    double xPoint, yPoint;
     for (int i = 0; i < arrayLength; i++) {
-        double xPoint = atkIssuer->getX() + atkIssuer->getBaseHitBoxX() + atkIssuer->getHalfBaseHitBoxW();
-        if (atkIssuer->isFacingEast()) xPoint += xyArray[i][0];
-        else xPoint -= xyArray[i][0];
-        double yPoint = atkIssuer->getY() + atkIssuer->getBaseHitBoxY() +
-                        atkIssuer->getHalfBaseHitBoxH() + xyArray[i][1];
+        calcPoint(&xPoint, &yPoint,
+                  followEntity, xyArray, i);
         bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
     }
-    double xPoint = atkIssuer->getX() + atkIssuer->getBaseHitBoxX() + atkIssuer->getHalfBaseHitBoxW();
-    if (atkIssuer->isFacingEast()) xPoint += xyArray[0][0];
-    else xPoint -= xyArray[0][0];
-    double yPoint = atkIssuer->getY() + atkIssuer->getBaseHitBoxY() +
-                    atkIssuer->getHalfBaseHitBoxH() + xyArray[0][1];
+    calcPoint(&xPoint, &yPoint,
+              followEntity, xyArray, 0); // Close Polygon
     bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
 
     this->damage = damage;
-    if (!atkIssuer->isFacingEast()) kbXVelocity = -kbXVelocity;
+    if (!followEntity->isFacingEast()) kbXVelocity = -kbXVelocity;
     this->kbXVelocity = kbXVelocity;
     this->kbYVelocity = kbYVelocity;
     this->atkTimeAcc = 0;
     this->atkDuration = 0;
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
+}
+
+Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
+               int damage, double kbXVelocity, double kbYVelocity)
+        : Attack(atkIssuer_, atkIssuer_,
+                 xyArray, arrayLength,
+                 damage, kbXVelocity, kbYVelocity) {
+
 }
 
 BoostPolygon Attack::getPolygonFromEntity(Entity *dstEntity) {
@@ -70,22 +100,22 @@ bool Attack::isHittingEntity(LivingEntity *dstEntity) {
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
     if (isHittingEntity(dstEntity)) {
         if (!dstEntity->isHurt())
-        dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
+            dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
     }
 }
 
 void Attack::onGameFrame() {
-    if (atkIssuerDependant) {
-        double atkIssuerX = atkIssuer->getX();
-        double atkIssuerY = atkIssuer->getY();
-        double xDiff = atkIssuerX - atkIssuerLastX;
-        double yDiff = atkIssuerY - atkIssuerLastY;
+    if (followEntity != nullptr) {
+        double atkIssuerX = followEntity->getX();
+        double atkIssuerY = followEntity->getY();
+        double xDiff = atkIssuerX - followEntityLastX;
+        double yDiff = atkIssuerY - followEntityLastY;
         for (BoostPoint &point: atkPolygon.outer()) {
             point.x(point.x() + xDiff);
             point.y(point.y() + yDiff);
         }
-        atkIssuerLastX = atkIssuerX;
-        atkIssuerLastY = atkIssuerY;
+        followEntityLastX = atkIssuerX;
+        followEntityLastY = atkIssuerY;
     }
 }
 

@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 03/08/2023.
+// Created by pyrowildx on 03/08/2023.
 //
 
 #ifndef RANDOM_HPP
@@ -21,6 +21,8 @@ public:
     static int getRandomIntEndExcl(int start, int end);
 
     static double getRandomReal();
+
+    static double getRandomReal(double start, double end);
 
 private:
     static std::random_device rd;

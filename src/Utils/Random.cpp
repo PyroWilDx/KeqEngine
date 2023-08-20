@@ -1,5 +1,5 @@
 //
-// Created by pyrow on 03/08/2023.
+// Created by pyrowildx on 03/08/2023.
 //
 
 #include "Utils/Random.hpp"
@@ -23,10 +23,14 @@ int Random::getRandomInt(int start, int end) {
 }
 
 int Random::getRandomIntEndExcl(int start, int end) {
-    return getRandomInt(start, end - 1);
+    return Random::getRandomInt(start, end - 1);
 }
 
 double Random::getRandomReal() {
     randomReal = std::uniform_real_distribution<double>(0.0, 1.0);
     return randomReal(generator);
+}
+
+double Random::getRandomReal(double start, double end) {
+    return (Random::getRandomReal() * (end - start) + start);
 }
