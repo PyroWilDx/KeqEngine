@@ -1065,48 +1065,55 @@ Particle *Keqing::pushParticleOnSkillBlink(Entity *centerEntity) {
     return blinkParticle;
 }
 
-Particle *Keqing::pushElectroAura(Entity *srcEntity, Particle *srcParticle) {
+void Keqing::pushElectroAura(Entity *srcEntity, Particle *srcParticle,
+                             double renderWM, double renderHM) {
     // One of the Parameters should be nullptr
-    if (srcEntity != nullptr && srcParticle != nullptr) return nullptr;
-
-    Particle *auraParticle =
-            Particle::pushParticle(PARTICLE_KQ_ELECTRO_AURA, 100);
-    auraParticle->setRGBAMod(100);
+    if (srcEntity != nullptr && srcParticle != nullptr) return;
 
     if (srcEntity != nullptr) {
+        Particle *auraParticle =
+                Particle::pushParticle(PARTICLE_KQ_ELECTRO_AURA,
+                                       100,
+                                       renderWM, renderHM);
+        auraParticle->setRGBAMod(100);
         auraParticle->moveToEntityCenter(srcEntity);
+        auraParticle->xyShift(-1, 0);
     }
 
     if (srcParticle != nullptr) {
-        auraParticle->moveToEntityCenter(srcParticle);
-        auto *fParams = new int;
-        *fParams = srcParticle->getCode();
+        for (int i = 0; i < 6; i++) {
+            Particle *auraParticle =
+                    Particle::pushParticle(PARTICLE_KQ_ELECTRO_AURA,
+                                           100,
+                                           renderWM, renderHM);
+            auraParticle->setRGBAMod(60);
+            auraParticle->setRotation(i * 60);
+            auraParticle->xyShift(-1, 10);
+            auraParticle->goToFrame(i);
 
-        auraParticle->setOnRender([](Particle *particle) {
-            auto *srcParticleCode = (int *) particle->getOnRenderParams();
-            if (Particle::isActive(*srcParticleCode)) {
-                if (particle->isNewestFrame(1)) {
-                    Particle *newAuraParticle =
-                            Particle::pushParticle(particle->getCode(),
-                                                   particle->getSpriteLengthFromTo(0, 0),
-                                                   particle->getRenderWMultiplier(),
-                                                   particle->getRenderHMultiplier());
-                    newAuraParticle->setRGBAMod(100);
-                    newAuraParticle->moveToEntityCenter(particle);
-//                    newAuraParticle->xyShift(Random::getRandomReal(-2, 2),
-//                                             Random::getRandomReal(-2, 2));
-                    newAuraParticle->setOnRender(particle->getOnRender(),
-                                                 particle->getOnRenderParams());
+            auraParticle->moveToEntityCenter(srcParticle);
+            auto *fParams = new int;
+            *fParams = srcParticle->getCode();
+
+            auraParticle->setOnRender([](Particle *particle) {
+                auto *srcParticleCode = (int *) particle->getOnRenderParams();
+                if (Particle::isActive(*srcParticleCode)) {
+                    if (particle->isNewestFrame(6)) {
+                        particle->goToFrameNoNew(2);
+                    }
+
+                } else {
+                    particle->removeSelf();
                 }
+            }, (void *) fParams);
 
-            } else {
-                Particle::hardResetOnRender(particle->getCode());
-                delete srcParticleCode;
-            }
-        }, (void *) fParams);
+            auraParticle->setOnRemove([](Particle *particle) {
+                auto *fParams = (int *) particle->getOnRenderParams();
+                delete fParams;
+            });
+
+        }
     }
-
-    return auraParticle;
 }
 
 void Keqing::ASkillFlip() {
@@ -1236,7 +1243,7 @@ void Keqing::ASkillCloneGeneral() {
 
                     cloneIdleParticle->setOnRender([](Particle *particle) {
                         if (particle->getTimeSinceCreation() > KQ_SKILL_CLONE_DURATION) {
-                            Particle::removeParticle(PARTICLE_KQ_SKILL_CLONE_IDLE);
+                            particle->removeSelf();
                             return;
                         }
 
@@ -1251,7 +1258,8 @@ void Keqing::ASkillCloneGeneral() {
                         cloneDespawnParticle->moveToEntityCenter(particle);
                     });
 
-                    Keqing::pushElectroAura(nullptr, cloneIdleParticle);
+                    Keqing::pushElectroAura(nullptr, cloneIdleParticle,
+                                            0.92, 1.48);
 
                     // Push Atk
                     const int N = 8;
@@ -1268,9 +1276,16 @@ void Keqing::ASkillCloneGeneral() {
                             Global::currentWorld->addKQAtk(kq, cloneIdleParticle,
                                                            atkPolyPts, N,
                                                            10, 0.1, -0.1);
+
+                    atk->setOnHit([](Attack *atk, void *fParams) {
+                        auto *cloneIdleParticle = (Particle *) fParams;
+                        cloneIdleParticle->removeSelf();
+                    }, (void *) cloneIdleParticle);
+
                     atk->setShouldRemove([](Attack *atk, void *fParams) {
                         return (!Particle::isActive(PARTICLE_KQ_SKILL_CLONE_IDLE));
                     }, nullptr);
+
                 }
             });
         }
@@ -1404,7 +1419,7 @@ void Keqing::createLightningStelitto() {
         skillDespawnParticle->moveToEntityCenter(particle);
     });
 
-    pushElectroAura(nullptr, idleParticle);
+    Keqing::pushElectroAura(nullptr, idleParticle);
 }
 
 void Keqing::createSkillProjParticle() {
@@ -1636,7 +1651,8 @@ void Keqing::ESkillSlashGeneral() {
                 Particle::pushParticle(PARTICLE_KQ_SKILL_TP_START, 60);
         tpStartParticle->moveToEntityCenter(this);
 
-        pushElectroAura(this, nullptr);
+        Keqing::pushElectroAura(this, nullptr,
+                                1.42, 1.42);
 
         moveTo(ESkillX, ESkillY);
 

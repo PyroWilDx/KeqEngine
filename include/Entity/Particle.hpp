@@ -114,6 +114,8 @@ public:
 
     void fadeAway(double speed = 1);
 
+    void removeSelf();
+
     inline void setOnRender(void (*onRender_)(Particle *)) { onRender = onRender_; }
 
     inline void setOnRender(void (*onRender_)(Particle *), void *fParams) {
