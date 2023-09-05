@@ -39,6 +39,11 @@ public:
 
     inline void setFollowEntity(Entity *followEntity_) { followEntity = followEntity_; }
 
+    inline void setOnHit(void (*onHit_)(Attack *, void *), void *fParams) {
+        onHit = onHit_;
+        onHitParams = fParams;
+    }
+
     inline void setShouldRemove(bool (*shouldRemove_)(Attack *, void *), void *fParams) {
         shouldRemove = shouldRemove_;
         shouldRemoveParams = fParams;
@@ -56,6 +61,10 @@ private:
     double kbYVelocity;
     int atkTimeAcc;
     int atkDuration;
+
+    void (*onHit)(Attack *, void *);
+
+    void *onHitParams;
 
     bool (*shouldRemove)(Attack *, void *);
 

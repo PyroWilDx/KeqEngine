@@ -64,6 +64,8 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->kbYVelocity = kbYVelocity;
     this->atkTimeAcc = 0;
     this->atkDuration = 0;
+    this->onHit = nullptr;
+    this->onHitParams = nullptr;
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
 }
@@ -99,8 +101,10 @@ bool Attack::isHittingEntity(LivingEntity *dstEntity) {
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
     if (isHittingEntity(dstEntity)) {
-        if (!dstEntity->isHurt())
+        if (!dstEntity->isHurt()) {
+            if (onHit != nullptr) onHit(this, onHitParams);
             dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
+        }
     }
 }
 

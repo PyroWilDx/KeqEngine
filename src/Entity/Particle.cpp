@@ -277,7 +277,7 @@ void Particle::removeParticle(int spriteCode, int i) {
     if (removedParticle->onRemove != nullptr) removedParticle->onRemove(removedParticle);
 
     int lastIndex = activeCounts[spriteCode] - 1;
-    removedParticle->setRGBAMod(COLOR_WHITE_FULL);
+    if (activeCounts[spriteCode] == 1) removedParticle->setRGBAMod(ALPHA_MAX);
     delete removedParticle;
     activeCounts[spriteCode]--;
     activeParticles[spriteCode][i] = activeParticles[spriteCode][lastIndex];
@@ -430,4 +430,13 @@ void Particle::fadeAway(double speed) {
     SDL_GetTextureAlphaMod(imgTexture, &alpha);
     fadeParams.baseAlpha = alpha;
     fadeParams.speed = speed;
+}
+
+void Particle::removeSelf() {
+    for (int i = 0; i < activeCounts[particleCode]; i++) {
+        if (this == activeParticles[particleCode][i]) {
+            Particle::removeParticle(particleCode, i);
+            break;
+        }
+    }
 }

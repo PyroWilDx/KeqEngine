@@ -29,6 +29,7 @@
 #define COLOR_GREEN_FULL COLOR_GREEN, 255
 #define COLOR_BLUE 0, 0, 255
 #define COLOR_BLUE_FULL COLOR_BLUE, 255
+#define ALPHA_MAX 255
 
 typedef struct f2Params {
     void *fParam0;
