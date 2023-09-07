@@ -6,7 +6,6 @@
 #define MAIN_HPP
 
 #include <type_traits>
-#include "Utils/Utils.hpp"
 
 template<typename Derived>
 class MainInterface {

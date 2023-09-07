@@ -9,6 +9,10 @@
 #include "Utils/Events.hpp"
 #include "Entity/Slime.hpp"
 #include "Entity/FPSText.hpp"
+#include "World/World.hpp"
+#include "Entity/Particle.hpp"
+#include "Utils/Utils.hpp"
+#include "World/Block.hpp"
 
 void Game1::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
@@ -111,7 +115,7 @@ void Game1::RunImpl() {
 
         gWorld->renderSelf();
 
-//        gWorld->renderDebugMode();
+        gWorld->renderDebugMode();
 
         gWindow->display();
     }

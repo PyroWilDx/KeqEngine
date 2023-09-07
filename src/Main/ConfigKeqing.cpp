@@ -6,7 +6,10 @@
 #include "Main/ColorKeqing.hpp"
 #include "World/World.hpp"
 #include "Utils/Global.hpp"
-#include "Main/MainInterface.hpp"
+#include "WindowRenderer.hpp"
+#include "Utils/Utils.hpp"
+#include "UI/Button.hpp"
+#include "Keqing.hpp"
 
 void ConfigKeqing::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();

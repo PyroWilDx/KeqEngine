@@ -5,6 +5,8 @@
 #include "Entity/Particle.hpp"
 #include "Keqing.hpp"
 #include "Utils/Global.hpp"
+#include "Utils/Utils.hpp"
+#include "WindowRenderer.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
 

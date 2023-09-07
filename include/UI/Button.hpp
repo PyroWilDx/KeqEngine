@@ -6,7 +6,8 @@
 #define BUTTON_HPP
 
 #include "BaseEntity/WorldEntity.hpp"
-#include "Entity/Text.hpp"
+
+class Text;
 
 typedef enum {
     BUTTON_IDLE = 0,

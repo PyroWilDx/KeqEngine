@@ -14,6 +14,11 @@
 
 #include "StructForEntity/Attack.hpp"
 #include "Utils/Global.hpp"
+#include "BaseEntity/Entity.hpp"
+#include "BaseEntity/LivingEntity.hpp"
+#include "Utils/Utils.hpp"
+#include "World/World.hpp"
+#include "World/Background.hpp"
 
 void calcPoint(double *pX, double *pY,
                Entity *followEntity, double xyArray[][2], int i) {

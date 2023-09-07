@@ -5,6 +5,7 @@
 #include <fstream>
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
+#include "World/World.hpp"
 
 std::unordered_map<std::string, std::string> Global::userData;
 

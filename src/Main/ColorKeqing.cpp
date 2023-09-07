@@ -7,6 +7,9 @@
 #include "Utils/Events.hpp"
 #include "Keqing.hpp"
 #include "UI/ColorPicker.hpp"
+#include "World/World.hpp"
+#include "WindowRenderer.hpp"
+#include "Utils/Utils.hpp"
 
 void ColorKeqing::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();

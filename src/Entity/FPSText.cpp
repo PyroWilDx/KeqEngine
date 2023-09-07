@@ -5,6 +5,7 @@
 #include <cstdio>
 #include "Entity/FPSText.hpp"
 #include "Utils/Global.hpp"
+#include "Utils/Utils.hpp"
 
 const char *FPSFontPath = "res/fonts/JetBrainsMono-Regular.ttf";
 const SDL_Color FPSTextColor = {COLOR_WHITE_FULL};

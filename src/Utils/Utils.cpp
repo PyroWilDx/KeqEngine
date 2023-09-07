@@ -2,10 +2,13 @@
 // Created by pyrowildx on 13/05/23.
 //
 
+#include <cmath>
 #include <cassert>
 #include <algorithm>
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
+#include "World/World.hpp"
+#include "World/Background.hpp"
 
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {

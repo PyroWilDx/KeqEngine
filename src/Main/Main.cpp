@@ -15,6 +15,8 @@
 #include "Keqing.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/Random.hpp"
+#include "Utils/Utils.hpp"
+#include "Entity/Particle.hpp"
 
 int main(int argc, char *argv[]) {
 

@@ -8,7 +8,9 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
-#include "BaseEntity/LivingEntity.hpp"
+
+class Entity;
+class LivingEntity;
 
 namespace bst_geo = boost::geometry;
 

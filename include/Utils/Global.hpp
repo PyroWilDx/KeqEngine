@@ -5,15 +5,17 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include <string>
 #include <unordered_map>
 #include <SDL2/SDL_mixer.h>
-#include "World/World.hpp"
 #include "Utils/Events.hpp"
 
 #define DATA_PATH "data/.dat"
 #define DATA_KQ_VOICE_LANG "KeqingVoiceLang"
 #define DATA_KQ_COLOR "KeqingColor"
 #define DATA_GAME_VOLUME "GameVolume"
+
+class World;
 
 class Global {
 

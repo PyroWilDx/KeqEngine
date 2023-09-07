@@ -6,9 +6,9 @@
 #define ANIMATEDENTITY_HPP
 
 #include "Entity.hpp"
-#include "WindowRenderer.hpp"
 #include "StructForEntity/SpriteArray.hpp"
-#include "StructForEntity/SoundSheet.hpp"
+
+class SoundSheet;
 
 class AnimatedEntity : public Entity {
 

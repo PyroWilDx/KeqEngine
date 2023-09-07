@@ -5,9 +5,9 @@
 #ifndef KEQING_HPP
 #define KEQING_HPP
 
-#include "WindowRenderer.hpp"
-#include "Utils/Utils.hpp"
 #include "BaseEntity/LivingEntity.hpp"
+
+class Particle;
 
 enum {
     KQ_IDLE = 0,

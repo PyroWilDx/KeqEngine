@@ -6,6 +6,13 @@
 #include "Utils/Events.hpp"
 #include "Keqing.hpp"
 #include "Utils/Sound.hpp"
+#include "Entity/Particle.hpp"
+#include "WindowRenderer.hpp"
+#include "World/Background.hpp"
+#include "World/Block.hpp"
+#include "UI/Button.hpp"
+#include "StructForEntity/Attack.hpp"
+#include "BaseEntity/Monster.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,

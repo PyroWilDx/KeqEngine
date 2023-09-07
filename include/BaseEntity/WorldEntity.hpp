@@ -6,7 +6,6 @@
 #define WORLDENTITY_HPP
 
 #include "Entity.hpp"
-#include "Utils/Utils.hpp"
 
 typedef enum {
     WORLD_BACKGROUND = 0,

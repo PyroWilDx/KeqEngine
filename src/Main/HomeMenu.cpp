@@ -10,6 +10,8 @@
 #include "Utils/Events.hpp"
 #include "Utils/Sound.hpp"
 #include "UI/VolumeSlider.hpp"
+#include "World/World.hpp"
+#include "Utils/Utils.hpp"
 
 void HomeMenu::RunImpl() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();

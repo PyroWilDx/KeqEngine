@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "UI/Button.hpp"
 #include "WindowRenderer.hpp"
+#include "Utils/Utils.hpp"
+#include "Entity/Text.hpp"
 
 Button::Button(double x, double y, int renderW, int renderH)
         : WorldEntity(x, y, renderW, renderH, WORLD_BUTTON),
