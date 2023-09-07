@@ -7,15 +7,26 @@
 
 #include <vector>
 #include <unordered_map>
-#include "Background.hpp"
-#include "UI/Button.hpp"
-#include "Block.hpp"
-#include "BaseEntity/Monster.hpp"
+#include <SDL2/SDL.h>
 #include "Utils/LinkedList.hpp"
-#include "StructForEntity/Attack.hpp"
-#include "Keqing.hpp"
+//#include "Background.hpp"
+//#include "UI/Button.hpp"
+//#include "Block.hpp"
+//#include "BaseEntity/Monster.hpp"
+//#include "StructForEntity/Attack.hpp"
+//#include "Keqing.hpp"
 
 #define GET_NEAREST_WALL_RETURN_NONE -42
+
+class Background;
+class Button;
+class Block;
+class Entity;
+class WorldEntity;
+class LivingEntity;
+class Monster;
+class Keqing;
+class Attack;
 
 typedef struct Pixel {
     int worldType;

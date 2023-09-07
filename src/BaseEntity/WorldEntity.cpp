@@ -3,6 +3,7 @@
 //
 
 #include "BaseEntity/WorldEntity.hpp"
+#include "WindowRenderer.hpp"
 
 int WorldEntity::entityCount = 0;
 

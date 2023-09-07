@@ -9,6 +9,11 @@
 #include "Utils/Global.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/Random.hpp"
+#include "StructForEntity/SoundSheet.hpp"
+#include "World/World.hpp"
+#include "WindowRenderer.hpp"
+#include "Utils/Utils.hpp"
+#include "StructForEntity/Attack.hpp"
 
 Keqing *Keqing::instance = nullptr;
 

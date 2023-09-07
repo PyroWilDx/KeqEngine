@@ -5,6 +5,10 @@
 #include <limits>
 #include "BaseEntity/Entity.hpp"
 #include "Utils/Global.hpp"
+#include "WindowRenderer.hpp"
+#include "World/World.hpp"
+#include "Utils/Utils.hpp"
+#include "World/Background.hpp"
 
 Entity::Entity()
         : imgFrame({0, 0, 0, 0}), hitBox(imgFrame) {

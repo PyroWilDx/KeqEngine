@@ -7,7 +7,6 @@
 
 #include <cmath>
 #include "BaseEntity/WorldEntity.hpp"
-#include "Utils/Utils.hpp"
 
 enum {
     BLOCK_WALL_INVISIBLE = 0,

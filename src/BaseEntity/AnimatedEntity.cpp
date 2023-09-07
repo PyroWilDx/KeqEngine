@@ -4,7 +4,9 @@
 
 #include <numeric>
 #include "BaseEntity/AnimatedEntity.hpp"
+#include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
+#include "StructForEntity/SoundSheet.hpp"
 
 AnimatedEntity::AnimatedEntity(int spriteArrayLength)
         : Entity(), spriteArray(spriteArrayLength) {

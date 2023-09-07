@@ -1,3 +1,7 @@
+forward declaration
+
+UTILISER LA FONC SINUS/COSINUS POUR KEQING E AIR AIM
+
 hitlag
 
 reput atk physics when touching walls...

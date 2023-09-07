@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "BaseEntity/LivingEntity.hpp"
 #include "Utils/Global.hpp"
+#include "Utils/Utils.hpp"
 
 LivingEntity::LivingEntity(double gravityWeight, int baseHp,
                            int spriteArrayLength, int hurtSpriteCode,

@@ -13,6 +13,8 @@
 #include "WindowRenderer.hpp"
 #include "BaseEntity/Entity.hpp"
 #include "Utils/Global.hpp"
+#include "World/World.hpp"
+#include "World/Background.hpp"
 
 WindowRenderer *WindowRenderer::instance = nullptr;
 

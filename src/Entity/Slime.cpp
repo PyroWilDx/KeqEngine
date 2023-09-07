@@ -64,14 +64,14 @@ void Slime::AI() {
                             {(double) hitBox.w + 10, -10},
                             {(double) hitBox.w + 10, (double) hitBox.h + 10},
                             {-10,                    (double) hitBox.h + 10}};
-    if (isSpriteAnimated(SLIME_ATK)) {
-        if (isNewestFrame(0, SLIME_ATK)) {
-            Attack *atk =
-                    Global::currentWorld->addMonsterAtk(this, xyArray, 4,
-                                                        10, 1.0, -0.4);
-            atk->setAtkDuration(INT32_MAX);
-        }
-    }
+//    if (isSpriteAnimated(SLIME_ATK)) {
+//        if (isNewestFrame(0, SLIME_ATK)) {
+//            Attack *atk =
+//                    Global::currentWorld->addMonsterAtk(this, xyArray, 4,
+//                                                        10, 1.0, -0.4);
+//            atk->setAtkDuration(INT32_MAX);
+//        }
+//    }
 }
 
 void Slime::hurt() {

@@ -4,6 +4,9 @@
 
 #include <cmath>
 #include "UI/VolumeSlider.hpp"
+#include "WindowRenderer.hpp"
+#include "Utils/Utils.hpp"
+#include "Entity/Text.hpp"
 
 VolumeSlider::VolumeSlider(double x, double y, int renderW,
                            SDL_Color *filledColor, int currVolume)

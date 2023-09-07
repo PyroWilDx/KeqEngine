@@ -5,7 +5,7 @@
 #ifndef COLORPICKER_HPP
 #define COLORPICKER_HPP
 
-#include "Button.hpp"
+#include "UI/Button.hpp"
 
 class ColorPicker : public Button {
 

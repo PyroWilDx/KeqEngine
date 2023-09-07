@@ -3,6 +3,7 @@
 //
 
 #include "World/Background.hpp"
+#include "Utils/Utils.hpp"
 
 Background::Background(int renderW, int renderH, int totalWidth, int totalHeight,
                        const char *imgPath) :
