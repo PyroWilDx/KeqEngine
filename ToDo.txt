@@ -1,17 +1,9 @@
-forward declaration
-
-UTILISER LA FONC SINUS/COSINUS POUR KEQING E AIR AIM
+for burst maybe cut the cirlce in two, and left side = kbx neg , right side = kbx pos
+same for crouch catk and up catk maube, plunge ground
 
 hitlag
 
-reput atk physics when touching walls...
-
 add sound effects
-
-ADD E SKILL EFFECTS
-
-for burst maybe cut the cirlce in two, and left side = kbx neg , right side = kbx pos
-same for crouch catk and up catk maube, plunge ground
 
 for volumeslider, the ismouseonbutton can be larger, (just change the variable directly)
 

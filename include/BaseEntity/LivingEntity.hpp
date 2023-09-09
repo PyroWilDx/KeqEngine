@@ -18,11 +18,11 @@ public:
 
     void setXYShift(int xShift, int yShift, int xRShift, int spriteCode);
 
-    void fallGravity() override;
-
     SDL_Rect getRenderRect() override;
 
     void onGameFrame() override;
+
+    virtual bool isInvincible();
 
     void setDmgFacingEast(double kbVX);
 

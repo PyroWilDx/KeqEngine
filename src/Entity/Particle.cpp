@@ -279,7 +279,7 @@ void Particle::removeParticle(int spriteCode, int i) {
     if (removedParticle->onRemove != nullptr) removedParticle->onRemove(removedParticle);
 
     int lastIndex = activeCounts[spriteCode] - 1;
-    if (activeCounts[spriteCode] == 1) removedParticle->setRGBAMod(ALPHA_MAX);
+    if (activeCounts[spriteCode] == 1) removedParticle->setRGBAMod(COLOR_MAX);
     delete removedParticle;
     activeCounts[spriteCode]--;
     activeParticles[spriteCode][i] = activeParticles[spriteCode][lastIndex];
@@ -300,7 +300,7 @@ void Particle::animateAll() {
                 Uint8 alpha;
                 SDL_GetTextureAlphaMod(currParticle->imgTexture, &alpha);
                 alpha -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
-                                ((double) currParticle->fadeParams.baseAlpha / 255.0));
+                                ((double) currParticle->fadeParams.baseAlpha / COLOR_MAX_DBL));
                 if (alpha < 20) {
                     removeParticle(spriteCode, i);
                     continue;
