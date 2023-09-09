@@ -1,6 +1,3 @@
-for burst maybe cut the cirlce in two, and left side = kbx neg , right side = kbx pos
-same for crouch catk and up catk maube, plunge ground
-
 hitlag
 
 add sound effects
