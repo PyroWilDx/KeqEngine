@@ -90,6 +90,8 @@ public:
 
     void moveToEntityCenter(Entity *centerEntity, bool takeFaceEast = true);
 
+    void moveToEntityCenterIgnoreHitBox(Entity *centerEntity, bool takeFaceEast = true);
+
     virtual void onGameFrame();
 
     virtual void renderSelf(SDL_Renderer *gRenderer);
@@ -124,6 +126,8 @@ public:
         xVelocity = xVelocity_;
         yVelocity = yVelocity_;
     }
+
+    inline void setSubjectToGravity(bool subjectToGravity_) { subjectToGravity = subjectToGravity_; }
 
     inline void setHitBox(SDL_Rect hitBox_) { hitBox = hitBox_; }
 
@@ -166,6 +170,8 @@ public:
 
     [[nodiscard]] inline SDL_Rect getHitBox() const { return hitBox; }
 
+    [[nodiscard]] inline SDL_Rect *getHitBoxAddr() { return &hitBox; }
+
     [[nodiscard]] inline SDL_Texture *getTexture() const { return imgTexture; }
 
     [[nodiscard]] inline double getRenderWMultiplier() const { return renderWMultiplier; }
@@ -181,6 +187,7 @@ protected:
     bool facingEast;
     double xVelocity, yVelocity;
     double gravityWeight;
+    bool subjectToGravity;
     SDL_Rect imgFrame;
     SDL_Rect hitBox;
     SDL_Texture *imgTexture;

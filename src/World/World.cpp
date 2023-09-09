@@ -226,7 +226,7 @@ Attack *World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayL
 }
 
 Attack *World::addKQAtk(LivingEntity *atkIssuer, Entity *followEntity,
-                        double (*xyArray)[2], int arrayLength,
+                        double xyArray[][2], int arrayLength,
                         int damage, double kbXVelocity, double kbYVelocity) {
     auto *atk = new Attack(atkIssuer, followEntity,
                            xyArray, arrayLength,

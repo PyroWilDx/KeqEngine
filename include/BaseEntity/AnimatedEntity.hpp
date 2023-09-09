@@ -42,6 +42,8 @@ public:
 
     bool isNewestFrame(int frameIndex, int spriteCode = 0);
 
+    bool isNewestNextFrame(int frameIndex, int spriteCode = 0);
+
     bool isFrameBetween(int startFrame, int endFrame, int spriteCode = 0);
 
     bool willFrameFinish(int frameIndex, int spriteCode = 0);

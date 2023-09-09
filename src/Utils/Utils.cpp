@@ -3,6 +3,7 @@
 //
 
 #include <cmath>
+#include <cstring>
 #include <cassert>
 #include <algorithm>
 #include "Utils/Utils.hpp"
@@ -82,6 +83,17 @@ void approxEllipse(double xyArray[][2], const int N,
         xyArray[i][0] = approxX;
         xyArray[i][1] = approxY;
     }
+}
+
+void cutEllipseHalf(double xyArray[][2], int N, int HalfN,
+                    double xyArrayHalfRight[][2], double xyArrayHalfLeft[][2]) {
+    std::memcpy(xyArrayHalfRight, xyArray,
+                sizeof(double[2]) * ((HalfN / 2) + 1));
+    std::memcpy(xyArrayHalfRight + (HalfN / 2) + 1,
+                xyArray + 30, sizeof(double[2]) * (HalfN / 2));
+
+    std::memcpy(xyArrayHalfLeft, xyArray + 10,
+                sizeof(double[2]) * HalfN);
 }
 
 void shiftXYArray(double xyArray[][2], const int N,
