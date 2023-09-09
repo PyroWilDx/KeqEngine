@@ -54,7 +54,7 @@ void HomeMenu::RunImpl() {
         int currVolumePercent = selfVolumeSlider->getCurrentVolume();
         std::string volumeStr = std::to_string(currVolumePercent);
         Global::saveUserData(DATA_GAME_VOLUME, volumeStr);
-        int currVolume = (int) (MIX_MAX_VOLUME * (currVolumePercent / 100.0));
+        int currVolume = (int) (MIX_MAX_VOLUME * (currVolumePercent / 100.));
         Mix_Volume(-1, currVolume);
     };
     volumeSlider->setOnClick(fSetVolume);

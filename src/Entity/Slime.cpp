@@ -55,15 +55,15 @@ void Slime::onGameFrame() {
 
 void Slime::AI() {
     setSpriteAnimated(true, SLIME_IDLE);
-
-    Keqing *kq = Keqing::getInstance();
-    if (abs(kq->getX() - x) < 110) {
-        setSpriteAnimated(true, SLIME_ATK);
-    }
-    double xyArray[4][2] = {{-10,                    -10},
-                            {(double) hitBox.w + 10, -10},
-                            {(double) hitBox.w + 10, (double) hitBox.h + 10},
-                            {-10,                    (double) hitBox.h + 10}};
+//
+//    Keqing *kq = Keqing::getInstance();
+//    if (abs(kq->getX() - x) < 110) {
+//        setSpriteAnimated(true, SLIME_ATK);
+//    }
+//    double xyArray[4][2] = {{-10,                    -10},
+//                            {(double) hitBox.w + 10, -10},
+//                            {(double) hitBox.w + 10, (double) hitBox.h + 10},
+//                            {-10,                    (double) hitBox.h + 10}};
 //    if (isSpriteAnimated(SLIME_ATK)) {
 //        if (isNewestFrame(0, SLIME_ATK)) {
 //            Attack *atk =

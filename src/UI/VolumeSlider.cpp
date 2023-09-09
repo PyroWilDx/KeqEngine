@@ -10,7 +10,8 @@
 
 VolumeSlider::VolumeSlider(double x, double y, int renderW,
                            SDL_Color *filledColor, int currVolume)
-        : Button(x, y, renderW, renderW / 10, 0) {
+        : Button(x, y, renderW, renderW / 10, 0),
+          filledColor() {
     this->swapColorOnClick = false;
     this->changeColor(COLOR_WHITE);
     SDL_Color blackColor = {COLOR_BLACK_FULL};
@@ -24,12 +25,12 @@ VolumeSlider::VolumeSlider(double x, double y, int renderW,
 }
 
 int VolumeSlider::getPickerXFromVolume(int volume) {
-    return (WorldEntity::getX() + round((double) getRenderW() * ((double) volume / 100.0)));
+    return (int) (WorldEntity::getX() + round((double) getRenderW() * ((double) volume / 100.)));
 }
 
 int VolumeSlider::getCurrentVolume() {
-    double filledW = (double) (pickerX - WorldEntity::getX());
-    int currVolume = round((filledW * 100.0) / (double) getRenderW());
+    auto filledW = (double) (pickerX - WorldEntity::getX());
+    int currVolume = (int) round((filledW * 100.) / (double) getRenderW());
     currVolume = std::max(currVolume, 0);
     currVolume = std::min(currVolume, 100);
     return currVolume;

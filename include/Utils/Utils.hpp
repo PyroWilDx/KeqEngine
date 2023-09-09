@@ -11,11 +11,13 @@
 #define SCREEN_BASE_WIDTH 1280
 #define SCREEN_BASE_HEIGHT 720
 
-#define HUD_SB_CIRCLE_M 4.0
+#define HUD_SB_CIRCLE_M 4.
 #define HUB_SB_ICON_M (HUD_SB_CIRCLE_M * 0.74)
 
 #define KEY_PRESS_SHORT_DURATION 100
 
+#define COLOR_MAX 255
+#define COLOR_MAX_DBL 255.
 #define COLOR_WHITE 255, 255, 255
 #define COLOR_WHITE_FULL COLOR_WHITE, 255
 #define COLOR_BLACK 0, 0, 0
@@ -26,7 +28,6 @@
 #define COLOR_GREEN_FULL COLOR_GREEN, 255
 #define COLOR_BLUE 0, 0, 255
 #define COLOR_BLUE_FULL COLOR_BLUE, 255
-#define ALPHA_MAX 255
 
 typedef struct f2Params {
     void *fParam0;

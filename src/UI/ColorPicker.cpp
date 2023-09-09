@@ -29,8 +29,8 @@ ColorPicker::~ColorPicker() {
 
 static void setRGB(double *pRGB, double value) {
     *pRGB = value;
-    *pRGB = std::min(*pRGB, 255.0);
-    *pRGB = std::max(*pRGB, 0.0);
+    *pRGB = std::min(*pRGB, COLOR_MAX_DBL);
+    *pRGB = std::max(*pRGB, 0.);
 }
 
 void ColorPicker::fillPixels(Uint32 currRGBA) {
@@ -45,11 +45,11 @@ void ColorPicker::fillPixels(Uint32 currRGBA) {
                                                   32, 0, 0, 0, 0);
 
     double r, g, b, lastR, lastG, lastB;
-    r = 255.0;
-    g = 0.0;
-    b = 0.0;
+    r = COLOR_MAX_DBL;
+    g = 0;
+    b = 0;
     const int nComb = 6;
-    const double xAddRGB = ((double) nComb * 255.0) / w;
+    const double xAddRGB = (double) nComb * COLOR_MAX_DBL / (double) w;
     double xAddRInfo[nComb] = {0, -xAddRGB, 0, 0, xAddRGB, 0};
     double xAddGInfo[nComb] = {xAddRGB, 0, 0, -xAddRGB, 0, 0};
     double xAddBInfo[nComb] = {0, 0, xAddRGB, 0, 0, -xAddRGB};
@@ -61,9 +61,9 @@ void ColorPicker::fillPixels(Uint32 currRGBA) {
         lastG = g;
         lastB = b;
 
-        yAddR = (255.0 - r) / h;
-        yAddG = (255.0 - g) / h;
-        yAddB = (255.0 - b) / h;
+        yAddR = (COLOR_MAX_DBL - r) / h;
+        yAddG = (COLOR_MAX_DBL - g) / h;
+        yAddB = (COLOR_MAX_DBL - b) / h;
 
         for (int j = y1; j < y2; j++) {
             rInt = (Uint8) r;
@@ -121,7 +121,7 @@ void ColorPicker::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
 int ColorPicker::getPickerSize() {
     double w, h;
     getRealSize(&w, &h);
-    return ((int) (std::min(w, h) / 32.0));
+    return (int) (std::min(w, h) / 32.);
 }
 
 void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {

@@ -10,6 +10,7 @@
 #include <boost/geometry/geometries/polygon.hpp>
 
 class Entity;
+
 class LivingEntity;
 
 namespace bst_geo = boost::geometry;
@@ -41,7 +42,11 @@ public:
 
     inline void setFollowEntity(Entity *followEntity_) { followEntity = followEntity_; }
 
-    inline void setOnHit(void (*onHit_)(Attack *, void *), void *fParams) {
+    inline void setKbXVelocity(double kbXVelocity_) { kbXVelocity = kbXVelocity_; }
+
+    inline void setKbYVelocity(double kbYVelocity_) { kbYVelocity = kbYVelocity_; }
+
+    inline void setOnHit(void (*onHit_)(Attack *, LivingEntity *, void *), void *fParams) {
         onHit = onHit_;
         onHitParams = fParams;
     }
@@ -52,6 +57,8 @@ public:
     }
 
     inline void setAtkDuration(int atkDuration_) { atkDuration = atkDuration_; }
+
+    inline LivingEntity *getAtkIssuer() { return atkIssuer; }
 
 private:
     LivingEntity *atkIssuer;
@@ -64,7 +71,7 @@ private:
     int atkTimeAcc;
     int atkDuration;
 
-    void (*onHit)(Attack *, void *);
+    void (*onHit)(Attack *, LivingEntity *, void *);
 
     void *onHitParams;
 

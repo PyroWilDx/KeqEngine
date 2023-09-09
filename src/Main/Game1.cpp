@@ -31,6 +31,8 @@ void Game1::RunImpl() {
                      1120, 720 - 120, 176, 40);
     gWorld->addBlock(BLOCK_DIRT,
                      1200, 720 - 180, 176, 40);
+    gWorld->addBlock(BLOCK_DIRT,
+                     1400, 720 - 180, 176, 32);
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, 0);
@@ -80,7 +82,7 @@ void Game1::RunImpl() {
 
     auto *slime = new Slime("Blue");
     slime->setHitBox({1, 4, 14, 12});
-    slime->setRenderWHMultiplier(4.0, 4.0);
+    slime->setRenderWHMultiplier(4., 4.);
     slime->moveToDownLeft(400, 720 - 200);
     gWorld->addMonster(slime);
 

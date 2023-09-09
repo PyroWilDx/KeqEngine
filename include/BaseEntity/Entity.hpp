@@ -54,7 +54,7 @@ public:
 
     [[nodiscard]] bool isHittingWallVerticallySide(bool sideUp) const;
 
-    [[nodiscard]] bool isInAir() const;
+    [[nodiscard]] virtual bool isInAir();
 
     [[nodiscard]] bool isHittingCeiling() const;
 
@@ -114,7 +114,11 @@ public:
 
     void clearTexture();
 
+    inline void setY(double y_) { y = y_; }
+
     virtual inline void setFacingEast(bool facingEast_) { facingEast = facingEast_; }
+
+    inline void setYVelocity(double yVelocity_) { yVelocity = yVelocity_; }
 
     inline void setXYVelocity(double xVelocity_, double yVelocity_) {
         xVelocity = xVelocity_;
