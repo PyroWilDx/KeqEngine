@@ -27,7 +27,7 @@ int Random::getRandomIntEndExcl(int start, int end) {
 }
 
 double Random::getRandomReal() {
-    randomReal = std::uniform_real_distribution<double>(0.0, 1.0);
+    randomReal = std::uniform_real_distribution<double>(0., 1.);
     return randomReal(generator);
 }
 

@@ -290,7 +290,7 @@ bool Entity::isHittingWallVerticallySide(bool sideUp) const {
     return res;
 }
 
-bool Entity::isInAir() const {
+bool Entity::isInAir() {
     return !isHittingWallVerticallySide(false);
 }
 
@@ -326,7 +326,7 @@ double Entity::getFallGravityAddVelocity() const {
 
 void Entity::fallGravity() {
     if (isHittingCeiling()) {
-        yVelocity = 0;
+        yVelocity = -yVelocity / 3.2;
     }
 
     if (isInAir()) {
@@ -352,7 +352,7 @@ void Entity::moveTo(double x_, double y_) {
 void Entity::moveToCenter(double x_, double y_) {
     double realW, realH;
     getRealSize(&realW, &realH);
-    moveTo(x_ - realW / 2.0, y_ - realH / 2.0);
+    moveTo(x_ - realW / 2., y_ - realH / 2.);
 }
 
 void Entity::moveToDownLeft(double xLeft, double yDown) {
@@ -442,8 +442,8 @@ void Entity::getSelfCenter(double *pX, double *pY) {
     } else {
         double realW, realH;
         getRealSize(&realW, &realH);
-        *pX = getX() + realW / 2.0;
-        *pY = getY() + realH / 2.0;
+        *pX = getX() + realW / 2.;
+        *pY = getY() + realH / 2.;
     }
 }
 
@@ -476,8 +476,8 @@ void Entity::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
         addY -= hitBox.y;
     }
 
-    if (pX != nullptr) *pX = vX + addX + (addW / 2.0 - (double) realW / 2.0);
-    if (pY != nullptr) *pY = vY + addY + (addH / 2.0 - (double) realH / 2.0);
+    if (pX != nullptr) *pX = vX + addX + (addW / 2. - realW / 2.);
+    if (pY != nullptr) *pY = vY + addY + (addH / 2. - realH / 2.);
 }
 
 void Entity::moveToEntityCenter(Entity *centerEntity, bool takeFaceEast) {
@@ -529,8 +529,8 @@ void Entity::setHitBoxCentered(int hitBoxW, int hitBoxH) {
     double realW, realH;
     getRealSize(&realW, &realH);
 
-    hitBox.x = (int) ((realW - (double) hitBoxW) / 2.0);
-    hitBox.y = (int) ((realH - (double) hitBoxH) / 2.0);
+    hitBox.x = (int) ((realW - (double) hitBoxW) / 2.);
+    hitBox.y = (int) ((realH - (double) hitBoxH) / 2.);
     hitBox.w = hitBoxW;
     hitBox.h = hitBoxH;
 }
@@ -552,11 +552,11 @@ double Entity::getBaseHitBoxH() const {
 }
 
 double Entity::getHalfBaseHitBoxW() const {
-    return (getBaseHitBoxW() / 2.0);
+    return getBaseHitBoxW() / 2.;
 }
 
 double Entity::getHalfBaseHitBoxH() const {
-    return (getBaseHitBoxH() / 2.0);
+    return getBaseHitBoxH() / 2.;
 }
 
 bool Entity::hitBoxCollision(Entity *entity) const {

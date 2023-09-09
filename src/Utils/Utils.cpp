@@ -39,11 +39,11 @@ double getAngle(double x1, double y1,
 }
 
 double radToDegree(double rad) {
-    return (rad * (180.0 / M_PI));
+    return (rad * (180. / M_PI));
 }
 
 double degreeToRad(double degree) {
-    return (degree * (M_PI / 180.0));
+    return (degree * (M_PI / 180.));
 }
 
 void rotatePoint(double x, double y, double *pResX, double *pResY,
@@ -217,9 +217,9 @@ void Uint32RGBAToUint8RGBA(Uint32 rgba, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a) 
 
 void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
               double *pH, double *pS, double *pV) {
-    double fr = (double) r / 255.0;
-    double fg = (double) g / 255.0;
-    double fb = (double) b / 255.0;
+    double fr = (double) r / COLOR_MAX_DBL;
+    double fg = (double) g / COLOR_MAX_DBL;
+    double fb = (double) b / COLOR_MAX_DBL;
 
     double maxVal = std::max(fr, std::max(fg, fb));
     double minVal = std::min(fr, std::min(fg, fb));
@@ -242,14 +242,14 @@ void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
         if (maxVal == fr) {
             h = (fg - fb) / delta;
         } else if (maxVal == fg) {
-            h = 2.0 + (fb - fr) / delta;
+            h = 2. + (fb - fr) / delta;
         } else {
-            h = 4.0 + (fr - fg) / delta;
+            h = 4. + (fr - fg) / delta;
         }
 
-        h *= 60.0;
+        h *= 60.;
 
-        if (h < 0) h += 360.0;
+        if (h < 0) h += 360.;
     }
 
     if (pH != nullptr) *pH = h;
@@ -260,49 +260,49 @@ void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
 void HSVToRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB) {
     if (s == 0) {
-        *pR = *pG = *pB = (Uint8) (v * 255.0);
+        *pR = *pG = *pB = (Uint8) (v * COLOR_MAX_DBL);
         return;
     }
 
     int r, g, b;
 
-    h /= 60.0;
+    h /= 60.;
     int i = (int) h;
     double f = h - (double) i;
-    double p = v * (1.0 - s);
-    double q = v * (1.0 - s * f);
-    double t = v * (1.0 - s * (1.0 - f));
+    double p = v * (1. - s);
+    double q = v * (1. - s * f);
+    double t = v * (1. - s * (1. - f));
 
     switch (i) {
         case 0:
-            r = (Uint8) (v * 255.0);
-            g = (Uint8) (t * 255.0);
-            b = (Uint8) (p * 255.0);
+            r = (Uint8) (v * COLOR_MAX_DBL);
+            g = (Uint8) (t * COLOR_MAX_DBL);
+            b = (Uint8) (p * COLOR_MAX_DBL);
             break;
         case 1:
-            r = (Uint8) (q * 255.0);
-            g = (Uint8) (v * 255.0);
-            b = (Uint8) (p * 255.0);
+            r = (Uint8) (q * COLOR_MAX_DBL);
+            g = (Uint8) (v * COLOR_MAX_DBL);
+            b = (Uint8) (p * COLOR_MAX_DBL);
             break;
         case 2:
-            r = (Uint8) (p * 255.0);
-            g = (Uint8) (v * 255.0);
-            b = (Uint8) (t * 255.0);
+            r = (Uint8) (p * COLOR_MAX_DBL);
+            g = (Uint8) (v * COLOR_MAX_DBL);
+            b = (Uint8) (t * COLOR_MAX_DBL);
             break;
         case 3:
-            r = (Uint8) (p * 255.0);
-            g = (Uint8) (q * 255.0);
-            b = (Uint8) (v * 255.0);
+            r = (Uint8) (p * COLOR_MAX_DBL);
+            g = (Uint8) (q * COLOR_MAX_DBL);
+            b = (Uint8) (v * COLOR_MAX_DBL);
             break;
         case 4:
-            r = (Uint8) (t * 255.0);
-            g = (Uint8) (p * 255.0);
-            b = (Uint8) (v * 255.0);
+            r = (Uint8) (t * COLOR_MAX_DBL);
+            g = (Uint8) (p * COLOR_MAX_DBL);
+            b = (Uint8) (v * COLOR_MAX_DBL);
             break;
         default:
-            r = (Uint8) (v * 255.0);
-            g = (Uint8) (p * 255.0);
-            b = (Uint8) (q * 255.0);
+            r = (Uint8) (v * COLOR_MAX_DBL);
+            g = (Uint8) (p * COLOR_MAX_DBL);
+            b = (Uint8) (q * COLOR_MAX_DBL);
             break;
     }
 

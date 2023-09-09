@@ -38,12 +38,6 @@ void LivingEntity::setXYShift(int xShift, int yShift, int xRShift, int spriteCod
     xRShifts[spriteCode] = xRShift;
 }
 
-void LivingEntity::fallGravity() {
-    if (!isHurt()) {
-        Entity::fallGravity();
-    }
-}
-
 SDL_Rect LivingEntity::getRenderRect() {
     SDL_Rect dst = Entity::getRenderRect();
 
@@ -66,52 +60,44 @@ void LivingEntity::onGameFrame() {
     }
 }
 
+bool LivingEntity::isInvincible() {
+    return false;
+}
+
 void LivingEntity::setDmgFacingEast(double kbVX) {
     if (kbVX != 0) facingEast = (kbVX < 0);
 }
 
 void LivingEntity::damageSelf(int damage, double kbVX, double kbVY) {
-    hp -= damage;
-    hurtKbVY = kbVY;
-    yVelocity = kbVY;
-    setDmgFacingEast(kbVX);
-    if (!isFacingEast()) kbVX = -kbVX;
-    hurtKbVX = kbVX;
-    xVelocity = kbVX;
-    timeSinceHurt = 0;
-    setSpriteAnimated(true, hurtSpriteCode);
+    if (!isInvincible()) {
+        hp -= damage;
+        hurtKbVY = kbVY;
+        yVelocity = kbVY;
+        setDmgFacingEast(kbVX);
+        if (!isFacingEast()) kbVX = -kbVX;
+        hurtKbVX = kbVX;
+        xVelocity = kbVX;
+        timeSinceHurt = 0;
+        setSpriteAnimated(true, hurtSpriteCode);
+    }
 }
 
 void LivingEntity::hurt() {
-    auto minF =
-            [](double a, double b) { return std::min(a, b); };
-    auto maxF =
-            [](double a, double b) { return std::max(a, b); };
-    double (*fX)(double, double) = (xVelocity < 0) ? minF : maxF;
-    double (*fY)(double, double) = (yVelocity < 0) ? minF : maxF;
-    double addX = (xVelocity < 0) ? 0.001 : -0.001;
-    double addY = (yVelocity < 0) ? 0.001 : -0.001;
+    double addX = 0.002;
+    xVelocity = (xVelocity < 0) ?
+                std::min(xVelocity + addX * Global::dt, 0.) :
+                std::max(xVelocity - addX * Global::dt, 0.);
 
-    xVelocity = fX(xVelocity + addX * Global::dt, 0.0);
-    yVelocity = fY(yVelocity + addY * Global::dt, 0.0);
+    if (timeSinceHurt > 0) {
+        if (isHittingWallHorizontally()) {
+            xVelocity /= 2.;
+            xVelocity = -xVelocity;
+        }
 
-//    if (Global::currentTime != hurtStartTime) {
-//        if (isHittingWallHorizontally()) {
-//            xVelocity /= 2;
-//            xVelocity = -xVelocity;
-//        }
-//
-//        if (!isInAir()) {
-//            xVelocity /= 1.06;
-//            yVelocity /= 2;
-//            yVelocity = -yVelocity;
-//        }
-//
-//        if (isHittingCeiling()) {
-//            yVelocity /= 2;
-//            yVelocity = -yVelocity;
-//        }
-//    }
+        if (!isInAir()) {
+            xVelocity /= 1.04;
+        }
+    }
 
     if (xVelocity == 0 && yVelocity == 0) {
         setSpriteAnimated(false, hurtSpriteCode);

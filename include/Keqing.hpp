@@ -51,15 +51,15 @@ enum {
 
 #define KQ_BASE_COLOR 2861694463
 
-#define KQ_WIDTH_MULTIPLIER 1.0
-#define KQ_HEIGHT_MULTIPLIER 1.0
+#define KQ_WIDTH_MULTIPLIER 1.
+#define KQ_HEIGHT_MULTIPLIER 1.
 
 #define KQ_WALK_VELOCITY 0.4
 #define KQ_RUN_VELOCITY 0.6
 #define KQ_AIR_WALK_VELOCITY 0.38
 #define KQ_DASH_VELOCITY 0.8
 
-#define KQ_JUMP_BASE_VELOCITY 1.0
+#define KQ_JUMP_BASE_VELOCITY 1.
 #define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
 #define KQ_AIR_DASH_VELOCITY 0.8
 
@@ -147,7 +147,7 @@ public:
     static Particle *pushParticleOnSkillBlink(Entity *centerEntity);
 
     static void pushElectroAura(Entity *srcEntity, Particle *srcParticle,
-                                double renderWM = 1.0, double renderHM = 1.0,
+                                double renderWM = 1., double renderHM = 1.,
                                 int frameLength = 100);
 
     void ASkillFlip();
@@ -198,6 +198,8 @@ public:
 
     void airPlunge();
 
+    [[nodiscard]] bool isInAir() override;
+
     void onGameFrame() override;
 
     void hurt() override;
@@ -234,6 +236,7 @@ private:
     static Keqing *instance;
 
     int jumpPressTime;
+    double yOnLastNAtk;
     int ASkillFlipPressTime;
     double ASkillCloneCenterX, ASkillCloneCenterY;
     int ESkillPausedSpriteCode;

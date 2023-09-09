@@ -26,6 +26,7 @@ Keqing::Keqing()
     setHitBox({0, 12, 60, 84});
 
     this->jumpPressTime = 0;
+    this->yOnLastNAtk = 0;
     this->ASkillFlipPressTime = 0;
     this->ASkillCloneCenterX = 0;
     this->ASkillCloneCenterY = 0;
@@ -309,6 +310,7 @@ void Keqing::reset() {
     yVelocity = 0;
 
     jumpPressTime = 0;
+    yOnLastNAtk = 0;
     ASkillFlipPressTime = 0;
     ASkillCloneCenterX = 0;
     ASkillCloneCenterY = 0;
@@ -556,7 +558,7 @@ void Keqing::run() {
         if (isNewestFrame(0, KQ_RUN_END)) {
             xVelocity = 0.26;
         }
-        xVelocity = std::max(xVelocity - 0.0008 * Global::dt, 0.0);
+        xVelocity = std::max(xVelocity - 0.0008 * Global::dt, 0.);
     }
 }
 
@@ -595,8 +597,8 @@ void Keqing::jump() {
     }
 }
 
-const double NAtkVelocity[NAtkMax + 1] = {0.1, 0, 0.2,
-                                          0, 0.4};
+const double NAtkXVelocity[NAtkMax + 1] = {0.08, 0.16, 0.26,
+                                           0.132, 0.6};
 const char *NAtkSfxPaths[NAtkMax + 1] = {"res/sfx/particle/KQNAtk0.ogg",
                                          "res/sfx/particle/KQNAtk1.ogg",
                                          "res/sfx/particle/KQNAtk2.ogg",
@@ -609,6 +611,7 @@ void Keqing::NAtk() {
             if (!isMouseLeftRecent()) { // Stop NAtk
                 setSpriteAnimated(false, KQ_NATK);
                 if (isMouseLeftLong()) {
+                    if (i > 2) y = yOnLastNAtk;
                     setSpriteAnimated(true, KQ_CATK);
                 }
                 return;
@@ -618,6 +621,7 @@ void Keqing::NAtk() {
         if (isFrameBetween(NAtkEndFrame[i], NAtkEndFrame[i] + 1, KQ_NATK)) {
             if (isMouseLeftLong()) {
                 setSpriteAnimated(false, KQ_NATK);
+                if (i > 2) y = yOnLastNAtk;
                 setSpriteAnimated(true, KQ_CATK);
                 return;
             }
@@ -625,7 +629,7 @@ void Keqing::NAtk() {
             xVelocity = 0;
             if (isMouseLeftRecent()) { // Continue NAtk
                 goToFrame(NAtkEndFrame[i] + 2, KQ_NATK);
-                xVelocity = NAtkVelocity[i + 1];
+                xVelocity = NAtkXVelocity[i + 1];
 
                 Sound::playAudioChunk(NAtkSfxPaths[i + 1]);
             }
@@ -633,12 +637,18 @@ void Keqing::NAtk() {
     }
 
     if (isNewestFrame(0, KQ_NATK)) {
-        xVelocity = NAtkVelocity[0];
+        xVelocity = NAtkXVelocity[0];
 
         soundSheet->playRandomSoundStartString("AtkWeak", KQ_NATK);
         Sound::playAudioChunk(NAtkSfxPaths[0]);
 
+    } else if (isNewestFrame(21, KQ_NATK)) {
+        yOnLastNAtk = y;
+        yVelocity = -0.48;
+
     } else if (isNewestFrame(30, KQ_NATK)) { // NAtk 4
+        y = yOnLastNAtk;
+
         soundSheet->playRandomSoundStartString("AtkMid", KQ_NATK);
 
         Particle *NAtk4Particle =
@@ -646,6 +656,10 @@ void Keqing::NAtk() {
                                        48, 2.4, 2.6);
         NAtk4Particle->setEntity(this);
         NAtk4Particle->xyShift(32, 20);
+    }
+
+    if (isFrameBetween(21, 28, KQ_NATK)) {
+        yVelocity += getFallGravityAddVelocity() * 1.08;
     }
 
     // Push Atk
@@ -658,7 +672,7 @@ void Keqing::NAtk() {
                  {30,  0}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.126, 0);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
 
     } else if (isNewestFrame(7, KQ_NATK)) {
@@ -682,7 +696,7 @@ void Keqing::NAtk() {
                  {54,  -12}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.28, -0.24);
         atk->setAtkDuration(getSpriteLengthFromTo(7, 8, KQ_NATK));
 
     } else if (isNewestFrame(13, KQ_NATK)) {
@@ -702,7 +716,7 @@ void Keqing::NAtk() {
                  {72,  4}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.36, -0.12);
         atk->setAtkDuration(getSpriteLengthFromTo(13, 14, KQ_NATK));
 
     } else if (isNewestFrame(21, KQ_NATK)) {
@@ -726,7 +740,7 @@ void Keqing::NAtk() {
                  {32,  -34}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.16, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(21, 22, KQ_NATK));
 
     } else if (isNewestFrame(24, KQ_NATK)) {
@@ -754,7 +768,7 @@ void Keqing::NAtk() {
                  {70,  -22}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.26, 0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(24, 25, KQ_NATK));
 
     } else if (isNewestFrame(30, KQ_NATK)) {
@@ -768,7 +782,7 @@ void Keqing::NAtk() {
                  {84,  30}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 2.6, -0.1);
+                                               10, 1., -0.2);
         atk->setAtkDuration(getSpriteLengthFromTo(30, 32, KQ_NATK));
     }
 }
@@ -801,7 +815,7 @@ void Keqing::CAtk() {
     }
 
     if (xVelocity < 0) {
-        xVelocity = std::min(xVelocity + 0.001 * Global::dt, 0.0);
+        xVelocity = std::min(xVelocity + 0.001 * Global::dt, 0.);
     }
 
     if (Particle::isActive(PARTICLE_KQ_CATK)) {
@@ -818,7 +832,7 @@ void Keqing::CAtk() {
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, CAtkParticle,
                                                    atkPolyPts, N,
-                                                   10, 2.6, -0.1);
+                                                   10, 1.2, -0.2);
             atk->setAtkDuration(CAtkParticle->getSpriteLengthFromTo(1, 1));
 
         } else if (CAtkParticle->isNewestFrame(3)) {
@@ -831,7 +845,7 @@ void Keqing::CAtk() {
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, CAtkParticle,
                                                    atkPolyPts, N,
-                                                   10, 2.6, -0.1);
+                                                   10, 1.2, -0.2);
             atk->setAtkDuration(CAtkParticle->getSpriteLengthFromTo(3, 3));
         }
     }
@@ -870,7 +884,7 @@ void Keqing::upNAtk() {
                  {-14, 22}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0, -0.42);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 3, KQ_UP_NATK));
     }
 }
@@ -899,7 +913,7 @@ void Keqing::upCAtk() {
                           0, -16, 40, 56);
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0.1, -0.1);
+                                                   10, 0, -0.6);
             atk->setAtkDuration(upCAtkParticle->getSpriteLengthFromTo(1, 1));
 
         } else if (upCAtkParticle->isNewestFrame(3)) {
@@ -909,7 +923,7 @@ void Keqing::upCAtk() {
                           0, -36, 26, 70);
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0.1, -0.8);
+                                                   10, 0, -1.);
             atk->setAtkDuration(upCAtkParticle->getSpriteLengthFromTo(3, 3));
         }
     }
@@ -938,7 +952,7 @@ void Keqing::crouchNAtk() {
                  {48,  30}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.142, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_CROUCH_NATK));
     }
 }
@@ -967,7 +981,7 @@ void Keqing::crouchCAtk() {
                           6, 10, 64, 18);
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0.4, -0.4);
+                                                   10, 0.2, 0.2);
             atk->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(1, 1));
 
         } else if (crouchCAtkParticle->isNewestFrame(3)) {
@@ -977,7 +991,7 @@ void Keqing::crouchCAtk() {
                           0, 26, 120, 24);
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0.4, -0.4);
+                                                   10, 0.8, -0.32);
             atk->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(3, 3));
         }
     }
@@ -999,7 +1013,7 @@ void Keqing::dash() {
 
     } else if (isFrameBetween(6, -1, KQ_DASH)) {
         if (xVelocity < 0) {
-            xVelocity = std::min(xVelocity + 0.01 * (double) Global::dt, 0.0);
+            xVelocity = std::min(xVelocity + 0.01 * (double) Global::dt, 0.);
         }
     }
 }
@@ -1133,7 +1147,7 @@ void Keqing::ASkillFlip() {
         }
 
         if (yVelocity > -0.12 && yVelocity < 0.12) {
-            cancelGravity(1.0 / 2.0);
+            cancelGravity(1. / 2.);
         }
 
         if (isFrameBetween(3, 6, KQ_SKILL_FLIP)) {
@@ -1167,7 +1181,7 @@ void Keqing::ASkillFlip() {
                           0, 0, 12, 84);
             rotateXYArray(PtAtkPolyPts, PtN,
                           0, 0,
-                          (0.96 * M_PI) / 4.0, false);
+                          (0.96 * M_PI) / 4., false);
             Attack *PtAtk =
                     Global::currentWorld->addKQAtk(this, flipSlashParticle,
                                                    PtAtkPolyPts, PtN,
@@ -1283,7 +1297,8 @@ void Keqing::ASkillCloneGeneral() {
                                                            atkPolyPts, N,
                                                            10, 0.1, -0.1);
 
-                    atk->setOnHit([](Attack *atk, void *fParams) {
+                    atk->setOnHit([](Attack *atk, LivingEntity *hitEntity,
+                                     void *fParams) {
                         auto *cloneIdleParticle = (Particle *) fParams;
                         cloneIdleParticle->removeSelf();
                     }, (void *) cloneIdleParticle);
@@ -1313,7 +1328,7 @@ void Keqing::ASkillCloneGeneral() {
         }
     }
 
-    xVelocity = std::min(xVelocity + 0.001 * Global::dt, 0.0);
+    xVelocity = std::min(xVelocity + 0.001 * Global::dt, 0.);
 }
 
 void Keqing::ASkillClone() {
@@ -1345,8 +1360,8 @@ void Keqing::updateSkillHudIcon() {
         Particle *timerHud =
                 Particle::pushParticle(PARTICLE_HUD_SKILL_BURST_TIMER,
                                        (KQ_SKILL_COOLDOWN - elapsedTime) / HUD_SB_TIMER_FRAME_N,
-                                       HUD_SB_CIRCLE_M * 1.0,
-                                       HUD_SB_CIRCLE_M * 1.0);
+                                       HUD_SB_CIRCLE_M * 1.,
+                                       HUD_SB_CIRCLE_M * 1.);
         timerHud->moveToEntityCenter(skillCircleHud);
 
         timerHud->setOnRemove([](Particle *removedParticle) {
@@ -1392,7 +1407,7 @@ void Keqing::createLightningStelitto() {
 
     Particle *idleParticle =
             Particle::pushParticle(PARTICLE_KQ_SKILL_IDLE,
-                                   40, 2.0, 2.0);
+                                   40, 2., 2.);
     idleParticle->setSpriteFrameLengthFromTo(880, 0, 0);
     idleParticle->moveToEntityCenter(spawnParticle);
     idleParticle->setHitBoxCentered(spawnParticle->getHitBox().w,
@@ -1516,8 +1531,8 @@ void Keqing::createSkillProjParticle() {
              {24,  0},
              {-10, 12},
              {-26, 0}};
-    double kbXV = cos(angle);
-    double kbYV = sin(angle);
+    double kbXV = 0.4 * cos(angle);
+    double kbYV = 0.4 * sin(angle);
     Attack *atk =
             Global::currentWorld->addKQAtk(kq, projParticle,
                                            atkPolyPts, N,
@@ -1586,7 +1601,7 @@ void Keqing::ESkillAimingGeneral() {
                             mouseX, mouseY,
                             false, !isFacingEast());
 
-    int frameIndex = (int) ((angle / (2.0 * M_PI)) * 8);
+    int frameIndex = (int) ((angle / (2. * M_PI)) * 8);
     goToFrame(frameIndex, SKILL_AIMING_CODE);
 
     double dist = getDistance(kqCenterX, kqCenterY,
@@ -1609,7 +1624,7 @@ void Keqing::ESkillAimingGeneral() {
 
         cursorIdleParticle =
                 Particle::pushParticle(PARTICLE_KQ_SKILL_CURSOR,
-                                       60, 2.0, 2.0);
+                                       60, 2., 2.);
         cursorIdleParticle->goToFrame(4);
 
         ESkillCursorSoundChannel =
@@ -1710,13 +1725,29 @@ void pushBurstSlashAtk(int dmg, double kbXV, double kbYV,
     Keqing *kq = Keqing::getInstance();
 
     const int N = 40;
+    const int HalfPolyN = N / 2 + 1;
     double atkPolyPts[N][2];
     approxEllipse(atkPolyPts, N,
                   0, 0, 200, 200);
-    Attack *atk =
-            Global::currentWorld->addKQAtk(kq, atkPolyPts, N,
+    double atkPolyPtsLeft[HalfPolyN][2];
+    double atkPolyPtsRight[HalfPolyN][2];
+
+    std::memcpy(atkPolyPtsLeft, atkPolyPts + 10,
+                sizeof(double[2]) * HalfPolyN);
+
+    std::memcpy(atkPolyPtsRight, atkPolyPts,
+                sizeof(double[2]) * ((HalfPolyN / 2) + 1));
+    std::memcpy(atkPolyPtsRight + (HalfPolyN / 2) + 1,
+                atkPolyPts + 30, sizeof(double[2]) * (HalfPolyN / 2));
+
+    Attack *atkLeft =
+            Global::currentWorld->addKQAtk(kq, atkPolyPtsLeft, HalfPolyN,
+                                           dmg, -kbXV, kbYV);
+    atkLeft->setAtkDuration(duration);
+    Attack *atkRight =
+            Global::currentWorld->addKQAtk(kq, atkPolyPtsRight, HalfPolyN,
                                            dmg, kbXV, kbYV);
-    atk->setAtkDuration(duration);
+    atkRight->setAtkDuration(duration);
 }
 
 const int cSlashFrameDuration = 16;
@@ -1727,9 +1758,9 @@ const double cSlashXShift[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
 const double cSlashYShift[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
         {26, 0, -72, 0, -30, -14};
 const double cSlashWM[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
-        {0.88, 1.6, 1.2, 1.52, 1.32, 1.0};
+        {0.88, 1.6, 1.2, 1.52, 1.32, 1.};
 const double cSlashHM[KQ_BURST_NUMBER_OF_CLONE_SLASH] =
-        {1.0, 1.2, 1.2, 1.2, 1.2, 1.2};
+        {1., 1.2, 1.2, 1.2, 1.2, 1.2};
 
 void pushCloneSlashParticle(Particle *removedParticle) {
     Keqing *kq = Keqing::getInstance();
@@ -1769,7 +1800,7 @@ const double cVanishYShift[KQ_BURST_NUMBER_OF_CLONE] =
         {26, -36, -48, 36, -80};
 
 const double aoeBaseWHM = 0;
-const double aoeMaxWHM = 2.0;
+const double aoeMaxWHM = 2.;
 const int cAppearDuration = 48;
 const double cAppearXShift[KQ_BURST_NUMBER_OF_CLONE] =
         {142, -120, 98, -136, -16};
@@ -1777,6 +1808,8 @@ const double cAppearYShift[KQ_BURST_NUMBER_OF_CLONE] =
         {42, -40, -58, 58, -110};
 
 void Keqing::RBurst() {
+    yVelocity = 0;
+
     if (isNewestFrame(0, KQ_BURST)) { // Burst Start
         Particle::removeParticle(PARTICLE_HUD_BURST_CIRCLE);
         Particle *burstIconHud =
@@ -1794,9 +1827,9 @@ void Keqing::RBurst() {
         soundSheet->playRandomSound(KQ_BURST);
         Sound::playAudioChunk("res/sfx/particle/KQBurstStart.ogg");
 
-    } else if (isNewestFrame(7, KQ_BURST)) {
+    } else if (isNewestFrame(2, KQ_BURST)) {
         // Push Atk
-        pushBurstSlashAtk(0, 0, 0, 40);
+        pushBurstSlashAtk(0, 0.4, -0.4, 40);
 
     } else if (isNewestFrame(12, KQ_BURST)) { // Vanish
         Particle *vanishParticle =
@@ -1808,7 +1841,7 @@ void Keqing::RBurst() {
         Particle *cloneParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_CLONE,
                                        (int) (cSlashFrameDuration * 1.8),
-                                       2.0, 2.0);
+                                       2., 2.);
         cloneParticle->moveToEntityCenter(this);
         cloneParticle->xyShift(0, -46);
         cloneParticle->delaySprite(cSlashFrameDuration);
@@ -1845,7 +1878,7 @@ void Keqing::RBurst() {
         Sound::playAudioChunk("res/sfx/particle/KQBurstEnd.ogg");
 
         // Push Atk
-        pushBurstSlashAtk(20, 1.0, -1.0,
+        pushBurstSlashAtk(20, 1., -1.,
                           finalSlashParticle->getSpriteLengthFromTo(0, 4));
     }
 
@@ -1946,7 +1979,7 @@ void Keqing::airNAtk() {
                  {-32, 20}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 2, KQ_AIR_NATK));
 
     } else if (isNewestFrame(3, KQ_AIR_NATK)) {
@@ -1966,7 +1999,7 @@ void Keqing::airNAtk() {
                  {-60, 14}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(3, 3, KQ_AIR_NATK));
 
     } else if (isNewestFrame(4, KQ_AIR_NATK)) {
@@ -1984,7 +2017,7 @@ void Keqing::airNAtk() {
                  {22,  -20}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(4, 4, KQ_AIR_NATK));
 
     } else if (isNewestFrame(5, KQ_AIR_NATK)) {
@@ -2006,7 +2039,7 @@ void Keqing::airNAtk() {
                  {48, -16}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(5, 5, KQ_AIR_NATK));
 
     } else if (isNewestFrame(6, KQ_AIR_NATK)) {
@@ -2034,7 +2067,7 @@ void Keqing::airNAtk() {
                  {70,  2}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(6, 7, KQ_AIR_NATK));
     }
 }
@@ -2062,7 +2095,7 @@ void Keqing::airUpNAtk() {
                  {14, -6}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, -0.06, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 2, KQ_AIR_UP_NATK));
 
     } else if (isNewestFrame(3, KQ_AIR_UP_NATK)) {
@@ -2078,7 +2111,7 @@ void Keqing::airUpNAtk() {
                  {-2, -64}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0, -0.72);
         atk->setAtkDuration(getSpriteLengthFromTo(3, 4, KQ_AIR_UP_NATK));
     }
 }
@@ -2127,7 +2160,7 @@ void Keqing::airESkill() {
     }
 
     if (isFrameBetween(0, 5, KQ_AIR_SKILL)) {
-        cancelGravity(1.0 / 2.0);
+        cancelGravity(1. / 2.);
     }
 
     ESkillGeneral();
@@ -2146,10 +2179,7 @@ void Keqing::airESkillAiming() {
         airESkillFloatCpt = 0;
     }
 
-    if (airESkillFloatCpt > KQ_SKILL_AIR_AIMING_FLOAT_FRAME_N) {
-        yVelocity = (yVelocity < 0) ? KQ_SKILL_AIR_AIMING_FLOAT_VELOCITY : -KQ_SKILL_AIR_AIMING_FLOAT_VELOCITY;
-        airESkillFloatCpt = 0;
-    }
+    yVelocity = 0.1 * sin(((double) airESkillFloatCpt / M_PI) * 0.08 + (M_PI / 2.));
     airESkillFloatCpt++;
 
     ESkillAimingGeneral();
@@ -2184,7 +2214,7 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
         airPlungeParticle->xyShift(26, 52);
         airPlungeParticle->setOnRender([](Particle *particle) {
             particle->addRenderWHMultiplierR(0, 0.02 * Global::dt,
-                                             0, 2.0);
+                                             0, 2.);
             Keqing *kq = Keqing::getInstance();
             if (!kq->isSpriteAnimated(KQ_AIR_PLUNGE) || !kq->isInAir()) {
                 Particle::removeParticle(PARTICLE_KQ_AIR_PLUNGE);
@@ -2225,7 +2255,7 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
                      {-46, 42}};
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0.4, -0.4);
+                                                   10, 0.6, -0.4);
             atk->setAtkDuration(airPlungeGroundParticle->getSpriteLengthFromTo(0, 2));
         }
     }
@@ -2238,11 +2268,30 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
                       26, -8, 16, 50);
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0, 0.8);
+        atk->setOnHit([](Attack *atk, LivingEntity *hitEntity,
+                         void *fParams) {
+            if (!hitEntity->isInAir()) {
+                atk->setKbXVelocity(0.6);
+                atk->setKbYVelocity(-0.2);
+                return;
+            }
+            Keqing *kq = Keqing::getInstance();
+            double yPlungeDownMax = kq->getY() + kq->getBaseHitBoxH() - 20.;
+            if (hitEntity->getY() > yPlungeDownMax && hitEntity->isInAir()) {
+                hitEntity->setY(yPlungeDownMax);
+                hitEntity->checkYCollision(true);
+            }
+        }, nullptr);
         atk->setShouldRemove([](Attack *self, void *fParams) {
             return (!Particle::isActive(PARTICLE_KQ_AIR_PLUNGE));
         }, nullptr);
     }
+}
+
+bool Keqing::isInAir() {
+    return Entity::isInAir() &&
+           !isSpriteAnimated(KQ_NATK);
 }
 
 void Keqing::onGameFrame() {

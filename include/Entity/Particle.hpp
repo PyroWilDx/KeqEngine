@@ -78,7 +78,7 @@ public:
     static void initParticle();
 
     static Particle *pushParticle(int spriteCode, int frameLength,
-                                  double wMultiplier = 1.0, double hMultiplier = 1.0);
+                                  double wMultiplier = 1., double hMultiplier = 1.);
 
     static void pushFast(Particle *particle);
 

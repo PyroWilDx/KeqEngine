@@ -105,11 +105,9 @@ bool Attack::isHittingEntity(LivingEntity *dstEntity) {
 }
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
-    if (isHittingEntity(dstEntity)) {
-        if (!dstEntity->isHurt()) {
-            if (onHit != nullptr) onHit(this, onHitParams);
-            dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
-        }
+if (isHittingEntity(dstEntity)) {
+        if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
+        dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
     }
 }
 
