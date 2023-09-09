@@ -112,6 +112,13 @@ bool AnimatedEntity::isNewestFrame(int frameIndex, int spriteCode) {
             spriteArray[spriteCode].sTimer == 0);
 }
 
+bool AnimatedEntity::isNewestNextFrame(int frameIndex, int spriteCode) {
+    if (frameIndex == -1) frameIndex = spriteArray[spriteCode].sFrameN - 1;
+    return (isFrameAt(frameIndex, spriteCode) &&
+            spriteArray[spriteCode].sTimer > Global::dt - 4 &&
+            spriteArray[spriteCode].sTimer < Global::dt + 4);
+}
+
 bool AnimatedEntity::isFrameBetween(int startFrame, int endFrame, int spriteCode) {
     Sprite *sprite = &spriteArray[spriteCode];
 

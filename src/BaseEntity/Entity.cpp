@@ -17,6 +17,7 @@ Entity::Entity()
     xVelocity = 0;
     yVelocity = 0;
     gravityWeight = 0;
+    subjectToGravity = true;
     facingEast = true;
     imgTexture = nullptr;
     renderWMultiplier = 1;
@@ -325,6 +326,8 @@ double Entity::getFallGravityAddVelocity() const {
 }
 
 void Entity::fallGravity() {
+    if (!subjectToGravity) return;
+
     if (isHittingCeiling()) {
         yVelocity = -yVelocity / 3.2;
     }
@@ -483,6 +486,21 @@ void Entity::getToEntityCenterXY(Entity *centerEntity, double *pX, double *pY) {
 void Entity::moveToEntityCenter(Entity *centerEntity, bool takeFaceEast) {
     if (takeFaceEast) facingEast = centerEntity->isFacingEast();
     getToEntityCenterXY(centerEntity, &x, &y);
+}
+
+void Entity::moveToEntityCenterIgnoreHitBox(Entity *centerEntity, bool takeFaceEast) {
+    if (takeFaceEast) facingEast = centerEntity->isFacingEast();
+
+    int hitBoxW = centerEntity->getHitBox().w;
+    int hitBoxH = centerEntity->getHitBox().h;
+
+    centerEntity->getHitBoxAddr()->w = 0;
+    centerEntity->getHitBoxAddr()->h = 0;
+
+    getToEntityCenterXY(centerEntity, &x, &y);
+
+    centerEntity->getHitBoxAddr()->w = hitBoxW;
+    centerEntity->getHitBoxAddr()->h = hitBoxH;
 }
 
 void Entity::onGameFrame() {
