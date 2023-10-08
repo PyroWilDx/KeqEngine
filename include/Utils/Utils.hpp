@@ -36,10 +36,17 @@ typedef struct f2Params {
 
 void myAssert(bool expr, const char *msg = nullptr, const char *err = nullptr);
 
+double getAddAbs(double a, double b);
+
+void fillArrayRandomInt(int intArray[], int length,
+                        int start, int end);
+
 double getDistance(double x1, double y1,
                    double x2, double y2);
 
 double atan2Pos(double y, double x);
+
+double getAngleOrigin(double x, double y);
 
 double getAngle(double x1, double y1,
                 double x2, double y2,

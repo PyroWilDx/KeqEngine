@@ -1,3 +1,9 @@
+add a random kb gap for every atk hit ??
+
+burst circle rempli
+
+change atk hit particle
+
 hitlag
 
 add sound effects

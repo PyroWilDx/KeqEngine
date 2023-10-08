@@ -7,6 +7,7 @@
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
+#include "StructForEntity/Attack.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
 
@@ -19,11 +20,13 @@ Particle::Particle(bool isBaseParticle)
           fadeParams({-1, 1}) {
     particleCode = -1;
     entity = nullptr;
+    entitySizeDependant = true;
     entityLastX = 0;
     entityLastY = 0;
     onRender = nullptr;
     onRenderParams = nullptr;
     onRemove = nullptr;
+    if (isBaseParticle) imgTexture = getSprite()->sTexture;
 }
 
 Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier)
@@ -33,7 +36,10 @@ Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double h
     Sprite *currentSprite = getSprite();
     *currentSprite = *baseSprite;
     currentSprite->sCode = 0;
+    currentSprite->sTexture = WindowRenderer::getInstance()->loadTexture(
+            currentSprite->imgPath);
     AnimatedEntity::setSpriteAnimated(true);
+    currentSprite->sFrameLengths = new int[currentSprite->sFrameN];
     setSpriteFrameLengthFromTo(frameLength, 0, -1);
     if (baseSprite->sNext != nullptr) { // If != NULL, then repeat itself
         currentSprite->sNext = currentSprite;
@@ -42,14 +48,6 @@ Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double h
     renderHMultiplier = hMultiplier;
     imgFrame = {0, 0, currentSprite->sFrameW, currentSprite->sFrameH};
     imgTexture = currentSprite->sTexture;
-}
-
-Particle::~Particle() {
-    if (particleCode == -1) {
-        baseParticle->imgTexture = (SDL_Texture *) 42; // Delete Texture (Clean Up)
-    } else {
-        imgTexture = nullptr; // Don't Delete Texture (Not the End)
-    }
 }
 
 void Particle::initParticle() {
@@ -199,6 +197,40 @@ void Particle::initParticle() {
                              800, 320, 10);
     particleMaxActives[PARTICLE_KQ_BURST_FINAL_SLASH] = 1;
 
+    baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_0, "res/gfx/particle/DMGPhysical0.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_DMG_PHYSICAL_0] = 16;
+
+    baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_1, "res/gfx/particle/DMGPhysical1.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_DMG_PHYSICAL_1] = particleMaxActives[PARTICLE_DMG_PHYSICAL_0];
+
+    baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_2, "res/gfx/particle/DMGPhysical2.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_DMG_PHYSICAL_2] = particleMaxActives[PARTICLE_DMG_PHYSICAL_0];
+
+    baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_MINI, "res/gfx/particle/DMGPhysicalMini.png",
+                             32, 32, 4);
+    particleMaxActives[PARTICLE_DMG_PHYSICAL_MINI] =
+            ATK_SMALL_PARTICLE_COUNT * particleMaxActives[PARTICLE_DMG_PHYSICAL_0];
+
+    baseParticle->initSprite(PARTICLE_DMG_ELECTRO_0, "res/gfx/particle/DMGElectro0.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_DMG_ELECTRO_0] = 16;
+
+    baseParticle->initSprite(PARTICLE_DMG_ELECTRO_1, "res/gfx/particle/DMGElectro1.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_DMG_ELECTRO_1] = particleMaxActives[PARTICLE_DMG_ELECTRO_0];
+
+    baseParticle->initSprite(PARTICLE_DMG_ELECTRO_2, "res/gfx/particle/DMGElectro2.png",
+                             96, 96, 8);
+    particleMaxActives[PARTICLE_DMG_ELECTRO_2] = particleMaxActives[PARTICLE_DMG_ELECTRO_0];
+
+    baseParticle->initSprite(PARTICLE_DMG_ELECTRO_MINI, "res/gfx/particle/DMGElectroMini.png",
+                             32, 32, 4);
+    particleMaxActives[PARTICLE_DMG_ELECTRO_MINI] =
+            ATK_SMALL_PARTICLE_COUNT * particleMaxActives[PARTICLE_DMG_ELECTRO_0];
+
     baseParticle->initSprite(PARTICLE_HUD_START, nullptr,
                              0, 0, 0);
     particleMaxActives[PARTICLE_HUD_START] = 0;
@@ -271,7 +303,7 @@ void Particle::pushFast(Particle *particle) {
 
 void Particle::removeParticle(int spriteCode, int i) {
     if (i < 0 || i >= particleMaxActives[spriteCode]) {
-        SDL_Log("WARNING, invalid index for removedParticle removeParticle!\n");
+        SDL_Log("WARNING, invalid index for removedParticle removeParticle (%d) !", i);
         return;
     }
     Particle *removedParticle = activeParticles[spriteCode][i];
@@ -376,17 +408,9 @@ void Particle::cleanUp() {
     delete baseParticle;
 }
 
-void Particle::setEntity(Entity *newEntity) {
-    moveToEntityCenter(newEntity);
-    facingEast = newEntity->isFacingEast();
-    entity = newEntity;
-    entityLastX = entity->getX();
-    entityLastY = entity->getY();
-}
-
 void Particle::getRealSize(double *pW, double *pH) {
     Entity::getRealSize(pW, pH);
-    if (entity != nullptr) {
+    if (entity != nullptr && entitySizeDependant) {
         if (pW != nullptr)
             *pW *= entity->getRenderWMultiplier();
         if (pH != nullptr)
@@ -411,6 +435,22 @@ void Particle::animateSprite() {
     }
 
     AnimatedEntity::animateSprite();
+}
+
+void Particle::setEntity(Entity *newEntity, bool sizeDependant,
+                         bool takeFaceEast) {
+    entity = newEntity;
+    setEntitySizeDependant(sizeDependant);
+    if (entity != nullptr) {
+        moveToEntityCenter(entity, takeFaceEast);
+        entityLastX = entity->getX();
+        entityLastY = entity->getY();
+    }
+}
+
+void Particle::setParticleEntity(Particle *srcParticle, bool sizeDependant,
+                                 bool takeFaceEast) {
+    setEntity(srcParticle->entity, sizeDependant, takeFaceEast);
 }
 
 void Particle::xyShift(double xShift, double yShift) {
@@ -443,4 +483,29 @@ void Particle::removeSelf() {
             break;
         }
     }
+}
+
+Particle *Particle::cloneSelf(int onRenderParamsSize) {
+    auto *newParticle = new Particle(particleCode,
+                                     0,
+                                     renderWMultiplier,
+                                     renderHMultiplier);
+    std::memcpy(newParticle->getSprite()->sFrameLengths,
+                getSprite()->sFrameLengths,
+                getSprite()->sFrameN * sizeof(getSprite()->sFrameLengths[0]));
+    newParticle->moveTo(x, y);
+    newParticle->setXYVelocity(xVelocity, yVelocity);
+    newParticle->entity = entity;
+    newParticle->entityLastX = entityLastX;
+    newParticle->entityLastY = entityLastY;
+    newParticle->fadeParams = fadeParams;
+    newParticle->onRender = onRender;
+    if (onRenderParams != nullptr && onRenderParamsSize > 0) {
+        newParticle->onRenderParams = (void *) malloc(onRenderParamsSize);
+        memcpy(newParticle->onRenderParams, onRenderParams,
+               onRenderParamsSize);
+    }
+    newParticle->onRemove = onRemove;
+
+    return newParticle;
 }
