@@ -2,7 +2,7 @@
 // Created by pyrowildx on 13/05/23.
 //
 
-#include <limits>
+#include <cmath>
 #include "BaseEntity/Entity.hpp"
 #include "Utils/Global.hpp"
 #include "WindowRenderer.hpp"
@@ -181,7 +181,7 @@ bool Entity::checkYCollision(bool checkDown) {
     return res;
 }
 
-void Entity::findNearestSurface() {
+void Entity::moveToNearestSurface() {
     double baseX = x;
     double baseY = y;
     double baseCenterX, baseCenterY;
@@ -189,7 +189,7 @@ void Entity::findNearestSurface() {
 
     double newCenterX, newCenterY;
 
-    double bestDistance = std::numeric_limits<double>::max();
+    auto bestDistance = DBL_MAX;
     double bestX = baseX;
     double bestY = baseY;
 
@@ -225,26 +225,78 @@ void Entity::findNearestSurface() {
         }
     }
 
+    for (bool checkRight: {false, true}) {
+        for (bool checkDown: {false, true}) {
+            if (checkXCollision(checkRight) || checkYCollision(checkDown)) {
+                if (!isHittingWall()) {
+                    getSelfCenter(&newCenterX, &newCenterY);
+                    double currDistance = getDistance(baseCenterX, baseCenterY,
+                                                      newCenterX, newCenterY);
+                    if (currDistance < bestDistance) {
+                        bestDistance = currDistance;
+                        bestX = x;
+                        bestY = y;
+                    }
+                }
+            }
+
+            if (checkYCollision(checkDown) || checkXCollision(checkRight)) {
+                if (!isHittingWall()) {
+                    getSelfCenter(&newCenterX, &newCenterY);
+                    double currDistance = getDistance(baseCenterX, baseCenterY,
+                                                      newCenterX, newCenterY);
+                    if (currDistance < bestDistance) {
+                        bestDistance = currDistance;
+                        bestX = x;
+                        bestY = y;
+                    }
+                }
+            }
+        }
+    }
     moveTo(bestX, bestY);
 }
 
 void Entity::moveX() {
-    double addX = xVelocity * (double) Global::dt;
-
-    if (addX == 0) return;
-
-    if (!facingEast) addX = -addX;
-    x += addX;
+    double addX = moveXNoCheck();
 
     checkXCollision((addX > 0));
 }
 
 void Entity::moveY() {
-    if (yVelocity == 0) return;
-
-    y += yVelocity * (double) Global::dt;
+    moveYNoCheck();
 
     checkYCollision((yVelocity > 0));
+}
+
+double Entity::moveXNoCheck() {
+    if (xVelocity == 0) return 0;
+
+    double addX = xVelocity * (double) Global::dt;
+
+    if (!facingEast) addX = -addX;
+
+    if (degRotation != 0) {
+        addX = addX * cos(degreeToRad(degRotation));
+    }
+
+    x += addX;
+
+    return addX;
+}
+
+double Entity::moveYNoCheck() {
+    if (yVelocity == 0) return 0;
+
+    double addY = yVelocity * (double) Global::dt;
+
+    if (degRotation != 0) {
+        addY = addY * -sin(degreeToRad(degRotation));
+    }
+
+    y += addY;
+
+    return addY;
 }
 
 bool Entity::isHittingWallHorizontallySide(bool sideLeft) const {
@@ -438,6 +490,11 @@ void Entity::addRenderWHMultiplierR(double addW, double addH, double maxW, doubl
     if (lastRenderHM != renderHMultiplier) y -= (newH - lastH);
 }
 
+void Entity::addXYVelocity(double addXV, double addYV) {
+    xVelocity += addXV;
+    yVelocity += addYV;
+}
+
 void Entity::getSelfCenter(double *pX, double *pY) {
     if (hitBox.w != 0 && hitBox.h != 0) {
         *pX = getX() + getBaseHitBoxX() + getHalfBaseHitBoxW();
@@ -503,8 +560,10 @@ void Entity::moveToEntityCenterIgnoreHitBox(Entity *centerEntity, bool takeFaceE
     centerEntity->getHitBoxAddr()->h = hitBoxH;
 }
 
-void Entity::onGameFrame() {
+bool Entity::onGameFrame() {
     timeSinceCreation += Global::dt;
+
+    return true;
 }
 
 void Entity::renderSelf(SDL_Renderer *gRenderer) {

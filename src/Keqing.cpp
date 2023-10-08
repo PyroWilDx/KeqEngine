@@ -292,7 +292,7 @@ void Keqing::initKeqing() {
     if (instance == nullptr) {
         instance = new Keqing();
     } else {
-        SDL_Log("Keqing already initialized!\n");
+        SDL_Log("Keqing already initialized !");
     }
 }
 
@@ -672,8 +672,9 @@ void Keqing::NAtk() {
                  {30,  0}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.126, 0);
+                                               10, 0.2036, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
+        atk->setClassicParticle(0, false);
 
     } else if (isNewestFrame(7, KQ_NATK)) {
         const int N = 16;
@@ -696,8 +697,9 @@ void Keqing::NAtk() {
                  {54,  -12}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.28, -0.24);
+                                               10, 0.32, -0.26);
         atk->setAtkDuration(getSpriteLengthFromTo(7, 8, KQ_NATK));
+        atk->setClassicParticle(0, false);
 
     } else if (isNewestFrame(13, KQ_NATK)) {
         const int N = 12;
@@ -716,8 +718,9 @@ void Keqing::NAtk() {
                  {72,  4}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.36, -0.12);
+                                               10, 0.48, -0.32);
         atk->setAtkDuration(getSpriteLengthFromTo(13, 14, KQ_NATK));
+        atk->setClassicParticle(0, false);
 
     } else if (isNewestFrame(21, KQ_NATK)) {
         const int N = 16;
@@ -742,6 +745,7 @@ void Keqing::NAtk() {
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
                                                10, 0.16, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(21, 22, KQ_NATK));
+        atk->setClassicParticle(0, false);
 
     } else if (isNewestFrame(24, KQ_NATK)) {
         const int N = 20;
@@ -770,6 +774,7 @@ void Keqing::NAtk() {
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
                                                10, 0.26, 0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(24, 25, KQ_NATK));
+        atk->setClassicParticle(0, false);
 
     } else if (isNewestFrame(30, KQ_NATK)) {
         const int N = 6;
@@ -784,6 +789,7 @@ void Keqing::NAtk() {
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
                                                10, 1., -0.2);
         atk->setAtkDuration(getSpriteLengthFromTo(30, 32, KQ_NATK));
+        atk->setClassicParticle(0, false);
     }
 }
 
@@ -793,7 +799,29 @@ void Keqing::checkESkillOnCAtk() {
                 Particle::getParticle(PARTICLE_KQ_SKILL_IDLE);
         Particle *skillExplosionParticle =
                 Particle::pushParticle(PARTICLE_KQ_SKILL_EXPLOSION, 30);
-        skillExplosionParticle->moveToEntityCenter(skillIdleParticle);
+        skillExplosionParticle->moveToEntityCenter(skillIdleParticle,
+                                                   false);
+
+        skillExplosionParticle->setOnRender([](Particle *particle) {
+            Keqing *kq = Keqing::getInstance();
+
+            if (particle->isNewestFrame(0)) {
+                // Push Atk
+                const int N = 40;
+                double atkPolyPts[N][2];
+                approxEllipse(atkPolyPts, N,
+                              0, 0, 60., 60.);
+
+                double kbXV = 0.6;
+                if (!kq->isFacingEast()) kbXV = -kbXV;
+
+                Attack *atk =
+                        Global::currentWorld->addKQAtk(kq, particle,
+                                                       atkPolyPts, N,
+                                                       10, kbXV, -0.32);
+                atk->setAtkDuration(60);
+            }
+        });
 
         Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_2);
     }
@@ -833,7 +861,7 @@ void Keqing::CAtk() {
             Attack *atk =
                     Global::currentWorld->addKQAtk(this, CAtkParticle,
                                                    atkPolyPts, N,
-                                                   10, 1.2, -0.2);
+                                                   10, 1.2, -0.26);
             atk->setAtkDuration(CAtkParticle->getSpriteLengthFromTo(3, 3));
         }
     }
@@ -872,7 +900,7 @@ void Keqing::upNAtk() {
                  {-14, 22}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0, -0.42);
+                                               10, -0.142, -0.582);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 3, KQ_UP_NATK));
     }
 }
@@ -940,7 +968,7 @@ void Keqing::crouchNAtk() {
                  {48,  30}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.142, -0.4);
+                                               10, 0.142, -0.452);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_CROUCH_NATK));
     }
 }
@@ -976,11 +1004,11 @@ void Keqing::crouchCAtk() {
 
             Attack *atkRight =
                     Global::currentWorld->addKQAtk(this, atkPolyPtsRight, HalfPolyN,
-                                                   10, 0.2, 0.2);
+                                                   10, 0.2, 0.6);
             atkRight->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(1, 1));
             Attack *atkLeft =
                     Global::currentWorld->addKQAtk(this, atkPolyPtsLeft, HalfPolyN,
-                                                   10, -0.2, 0.2);
+                                                   10, -0.2, 0.6);
             atkLeft->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(1, 1));
 
         } else if (crouchCAtkParticle->isNewestFrame(3)) {
@@ -1077,7 +1105,7 @@ void Keqing::runNAtk() {
                  {-26, 14}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.4, -0.4);
+                                               10, 0.82, -0.8);
         atk->setAtkDuration(getSpriteLengthFromTo(5, 6, KQ_RUN_NATK));
     }
 }
@@ -1116,12 +1144,13 @@ void Keqing::pushElectroAura(Entity *srcEntity, Particle *srcParticle,
                     Particle::pushParticle(PARTICLE_KQ_ELECTRO_AURA,
                                            100,
                                            renderWM, renderHM);
-            auraParticle->setRGBAMod(60);
+            auraParticle->setRGBAMod(80);
             auraParticle->setRotation(i * 60);
             auraParticle->xyShift(-1, 10);
             auraParticle->goToFrame(i);
 
-            auraParticle->moveToEntityCenter(srcParticle);
+            auraParticle->setEntity(srcParticle, false,
+                                    false);
             auto *fParams = new int;
             *fParams = srcParticle->getCode();
 
@@ -1215,7 +1244,7 @@ void Keqing::ASkillFlip() {
             Attack *PtAtk =
                     Global::currentWorld->addKQAtk(this, flipSlashParticle,
                                                    PtAtkPolyPts, PtN,
-                                                   10, 2., 0.6);
+                                                   10, 1.06, 0.6);
             PtAtk->setAtkDuration(flipSlashParticle->getSpriteLengthFromTo(0, 1));
         }
 
@@ -1285,25 +1314,46 @@ void Keqing::ASkillCloneGeneral() {
 
                     // Push Atk
                     const int N = 4;
-                    double atkPolyPts[N][2] =
+                    double atkPolyPtsLeft[N][2] =
                             {{-22, -36},
-                             {22,  -36},
-                             {22,  40},
+                             {0,   -36},
+                             {0,   40},
                              {-22, 40}};
-                    Attack *atk =
+                    double atkPolyPtsRight[N][2] =
+                            {{0,  -36},
+                             {22, -36},
+                             {22, 40},
+                             {0,  40}};
+
+                    auto atkOnHit =
+                            [](Attack *atk, LivingEntity *hitEntity,
+                               void *fParams) {
+                                auto *cloneIdleParticle = (Particle *) fParams;
+                                cloneIdleParticle->removeSelf();
+                            };
+                    auto atkShouldRemove =
+                            [](Attack *atk, void *fParams) {
+                                return (!Particle::isActive(
+                                        PARTICLE_KQ_SKILL_CLONE_IDLE));
+                            };
+
+                    Attack *atkLeft =
                             Global::currentWorld->addKQAtk(kq, cloneIdleParticle,
-                                                           atkPolyPts, N,
+                                                           atkPolyPtsLeft, N,
+                                                           10, -0.56, -0.26);
+                    atkLeft->setOnHit(atkOnHit,
+                                      (void *) cloneIdleParticle);
+                    atkLeft->setShouldRemove(atkShouldRemove,
+                                             nullptr);
+
+                    Attack *atkRight =
+                            Global::currentWorld->addKQAtk(kq, cloneIdleParticle,
+                                                           atkPolyPtsRight, N,
                                                            10, 0.56, -0.26);
-
-                    atk->setOnHit([](Attack *atk, LivingEntity *hitEntity,
-                                     void *fParams) {
-                        auto *cloneIdleParticle = (Particle *) fParams;
-                        cloneIdleParticle->removeSelf();
-                    }, (void *) cloneIdleParticle);
-
-                    atk->setShouldRemove([](Attack *atk, void *fParams) {
-                        return (!Particle::isActive(PARTICLE_KQ_SKILL_CLONE_IDLE));
-                    }, nullptr);
+                    atkRight->setOnHit(atkOnHit,
+                                       (void *) cloneIdleParticle);
+                    atkRight->setShouldRemove(atkShouldRemove,
+                                              nullptr);
 
                 }
             });
@@ -1395,7 +1445,7 @@ void Keqing::createSkillSpawnParticle() {
     spawnParticle->moveToCenter(kq->getESkillX(), kq->getESkillY());
     spawnParticle->setHitBoxCentered((int) kq->getBaseHitBoxW(),
                                      (int) kq->getBaseHitBoxH());
-    spawnParticle->findNearestSurface();
+    spawnParticle->moveToNearestSurface();
     spawnParticle->pauseSprite(true);
 }
 
@@ -1406,10 +1456,14 @@ void Keqing::createLightningStelitto() {
     Particle *idleParticle =
             Particle::pushParticle(PARTICLE_KQ_SKILL_IDLE,
                                    40, 2., 2.);
-    idleParticle->setSpriteFrameLengthFromTo(880, 0, 0);
-    idleParticle->moveToEntityCenter(spawnParticle);
-    idleParticle->setHitBoxCentered(spawnParticle->getHitBox().w,
-                                    spawnParticle->getHitBox().h);
+    idleParticle->setSpriteFrameLengthFromTo(
+            1000 - idleParticle->getSpriteLengthFromTo(1, -1),
+            0, 0);
+    idleParticle->setParticleEntity(spawnParticle, false,
+                                    false);
+    idleParticle->moveToEntityCenter(spawnParticle, false);
+    idleParticle->setHitBoxCentered((int) spawnParticle->getBaseHitBoxW(),
+                                    (int) spawnParticle->getBaseHitBoxH());
     idleParticle->goToFrameNoNew(1);
 
     idleParticle->setOnRender([](Particle *particle) {
@@ -1441,6 +1495,27 @@ void Keqing::createLightningStelitto() {
     Keqing::pushElectroAura(nullptr, idleParticle);
 }
 
+void Keqing::createSkillProjAfterFx() {
+    Particle *projParticle =
+            Particle::getParticle(PARTICLE_KQ_SKILL_PROJ);
+    Particle *projAftFxParticle =
+            Particle::pushParticle(PARTICLE_KQ_SKILL_PROJ_AFT_FX, 20);
+    projAftFxParticle->setRotation(projParticle->getRotation());
+    projAftFxParticle->moveToEntityCenter(projParticle);
+}
+
+void Keqing::finishSkillProjParticle() {
+    Particle::removeParticle(PARTICLE_KQ_SKILL_PROJ);
+
+    Particle *spawnParticle =
+            Particle::getParticle(PARTICLE_KQ_SKILL_SPAWN);
+    spawnParticle->pauseSprite(false);
+
+    Keqing::createLightningStelitto();
+
+    Sound::playAudioChunk("res/sfx/particle/KQSkillSpawn.ogg");
+}
+
 void Keqing::createSkillProjParticle() {
     Keqing *kq = Keqing::getInstance();
     Particle *spawnParticle =
@@ -1460,12 +1535,12 @@ void Keqing::createSkillProjParticle() {
                             *spawnParticleCenterX, *spawnParticleCenterY,
                             true, !kq->isFacingEast());
 
-    projParticle->setRotation(radToDegree(angle));
+    projParticle->setRotationMovingRot(radToDegree(angle));
     projParticle->moveToEntityCenter(kq);
     projParticle->setHitBoxCentered(spawnParticle->getHitBox().w,
                                     spawnParticle->getHitBox().h);
-//    projParticle->setXYVelocity(KQ_LIGHTNING_STELITTO_VELOCITY * cos(angle),
-//                                KQ_LIGHTNING_STELITTO_VELOCITY * sin(angle));
+    projParticle->setXYVelocity(KQ_LIGHTNING_STELITTO_VELOCITY,
+                                -KQ_LIGHTNING_STELITTO_VELOCITY);
 
     auto *fParams = new f2Params;
     fParams->fParam0 = (void *) spawnParticleCenterX;
@@ -1474,21 +1549,10 @@ void Keqing::createSkillProjParticle() {
         double lastCenterX, lastCenterY;
         particle->getSelfCenter(&lastCenterX, &lastCenterY);
 
-        double angleDeg = particle->getRotation();
-        double angle = degreeToRad(angleDeg);
+        Keqing::createSkillProjAfterFx();
 
-        Particle *projAftFxParticle =
-                Particle::pushParticle(PARTICLE_KQ_SKILL_PROJ_AFT_FX, 20);
-        projAftFxParticle->setRotation(angleDeg);
-        projAftFxParticle->moveToEntityCenter(particle);
-
-        double distance = KQ_LIGHTNING_STELITTO_VELOCITY * (double) Global::dt;
-        double addX = cos(angle) * distance;
-        if (!particle->isFacingEast()) addX = -addX;
-        double addY = sin(angle) * distance;
-        particle->moveAdd(addX, addY);
-//        particle->moveX();
-//        particle->moveY();
+        particle->moveXNoCheck();
+        particle->moveYNoCheck();
 
         auto *fParams = (f2Params *) particle->getOnRenderParams();
         double dstX = *((double *) fParams->fParam0);
@@ -1496,22 +1560,11 @@ void Keqing::createSkillProjParticle() {
         double newCenterX, newCenterY;
         particle->getSelfCenter(&newCenterX, &newCenterY);
 
-//        if ((lastCenterX == newCenterX && particle->getXVelocity() != 0) ||
-//            (lastCenterY == newCenterY && particle->getYVelocity() != 0) ||
         if ((lastCenterX < dstX && newCenterX >= dstX) ||
             (lastCenterX > dstX && newCenterX <= dstX) ||
             (lastCenterY < dstY && newCenterY >= dstY) ||
             (lastCenterY > dstY && newCenterY <= dstY)) {
-            Particle::removeParticle(PARTICLE_KQ_SKILL_PROJ);
-
-            Particle *spawnParticle =
-                    Particle::getParticle(PARTICLE_KQ_SKILL_SPAWN);
-//            spawnParticle->moveToEntityCenter(particle);
-            spawnParticle->pauseSprite(false);
-
-            Keqing::createLightningStelitto();
-
-            Sound::playAudioChunk("res/sfx/particle/KQSkillSpawn.ogg");
+            Keqing::finishSkillProjParticle();
         }
     }, fParams);
 
@@ -1535,6 +1588,18 @@ void Keqing::createSkillProjParticle() {
             Global::currentWorld->addKQAtk(kq, projParticle,
                                            atkPolyPts, N,
                                            10, kbXV, kbYV);
+    atk->setUniqueEntityHit(true);
+
+    atk->setOnHit([](Attack *atk, LivingEntity *dstEntity,
+                     void *fParams) {
+        Particle *spawnParticle =
+                Particle::getParticle(PARTICLE_KQ_SKILL_SPAWN);
+        spawnParticle->setEntity(dstEntity, false,
+                                 false);
+        Keqing::createSkillProjAfterFx();
+        Keqing::finishSkillProjParticle();
+    }, nullptr);
+
     atk->setShouldRemove([](Attack *atk, void *fParams) {
         return (!Particle::isActive(PARTICLE_KQ_SKILL_PROJ));
     }, nullptr);
@@ -1675,6 +1740,7 @@ void Keqing::ESkillSlashGeneral() {
                                 60);
 
         moveTo(ESkillX, ESkillY);
+        moveToNearestSurface();
 
         Particle *tpEndParticle =
                 Particle::pushParticle(PARTICLE_KQ_SKILL_TP_END, 60);
@@ -1709,7 +1775,7 @@ void Keqing::ESkillSlashGeneral() {
                  {-76, -10}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.8, -0.26);
+                                               10, 1., -0.42);
         atk->setAtkDuration(getSpriteLengthFromTo(7, 9, SKILL_SLASH_CODE));
     }
 }
@@ -1806,7 +1872,7 @@ void pushCloneSlashParticle(Particle *removedParticle) {
         kq->setBurstCloneSlashCount(cSlashCount + 1);
 
         // Push Atk
-        pushBurstSlashAtk(10, 0.042, -0.056,
+        pushBurstSlashAtk(10, 0.072, -0.1312,
                           cSlashParticle->getSpriteLengthFromTo(0, -1),
                           1);
     }
@@ -1902,7 +1968,7 @@ void Keqing::RBurst() {
         Sound::playAudioChunk("res/sfx/particle/KQBurstEnd.ogg");
 
         // Push Atk
-        pushBurstSlashAtk(20, 1.56, -0.32,
+        pushBurstSlashAtk(20, 2., -0.8,
                           80, -1);
     }
 
@@ -1953,7 +2019,7 @@ void Keqing::RBurst() {
                 slashParticle->setOnRender([](Particle *particle) {
                     if (particle->isNewestFrame(0)) {
                         // Push Atk
-                        pushBurstSlashAtk(10, 0.08, -0.12,
+                        pushBurstSlashAtk(10, 0.08, -0.18,
                                           40, 2);
                     }
                 });
@@ -2119,7 +2185,7 @@ void Keqing::airUpNAtk() {
                  {14, -6}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, -0.06, -0.4);
+                                               10, -0.08, -0.42);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 2, KQ_AIR_UP_NATK));
 
     } else if (isNewestFrame(3, KQ_AIR_UP_NATK)) {
@@ -2135,7 +2201,7 @@ void Keqing::airUpNAtk() {
                  {-2, -64}};
         Attack *atk =
                 Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0, -0.72);
+                                               10, 0, -0.76);
         atk->setAtkDuration(getSpriteLengthFromTo(3, 4, KQ_AIR_UP_NATK));
     }
 }
@@ -2268,8 +2334,20 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
             airPlungeGroundParticle->moveToEntityCenter(this);
             airPlungeGroundParticle->xyShift(20, -6);
 
+            airPlungeHitEntityVector.clear();
+
             Sound::deleteAudioChunk(airPlungeLoopSoundChannel);
             Sound::playAudioChunk("res/sfx/particle/KQPlungeEnd.ogg");
+        }
+    }
+
+    if (!airPlungeHitEntityVector.empty()) {
+        double yPlungeDownMax = y + getBaseHitBoxH() - 16.;
+        for (LivingEntity *hitEntity: airPlungeHitEntityVector) {
+            if (hitEntity->getY() > yPlungeDownMax && hitEntity->isInAir()) {
+                hitEntity->setY(yPlungeDownMax);
+                hitEntity->checkYCollision(true);
+            }
         }
     }
 
@@ -2290,11 +2368,7 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
                 atk->setKbYVelocity(-0.1);
                 return;
             }
-            double yPlungeDownMax = kq->getY() + kq->getBaseHitBoxH() - 20.;
-            if (hitEntity->getY() > yPlungeDownMax && hitEntity->isInAir()) {
-                hitEntity->setY(yPlungeDownMax);
-                hitEntity->checkYCollision(true);
-            }
+            kq->addAirPlungeHitEntity(hitEntity);
         }, nullptr);
         atk->setShouldRemove([](Attack *self, void *fParams) {
             return (!Particle::isActive(PARTICLE_KQ_AIR_PLUNGE));
@@ -2328,28 +2402,30 @@ bool Keqing::isInAir() {
            !isSpriteAnimated(KQ_NATK);
 }
 
-void Keqing::onGameFrame() {
-    LivingEntity::onGameFrame();
+bool Keqing::onGameFrame() {
+    bool doNext = LivingEntity::onGameFrame();
 
-    if (!isLocked) {
-        LivingEntity::onGameFrame();
+    if (doNext) {
+        if (!isLocked) {
+            updateActionFromKey();
 
-        updateActionFromKey();
+            fallGravity();
 
-        fallGravity();
+            if (shouldUpdateDirection()) updateDirection();
+            if (canMoveLR()) moveLR();
 
-        if (shouldUpdateDirection()) updateDirection();
-        if (canMoveLR()) moveLR();
+            updateAction();
 
-        updateAction();
+            moveX();
+            moveY();
 
-        moveX();
-        moveY();
-
-        airAnimate();
+            airAnimate();
+        }
     }
 
     animateSprite();
+
+    return doNext;
 }
 
 void Keqing::hurt() {
@@ -2523,7 +2599,8 @@ void Keqing::updateActionFromKey() {
                 spriteCode = KQ_AIR_NATK;
             }
         } else if (isSpriteAnimated(KQ_RUN_START) ||
-                   isSpriteAnimated(KQ_RUN)) {
+                   isSpriteAnimated(KQ_RUN) ||
+                   isSpriteAnimated(KQ_RUN_TURN)) {
             spriteCode = KQ_RUN_NATK;
 
         } else {

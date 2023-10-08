@@ -5,6 +5,7 @@
 #ifndef ENTITY_HPP
 #define ENTITY_HPP
 
+#include <cfloat>
 #include <vector>
 #include <SDL2/SDL.h>
 
@@ -42,11 +43,15 @@ public:
 
     bool checkYCollision(bool checkDown);
 
-    void findNearestSurface();
+    void moveToNearestSurface();
 
     virtual void moveX();
 
     void moveY();
+
+    double moveXNoCheck();
+
+    double moveYNoCheck();
 
     [[nodiscard]] bool isHittingWallHorizontallySide(bool sideLeft) const;
 
@@ -80,9 +85,13 @@ public:
 
     virtual SDL_Rect getRenderRect();
 
-    void addRenderWHMultiplier(double addW, double addH, double maxW, double maxH);
+    void addRenderWHMultiplier(double addW, double addH,
+                               double maxW = DBL_MAX, double maxH = DBL_MAX);
 
-    void addRenderWHMultiplierR(double addW, double addH, double maxW, double maxH);
+    void addRenderWHMultiplierR(double addW, double addH,
+                                double maxW = DBL_MAX, double maxH = DBL_MAX);
+
+    void addXYVelocity(double addXV, double addYV);
 
     void getSelfCenter(double *pX, double *pY);
 
@@ -92,7 +101,7 @@ public:
 
     void moveToEntityCenterIgnoreHitBox(Entity *centerEntity, bool takeFaceEast = true);
 
-    virtual void onGameFrame();
+    virtual bool onGameFrame();
 
     virtual void renderSelf(SDL_Renderer *gRenderer);
 
@@ -119,6 +128,8 @@ public:
     inline void setY(double y_) { y = y_; }
 
     virtual inline void setFacingEast(bool facingEast_) { facingEast = facingEast_; }
+
+    inline void setFaceOtherSide() { setFacingEast(!facingEast); }
 
     inline void setYVelocity(double yVelocity_) { yVelocity = yVelocity_; }
 
@@ -155,6 +166,13 @@ public:
     }
 
     inline void setRotation(double rotation_) { degRotation = rotation_; }
+
+    inline void setRotationMovingRot(double rotation_) {
+        setRotation(rotation_);
+        if (degRotation == 0) {
+            degRotation = 360.;
+        }
+    }
 
     [[nodiscard]] inline double getX() const { return x; }
 

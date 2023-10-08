@@ -7,6 +7,10 @@
 
 #include "AnimatedEntity.hpp"
 
+#define ENTITY_MIN_HURT_LOCK_TIME 60.
+#define ENTITY_MAX_HURT_LOCK_TIME 120.
+#define ENTITY_DIFF_HURT_LOCK_TIME (ENTITY_MAX_HURT_LOCK_TIME - ENTITY_MIN_HURT_LOCK_TIME)
+
 class LivingEntity : public AnimatedEntity {
 
 public:
@@ -20,13 +24,13 @@ public:
 
     SDL_Rect getRenderRect() override;
 
-    void onGameFrame() override;
+    bool onGameFrame() override;
 
     virtual bool isInvincible();
 
-    void setDmgFacingEast(double kbVX);
+    void setDmgFacingEast(double kbXV);
 
-    void damageSelf(int damage, double kbVX, double kbVY);
+    bool damageSelf(int damage, double kbXV, double kbVY);
 
     virtual void hurt() = 0;
 
@@ -39,8 +43,9 @@ public:
 protected:
     int hp;
     int hurtSpriteCode;
-    double hurtKbVX;
+    double hurtKbXV;
     double hurtKbVY;
+    int hitLagTime;
     int timeSinceHurt;
     int stateChangerEndSpriteCode;
     int *xShifts, *yShifts, *xRShifts;

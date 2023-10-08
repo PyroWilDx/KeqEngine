@@ -18,16 +18,20 @@ FPSText::FPSText()
     accumulatedFrames = 0;
 }
 
-void FPSText::onGameFrame() {
-    Text::onGameFrame();
+bool FPSText::onGameFrame() {
+    bool doNext = Text::onGameFrame();
 
-    if (accumulatedFPSTime > 1000) {
-        char text[16];
-        sprintf(text, "FPS : %d", accumulatedFrames);
-        changeText(text);
-        accumulatedFPSTime = 0;
-        accumulatedFrames = 0;
+    if (doNext) {
+        if (accumulatedFPSTime > 1000) {
+            char text[16];
+            sprintf(text, "FPS : %d", accumulatedFrames);
+            changeText(text);
+            accumulatedFPSTime = 0;
+            accumulatedFrames = 0;
+        }
+        accumulatedFPSTime += Global::dt;
+        accumulatedFrames++;
     }
-    accumulatedFPSTime += Global::dt;
-    accumulatedFrames++;
+
+    return doNext;
 }

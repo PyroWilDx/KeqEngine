@@ -43,7 +43,7 @@ void WindowRenderer::initWindowRenderer(const char *title, int w, int h) {
     if (instance == nullptr) {
         instance = new WindowRenderer(title, w, h);
     } else {
-        SDL_Log("WindowRenderer already initialized!\n");
+        SDL_Log("WindowRenderer already initialized !");
     }
 }
 

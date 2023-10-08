@@ -10,13 +10,25 @@
 #include "Utils/Global.hpp"
 #include "World/World.hpp"
 #include "World/Background.hpp"
+#include "Utils/Random.hpp"
 
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {
-        SDL_Log("Assertion FAILED.\n");
-        if (msg != nullptr) SDL_Log("Message : %s\n", msg);
-        if (err != nullptr) SDL_Log("Error : %s\n", err);
+        SDL_Log("Assertion FAILED.");
+        if (msg != nullptr) SDL_Log("Message : %s", msg);
+        if (err != nullptr) SDL_Log("Error : %s", err);
         assert(expr);
+    }
+}
+
+double getAddAbs(double a, double b) {
+    return std::abs(a) + std::abs(b);
+}
+
+void fillArrayRandomInt(int intArray[], int length,
+                        int start, int end) {
+    for (int i = 0; i < length; i++) {
+        intArray[i] = Random::getRandomInt(start, end);
     }
 }
 
@@ -31,12 +43,16 @@ double atan2Pos(double y, double x) {
     return res;
 }
 
+double getAngleOrigin(double x, double y) {
+    return atan2Pos(y, x);
+}
+
 double getAngle(double x1, double y1,
                 double x2, double y2,
                 bool clockWise, bool invX) {
     double xDiff = (!invX) ? x2 - x1 : x1 - x2;
     double yDiff = (clockWise) ? y2 - y1 : y1 - y2;
-    return atan2Pos(yDiff, xDiff);
+    return getAngleOrigin(xDiff, yDiff);
 }
 
 double radToDegree(double rad) {

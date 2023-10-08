@@ -14,8 +14,9 @@ LivingEntity::LivingEntity(double gravityWeight, int baseHp,
     this->gravityWeight = gravityWeight;
     this->hp = baseHp;
     this->hurtSpriteCode = hurtSpriteCode;
-    this->hurtKbVX = 0;
+    this->hurtKbXV = 0;
     this->hurtKbVY = 0;
+    this->hitLagTime = 0;
     this->timeSinceHurt = 0;
     this->stateChangerEndSpriteCode = stateChangerEndSpriteCode;
     this->xShifts = new int[spriteArrayLength];
@@ -54,36 +55,55 @@ SDL_Rect LivingEntity::getRenderRect() {
     return dst;
 }
 
-void LivingEntity::onGameFrame() {
-    if (isHurt()) {
-        timeSinceHurt += Global::dt;
+bool LivingEntity::onGameFrame() {
+    bool doNext = Entity::onGameFrame();
+
+    if (doNext) {
+        if (isHurt()) {
+            timeSinceHurt += Global::dt;
+
+            if (timeSinceHurt < hitLagTime) return false;
+        }
     }
+
+    return doNext;
 }
 
 bool LivingEntity::isInvincible() {
     return false;
 }
 
-void LivingEntity::setDmgFacingEast(double kbVX) {
-    if (kbVX != 0) facingEast = (kbVX < 0);
+void LivingEntity::setDmgFacingEast(double kbXV) {
+    if (kbXV != 0) facingEast = (kbXV < 0);
 }
 
-void LivingEntity::damageSelf(int damage, double kbVX, double kbVY) {
-    if (!isInvincible()) {
-        hp -= damage;
-        hurtKbVY = kbVY;
-        yVelocity = kbVY;
-        setDmgFacingEast(kbVX);
-        if (!isFacingEast()) kbVX = -kbVX;
-        hurtKbVX = kbVX;
-        xVelocity = kbVX;
-        timeSinceHurt = 0;
-        setSpriteAnimated(true, hurtSpriteCode);
-    }
+bool LivingEntity::damageSelf(int damage, double kbXV, double kbVY) {
+    if (isInvincible()) return false;
+
+    hp -= damage;
+    hurtKbVY = kbVY;
+    yVelocity = kbVY;
+    setDmgFacingEast(kbXV);
+    if (!isFacingEast()) kbXV = -kbXV;
+    hurtKbXV = kbXV;
+    xVelocity = kbXV;
+    const double minKbAdded = 0.4;
+    const double maxKbAdded = 2.;
+    const double diffKbAdded = maxKbAdded - minKbAdded;
+    double addLockTime = getAddAbs(kbXV, kbVY);
+    addLockTime = std::min(addLockTime, maxKbAdded);
+    addLockTime = std::max(addLockTime, minKbAdded);
+    addLockTime -= minKbAdded;
+    hitLagTime = (int) (ENTITY_MIN_HURT_LOCK_TIME +
+                        addLockTime * (ENTITY_DIFF_HURT_LOCK_TIME / diffKbAdded));
+    timeSinceHurt = 0;
+    setSpriteAnimated(true, hurtSpriteCode);
+
+    return true;
 }
 
 void LivingEntity::hurt() {
-    double addX = 0.002;
+    double addX = 0.0012;
     xVelocity = (xVelocity < 0) ?
                 std::min(xVelocity + addX * Global::dt, 0.) :
                 std::max(xVelocity - addX * Global::dt, 0.);

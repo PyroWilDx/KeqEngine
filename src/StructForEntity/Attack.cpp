@@ -19,6 +19,11 @@
 #include "Utils/Utils.hpp"
 #include "World/World.hpp"
 #include "World/Background.hpp"
+#include "Entity/Particle.hpp"
+#include "Utils/Random.hpp"
+
+#define BIG_PARTICLE_FRAME_LENGTH 40
+#define SMALL_PARTICLE_FRAME_LENGTH BIG_PARTICLE_FRAME_LENGTH
 
 void calcPoint(double *pX, double *pY,
                Entity *followEntity, double xyArray[][2], int i) {
@@ -73,6 +78,9 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->onHitParams = nullptr;
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
+    this->bigParticle = nullptr;
+    this->smallParticle = nullptr;
+    this->uniqueEntityHit = false;
 }
 
 Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
@@ -81,6 +89,32 @@ Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
                  xyArray, arrayLength,
                  damage, kbXVelocity, kbYVelocity) {
 
+}
+
+Attack::~Attack() {
+    delete bigParticle;
+    delete smallParticle;
+}
+
+void Attack::setClassicParticle(int n, bool electro) {
+    const int nCode = 8;
+    const int allCodes[nCode] = {
+            PARTICLE_DMG_PHYSICAL_0,
+            PARTICLE_DMG_PHYSICAL_1,
+            PARTICLE_DMG_PHYSICAL_2,
+            PARTICLE_DMG_PHYSICAL_MINI,
+            PARTICLE_DMG_ELECTRO_0,
+            PARTICLE_DMG_ELECTRO_1,
+            PARTICLE_DMG_ELECTRO_2,
+            PARTICLE_DMG_ELECTRO_MINI
+    };
+    int addI = (nCode / 2) * electro;
+    bigParticle = new Particle(allCodes[n + addI],
+                               BIG_PARTICLE_FRAME_LENGTH,
+                               1., 1.);
+    smallParticle = new Particle(allCodes[3 + addI],
+                                 SMALL_PARTICLE_FRAME_LENGTH,
+                                 1., 1.);
 }
 
 BoostPolygon Attack::getPolygonFromEntity(Entity *dstEntity) {
@@ -105,9 +139,84 @@ bool Attack::isHittingEntity(LivingEntity *dstEntity) {
 }
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
-if (isHittingEntity(dstEntity)) {
-        if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
-        dstEntity->damageSelf(damage, kbXVelocity, kbYVelocity);
+    if (uniqueEntityHit && !hitEntityVector.empty()) {
+        shouldRemove = [](Attack *atk, void *fParams) {
+            return true;
+        };
+        return;
+    }
+
+    if (isHittingEntity(dstEntity)) {
+        if (std::find(hitEntityVector.begin(), hitEntityVector.end(),
+                      dstEntity) == hitEntityVector.end()) {
+            if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
+            bool isDamaged = dstEntity->damageSelf(damage,
+                                                   kbXVelocity, kbYVelocity);
+            if (isDamaged) {
+                hitEntityVector.push_back(dstEntity);
+
+                if (bigParticle != nullptr) {
+                    bigParticle->moveToEntityCenter(dstEntity);
+                    Particle *bigParticleClone = bigParticle->cloneSelf();
+                    Particle::pushFast(bigParticleClone);
+                }
+                if (smallParticle != nullptr) {
+                    double kbAngle = getAngleOrigin(kbXVelocity, kbYVelocity);
+                    double maxGap = M_PI / 4.;
+                    double minAngle = kbAngle - maxGap;
+                    double maxAngle = kbAngle + maxGap;
+
+                    smallParticle->moveToEntityCenter(dstEntity);
+                    smallParticle->setRotationMovingRot(
+                            Random::getRandomReal(minAngle, maxAngle));
+                    const double smallParticleVelocity = 0.4;
+                    smallParticle->setXYVelocity(smallParticleVelocity,
+                                                 -smallParticleVelocity);
+                    smallParticle->setOnRender([](Particle *particle) {
+                        particle->moveXNoCheck();
+                        particle->moveYNoCheck();
+                    });
+                    const int nSmallParticleCount = (int) (ATK_SMALL_PARTICLE_COUNT +
+                                                           4. * getAddAbs(kbXVelocity, kbYVelocity));
+                    for (int i = 0; i < nSmallParticleCount; i++) {
+                        Particle *smallParticleClone = smallParticle->cloneSelf();
+
+                        const double addWHMGap = 0.2;
+                        double rdAddWHM = Random::getRandomReal(
+                                -addWHMGap, addWHMGap);
+                        smallParticleClone->addRenderWHMultiplier(
+                                rdAddWHM, rdAddWHM);
+
+                        const double addMoveGap = 10.;
+                        smallParticleClone->moveAdd(
+                                Random::getRandomReal(-addMoveGap, addMoveGap),
+                                Random::getRandomReal(-addMoveGap, addMoveGap)
+                        );
+
+                        const double addVelocityGap = 0.1;
+                        double rdAddVelocity = Random::getRandomReal(
+                                -addVelocityGap, addVelocityGap);
+                        smallParticleClone->addXYVelocity(
+                                rdAddVelocity, rdAddVelocity);
+
+                        double rdRotationRad = Random::getRandomReal(
+                                minAngle, maxAngle);
+                        smallParticleClone->setRotationMovingRot(
+                                radToDegree(rdRotationRad));
+
+                        const int addFrameTimeGap = 20;
+                        int baseFrameTime = SMALL_PARTICLE_FRAME_LENGTH;
+                        smallParticleClone->setSpriteFrameLengthFromTo(
+                                Random::getRandomInt(
+                                        baseFrameTime - addFrameTimeGap,
+                                        baseFrameTime + addFrameTimeGap / 2),
+                                0, -1);
+
+                        Particle::pushFast(smallParticleClone);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -159,6 +268,6 @@ bool Attack::shouldSelfRemove() {
         atkTimeAcc += Global::dt;
         return (atkTimeAcc > atkDuration);
     }
-    SDL_Log("Attack has no way to be removed !\n");
+    SDL_Log("Attack has no way to be removed !");
     return false;
 }
