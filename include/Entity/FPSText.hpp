@@ -14,7 +14,7 @@ public:
 
     ~FPSText() override = default;
 
-    void onGameFrame() override;
+    bool onGameFrame() override;
 
 private:
     int accumulatedFPSTime;

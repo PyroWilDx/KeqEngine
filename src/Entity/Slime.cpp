@@ -38,19 +38,23 @@ Slime::Slime(const std::string &colorString) :
     setSpriteFrameLengthFromTo(INT32_MAX, -1, -1, SLIME_DEATH);
 }
 
-void Slime::onGameFrame() {
-    Monster::onGameFrame();
+bool Slime::onGameFrame() {
+    bool doNext = Monster::onGameFrame();
 
-    fallGravity();
+    if (doNext) {
+        fallGravity();
 
-    AI();
+        AI();
 
-    updateAction();
+        updateAction();
 
-    moveX();
-    moveY();
+        moveX();
+        moveY();
+    }
 
     animateSprite();
+
+    return doNext;
 }
 
 void Slime::AI() {

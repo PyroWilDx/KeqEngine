@@ -43,6 +43,14 @@ enum {
     PARTICLE_KQ_BURST_SLASH,
     PARTICLE_KQ_BURST_CLONE_VANISH,
     PARTICLE_KQ_BURST_FINAL_SLASH,
+    PARTICLE_DMG_PHYSICAL_0,
+    PARTICLE_DMG_PHYSICAL_1,
+    PARTICLE_DMG_PHYSICAL_2,
+    PARTICLE_DMG_PHYSICAL_MINI,
+    PARTICLE_DMG_ELECTRO_0,
+    PARTICLE_DMG_ELECTRO_1,
+    PARTICLE_DMG_ELECTRO_2,
+    PARTICLE_DMG_ELECTRO_MINI,
     PARTICLE_HUD_START,
     PARTICLE_HUD_SKILL_CIRCLE_BG,
     PARTICLE_HUD_BURST_CIRCLE_BG,
@@ -72,8 +80,6 @@ public:
     explicit Particle(bool isBaseParticle);
 
     Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
-
-    ~Particle() override;
 
     static void initParticle();
 
@@ -106,7 +112,11 @@ public:
 
     void animateSprite() override;
 
-    void setEntity(Entity *newEntity);
+    void setEntity(Entity *newEntity, bool sizeDependant = true,
+                   bool takeFaceEast = true);
+
+    void setParticleEntity(Particle *srcParticle, bool sizeDependant = true,
+                           bool takeFaceEast = true);
 
     void xyShift(double xShift, double yShift);
 
@@ -115,6 +125,12 @@ public:
     void fadeAway(double speed = 1);
 
     void removeSelf();
+
+    Particle *cloneSelf(int onRenderParamsSize = 0);
+
+    inline void setEntitySizeDependant(bool entitySizeDependant_) {
+        entitySizeDependant = entitySizeDependant_;
+    }
 
     inline void setOnRender(void (*onRender_)(Particle *)) { onRender = onRender_; }
 
@@ -140,6 +156,7 @@ private:
 
     int particleCode;
     Entity *entity;
+    bool entitySizeDependant;
     double entityLastX, entityLastY;
     FadeAwayParams fadeParams;
 

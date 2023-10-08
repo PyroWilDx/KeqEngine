@@ -5,6 +5,7 @@
 #ifndef KEQING_HPP
 #define KEQING_HPP
 
+#include <vector>
 #include "BaseEntity/LivingEntity.hpp"
 
 class Particle;
@@ -162,6 +163,10 @@ public:
 
     static void createLightningStelitto();
 
+    static void createSkillProjAfterFx();
+
+    static void finishSkillProjParticle();
+
     static void createSkillProjParticle();
 
     void getESkillSpriteCodes(int *pSkill, int *pSkillAiming, int *pSkillSlash);
@@ -200,7 +205,7 @@ public:
 
     [[nodiscard]] bool isInAir() override;
 
-    void onGameFrame() override;
+    bool onGameFrame() override;
 
     void hurt() override;
 
@@ -217,6 +222,8 @@ public:
     void kqLock(bool shouldLock);
 
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }
+
+    inline void addAirPlungeHitEntity(LivingEntity *hitEntity) { airPlungeHitEntityVector.push_back(hitEntity); }
 
     [[nodiscard]] inline double getESkillX() const { return ESkillX; }
 
@@ -250,6 +257,7 @@ private:
     bool airASkillCloned;
     int airESkillFloatCpt;
     int airPlungeLoopSoundChannel;
+    std::vector<LivingEntity *> airPlungeHitEntityVector;
     bool isLocked;
 
 };
