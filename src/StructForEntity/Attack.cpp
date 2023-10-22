@@ -97,6 +97,8 @@ Attack::~Attack() {
 }
 
 void Attack::setClassicParticle(int n, bool electro) {
+    myAssert(n >= 0 && n <= 2, "Index must be 0, 1 or 2");
+
     const int nCode = 8;
     const int allCodes[nCode] = {
             PARTICLE_DMG_PHYSICAL_0,

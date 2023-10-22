@@ -124,6 +124,8 @@ public:
 
     void fadeAway(double speed = 1);
 
+    void renderSelf(SDL_Renderer *gRenderer) override;
+
     void removeSelf();
 
     Particle *cloneSelf(int onRenderParamsSize = 0);

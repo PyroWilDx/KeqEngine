@@ -16,7 +16,7 @@
 //#include "StructForEntity/Attack.hpp"
 //#include "Keqing.hpp"
 
-#define GET_NEAREST_WALL_RETURN_NONE -42
+#define GET_NEAREST_WALL_RETURN_NONE (-42)
 
 class Background;
 class Button;
@@ -27,6 +27,15 @@ class LivingEntity;
 class Monster;
 class Keqing;
 class Attack;
+
+typedef struct Filter {
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    double currAlpha;
+    double targetAlpha;
+    bool filterActivated;
+} Filter;
 
 typedef struct Pixel {
     int worldType;
@@ -68,7 +77,7 @@ public:
 
     void addMonster(Monster *monster);
 
-    void addOtherEntity(Entity *entity);
+    void addOtherEntity(Entity *otherEntity);
 
     void addKQAtk(Attack *atk);
 
@@ -88,11 +97,21 @@ public:
                           double xyArray[][2], int arrayLength,
                           int damage, double kbXVelocity, double kbYVelocity);
 
+    void enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+
+    void disableColorFilter();
+
+    void addIgnoreFilterEntity(Entity *ignoreFilterEntity);
+
     void onGameFrame();
+
+    void renderFilter();
 
     void renderSelf();
 
     void renderDebugMode();
+
+    void onEntityRemove(Entity *removedEntity);
 
     inline void setTranslateEntity(Entity *translateEntity) { translateBackgroundEntity = translateEntity; }
 
@@ -115,6 +134,8 @@ private:
     bool renderKeqing;
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;
+    Filter colorFilter;
+    std::vector<Entity *> ignoreFilterEntityVector;
     Pixel **pixels;
 
     void (*onQuit)();
