@@ -58,6 +58,8 @@ Entity::Entity(double x, double y, int frameW, int frameH,
 
 Entity::~Entity() {
     clearTexture();
+
+    Global::currentWorld->onEntityRemove(this);
 }
 
 void Entity::setRGBAMod(Uint8 a) {

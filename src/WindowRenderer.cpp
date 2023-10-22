@@ -77,6 +77,7 @@ void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled,
         shiftXYFromScreenPosition(&dstRect.x, &dstRect.y);
     }
 
+    SDL_SetRenderDrawBlendMode(gRenderer_, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(gRenderer_, r, g, b, a);
 
     if (filled) SDL_RenderFillRect(gRenderer_, &dstRect);

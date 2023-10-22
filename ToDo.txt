@@ -2,9 +2,10 @@ add a random kb gap for every atk hit ??
 
 burst circle rempli
 
-change atk hit particle
+for future if i want multiple instance for keqing, just do a vector of instances
+and getInstance() returns by default the first one. or a selected index.
 
-hitlag
+hitlag (semi ok)
 
 add sound effects
 

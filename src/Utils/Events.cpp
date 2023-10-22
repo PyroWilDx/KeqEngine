@@ -64,11 +64,11 @@ void Events::onWindowResize(int newW, int newH) {
 
     SDL_Rect renderClipper;
     SDL_Rect *pRenderClipper = &renderClipper;
-    if ((newW - newRenderW) != 0) {
+    if ((newW - newRenderW) != 0 or (newH - newRenderH) != 0) {
         renderClipper = {wDiff / 2,
                          hDiff / 2,
                          newRenderW,
-                         newRenderH};
+                         newRenderH - 1};
     } else {
         pRenderClipper = nullptr;
     }

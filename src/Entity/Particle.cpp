@@ -202,11 +202,11 @@ void Particle::initParticle() {
     particleMaxActives[PARTICLE_DMG_PHYSICAL_0] = 16;
 
     baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_1, "res/gfx/particle/DMGPhysical1.png",
-                             96, 96, 8);
+                             128, 128, 8);
     particleMaxActives[PARTICLE_DMG_PHYSICAL_1] = particleMaxActives[PARTICLE_DMG_PHYSICAL_0];
 
     baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_2, "res/gfx/particle/DMGPhysical2.png",
-                             96, 96, 8);
+                             160, 160, 8);
     particleMaxActives[PARTICLE_DMG_PHYSICAL_2] = particleMaxActives[PARTICLE_DMG_PHYSICAL_0];
 
     baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_MINI, "res/gfx/particle/DMGPhysicalMini.png",
@@ -219,11 +219,11 @@ void Particle::initParticle() {
     particleMaxActives[PARTICLE_DMG_ELECTRO_0] = 16;
 
     baseParticle->initSprite(PARTICLE_DMG_ELECTRO_1, "res/gfx/particle/DMGElectro1.png",
-                             96, 96, 8);
+                             128, 128, 8);
     particleMaxActives[PARTICLE_DMG_ELECTRO_1] = particleMaxActives[PARTICLE_DMG_ELECTRO_0];
 
     baseParticle->initSprite(PARTICLE_DMG_ELECTRO_2, "res/gfx/particle/DMGElectro2.png",
-                             96, 96, 8);
+                             160, 160, 8);
     particleMaxActives[PARTICLE_DMG_ELECTRO_2] = particleMaxActives[PARTICLE_DMG_ELECTRO_0];
 
     baseParticle->initSprite(PARTICLE_DMG_ELECTRO_MINI, "res/gfx/particle/DMGElectroMini.png",
@@ -351,12 +351,9 @@ void Particle::animateAll() {
 
 void Particle::renderAll() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
-    Particle *currParticle;
     for (int spriteCode = 0; spriteCode < PARTICLE_ENUM_N; spriteCode++) {
         for (int i = 0; i < activeCounts[spriteCode]; i++) {
-            currParticle = activeParticles[spriteCode][i];
-            gWindow->renderEntity(currParticle);
-            if (currParticle->onRender != nullptr) currParticle->onRender(currParticle);
+            gWindow->renderEntity(activeParticles[spriteCode][i]);
         }
     }
 }
@@ -474,6 +471,12 @@ void Particle::fadeAway(double speed) {
     SDL_GetTextureAlphaMod(imgTexture, &alpha);
     fadeParams.baseAlpha = alpha;
     fadeParams.speed = speed;
+}
+
+void Particle::renderSelf(SDL_Renderer *gRenderer) {
+    AnimatedEntity::renderSelf(gRenderer);
+
+    if (onRender != nullptr) onRender(this);
 }
 
 void Particle::removeSelf() {
