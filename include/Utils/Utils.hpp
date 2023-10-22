@@ -6,6 +6,8 @@
 #define UTILS_HPP
 
 #include <string>
+#include <vector>
+#include <algorithm>
 #include <SDL2/SDL.h>
 
 #define SCREEN_BASE_WIDTH 1280
@@ -70,6 +72,21 @@ void cutEllipseHalf(double xyArray[][2], int N, int HalfN,
 
 void shiftXYArray(double xyArray[][2], int N,
                   double xShift, double yShift);
+
+template<typename T>
+void clearAndShrinkVector(std::vector<T> *vector) {
+    vector->clear();
+    vector->shrink_to_fit();
+}
+
+template<typename T>
+void removePointerElementFromVector(void *ptrEl, std::vector<T> *vector) {
+    auto it = std::find(vector->begin(), vector->end(), ptrEl);
+    if (it != vector->end()) {
+        *it = vector->back();
+        vector->pop_back();
+    }
+}
 
 Uint32 cvStringToUint32(std::string &valStr);
 

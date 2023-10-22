@@ -13,10 +13,13 @@
 #include "UI/Button.hpp"
 #include "StructForEntity/Attack.hpp"
 #include "BaseEntity/Monster.hpp"
+#include "Utils/Utils.hpp"
+#include "Utils/Global.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
-             const char *backgroundImgPath) {
+             const char *backgroundImgPath)
+        : colorFilter({COLOR_BLACK, 0, 0, false}) {
     this->background = new Background(screenW, screenH,
                                       backgroundTotalW, backgroundTotalH,
                                       backgroundImgPath);
@@ -209,8 +212,8 @@ void World::addMonster(Monster *monster) {
     monsterVector.push_back(monster);
 }
 
-void World::addOtherEntity(Entity *entity) {
-    otherEntityVecotr.push_back(entity);
+void World::addOtherEntity(Entity *otherEntity) {
+    otherEntityVecotr.push_back(otherEntity);
 }
 
 void World::addKQAtk(Attack *atk) {
@@ -255,6 +258,31 @@ Attack *World::addMonsterAtk(LivingEntity *atkIssuer, Entity *followEntity,
                            damage, kbXVelocity, kbYVelocity);
     addMonsterAtk(atk);
     return atk;
+}
+
+void World::enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+    if (colorFilter.filterActivated) {
+        SDL_Log("Color filter has been overwritten, is it wanted ?");
+    }
+
+    clearAndShrinkVector(&ignoreFilterEntityVector);
+
+    colorFilter.r = r;
+    colorFilter.g = g;
+    colorFilter.b = b;
+
+    colorFilter.currAlpha = 0;
+    colorFilter.targetAlpha = a;
+
+    colorFilter.filterActivated = true;
+}
+
+void World::disableColorFilter() {
+    colorFilter.filterActivated = false;
+}
+
+void World::addIgnoreFilterEntity(Entity *ignoreFilterEntity) {
+    ignoreFilterEntityVector.push_back(ignoreFilterEntity);
 }
 
 void World::onGameFrame() {
@@ -305,6 +333,40 @@ void World::onGameFrame() {
     }
 }
 
+void World::renderFilter() {
+    const double colorFilterSpeed = 0.16;
+
+    double targetAlpha = colorFilter.targetAlpha;
+
+    if (colorFilter.filterActivated && colorFilter.currAlpha < targetAlpha) {
+        colorFilter.currAlpha = std::min(
+                colorFilter.currAlpha + colorFilterSpeed * (double) Global::dt,
+                targetAlpha);
+    }
+
+    if (!colorFilter.filterActivated && colorFilter.currAlpha > 0) {
+        colorFilter.currAlpha = std::max(
+                colorFilter.currAlpha - colorFilterSpeed * (double) Global::dt,
+                0.);
+        if (colorFilter.currAlpha == 0) {
+            clearAndShrinkVector(&ignoreFilterEntityVector);
+        }
+    }
+
+    if (colorFilter.currAlpha > 0) {
+        SDL_Rect filterRect = {0, 0,
+                               SCREEN_BASE_WIDTH,
+                               SCREEN_BASE_HEIGHT};
+        WindowRenderer::renderRect(&filterRect, true,
+                                   colorFilter.r,
+                                   colorFilter.g,
+                                   colorFilter.b,
+                                   (Uint8) colorFilter.currAlpha,
+                                   WindowRenderer::getInstance()->getRenderer(),
+                                   false, false);
+    }
+}
+
 void World::renderSelf() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
     gWindow->renderEntity(background);
@@ -317,12 +379,18 @@ void World::renderSelf() {
     for (Monster *monster: monsterVector) {
         gWindow->renderEntity(monster);
     }
-    for (Entity *entity: otherEntityVecotr) {
-        gWindow->renderEntity(entity);
+    for (Entity *otherEntity: otherEntityVecotr) {
+        gWindow->renderEntity(otherEntity);
     }
     if (renderKeqing) gWindow->renderEntity(Keqing::getInstance());
 
     Particle::renderAll();
+
+    renderFilter();
+
+    for (Entity *ignoreFilterEntity: ignoreFilterEntityVector) {
+        gWindow->renderEntity(ignoreFilterEntity);
+    }
 }
 
 void World::renderDebugMode() {
@@ -345,4 +413,12 @@ void World::renderDebugMode() {
     };
     LLIterate(monsterAtkLL, fRenderAtk, gRenderer);
     LLIterate(kqAtkLL, fRenderAtk, gRenderer);
+}
+
+void World::onEntityRemove(Entity *removedEntity) {
+    auto ptrRemovedEntity = (void *) removedEntity;
+
+    removePointerElementFromVector(ptrRemovedEntity, &monsterVector);
+    removePointerElementFromVector(ptrRemovedEntity, &otherEntityVecotr);
+    removePointerElementFromVector(ptrRemovedEntity, &ignoreFilterEntityVector);
 }
