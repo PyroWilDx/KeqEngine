@@ -27,9 +27,10 @@ typedef struct gStateInfo {
     bool gRunning;
     bool gPaused;
     bool runFrame;
+    int lastDt;
 } gStateInfo;
 
-#define DEFAULT_GAME_STATE_INFO {true, false, false}
+#define DEFAULT_GAME_STATE_INFO {true, false, false, 0}
 
 class Events {
 
