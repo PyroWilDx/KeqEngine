@@ -22,9 +22,7 @@ void Game1::RunImpl() {
                                      "res/gfx/background/Game1.png");
 
     gWorld->addBlock(BLOCK_DIRT,
-                     300, 720 - 200, 400, 500);
-    gWorld->addBlock(BLOCK_DIRT,
-                     751, 720 - 200, 176, 200);
+                     300, 720 - 200, 900, 500);
     gWorld->addBlock(BLOCK_DIRT,
                      1000, 720 - 20, 176, 20);
     gWorld->addBlock(BLOCK_DIRT,
@@ -89,7 +87,7 @@ void Game1::RunImpl() {
     auto *slime1 = new Slime("Blue");
     slime1->setHitBox({1, 4, 14, 12});
     slime1->setRenderWHMultiplier(4., 4.);
-    slime1->moveToDownLeft(460, 720 - 200);
+    slime1->moveToDownLeft(1540, 720 - 200);
     gWorld->addMonster(slime1);
 
     auto *slime2 = new Slime("Blue");
@@ -129,7 +127,7 @@ void Game1::RunImpl() {
 
         gWorld->renderSelf();
 
-//        gWorld->renderDebugMode();
+        gWorld->renderDebugMode();
 
         gWindow->display();
     }

@@ -5,6 +5,7 @@
 #ifndef ATTACK_HPP
 #define ATTACK_HPP
 
+#include <string>
 #include <vector>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
@@ -34,6 +35,12 @@ public:
            int damage, double kbXVelocity, double kbYVelocity);
 
     ~Attack();
+
+    void setHitSound(const char *fileName);
+
+    void setHitSound(std::string &fileName);
+
+    void setKQHitSoundRandom(int atkStrength);
 
     void setClassicParticle(int n, bool electro);
 
@@ -85,6 +92,7 @@ private:
     double kbYVelocity;
     int atkTimeAcc;
     int atkDuration;
+    std::string hitSoundPath;
     Particle *bigParticle;
     Particle *smallParticle;
     bool uniqueEntityHit;

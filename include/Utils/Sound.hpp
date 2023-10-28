@@ -22,9 +22,13 @@ public:
 
     static void deleteAudioChunk(int channel);
 
+    static void stopAllAudioChunks();
+
     static Mix_Music *playAudioMusic(const char *musicPath, int repeatCount = 0);
 
     static void deleteAudioMusic();
+
+    static void stopAllSounds();
 
 private:
     static Mix_Chunk *chunkArray[MIX_CHANNEL_N];

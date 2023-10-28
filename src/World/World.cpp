@@ -40,6 +40,8 @@ World::World(int screenW, int screenH,
         }
     }
 
+    stopSoundOnQuit = STOP_SOUND_ALL;
+
     onQuit = nullptr;
 }
 
@@ -74,6 +76,23 @@ World::~World() {
         delete[] pixels[i];
     }
     delete[] pixels;
+
+    switch (stopSoundOnQuit) {
+        case STOP_SOUND_CHUNK:
+            Sound::stopAllAudioChunks();
+            break;
+
+        case STOP_SOUND_MUSIC:
+            Sound::deleteAudioMusic();
+            break;
+
+        case STOP_SOUND_ALL:
+            Sound::stopAllSounds();
+            break;
+
+        default:
+            break;
+    }
 
     delete background;
 }

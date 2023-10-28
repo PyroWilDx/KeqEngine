@@ -129,13 +129,14 @@ void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
 
                 case SDLK_BACKSPACE:
                     gInfo->gPaused = !gInfo->gPaused;
+                    if (gInfo->gPaused) gInfo->lastDt = Global::dt;
                     if (!gInfo->gPaused) Global::currentTime = getTime();
                     break;
 
                 case SDLK_RETURN:
                     if (gInfo->gPaused) {
                         gInfo->runFrame = true;
-                        Global::dt = 10;
+                        Global::dt = gInfo->lastDt;
                     }
                     break;
 
