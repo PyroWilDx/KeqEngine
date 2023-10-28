@@ -21,6 +21,7 @@
 #include "World/Background.hpp"
 #include "Entity/Particle.hpp"
 #include "Utils/Random.hpp"
+#include "Utils/Sound.hpp"
 
 #define BIG_PARTICLE_FRAME_LENGTH 40
 #define SMALL_PARTICLE_FRAME_LENGTH BIG_PARTICLE_FRAME_LENGTH
@@ -78,6 +79,7 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->onHitParams = nullptr;
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
+    this->hitSoundPath.clear();
     this->bigParticle = nullptr;
     this->smallParticle = nullptr;
     this->uniqueEntityHit = false;
@@ -94,6 +96,33 @@ Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
 Attack::~Attack() {
     delete bigParticle;
     delete smallParticle;
+}
+
+void Attack::setHitSound(const char *fileName) {
+    hitSoundPath = std::string("res/sfx/particle/") + fileName;
+}
+
+void Attack::setHitSound(std::string &fileName) {
+    setHitSound(fileName.c_str());
+}
+
+void Attack::setKQHitSoundRandom(int atkStrength) {
+    std::string startName;
+    int nSound;
+    if (atkStrength == 0) {
+        startName = std::string("KQHitSwordHitWeak");
+        nSound = 3;
+    } else if (atkStrength == 1) {
+        startName = std::string("KQHitSwordHitMedium");
+        nSound = 2;
+    } else if (atkStrength == 2) {
+        startName = std::string("KQHitSwordStrong");
+        nSound = 2;
+    }
+
+    int rdSound = Random::getRandomIntEndExcl(0, nSound);
+    std::string finalName = startName + std::to_string(rdSound) + ".ogg";
+    setHitSound(finalName);
 }
 
 void Attack::setClassicParticle(int n, bool electro) {
@@ -152,10 +181,18 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
         if (std::find(hitEntityVector.begin(), hitEntityVector.end(),
                       dstEntity) == hitEntityVector.end()) {
             if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
-            bool isDamaged = dstEntity->damageSelf(damage,
-                                                   kbXVelocity, kbYVelocity);
+            const double maxPercentGap = 0.06;
+            double lowerBoundPercent = 1 - maxPercentGap;
+            double upperBoundPercent = 1 + maxPercentGap;
+            double rdKbXV = kbXVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
+            double rdKbYV = kbYVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
+            bool isDamaged = dstEntity->damageSelf(damage, rdKbXV, rdKbYV);
             if (isDamaged) {
                 hitEntityVector.push_back(dstEntity);
+
+                if (!hitSoundPath.empty()) {
+                    Sound::playAudioChunk(hitSoundPath.c_str());
+                }
 
                 if (bigParticle != nullptr) {
                     bigParticle->moveToEntityCenter(dstEntity);

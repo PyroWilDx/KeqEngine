@@ -42,6 +42,13 @@ typedef struct Pixel {
     int worldCode;
 } Pixel;
 
+enum {
+    STOP_SOUND_NONE = 0,
+    STOP_SOUND_CHUNK,
+    STOP_SOUND_MUSIC,
+    STOP_SOUND_ALL
+};
+
 class World {
 
 public:
@@ -137,6 +144,7 @@ private:
     Filter colorFilter;
     std::vector<Entity *> ignoreFilterEntityVector;
     Pixel **pixels;
+    int stopSoundOnQuit;
 
     void (*onQuit)();
 

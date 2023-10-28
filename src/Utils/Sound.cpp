@@ -40,18 +40,24 @@ void Sound::onGameFrame() {
 
 int Sound::playAudioChunk(const char *chunkPath, int repeatCount) {
     Mix_Chunk *currChunk = Mix_LoadWAV(chunkPath);
-    int channel = -1;
+    int usedChannel = -1;
     if (currChunk != nullptr) {
-        channel = Mix_PlayChannel(-1, currChunk, repeatCount);
-        chunkArray[channel] = currChunk;
+        usedChannel = Mix_PlayChannel(-1, currChunk, repeatCount);
+        chunkArray[usedChannel] = currChunk;
     }
-    return channel;
+    return usedChannel;
 }
 
 void Sound::deleteAudioChunk(int channel) {
     if (chunkArray[channel] != nullptr) {
         Mix_FreeChunk(chunkArray[channel]);
         chunkArray[channel] = nullptr;
+    }
+}
+
+void Sound::stopAllAudioChunks() {
+    for (int i = 0; i < MIX_CHANNEL_N; i++) {
+        deleteAudioChunk(i);
     }
 }
 
@@ -70,4 +76,9 @@ void Sound::deleteAudioMusic() {
         Mix_FreeMusic(currentAudioMusic);
         currentAudioMusic = nullptr;
     }
+}
+
+void Sound::stopAllSounds() {
+    stopAllAudioChunks();
+    deleteAudioMusic();
 }

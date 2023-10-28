@@ -1,13 +1,16 @@
-add a random kb gap for every atk hit ??
+calculate middle point with boost for attacks hit.
+
+BUG A CORRIGER : ENTITY SUR UN COIN DUNE SURFACE PUIS TP AVEC E CA CRASH
+
+appuie rapid 2 fois sur S, check si la platforme fait moins de X height, si oui,
+voir si ya dla place en dessous. Et meme faire tomber plus vite
+
+set an electro mode texture for keqing, just create two spritearray and set it accordingly!
 
 burst circle rempli
 
 for future if i want multiple instance for keqing, just do a vector of instances
 and getInstance() returns by default the first one. or a selected index.
-
-hitlag (semi ok)
-
-add sound effects
 
 for volumeslider, the ismouseonbutton can be larger, (just change the variable directly)
 
