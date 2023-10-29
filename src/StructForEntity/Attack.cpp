@@ -12,6 +12,7 @@
 
 #endif
 
+#include <deque>
 #include "StructForEntity/Attack.hpp"
 #include "Utils/Global.hpp"
 #include "BaseEntity/Entity.hpp"
@@ -68,6 +69,7 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     calcPoint(&xPoint, &yPoint,
               followEntity, xyArray, 0); // Close Polygon
     bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
+    bst_geo::correct(atkPolygon);
 
     this->damage = damage;
     if (!followEntity->isFacingEast()) kbXVelocity = -kbXVelocity;
@@ -83,6 +85,7 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->bigParticle = nullptr;
     this->smallParticle = nullptr;
     this->uniqueEntityHit = false;
+    this->atkCompanion = nullptr;
 }
 
 Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
@@ -160,13 +163,24 @@ BoostPolygon Attack::getPolygonFromEntity(Entity *dstEntity) {
     bst_geo::append(resPolygon, BoostPoint(x2, y2));
     bst_geo::append(resPolygon, BoostPoint(x1, y2));
     bst_geo::append(resPolygon, BoostPoint(x1, y1));
+    bst_geo::correct(resPolygon);
     return resPolygon;
 }
 
-bool Attack::isHittingEntity(LivingEntity *dstEntity) {
+BoostPoint Attack::isHittingEntity(LivingEntity *dstEntity) {
     BoostPolygon dstHitBoxPoly = getPolygonFromEntity(dstEntity);
-    bool res = bst_geo::intersects(atkPolygon, dstHitBoxPoly);
-    return res;
+    BoostPoint centerPoint;
+
+    std::deque<BoostPolygon> qIntersection;
+    bst_geo::intersection(atkPolygon, dstHitBoxPoly,
+                          qIntersection);
+    if (!qIntersection.empty()) {
+        bst_geo::centroid(qIntersection[0], centerPoint);
+    } else {
+        centerPoint.x(-1.);
+        centerPoint.y(-1.);
+    }
+    return centerPoint;
 }
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
@@ -177,86 +191,93 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
         return;
     }
 
-    if (isHittingEntity(dstEntity)) {
-        if (std::find(hitEntityVector.begin(), hitEntityVector.end(),
-                      dstEntity) == hitEntityVector.end()) {
-            if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
-            const double maxPercentGap = 0.06;
-            double lowerBoundPercent = 1 - maxPercentGap;
-            double upperBoundPercent = 1 + maxPercentGap;
-            double rdKbXV = kbXVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
-            double rdKbYV = kbYVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
-            bool isDamaged = dstEntity->damageSelf(damage, rdKbXV, rdKbYV);
-            if (isDamaged) {
-                hitEntityVector.push_back(dstEntity);
+    if (haveHitEntity(dstEntity)) return;
+    if (atkCompanion != nullptr && atkCompanion->haveHitEntity(dstEntity)) return;
 
-                if (!hitSoundPath.empty()) {
-                    Sound::playAudioChunk(hitSoundPath.c_str());
-                }
+    BoostPoint centerPoint = isHittingEntity(dstEntity);
+    if (centerPoint.x() == -1.) return;
 
-                if (bigParticle != nullptr) {
-                    bigParticle->moveToEntityCenter(dstEntity);
-                    Particle *bigParticleClone = bigParticle->cloneSelf();
-                    Particle::pushFast(bigParticleClone);
-                }
-                if (smallParticle != nullptr) {
-                    double kbAngle = getAngleOrigin(kbXVelocity, kbYVelocity);
-                    double maxGap = M_PI / 4.;
-                    double minAngle = kbAngle - maxGap;
-                    double maxAngle = kbAngle + maxGap;
+    const double maxPercentGap = 0.06;
+    double lowerBoundPercent = 1. - maxPercentGap;
+    double upperBoundPercent = 1. + maxPercentGap;
+    double rdKbXV = kbXVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
+    double rdKbYV = kbYVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
+    bool isDamaged = dstEntity->damageSelf(damage, rdKbXV, rdKbYV);
 
-                    smallParticle->moveToEntityCenter(dstEntity);
-                    smallParticle->setRotationMovingRot(
-                            Random::getRandomReal(minAngle, maxAngle));
-                    const double smallParticleVelocity = 0.4;
-                    smallParticle->setXYVelocity(smallParticleVelocity,
-                                                 -smallParticleVelocity);
-                    smallParticle->setOnRender([](Particle *particle) {
-                        particle->moveXNoCheck();
-                        particle->moveYNoCheck();
-                    });
-                    const int nSmallParticleCount = (int) (ATK_SMALL_PARTICLE_COUNT +
-                                                           4. * getAddAbs(kbXVelocity, kbYVelocity));
-                    for (int i = 0; i < nSmallParticleCount; i++) {
-                        Particle *smallParticleClone = smallParticle->cloneSelf();
+    if (!isDamaged) return;
 
-                        const double addWHMGap = 0.2;
-                        double rdAddWHM = Random::getRandomReal(
-                                -addWHMGap, addWHMGap);
-                        smallParticleClone->addRenderWHMultiplier(
-                                rdAddWHM, rdAddWHM);
+    if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
+    hitEntityVector.push_back(dstEntity);
 
-                        const double addMoveGap = 10.;
-                        smallParticleClone->moveAdd(
-                                Random::getRandomReal(-addMoveGap, addMoveGap),
-                                Random::getRandomReal(-addMoveGap, addMoveGap)
-                        );
+    if (!hitSoundPath.empty()) {
+        Sound::playAudioChunk(hitSoundPath.c_str());
+    }
 
-                        const double addVelocityGap = 0.1;
-                        double rdAddVelocity = Random::getRandomReal(
-                                -addVelocityGap, addVelocityGap);
-                        smallParticleClone->addXYVelocity(
-                                rdAddVelocity, rdAddVelocity);
+    if (bigParticle != nullptr) {
+        bigParticle->moveToCenter(centerPoint.x(), centerPoint.y());
+        Particle *bigParticleClone = bigParticle->cloneSelf();
+        Particle::pushFast(bigParticleClone);
+    }
+    if (smallParticle != nullptr) {
+        double kbAngle = getAngleOrigin(kbXVelocity, kbYVelocity);
+        double maxGap = M_PI / 4.;
+        double minAngle = kbAngle - maxGap;
+        double maxAngle = kbAngle + maxGap;
 
-                        double rdRotationRad = Random::getRandomReal(
-                                minAngle, maxAngle);
-                        smallParticleClone->setRotationMovingRot(
-                                radToDegree(rdRotationRad));
+        smallParticle->moveToCenter(centerPoint.x(), centerPoint.y());
+        smallParticle->setRotationMovingRot(
+                Random::getRandomReal(minAngle, maxAngle));
+        const double smallParticleVelocity = 0.4;
+        smallParticle->setXYVelocity(smallParticleVelocity,
+                                     -smallParticleVelocity);
+        smallParticle->setOnRender([](Particle *particle) {
+            particle->moveXNoCheck();
+            particle->moveYNoCheck();
+        });
+        const int nSmallParticleCount = (int) (ATK_SMALL_PARTICLE_COUNT +
+                                               4. * getAddAbs(kbXVelocity, kbYVelocity));
+        for (int i = 0; i < nSmallParticleCount; i++) {
+            Particle *smallParticleClone = smallParticle->cloneSelf();
 
-                        const int addFrameTimeGap = 20;
-                        int baseFrameTime = SMALL_PARTICLE_FRAME_LENGTH;
-                        smallParticleClone->setSpriteFrameLengthFromTo(
-                                Random::getRandomInt(
-                                        baseFrameTime - addFrameTimeGap,
-                                        baseFrameTime + addFrameTimeGap / 2),
-                                0, -1);
+            const double addWHMGap = 0.2;
+            double rdAddWHM = Random::getRandomReal(
+                    -addWHMGap, addWHMGap);
+            smallParticleClone->addRenderWHMultiplier(
+                    rdAddWHM, rdAddWHM);
 
-                        Particle::pushFast(smallParticleClone);
-                    }
-                }
-            }
+            const double addMoveGap = 10.;
+            smallParticleClone->moveAdd(
+                    Random::getRandomReal(-addMoveGap, addMoveGap),
+                    Random::getRandomReal(-addMoveGap, addMoveGap)
+            );
+
+            const double addVelocityGap = 0.1;
+            double rdAddVelocity = Random::getRandomReal(
+                    -addVelocityGap, addVelocityGap);
+            smallParticleClone->addXYVelocity(
+                    rdAddVelocity, rdAddVelocity);
+
+            double rdRotationRad = Random::getRandomReal(
+                    minAngle, maxAngle);
+            smallParticleClone->setRotationMovingRot(
+                    radToDegree(rdRotationRad));
+
+            const int addFrameTimeGap = 20;
+            int baseFrameTime = SMALL_PARTICLE_FRAME_LENGTH;
+            smallParticleClone->setSpriteFrameLengthFromTo(
+                    Random::getRandomInt(
+                            baseFrameTime - addFrameTimeGap,
+                            baseFrameTime + addFrameTimeGap / 2),
+                    0, -1);
+
+            Particle::pushFast(smallParticleClone);
         }
     }
+}
+
+bool Attack::haveHitEntity(LivingEntity *checkEntity) {
+    return std::find(hitEntityVector.begin(), hitEntityVector.end(),
+                     checkEntity) != hitEntityVector.end();
 }
 
 void Attack::onGameFrame() {
