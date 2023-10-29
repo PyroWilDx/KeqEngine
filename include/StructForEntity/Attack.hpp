@@ -46,9 +46,11 @@ public:
 
     static BoostPolygon getPolygonFromEntity(Entity *dstEntity);
 
-    bool isHittingEntity(LivingEntity *dstEntity);
+    BoostPoint isHittingEntity(LivingEntity *dstEntity);
 
     void checkEntityHit(LivingEntity *dstEntity);
+
+    bool haveHitEntity(LivingEntity *checkEntity);
 
     void onGameFrame();
 
@@ -80,6 +82,11 @@ public:
 
     inline void setAtkDuration(int atkDuration_) { atkDuration = atkDuration_; }
 
+    inline void setAtkCompanion(Attack *atkCompanion_) {
+        atkCompanion = atkCompanion_;
+        atkCompanion_->atkCompanion = this;
+    }
+
     inline LivingEntity *getAtkIssuer() { return atkIssuer; }
 
 private:
@@ -97,6 +104,7 @@ private:
     Particle *smallParticle;
     bool uniqueEntityHit;
     std::vector<LivingEntity *> hitEntityVector;
+    Attack *atkCompanion;
 
     void (*onHit)(Attack *, LivingEntity *, void *);
 
