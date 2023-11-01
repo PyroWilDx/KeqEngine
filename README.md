@@ -1,3 +1,10 @@
-# Keqing
+# Keqing (2023)
 
-> Keqing
+#### ――――――――――
+
+- *Code Editor* : CLion.
+- *Language* : C++.
+- *Framework* : SDL2.
+- *Library* : Boost.
+
+#### ――――――――――
