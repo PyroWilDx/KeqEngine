@@ -4,7 +4,10 @@
 
 - *Code Editor* : CLion.
 - *Language* : C++.
-- *Framework* : SDL2.
-- *Library* : Boost.
+- *Library* : SDL2, Boost.
+
+#### ――――――――――
+
+From Scratch.
 
 #### ――――――――――
