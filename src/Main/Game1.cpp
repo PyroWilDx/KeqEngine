@@ -127,7 +127,7 @@ void Game1::RunImpl() {
 
         gWorld->renderSelf();
 
-//        gWorld->renderDebugMode();
+        gWorld->renderDebugMode();
 
         gWindow->display();
     }

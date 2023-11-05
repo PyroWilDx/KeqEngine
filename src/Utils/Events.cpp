@@ -77,10 +77,12 @@ void Events::onWindowResize(int newW, int newH) {
 }
 
 void Events::onMouse(SDL_Event *event) {
-    int mouseX = event->button.x;
-    int mouseY = event->button.y;
-    getMouseAbsoluteXY(&mouseX, &mouseY);
-    Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
+    if (Global::currentWorld != nullptr) {
+        int mouseX = event->button.x;
+        int mouseY = event->button.y;
+        getMouseAbsoluteXY(&mouseX, &mouseY);
+        Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
+    }
 }
 
 void Events::onQuit(gStateInfo *gInfo) {
@@ -174,6 +176,8 @@ void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
 void Events::callMainFunc(bool *gRunningLastMain, void (*gMain)()) {
     *gRunningLastMain = false;
     Particle::removeAllParticles();
-    Global::deleteWorld();
-    if (gMain != nullptr) gMain();
+    if (gMain != nullptr) {
+        Global::deleteWorld();
+        gMain();
+    }
 }
