@@ -67,7 +67,10 @@ World::~World() {
         delete entity;
     }
 
-    if (renderKeqing) Keqing::getInstance()->reset();
+    if (renderKeqing) {
+        Keqing *kq = Keqing::getInstance();
+        if (kq != nullptr) kq->reset();
+    }
 
     LLFree(monsterAtkLL, LLFreeAtkF);
     LLFree(kqAtkLL, LLFreeAtkF);

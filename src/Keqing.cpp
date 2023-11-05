@@ -25,9 +25,11 @@ Keqing::Keqing()
                        KQ_HURT, KQ_JUMP) {
     setHitBox({0, 12, 60, 84});
 
+    this->wasInAir = false;
     this->jumpPressTime = 0;
     this->yOnLastNAtk = 0;
     this->ASkillFlipPressTime = 0;
+    this->ASkillFlipCount = 0;
     this->ASkillCloneCenterX = 0;
     this->ASkillCloneCenterY = 0;
     this->ESkillPausedSpriteCode = 0;
@@ -35,7 +37,6 @@ Keqing::Keqing()
     this->ESkillX = 0;
     this->ESkillY = 0;
     this->ESkillUseTime = 0;
-    this->isESkillParticleInAir = false;
     this->RBurstCloneSlashCount = 0;
     this->airDoubleJumped = false;
     this->airDashed = false;
@@ -270,6 +271,17 @@ void Keqing::setSoundSheet() {
                                "Dash2.ogg");
     soundSheet->copySoundPaths(KQ_AIR_DASH, KQ_DASH);
 
+    soundSheet->copySoundPathsStartString(KQ_RUN_NATK, KQ_NATK,
+                                          "AtkMid");
+
+    soundSheet->copySoundPathsStartString(KQ_SKILL_FLIP, KQ_NATK,
+                                          "AtkMid");
+
+    soundSheet->copySoundPathsStartString(KQ_SKILL_CLONE, KQ_NATK,
+                                          "AtkWeak");
+    soundSheet->copySoundPathsStartString(KQ_AIR_SKILL_CLONE, KQ_NATK,
+                                          "AtkWeak");
+
     soundSheet->pushSoundPaths(KQ_SKILL,
                                "Skill0.ogg",
                                "Skill1.ogg",
@@ -309,9 +321,11 @@ void Keqing::reset() {
     xVelocity = 0;
     yVelocity = 0;
 
+    wasInAir = false;
     jumpPressTime = 0;
     yOnLastNAtk = 0;
     ASkillFlipPressTime = 0;
+    ASkillFlipCount = 0;
     ASkillCloneCenterX = 0;
     ASkillCloneCenterY = 0;
     ESkillPausedSpriteCode = 0;
@@ -319,7 +333,6 @@ void Keqing::reset() {
     ESkillX = 0;
     ESkillY = 0;
     ESkillUseTime = 0;
-    isESkillParticleInAir = false;
     RBurstCloneSlashCount = 0;
     airDoubleJumped = false;
     airDashed = false;
@@ -493,16 +506,17 @@ const double averageFallVelocity = 0.2;
 
 void Keqing::airAnimate() {
     if (!isInAir()) {
-        if (isSpriteAnimated(KQ_JUMP)) {
-            setSpriteAnimated(false, KQ_JUMP);
-
-            setSpriteAnimated(true, KQ_JUMP_END);
-
+        if (wasInAir) {
+            if (isSpriteAnimated(KQ_JUMP)) {
+                setSpriteAnimated(false, KQ_JUMP);
+                setSpriteAnimated(true, KQ_JUMP_END);
+            }
             Sound::playAudioChunk("res/sfx/particle/KQJumpEnd.ogg");
+            ASkillFlipCount = 0;
+            airDoubleJumped = false;
+            airDashed = false;
+            airASkillCloned = false;
         }
-        airDoubleJumped = false;
-        airDashed = false;
-        airASkillCloned = false;
         return;
     }
 
@@ -631,6 +645,11 @@ void Keqing::NAtk() {
                 goToFrame(NAtkEndFrame[i] + 2, KQ_NATK);
                 xVelocity = NAtkXVelocity[i + 1];
 
+                if (i != 0 && i != NAtkMax - 1) {
+                    if (Random::getRandomReal() < 0.42) {
+                        soundSheet->playRandomSoundStartString("AtkWeak", KQ_NATK);
+                    }
+                }
                 Sound::playAudioChunk(NAtkSfxPaths[i + 1]);
             }
         }
@@ -1118,6 +1137,7 @@ void Keqing::runNAtk() {
     if (isNewestFrame(0, KQ_RUN_NATK)) {
         xVelocity = 0.4;
 
+        soundSheet->playRandomSound(KQ_RUN_NATK);
         Sound::playAudioChunk("res/sfx/particle/KQCapeSwipe.wav");
 
     } else if (isNewestFrame(5, KQ_RUN_NATK)) {
@@ -1243,10 +1263,12 @@ void Keqing::ASkillFlip() {
     if (isSpriteAnimated(KQ_SKILL_FLIP)) {
         if (isNewestFrame(0, KQ_SKILL_FLIP)) {
             ASkillFlipPressTime = Global::pressedTime[KEY_A];
+            ASkillFlipCount++;
 
             yVelocity = -KQ_SKILL_FLIP_BASE_Y_VELOCITY;
             xVelocity = KQ_SKILL_FLIP_BASE_X_VELOCITY;
 
+            soundSheet->playRandomSound(KQ_JUMP_START);
             Sound::playAudioChunk("res/sfx/particle/KQJump.ogg");
         }
 
@@ -1275,6 +1297,10 @@ void Keqing::ASkillFlip() {
                     Particle::pushParticle(PARTICLE_KQ_SKILL_FLIP_SLASH, 40);
             flipSlashParticle->moveToEntityCenter(this);
             flipSlashParticle->xyShift(50, 44);
+
+            soundSheet->playRandomSound(KQ_SKILL_FLIP);
+            Sound::playAudioChunk("res/sfx/particle/KQSkillFlipSlash.wav");
+            Sound::playAudioChunk("res/sfx/particle/KQNAtk4.ogg");
 
             // Push Atk
 
@@ -1315,9 +1341,6 @@ void Keqing::ASkillFlip() {
             PtAtk->setAtkDuration(flipSlashParticle->getSpriteLengthFromTo(0, 1));
             PtAtk->setHitSound("KQHitSkillFlipParticle.wav");
             PtAtk->setClassicParticle(2, true);
-
-            Sound::playAudioChunk("res/sfx/particle/KQSkillFlipSlash.wav");
-            Sound::playAudioChunk("res/sfx/particle/KQNAtk4.ogg");
         }
 
         if (!isInAir() && !isNewestFrame(0, KQ_SKILL_FLIP)) {
@@ -1338,6 +1361,7 @@ void Keqing::ASkillCloneGeneral() {
     } else if (isNewestFrame(3, SKILL_CLONE_CODE)) {
         xVelocity = -KQ_SKILL_CLONE_X_VELOCITY;
 
+        soundSheet->playRandomSound(SKILL_CLONE_CODE);
         Sound::playAudioChunk("res/sfx/particle/KQSkillCloneDashStart.wav");
 
     } else if (isNewestFrame(4, SKILL_CLONE_CODE)) {
@@ -1820,8 +1844,6 @@ void Keqing::ESkillSlashGeneral() {
 
         getToEntityCenterXY(idleParticle, &ESkillX, &ESkillY);
 
-        isESkillParticleInAir = idleParticle->isInAir();
-
         Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_2);
 
     } else if (isNewestFrame(6, SKILL_SLASH_CODE)) {
@@ -1843,15 +1865,13 @@ void Keqing::ESkillSlashGeneral() {
         soundSheet->playRandomSound(SKILL_SLASH_CODE);
         Sound::playAudioChunk("res/sfx/particle/KQSkillTP.ogg");
 
-        if (isESkillParticleInAir && SKILL_SLASH_CODE == KQ_SKILL_SLASH) {
-            setSpriteAnimated(false, SKILL_SLASH_CODE);
-            setSpriteAnimated(true, KQ_AIR_SKILL_SLASH);
-            goToFrameNoNew(6, KQ_AIR_SKILL_SLASH);
+        if (isInAir() && SKILL_SLASH_CODE == KQ_SKILL_SLASH) {
+            relaySprite(KQ_AIR_SKILL_SLASH, SKILL_SLASH_CODE);
+            SKILL_SLASH_CODE = KQ_AIR_SKILL_SLASH;
         }
-        if (!isESkillParticleInAir && SKILL_SLASH_CODE == KQ_AIR_SKILL_SLASH) {
-            setSpriteAnimated(false, SKILL_SLASH_CODE);
-            setSpriteAnimated(true, KQ_SKILL_SLASH);
-            goToFrameNoNew(6, KQ_SKILL_SLASH);
+        if (!isInAir() && SKILL_SLASH_CODE == KQ_AIR_SKILL_SLASH) {
+            relaySprite(KQ_SKILL_SLASH, SKILL_SLASH_CODE);
+            SKILL_SLASH_CODE = KQ_SKILL_SLASH;
         }
     }
 
@@ -2593,6 +2613,8 @@ bool Keqing::onGameFrame() {
             updateAction();
 
             moveX();
+
+            wasInAir = isInAir();
             moveY();
 
             airAnimate();
@@ -2639,6 +2661,7 @@ bool Keqing::canDoAction(int spriteCode) {
             break;
 
         case KQ_SKILL_FLIP:
+            if (ASkillFlipCount >= KQ_SKILL_FLIP_MAX_COUNT) return false;
             spriteCodeToSkip[KQ_AIR_DOUBLE_JUMP] = 2;
             spriteCodeToSkip[KQ_AIR_NATK] = 2;
             spriteCodeToSkip[KQ_AIR_UP_NATK] = 2;
