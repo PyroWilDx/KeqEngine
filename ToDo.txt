@@ -1,11 +1,4 @@
-add voice for : runnatk, askillflip/clone
-
-et j'avais oublié quon peut askillflip a l'infini et fly jusqua l'infini et l'  au dela...
-
-WTF C QUOI CE BUG??? : FAIRE LE ASKILLCLONE + BURST CA FAIT DES TRUC CHELOU,
-    bah jsp pk ca le fait plus en fait
-EH VAZY EN PLUS CA FAIT QUE CRASH QUAND JE FERME, YA DES PB DE FREE
-BUG A CORRIGER : ENTITY SUR UN COIN DUNE SURFACE PUIS TP AVEC E CA CRASH
+add intro, parry, taunt...
 
 appuie rapid 2 fois sur S, check si la platforme fait moins de X height, si oui,
 voir si ya dla place en dessous. Et meme faire tomber plus vite

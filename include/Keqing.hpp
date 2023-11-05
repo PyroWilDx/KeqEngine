@@ -64,6 +64,7 @@ enum {
 #define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
 #define KQ_AIR_DASH_VELOCITY 0.8
 
+#define KQ_SKILL_FLIP_MAX_COUNT 2
 #define KQ_SKILL_FLIP_BASE_Y_VELOCITY 0.62
 #define KQ_SKILL_FLIP_BASE_X_VELOCITY 0.44
 
@@ -242,15 +243,16 @@ private:
 
     static Keqing *instance;
 
+    bool wasInAir;
     int jumpPressTime;
     double yOnLastNAtk;
     int ASkillFlipPressTime;
+    int ASkillFlipCount;
     double ASkillCloneCenterX, ASkillCloneCenterY;
     int ESkillPausedSpriteCode;
     int ESkillCursorSoundChannel;
     double ESkillX, ESkillY;
     int ESkillUseTime;
-    bool isESkillParticleInAir;
     int RBurstCloneSlashCount;
     bool airDoubleJumped;
     bool airDashed;
