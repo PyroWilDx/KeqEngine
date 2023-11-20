@@ -8,7 +8,8 @@
 #include "Utils/Utils.hpp"
 
 ColorPicker::ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA)
-        : Button(x, y, renderW, renderH) {
+        : Button(x + 8, y + 8, renderW, renderH,
+                 8, 20) {
     swapColorOnClick = false;
     pickerX = WorldEntity::getX();
     pickerY = WorldEntity::getY();
@@ -105,16 +106,14 @@ Uint32 ColorPicker::getCurrentRGBA() const {
 }
 
 void ColorPicker::onClick(int mouseX, int mouseY) {
-    pickerX = mouseX;
-    pickerY = mouseY;
+    setPickerXY(mouseX, mouseY);
+
     Button::onClick(mouseX, mouseY);
 }
 
 void ColorPicker::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
-    if (isMouseOnButton) {
-        pickerX = mouseX;
-        pickerY = mouseY;
-    }
+    setPickerXY(mouseX, mouseY);
+
     Button::onClickedMove(mouseX, mouseY, isMouseOnButton);
 }
 
@@ -130,8 +129,21 @@ void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {
     int cursorSize = getPickerSize();
     SDL_Rect cursorDst = {pickerX - cursorSize / 2, pickerY - cursorSize / 2,
                           cursorSize, cursorSize};
+    cursorDst.x += (int) x;
+    cursorDst.y += (int) y;
     WindowRenderer::renderRect(&cursorDst, false,
                                COLOR_BLACK_FULL,
                                gRenderer,
                                false, false);
+}
+
+void ColorPicker::setPickerXY(int mouseX, int mouseY) {
+    int renderW = getRenderW();
+    int renderH = getRenderH();
+    pickerX = (int) ((double) mouseX - x);
+    if (pickerX < 0) pickerX = 0;
+    if (pickerX >= renderW) pickerX = renderW - 1;
+    pickerY = (int) ((double) mouseY - y);
+    if (pickerY < 0) pickerY = 0;
+    if (pickerY >= renderH) pickerY = renderH - 1;
 }

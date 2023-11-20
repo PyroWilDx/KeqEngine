@@ -274,8 +274,9 @@ void Keqing::setSoundSheet() {
     soundSheet->copySoundPathsStartString(KQ_RUN_NATK, KQ_NATK,
                                           "AtkMid");
 
-    soundSheet->copySoundPathsStartString(KQ_SKILL_FLIP, KQ_NATK,
-                                          "AtkMid");
+    soundSheet->pushSoundPaths(KQ_SKILL_FLIP,
+                               "AtkStrong0.ogg",
+                               "AtkStrong1.ogg");
 
     soundSheet->copySoundPathsStartString(KQ_SKILL_CLONE, KQ_NATK,
                                           "AtkWeak");
