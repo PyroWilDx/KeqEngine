@@ -31,6 +31,8 @@ void Game1::RunImpl() {
                      1200, 720 - 180, 176, 40);
     gWorld->addBlock(BLOCK_DIRT,
                      1400, 720 - 180, 176, 32);
+    gWorld->addBlock(BLOCK_DIRT,
+                     0, 720 - 200, 3000, 500);
 
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(0, 0);
@@ -93,7 +95,7 @@ void Game1::RunImpl() {
     auto *slime2 = new Slime("Blue");
     slime2->setHitBox({1, 4, 14, 12});
     slime2->setRenderWHMultiplier(4., 4.);
-    slime2->moveToDownLeft(1600, 720);
+    slime2->moveToDownLeft(1600, 720 - 200);
     gWorld->addMonster(slime2);
 
     auto *gFPSText = new FPSText();
@@ -127,7 +129,7 @@ void Game1::RunImpl() {
 
         gWorld->renderSelf();
 
-        gWorld->renderDebugMode();
+//        gWorld->renderDebugMode();
 
         gWindow->display();
     }
