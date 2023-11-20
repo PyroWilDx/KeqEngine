@@ -26,6 +26,8 @@ public:
 
     void renderSelf(SDL_Renderer *gRenderer) override;
 
+    void setPickerXY(int mouseX, int mouseY);
+
 private:
     Uint32 **absPixels;
     int pickerX, pickerY;

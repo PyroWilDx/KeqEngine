@@ -27,7 +27,7 @@ void ColorKeqing::RunImpl() {
     });
 
     Uint32 currRGBA = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
-    auto *colorPicker = new ColorPicker(0, 0, 400, 400, currRGBA);
+    auto *colorPicker = new ColorPicker(40, 40, 400, 400, currRGBA);
     colorPicker->setOnClick([](Button *self, int mouseX,
                                int mouseY, void *fParams) {
         auto *selfColorPicker = (ColorPicker *) self;

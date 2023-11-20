@@ -19,7 +19,11 @@ class Button : public WorldEntity {
 public:
     Button(double x, double y, int renderW, int renderH);
 
-    Button(double x, double y, int renderW, int renderH, int outlineThickness);
+    Button(double x, double y, int renderW, int renderH,
+           int outlineThickness);
+
+    Button(double x, double y, int renderW, int renderH,
+           int outlineThickness, int outlineDarkerCoeff);
 
     ~Button() override;
 
@@ -92,6 +96,7 @@ protected:
     SDL_Color buttonColor;
     Text *buttonText;
     int outlineThickness;
+    int outlineDarkerCoeff;
 
 };
 

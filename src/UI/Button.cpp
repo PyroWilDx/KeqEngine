@@ -11,24 +11,31 @@
 Button::Button(double x, double y, int renderW, int renderH)
         : WorldEntity(x, y, renderW, renderH, WORLD_BUTTON),
           buttonColor() {
-    fOnClick = nullptr;
-    fOnClickedMove = nullptr;
-    fOnClickRelease = nullptr;
-    onClickParams = nullptr;
-    onClickedMoveParams = nullptr;
-    onClickReleaseParams = nullptr;
-    swapColorOnClick = true;
-    buttonState = BUTTON_IDLE;
-    buttonColor = {COLOR_WHITE_FULL};
-    buttonText = nullptr;
-    outlineThickness = 6;
+    this->fOnClick = nullptr;
+    this->fOnClickedMove = nullptr;
+    this->fOnClickRelease = nullptr;
+    this->onClickParams = nullptr;
+    this->onClickedMoveParams = nullptr;
+    this->onClickReleaseParams = nullptr;
+    this->swapColorOnClick = true;
+    this->buttonState = BUTTON_IDLE;
+    this->buttonColor = {COLOR_WHITE_FULL};
+    this->buttonText = nullptr;
+    this->outlineThickness = 6;
+    this->outlineDarkerCoeff = 40;
 }
 
-Button::Button(double x, double y, int renderW, int renderH, int outlineThickness)
+Button::Button(double x, double y, int renderW, int renderH,
+               int outlineThickness)
         : Button(x, y, renderW, renderH) {
     this->outlineThickness = outlineThickness;
 }
 
+Button::Button(double x, double y, int renderW, int renderH,
+               int outlineThickness, int outlineDarkerCoeff)
+        : Button(x, y, renderW, renderH, outlineThickness) {
+    this->outlineDarkerCoeff = outlineDarkerCoeff;
+}
 
 Button::~Button() {
     delete buttonText;
@@ -56,23 +63,21 @@ void Button::changeText(const char *text) {
 
 void Button::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect dst = getRenderRect();
+    SDL_Rect outlineRect = {dst.x - outlineThickness, dst.y - outlineThickness,
+                            dst.w + outlineThickness * 2, dst.h + outlineThickness * 2};
+    SDL_Color outlineRectColor = buttonColor;
+    outlineRectColor.r = std::max((int) outlineRectColor.r - outlineDarkerCoeff, 0);
+    outlineRectColor.g = std::max((int) outlineRectColor.g - outlineDarkerCoeff, 0);
+    outlineRectColor.b = std::max((int) outlineRectColor.b - outlineDarkerCoeff, 0);
+    WindowRenderer::renderRect(&outlineRect, true,
+                               outlineRectColor.r, outlineRectColor.g,
+                               outlineRectColor.b, outlineRectColor.a,
+                               gRenderer,
+                               true);
 
     if (imgFrame.w != 0 && imgFrame.h != 0) {
         Entity::renderSelf(gRenderer);
     } else {
-        SDL_Rect outlineRect = {dst.x - outlineThickness, dst.y - outlineThickness,
-                                dst.w + outlineThickness * 2, dst.h + outlineThickness * 2};
-        SDL_Color outlineRectColor = buttonColor;
-        int darkerCoeff = 40;
-        outlineRectColor.r = std::max(outlineRectColor.r - darkerCoeff, 0);
-        outlineRectColor.g = std::max(outlineRectColor.g - darkerCoeff, 0);
-        outlineRectColor.b = std::max(outlineRectColor.b - darkerCoeff, 0);
-        WindowRenderer::renderRect(&outlineRect, true,
-                                   outlineRectColor.r, outlineRectColor.g,
-                                   outlineRectColor.b, outlineRectColor.a,
-                                   gRenderer,
-                                   true);
-
         SDL_Color renderColor = buttonColor;
         if (buttonState == BUTTON_CLICKED) {
             if (swapColorOnClick) {
