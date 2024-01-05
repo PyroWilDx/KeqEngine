@@ -25,6 +25,10 @@ public:
 
     bool isPixelInSelfRect(double pixelX, double pixelY);
 
+    inline void setRenderW(int renderW_) { this->renderW = renderW_; }
+
+    inline void setRenderH(int renderH_) { this->renderH = renderH_; }
+
     inline int getX() { return (int) x; }
 
     inline int getY() { return (int) y; }

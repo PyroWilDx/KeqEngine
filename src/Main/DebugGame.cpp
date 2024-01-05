@@ -2,7 +2,7 @@
 // Created by pyrowildx on 09/07/2023.
 //
 
-#include "Main/Game1.hpp"
+#include "Main/DebugGame.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Keqing.hpp"
@@ -14,12 +14,15 @@
 #include "Utils/Utils.hpp"
 #include "World/Block.hpp"
 
-void Game1::RunImpl() {
+void DebugGame::RunImpl() {
+    SDL_Event event;
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      3000, 720,
-                                     "res/gfx/background/Game1.png");
+                                     "res/gfx/background/DebugGame.png");
 
     gWorld->addBlock(BLOCK_DIRT,
                      300, 720 - 200, 900, 500);
@@ -101,11 +104,7 @@ void Game1::RunImpl() {
     auto *gFPSText = new FPSText();
     gWorld->addOtherEntity(gFPSText);
 
-    SDL_Event event;
-    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
-
     while (gInfo.gRunning) {
-
         handleTime();
 
         // Events
@@ -129,7 +128,7 @@ void Game1::RunImpl() {
 
         gWorld->renderSelf();
 
-//        gWorld->renderDebugMode();
+        gWorld->renderDebugMode();
 
         gWindow->display();
     }
