@@ -48,9 +48,9 @@ void VolumeSlider::onClick(int mouseX, int mouseY) {
 }
 
 void VolumeSlider::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
-    if (isMouseOnButton) setPickerXFromNewX(mouseX);
+    setPickerXFromNewX(mouseX);
 
-    Button::onClickedMove(mouseX, mouseY, isMouseOnButton);
+    Button::onClickedMove(mouseX, mouseY, true);
 }
 
 void VolumeSlider::renderSelf(SDL_Renderer *gRenderer) {

@@ -12,24 +12,27 @@
 #include "Keqing.hpp"
 
 void ConfigKeqing::RunImpl() {
+    SDL_Event event;
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      "res/gfx/background/ConfigKeqing.png");
 
-    auto *swapKqVAButton = new Button(600, 100, 200, 100);
+    auto *swapKqVAButton = new Button(100, 100, 200, 100);
     swapKqVAButton->setOnClickRelease([](Button *self, int mouseX,
                                          int mouseY, void *fParams) {
         const int nLang = 5;
-        std::string allKqLangs[nLang] = {"jp", "en", "cn", "kr", "muted"};
+        std::string allKqLangs[nLang] = {"Jp", "En", "Cn", "Kr", "None"};
         std::string currKqLang = Global::userData[DATA_KQ_VOICE_LANG];
         for (int i = 0; i < nLang; i++) {
             if (currKqLang == allKqLangs[i]) {
                 currKqLang = allKqLangs[(i + 1) % nLang];
                 Global::saveUserData(DATA_KQ_VOICE_LANG, currKqLang);
                 Keqing::getInstance()->setSoundSheetStartPath();
-                self->changeText(currKqLang.c_str());
+                self->changeText(("VA : " + currKqLang).c_str());
                 break;
             }
         }
@@ -40,24 +43,20 @@ void ConfigKeqing::RunImpl() {
     swapKqVAButton->changeColor(COLOR_BLUE);
     gWorld->addButton(swapKqVAButton);
 
-    auto *runColorKqButton = new Button(700, 400, 200, 100);
+    auto *runColorKqButton = new Button(100, 210, 200, 100);
     runColorKqButton->setOnClickRelease([](Button *self, int mouseX,
                                            int mouseY, void *fParams) {
         bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &ColorKeqing::Run);
     });
+    runColorKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
     tmpColor = {COLOR_WHITE_FULL};
-    runColorKqButton->addText("RUN COLOR KEQING", &tmpColor,
+    runColorKqButton->addText("Color Keqing", &tmpColor,
                               "res/fonts/JetBrainsMono-Regular.ttf", 16);
     runColorKqButton->changeColor(COLOR_GREEN);
     gWorld->addButton(runColorKqButton);
 
-    SDL_Event event;
-    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
-    runColorKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-
     while (gInfo.gRunning) {
-
         handleTime();
 
         while (SDL_PollEvent(&event)) {

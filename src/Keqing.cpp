@@ -309,6 +309,55 @@ void Keqing::initKeqing() {
     }
 }
 
+void Keqing::initKeqingForPlay(double kqX, double kqY) {
+    World *gWorld = Global::currentWorld;
+    Keqing *kq = Keqing::getInstance();
+    kq->moveTo(kqX, kqY);
+    kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
+    gWorld->setRenderKeqing(true);
+    gWorld->setTranslateEntity(kq);
+
+    const int hudSBCircleY = SCREEN_BASE_HEIGHT - 130;
+    const int hudSBCircleBGAlpha = 128;
+
+    const int hudSkillCircleX = 1016;
+    Particle *skillCircleBG =
+            Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE_BG, INT32_MAX,
+                                   HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
+    skillCircleBG->moveTo(hudSkillCircleX, hudSBCircleY);
+    skillCircleBG->setRGBAMod(COLOR_WHITE, hudSBCircleBGAlpha);
+
+    Particle *skillCircle =
+            Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE, INT32_MAX,
+                                   HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
+    skillCircle->moveToEntityCenter(skillCircleBG);
+    skillCircle->setRGBAMod(HUD_SKILL1_CIRCLE_RGBA);
+
+    Particle *burstCircleBG =
+            Particle::pushParticle(PARTICLE_HUD_BURST_CIRCLE_BG, INT32_MAX,
+                                   HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
+    double hudSCW;
+    skillCircle->getRealSize(&hudSCW, nullptr);
+    burstCircleBG->moveTo(hudSkillCircleX + hudSCW,
+                          hudSBCircleY);
+    burstCircleBG->setRGBAMod(COLOR_WHITE, hudSBCircleBGAlpha);
+
+    Particle *burstCircle =
+            Particle::pushParticle(PARTICLE_HUD_BURST_CIRCLE, INT32_MAX,
+                                   HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
+    burstCircle->moveToEntityCenter(burstCircleBG);
+
+    Particle *skillIcon1 =
+            Particle::pushParticle(PARTICLE_HUD_SKILL_ICON_1, INT32_MAX,
+                                   HUB_SB_ICON_M, HUB_SB_ICON_M);
+    skillIcon1->moveToEntityCenter(skillCircle);
+
+    Particle *burstIcon =
+            Particle::pushParticle(PARTICLE_HUD_BURST_ICON, INT32_MAX,
+                                   HUB_SB_ICON_M, HUB_SB_ICON_M);
+    burstIcon->moveToEntityCenter(burstCircle);
+}
+
 void Keqing::cleanUp() {
     delete instance;
     instance = nullptr;
