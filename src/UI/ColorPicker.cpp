@@ -8,8 +8,7 @@
 #include "Utils/Utils.hpp"
 
 ColorPicker::ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA)
-        : Button(x + 8, y + 8, renderW, renderH,
-                 8, 20) {
+        : Button(x, y, renderW, renderH, 0) {
     swapColorOnClick = false;
     pickerX = WorldEntity::getX();
     pickerY = WorldEntity::getY();
@@ -114,7 +113,7 @@ void ColorPicker::onClick(int mouseX, int mouseY) {
 void ColorPicker::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
     setPickerXY(mouseX, mouseY);
 
-    Button::onClickedMove(mouseX, mouseY, isMouseOnButton);
+    Button::onClickedMove(mouseX, mouseY, true);
 }
 
 int ColorPicker::getPickerSize() {

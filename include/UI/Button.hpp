@@ -7,6 +7,8 @@
 
 #include "BaseEntity/WorldEntity.hpp"
 
+#define BASE_OUTLINE 6
+
 class Text;
 
 typedef enum {
@@ -17,15 +19,17 @@ typedef enum {
 class Button : public WorldEntity {
 
 public:
-    Button(double x, double y, int renderW, int renderH);
+    Button(double x, double y, int renderW, int renderH, bool rmOutline = true);
 
-    Button(double x, double y, int renderW, int renderH,
-           int outlineThickness);
+    Button(double x, double y, int renderW, int renderH, int outlineThickness,
+           bool rmOutline = true);
 
-    Button(double x, double y, int renderW, int renderH,
-           int outlineThickness, int outlineDarkerCoeff);
+    Button(double x, double y, int renderW, int renderH, int outlineThickness,
+           int outlineDarkerCoeff, bool rmOutline = true);
 
     ~Button() override;
+
+    void translateOutline(double fromX, double fromY, int fromRW, int fromRH);
 
     void changeColor(Uint8 r, Uint8 g, Uint8 b);
 
@@ -77,6 +81,11 @@ public:
         setOnClickReleaseParams(fParams);
     }
 
+    inline void setOnDestroy(void (*fOnDestroy_)(Button *, void *), void *fParams) {
+        fOnDestroy = fOnDestroy_;
+        onDestroyParams = fParams;
+    }
+
     inline void setState(ButtonState buttonState_) { buttonState = buttonState_; }
 
     [[nodiscard]] inline Text *getButtonText() const { return buttonText; }
@@ -88,9 +97,12 @@ protected:
 
     void (*fOnClickRelease)(Button *, int, int, void *);
 
+    void (*fOnDestroy)(Button *, void  *);
+
     void *onClickParams;
     void *onClickedMoveParams;
     void *onClickReleaseParams;
+    void *onDestroyParams;
     bool swapColorOnClick;
     ButtonState buttonState;
     SDL_Color buttonColor;

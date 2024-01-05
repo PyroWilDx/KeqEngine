@@ -4,7 +4,7 @@
 
 #include "Main/HomeMenu.hpp"
 #include "Main/ConfigKeqing.hpp"
-#include "Main/Game1.hpp"
+#include "Main/DebugGame.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Events.hpp"
@@ -12,41 +12,60 @@
 #include "UI/VolumeSlider.hpp"
 #include "World/World.hpp"
 #include "Utils/Utils.hpp"
+#include "Main/GoalGameMenu.hpp"
 
 void HomeMenu::RunImpl() {
+    SDL_Event event;
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      "res/gfx/background/HomeMenu.png");
 
-    auto *runGame1Button = new Button(400, 0, 200, 100);
-    runGame1Button->setOnClickRelease([](Button *self, int mouseX,
+    auto *runDebugGameButton = new Button(10, 10, 200, 100);
+    runDebugGameButton->setOnClickRelease([](Button *self, int mouseX,
+                                             int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
+        Events::callMainFunc(pGRunning, &DebugGame::Run);
+    });
+    runDebugGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
+    SDL_Color tmpColor = {COLOR_WHITE_FULL};
+    runDebugGameButton->addText("Debug Game", &tmpColor,
+                                "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    runDebugGameButton->changeColor(COLOR_BLUE);
+    gWorld->addButton(runDebugGameButton);
+
+    auto *runGoalGameButton = new Button(10, 120, 200, 100);
+    runGoalGameButton->setOnClickRelease([](Button *self, int mouseX,
                                          int mouseY, void *fParams) {
         bool *pGRunning = (bool *) fParams;
-        Events::callMainFunc(pGRunning, &Game1::Run);
+        Events::callMainFunc(pGRunning, &GoalGameMenu::Run);
     });
-    SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    runGame1Button->addText("RUN GAME 1", &tmpColor,
+    runGoalGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
+    tmpColor = {COLOR_BLACK_FULL};
+    runGoalGameButton->addText("Goal Game", &tmpColor,
                             "res/fonts/JetBrainsMono-Regular.ttf", 16);
-    runGame1Button->changeColor(COLOR_RED);
-    gWorld->addButton(runGame1Button);
+    runGoalGameButton->changeColor(COLOR_WHITE);
+    gWorld->addButton(runGoalGameButton);
 
-    auto *runConfigKqButton = new Button(400, 200, 200, 100);
+    auto *runConfigKqButton = new Button(10, 230, 200, 100);
     runConfigKqButton->setOnClickRelease([](Button *self, int mouseX,
                                             int mouseY, void *fParams) {
         bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &ConfigKeqing::Run);
     });
+    runConfigKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
     tmpColor = {COLOR_WHITE_FULL};
-    runConfigKqButton->addText("RUN CONFIG KEQING", &tmpColor,
+    runConfigKqButton->addText("Config Keqing", &tmpColor,
                                "res/fonts/JetBrainsMono-Regular.ttf", 16);
     runConfigKqButton->changeColor(COLOR_RED);
     gWorld->addButton(runConfigKqButton);
 
-    int currVolume = std::stod(Global::userData[DATA_GAME_VOLUME]);
+    int currVolume = std::stoi(Global::userData[DATA_GAME_VOLUME]);
     tmpColor = {COLOR_GREEN_FULL};
-    auto *volumeSlider = new VolumeSlider(400, 600, 400,
+    auto *volumeSlider = new VolumeSlider(880, 10, 390,
                                           &tmpColor, currVolume);
     auto fSetVolume = [](Button *self, int mouseX,
                          int mouseY, void *fParams) {
@@ -63,13 +82,7 @@ void HomeMenu::RunImpl() {
 
 //    Sound::playAudioMusic("res/sfx/music/NimbleAsLightning.ogg");
 
-    SDL_Event event;
-    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
-    runGame1Button->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    runConfigKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-
     while (gInfo.gRunning) {
-
         handleTime();
 
         while (SDL_PollEvent(&event)) {

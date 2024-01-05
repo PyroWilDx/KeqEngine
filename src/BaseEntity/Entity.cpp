@@ -574,7 +574,7 @@ void Entity::renderSelf(SDL_Renderer *gRenderer) {
     if (src.x < 0 || src.y < 0) return;
     if (src.w <= 0 || src.h <= 0) return;
 
-    SDL_Rect dst = this->getRenderRect();
+    SDL_Rect dst = getRenderRect();
 
     if (facingEast && degRotation == 0) {
         SDL_RenderCopy(gRenderer, imgTexture,

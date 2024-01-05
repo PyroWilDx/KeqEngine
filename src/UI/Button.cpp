@@ -8,37 +8,55 @@
 #include "Utils/Utils.hpp"
 #include "Entity/Text.hpp"
 
-Button::Button(double x, double y, int renderW, int renderH)
+Button::Button(double x, double y, int renderW, int renderH, bool rmOutline)
         : WorldEntity(x, y, renderW, renderH, WORLD_BUTTON),
           buttonColor() {
     this->fOnClick = nullptr;
     this->fOnClickedMove = nullptr;
     this->fOnClickRelease = nullptr;
+    this->fOnDestroy = nullptr;
     this->onClickParams = nullptr;
     this->onClickedMoveParams = nullptr;
     this->onClickReleaseParams = nullptr;
+    this->onDestroyParams = nullptr;
     this->swapColorOnClick = true;
     this->buttonState = BUTTON_IDLE;
     this->buttonColor = {COLOR_WHITE_FULL};
     this->buttonText = nullptr;
-    this->outlineThickness = 6;
+    this->outlineThickness = BASE_OUTLINE;
     this->outlineDarkerCoeff = 40;
+    if (rmOutline) {
+        translateOutline(x, y, renderW, renderH);
+    }
 }
 
-Button::Button(double x, double y, int renderW, int renderH,
-               int outlineThickness)
-        : Button(x, y, renderW, renderH) {
+Button::Button(double x, double y, int renderW, int renderH, int outlineThickness,
+               bool rmOutline)
+        : Button(x, y, renderW, renderH, rmOutline) {
     this->outlineThickness = outlineThickness;
+    if (rmOutline) {
+        translateOutline(x, y, renderW, renderH);
+    }
 }
 
-Button::Button(double x, double y, int renderW, int renderH,
-               int outlineThickness, int outlineDarkerCoeff)
-        : Button(x, y, renderW, renderH, outlineThickness) {
+Button::Button(double x, double y, int renderW, int renderH, int outlineThickness,
+               int outlineDarkerCoeff,  bool rmOutline)
+        : Button(x, y, renderW, renderH, outlineThickness, rmOutline) {
     this->outlineDarkerCoeff = outlineDarkerCoeff;
 }
 
 Button::~Button() {
+    if (fOnDestroy != nullptr) {
+        fOnDestroy(this, onDestroyParams);
+    }
     delete buttonText;
+}
+
+void Button::translateOutline(double fromX, double fromY, int fromRW, int fromRH) {
+    x = fromX + outlineThickness;
+    y = fromY + outlineThickness;
+    setRenderW(fromRW - 2 * outlineThickness);
+    setRenderH(fromRH - 2 * outlineThickness);
 }
 
 void Button::changeColor(Uint8 r, Uint8 g, Uint8 b) {
@@ -63,6 +81,8 @@ void Button::changeText(const char *text) {
 
 void Button::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect dst = getRenderRect();
+//    dst.x += outlineThickness;
+//    dst.y += outlineThickness;
     SDL_Rect outlineRect = {dst.x - outlineThickness, dst.y - outlineThickness,
                             dst.w + outlineThickness * 2, dst.h + outlineThickness * 2};
     SDL_Color outlineRectColor = buttonColor;
@@ -76,7 +96,7 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
                                true);
 
     if (imgFrame.w != 0 && imgFrame.h != 0) {
-        Entity::renderSelf(gRenderer);
+        WorldEntity::renderSelf(gRenderer);
     } else {
         SDL_Color renderColor = buttonColor;
         if (buttonState == BUTTON_CLICKED) {

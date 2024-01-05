@@ -12,6 +12,9 @@
 #include "Utils/Utils.hpp"
 
 void ColorKeqing::RunImpl() {
+    SDL_Event event;
+    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
@@ -55,7 +58,7 @@ void ColorKeqing::RunImpl() {
         kq->kqLock(false);
     }, (void *) colorPicker);
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    setKqColorButton->addText("SET COLOR", &tmpColor,
+    setKqColorButton->addText("Set Color", &tmpColor,
                               "res/fonts/JetBrainsMono-Regular.ttf", 20);
     setKqColorButton->changeColor(COLOR_BLUE);
     gWorld->addButton(setKqColorButton);
@@ -70,9 +73,9 @@ void ColorKeqing::RunImpl() {
         colorPicker->fillPixels(KQ_BASE_COLOR);
     }, (void *) colorPicker);
     tmpColor = {COLOR_WHITE_FULL};
-    resetKqColorButton->addText("RESET TO BASE COLOR", &tmpColor,
+    resetKqColorButton->addText("Reset Color", &tmpColor,
                                 "res/fonts/JetBrainsMono-Regular.ttf", 20);
-    resetKqColorButton->changeColor(COLOR_BLUE);
+    resetKqColorButton->changeColor(COLOR_GRAY);
     gWorld->addButton(resetKqColorButton);
 
     Keqing *kq = Keqing::getInstance();
@@ -80,11 +83,7 @@ void ColorKeqing::RunImpl() {
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
     gWorld->setRenderKeqing(true);
 
-    SDL_Event event;
-    gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
-
     while (gInfo.gRunning) {
-
         handleTime();
 
         while (SDL_PollEvent(&event)) {
