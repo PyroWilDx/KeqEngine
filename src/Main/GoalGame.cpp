@@ -11,7 +11,9 @@
 #include "Keqing.hpp"
 #include "Entity/Particle.hpp"
 #include "Entity/Slime.hpp"
-#include "Entity/FPSText.hpp"
+#include "World/Background.hpp"
+#include "Entity/Timer.hpp"
+#include "Utils/SQLite3.hpp"
 
 int GoalGame::iLevel = 0;
 std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level1, &Level2};
@@ -22,18 +24,40 @@ void GoalGame::RunImpl() {
 
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    World *gWorld = lvlFuncs[iLevel]();
+    Block *goalBlock;
+    World *gWorld = lvlFuncs[iLevel](&goalBlock);
 
-    Keqing::initKeqingForPlay(0, 0);
+    Keqing *kq = Keqing::initKeqingForPlay(0, 0);
 
-    auto *slime = new Slime("Blue");
-    slime->setHitBox({1, 4, 14, 12});
-    slime->setRenderWHMultiplier(4., 4.);
-    slime->moveToDownLeft(400, 720 - 200);
-    gWorld->addMonster(slime);
+    auto *mob = new Slime("Blue");
+    mob->setHitBox({1, 4, 14, 12});
+    mob->setRenderWHMultiplier(4., 4.);
+    mob->moveToDownLeft(400, 720 - 200);
+    gWorld->addMonster(mob);
 
-    auto *gFPSText = new FPSText();
-    gWorld->addOtherEntity(gFPSText);
+    int bestTime = -1;
+    execSQL(("SELECT bestTime "
+             "FROM GoalGame "
+             "WHERE levelId=" + std::to_string(iLevel)).c_str(),
+            [](void *data, int argc, char **argv, char **azColName) -> int {
+                if (argc > 0) {
+                    int *bestTime = (int *) data;
+                    *bestTime = std::stoi(argv[0]);
+                }
+                return 0;
+            },
+            (void *) &bestTime);
+
+    char bestTimeStr[32];
+    if (bestTime >= 0) sprintf(bestTimeStr, "Best Time : %.2f", (double) bestTime * 0.001);
+    else sprintf(bestTimeStr, "Best Time : None");
+    Text *bestTimeText = new Text(bestTimeStr, 20, false);
+    bestTimeText->moveTo(6., 2.);
+    gWorld->addOtherEntity(bestTimeText);
+
+    SDL_Color timerColor = {COLOR_RED_FULL};
+    auto *timer = new Timer(6., 26., &timerColor, 30);
+    gWorld->addOtherEntity(timer);
 
     while (gInfo.gRunning) {
         handleTime();
@@ -51,6 +75,31 @@ void GoalGame::RunImpl() {
             else gInfo.runFrame = false;
         }
 
+        if (!timer->hasStarted() && !kq->isInAir()) {
+            timer->start();
+        }
+
+        if (goalBlock != nullptr && mob->hitBoxCollision(goalBlock)) {
+            timer->stop();
+            Particle *explosionParticle = Particle::pushParticle(PARTICLE_EXPLOSION, 10,
+                                                                 4.6, 4.6);
+            explosionParticle->moveToEntityCenter(goalBlock);
+            gWorld->removeBlock(&goalBlock);
+
+            int elapsedTime = timer->getElapsedTime();
+            if (bestTime < 0) {
+                execSQL(("INSERT OR IGNORE INTO GoalGame "
+                         "VALUES (" + std::to_string(iLevel) + ", " + std::to_string(elapsedTime) + ")").c_str(),
+                        nullptr, nullptr);
+            }
+            if (elapsedTime < bestTime) {
+                execSQL(("UPDATE GoalGame SET bestTime=" +
+                         std::to_string(elapsedTime) + " "
+                         "WHERE levelId=" + std::to_string(iLevel)).c_str(),
+                        nullptr, nullptr);
+            }
+        }
+
         // World
         gWorld->onGameFrame();
 
@@ -63,18 +112,24 @@ void GoalGame::RunImpl() {
     }
 }
 
-World *GoalGame::Level1() {
+World *GoalGame::Level1(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2000, 720,
                                      "res/gfx/background/GoalGame_1.png");
+    gWorld->getBackground()->setRGBAMod(100);
 
     gWorld->addBlock(BLOCK_DIRT,
                      0, 600, 2000, 160);
 
+    *goalBlock = gWorld->addBlock(BLOCK_TNT,
+                                  1800, 400, 64, 64);
+    (*goalBlock)->setHitBoxAuto();
+    (*goalBlock)->resizeToRenderSize();
+
     return gWorld;
 }
 
-World *GoalGame::Level2() {
+World *GoalGame::Level2(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      3000, 2000,
                                      "res/gfx/background/HomeMenu.png");

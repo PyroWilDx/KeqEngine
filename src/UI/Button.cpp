@@ -65,12 +65,10 @@ void Button::changeColor(Uint8 r, Uint8 g, Uint8 b) {
     buttonColor.b = b;
 }
 
-void Button::addText(const char *text, const SDL_Color *color,
-                     const char *fontPath, int fontSize) {
+void Button::addText(const char *text, const SDL_Color *color, int fontSize) {
     delete buttonText;
 
-    buttonText = new Text(text, color, fontPath,
-                          fontSize, false);
+    buttonText = new Text(text, color, fontSize, false);
     buttonText->moveToEntityCenter(this);
 }
 

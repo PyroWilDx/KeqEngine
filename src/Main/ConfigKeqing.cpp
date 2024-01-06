@@ -40,8 +40,8 @@ void ConfigKeqing::RunImpl() {
         }
     });
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    swapKqVAButton->addText(("VA : " + Global::userData[DATA_KQ_VOICE_LANG]).c_str(), &tmpColor,
-                            "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    swapKqVAButton->addText(("VA : " + Global::userData[DATA_KQ_VOICE_LANG]).c_str(),
+                            &tmpColor, 16);
     swapKqVAButton->changeColor(COLOR_BLUE);
     gWorld->addButton(swapKqVAButton);
 
@@ -53,8 +53,7 @@ void ConfigKeqing::RunImpl() {
     });
     runColorKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
     tmpColor = {COLOR_WHITE_FULL};
-    runColorKqButton->addText("Color Keqing", &tmpColor,
-                              "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    runColorKqButton->addText("Color Keqing", &tmpColor, 16);
     runColorKqButton->changeColor(COLOR_GREEN);
     gWorld->addButton(runColorKqButton);
 

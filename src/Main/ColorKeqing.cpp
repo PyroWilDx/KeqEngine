@@ -58,8 +58,7 @@ void ColorKeqing::RunImpl() {
         kq->kqLock(false);
     }, (void *) colorPicker);
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    setKqColorButton->addText("Set Color", &tmpColor,
-                              "res/fonts/JetBrainsMono-Regular.ttf", 20);
+    setKqColorButton->addText("Set Color", &tmpColor, 20);
     setKqColorButton->changeColor(COLOR_BLUE);
     gWorld->addButton(setKqColorButton);
 
@@ -73,8 +72,7 @@ void ColorKeqing::RunImpl() {
         colorPicker->fillPixels(KQ_BASE_COLOR);
     }, (void *) colorPicker);
     tmpColor = {COLOR_WHITE_FULL};
-    resetKqColorButton->addText("Reset Color", &tmpColor,
-                                "res/fonts/JetBrainsMono-Regular.ttf", 20);
+    resetKqColorButton->addText("Reset Color", &tmpColor, 20);
     resetKqColorButton->changeColor(COLOR_GRAY);
     gWorld->addButton(resetKqColorButton);
 

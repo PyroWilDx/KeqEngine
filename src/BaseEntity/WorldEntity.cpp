@@ -16,6 +16,15 @@ WorldEntity::WorldEntity(double x, double y, int renderW, int renderH, WorldEnti
     this->renderH = renderH;
 }
 
+void WorldEntity::setHitBoxAuto() {
+    hitBox = {0, 0, renderW, renderH};
+}
+
+void WorldEntity::resizeToRenderSize() {
+    imgFrame.w = getRenderW();
+    imgFrame.h = getRenderH();
+}
+
 void WorldEntity::getRealSize(double *pW, double *pH) {
     if (pW != nullptr) *pW = renderW;
     if (pH != nullptr) *pH = renderH;
@@ -31,4 +40,11 @@ bool WorldEntity::isPixelInSelfRect(double pixelX, double pixelY) {
             pixelX <= x + renderW &&
             pixelY >= y &&
             pixelY <= y + renderH);
+}
+
+bool WorldEntity::getCollisionArea(WorldEntity *worldEntity, SDL_Rect *result) {
+    SDL_Rect rect1 = {getX(), getY(), renderW, renderH};
+    SDL_Rect rect2 = {worldEntity->getX(), worldEntity->getY(),
+                      worldEntity->renderW, worldEntity->renderH};
+    return SDL_IntersectRect(&rect1, &rect2, result);
 }

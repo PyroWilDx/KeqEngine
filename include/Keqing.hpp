@@ -92,7 +92,7 @@ public:
 
     static void initKeqing();
 
-    static void initKeqingForPlay(double kqX, double kqY);
+    static Keqing *initKeqingForPlay(double kqX, double kqY);
 
     static inline Keqing *getInstance() { return instance; }
 

@@ -60,6 +60,10 @@ public:
 
     void updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntity);
 
+    void updatePixels(SDL_Rect *rect, WorldEntity *worldEntity);
+
+    void refreshPixelsOnRemove(WorldEntity *worldEntity);
+
     bool xyOutOfBounds(double x, double y);
 
     Pixel getPixel(double x, double y);
@@ -74,7 +78,9 @@ public:
 
     void addBlock(Block *block);
 
-    void addBlock(int blockCode, double x, double y, int renderW, int renderH);
+    Block *addBlock(int blockCode, double x, double y, int renderW, int renderH);
+
+    void removeBlock(Block **block);
 
     bool isPixelBlock(double x, double y);
 

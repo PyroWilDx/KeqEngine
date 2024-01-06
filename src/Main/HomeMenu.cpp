@@ -34,8 +34,7 @@ void HomeMenu::RunImpl() {
     });
     runDebugGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    runDebugGameButton->addText("Debug Game", &tmpColor,
-                                "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    runDebugGameButton->addText("Debug Game", &tmpColor, 16);
     runDebugGameButton->changeColor(COLOR_BLUE);
     gWorld->addButton(runDebugGameButton);
 
@@ -47,8 +46,7 @@ void HomeMenu::RunImpl() {
     });
     runGoalGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
     tmpColor = {COLOR_BLACK_FULL};
-    runGoalGameButton->addText("Goal Game", &tmpColor,
-                            "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    runGoalGameButton->addText("Goal Game", &tmpColor, 16);
     runGoalGameButton->changeColor(COLOR_WHITE);
     gWorld->addButton(runGoalGameButton);
 
@@ -60,8 +58,7 @@ void HomeMenu::RunImpl() {
     });
     runConfigKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
     tmpColor = {COLOR_WHITE_FULL};
-    runConfigKqButton->addText("Config Keqing", &tmpColor,
-                               "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    runConfigKqButton->addText("Config Keqing", &tmpColor, 16);
     runConfigKqButton->changeColor(COLOR_RED);
     gWorld->addButton(runConfigKqButton);
 

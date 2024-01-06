@@ -24,6 +24,11 @@ void Block::setBlockInfo() {
             imgFrame.h = 32;
             imgPath = "res/gfx/block/Dirt.png";
             break;
+        case BLOCK_TNT:
+            imgFrame.w = 32;
+            imgFrame.h = 32;
+            imgPath = "res/gfx/block/TNT.png";
+            break;
         default:
             break;
     }

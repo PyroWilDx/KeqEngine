@@ -18,8 +18,7 @@ Background::Background(int renderW, int renderH, int totalWidth, int totalHeight
     this->baseFrameW = imgFrame.w;
     this->baseFrameH = imgFrame.h;
 
-    this->imgFrame.w = getRenderW();
-    this->imgFrame.h = getRenderH();
+    resizeToRenderSize();
 }
 
 void Background::fitImgToScreen() {

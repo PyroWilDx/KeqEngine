@@ -17,8 +17,7 @@ VolumeSlider::VolumeSlider(double x, double y, int renderW,
     SDL_Color blackColor = {COLOR_BLACK_FULL};
     char volTxt[4];
     sprintf(volTxt, "%d\n", currVolume);
-    this->addText(volTxt, &blackColor,
-                  "res/fonts/JetBrainsMono-Regular.ttf", 16);
+    this->addText(volTxt, &blackColor, 16);
 
     this->filledColor = *filledColor;
     this->pickerX = getPickerXFromVolume(currVolume);
@@ -54,8 +53,8 @@ void VolumeSlider::onClickedMove(int mouseX, int mouseY, bool isMouseOnButton) {
 }
 
 void VolumeSlider::renderSelf(SDL_Renderer *gRenderer) {
-    char volTxt[4];
-    sprintf(volTxt, "%d", getCurrentVolume());
+    char volTxt[16];
+    sprintf(volTxt, "Volume : %d", getCurrentVolume());
     changeText(volTxt);
 
     Button::renderSelf(gRenderer);

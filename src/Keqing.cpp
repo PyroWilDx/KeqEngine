@@ -309,7 +309,7 @@ void Keqing::initKeqing() {
     }
 }
 
-void Keqing::initKeqingForPlay(double kqX, double kqY) {
+Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
     World *gWorld = Global::currentWorld;
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(kqX, kqY);
@@ -356,6 +356,8 @@ void Keqing::initKeqingForPlay(double kqX, double kqY) {
             Particle::pushParticle(PARTICLE_HUD_BURST_ICON, INT32_MAX,
                                    HUB_SB_ICON_M, HUB_SB_ICON_M);
     burstIcon->moveToEntityCenter(burstCircle);
+
+    return kq;
 }
 
 void Keqing::cleanUp() {

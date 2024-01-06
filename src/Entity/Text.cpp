@@ -7,13 +7,16 @@
 #include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
 
-Text::Text()
-        : Entity() {
-    this->currText = "";
-    this->currColor = {COLOR_WHITE_FULL};
-    this->currFontPath = "";
-    this->currFontSize = 0;
-    this->translateBackground = true;
+Text::Text(const char *text, int fontSize, bool translateBackground_) {
+    SDL_Color defaultColor = {COLOR_WHITE_FULL};
+    loadTextTexture(text, &defaultColor, DEFAULT_FONT_PATH,
+                    fontSize, translateBackground_);
+}
+
+Text::Text(const char *text, const SDL_Color *color,
+           int fontSize, bool translateBackground_) {
+    loadTextTexture(text, color, DEFAULT_FONT_PATH,
+                    fontSize, translateBackground_);
 }
 
 Text::Text(const char *text, const SDL_Color *color, const char *fontPath,
@@ -23,14 +26,25 @@ Text::Text(const char *text, const SDL_Color *color, const char *fontPath,
 }
 
 Text::Text(double x, double y, const char *text, const SDL_Color *color,
-           const char *fontPath, int fontSize, bool translateBackground_)
-        : Text() {
-    loadTextTextureMove(x, y, text, color,
-                        fontPath, fontSize, translateBackground_);
+     int fontSize, bool translateBackground_) {
+    loadTextTexture(text, color, DEFAULT_FONT_PATH,
+                    fontSize, translateBackground_);
+    this->x = x;
+    this->y = y;
+}
+
+Text::Text(double x, double y, const char *text, const SDL_Color *color,
+           const char *fontPath, int fontSize, bool translateBackground_) {
+    loadTextTexture(text, color, fontPath,
+                    fontSize, translateBackground_);
+    this->x = x;
+    this->y = y;
 }
 
 void Text::loadTextTexture(const char *text, const SDL_Color *color, const char *fontPath,
                            int fontSize, bool translateBackground_) {
+    clearTexture();
+
     TTF_Font *font = TTF_OpenFont(fontPath, fontSize);
     SDL_Surface *textSurface = TTF_RenderText_Solid(font, text, *color);
     imgTexture = SDL_CreateTextureFromSurface(WindowRenderer::getInstance()->getRenderer(), textSurface);
@@ -45,16 +59,6 @@ void Text::loadTextTexture(const char *text, const SDL_Color *color, const char 
     this->currFontPath = std::string(fontPath);
     this->currFontSize = fontSize;
     this->translateBackground = translateBackground_;
-}
-
-void Text::loadTextTextureMove(double x, double y, const char *text, const SDL_Color *color,
-                               const char *fontPath, int fontSize, bool translateBackground_) {
-    clearTexture();
-
-    loadTextTexture(text, color, fontPath, fontSize, translateBackground_);
-
-    this->x = x;
-    this->y = y;
 }
 
 void Text::changeText(const char *text) {

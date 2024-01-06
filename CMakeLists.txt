@@ -16,12 +16,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter")
 
 if (WIN32)
-    set(LIB_FLAGS -lmingw32 -LC:/C/SDL2/lib -lSDL2main -lSDL2.dll -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -lm)
+    set(LIB_FLAGS
+            -lmingw32
+            -LC:/C/SDL2/lib -lSDL2main -lSDL2.dll -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx
+            -lm)
 
     set(SDL2 "C:/C/SDL2")
-
     set(HEADER_DIRS ${HEADER_DIRS} ${SDL2}/include)
-
     set(PLATFORM_LIB_FLAGS ${LIB_FLAGS}
             ${SDL2}/lib/libSDL2main.a
             ${SDL2}/lib/libSDL2.dll.a
@@ -31,6 +32,11 @@ if (WIN32)
             ${SDL2}/lib/libSDL2_gfx.a)
 
     set(BOOST_ROOT "C:/C/boost")
+
+    set(SQLITE3 "C:/C/sqlite3")
+    set(HEADER_DIRS ${HEADER_DIRS} ${SQLITE3}/include)
+    set(PLATFORM_LIB_FLAGS ${PLATFORM_LIB_FLAGS}
+            ${SQLITE3}/lib/sqlite3.a)
 
     message(STATUS "Building for Windows")
 

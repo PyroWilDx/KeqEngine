@@ -19,11 +19,17 @@ class WorldEntity : public Entity {
 public:
     WorldEntity(double x, double y, int renderW, int renderH, WorldEntityType worldEntityType);
 
+    void setHitBoxAuto();
+
+    void resizeToRenderSize();
+
     void getRealSize(double *pW, double *pH) override;
 
     void addImage(const char *imgPath, int frameW = 0, int frameH = 0);
 
     bool isPixelInSelfRect(double pixelX, double pixelY);
+
+    bool getCollisionArea(WorldEntity *worldEntity, SDL_Rect *result);
 
     inline void setRenderW(int renderW_) { this->renderW = renderW_; }
 

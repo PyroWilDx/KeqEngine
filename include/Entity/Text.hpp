@@ -8,12 +8,20 @@
 #include <string>
 #include "BaseEntity/Entity.hpp"
 
+#define DEFAULT_FONT_PATH "res/fonts/JetBrainsMono-Regular.ttf"
+
 class Text : public Entity {
 
 public:
-    Text();
+    Text(const char *text, int fontSize, bool translateBackground_ = true);
+
+    Text(const char *text, const SDL_Color *color,
+               int fontSize, bool translateBackground_ = true);
 
     Text(const char *text, const SDL_Color *color, const char *fontPath,
+         int fontSize, bool translateBackground_ = true);
+
+    Text(double x, double y, const char *text, const SDL_Color *color,
          int fontSize, bool translateBackground_ = true);
 
     Text(double x, double y, const char *text, const SDL_Color *color,
@@ -23,9 +31,6 @@ public:
 
     void loadTextTexture(const char *text, const SDL_Color *color, const char *fontPath,
                          int fontSize, bool translateBackground_ = true);
-
-    void loadTextTextureMove(double x, double y, const char *text, const SDL_Color *color,
-                             const char *fontPath, int fontSize, bool translateBackground = true);
 
     void changeText(const char *text);
 

@@ -9,8 +9,9 @@
 #include "MainInterface.hpp"
 
 class World;
+class Block;
 
-typedef World *(*LvlFuncPointer)();
+typedef World *(*LvlFuncPointer)(Block **);
 
 class GoalGame : public MainInterface<GoalGame> {
 
@@ -19,9 +20,9 @@ public:
 
     static void RunImpl();
 
-    static World * Level1();
+    static World * Level1(Block **goalBlock);
 
-    static World * Level2();
+    static World * Level2(Block **goalBlock);
 
     static int iLevel;
 
