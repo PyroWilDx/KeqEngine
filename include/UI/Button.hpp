@@ -33,8 +33,7 @@ public:
 
     void changeColor(Uint8 r, Uint8 g, Uint8 b);
 
-    void addText(const char *text, const SDL_Color *color,
-                 const char *fontPath, int fontSize);
+    void addText(const char *text, const SDL_Color *color, int fontSize);
 
     void changeText(const char *text);
 

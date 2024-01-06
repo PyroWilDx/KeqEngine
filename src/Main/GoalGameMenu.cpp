@@ -51,8 +51,7 @@ void GoalGameMenu::RunImpl() {
         fParams->fParam0 = (void *) fParam0;
         fParams->fParam1 = (void *) &(gInfo.gRunning);
         lButton->setOnClickReleaseParams((void *) fParams);
-        lButton->addText(("Lvl " + std::to_string(i)).c_str(), &textColor,
-                              "res/fonts/JetBrainsMono-Regular.ttf", 16);
+        lButton->addText(("Lvl " + std::to_string(i)).c_str(), &textColor, 16);
         lButton->changeColor(COLOR_GREEN);
         gWorld->addButton(lButton);
     }

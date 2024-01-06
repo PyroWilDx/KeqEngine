@@ -8,6 +8,7 @@
 #include "World/World.hpp"
 
 std::unordered_map<std::string, std::string> Global::userData;
+sqlite3 *Global::db;
 
 int Global::windowWidth;
 int Global::windowHeight;
@@ -26,6 +27,7 @@ World *Global::currentWorld;
 
 void Global::initGlobal() {
     readUserData();
+    myAssert(sqlite3_open(DB_PATH, &db) == SQLITE_OK, "SQLITE3_Open FAILED.");
 
     windowWidth = SCREEN_BASE_WIDTH;
     windowHeight = SCREEN_BASE_HEIGHT;
@@ -47,6 +49,8 @@ void Global::initGlobal() {
 
 void Global::cleanUp() {
     deleteWorld();
+
+    sqlite3_close(db);
 }
 
 void Global::readUserData() {

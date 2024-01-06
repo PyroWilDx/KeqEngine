@@ -8,9 +8,11 @@
 #include <string>
 #include <unordered_map>
 #include <SDL2/SDL_mixer.h>
+#include <sqlite3.h>
 #include "Utils/Events.hpp"
 
 #define DATA_PATH "data/.dat"
+#define DB_PATH "data/Keqing.db"
 #define DATA_KQ_VOICE_LANG "KeqingVoiceLang"
 #define DATA_KQ_COLOR "KeqingColor"
 #define DATA_GAME_VOLUME "GameVolume"
@@ -37,6 +39,7 @@ public:
     static void deleteWorld();
 
     static std::unordered_map<std::string, std::string> userData;
+    static sqlite3 *db;
 
     static int windowWidth;
     static int windowHeight;
