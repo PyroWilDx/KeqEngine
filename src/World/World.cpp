@@ -351,7 +351,7 @@ void World::onGameFrame() {
     }, (void *) Keqing::getInstance());
 
     if (translateBackgroundEntity != nullptr) {
-        background->translate(translateBackgroundEntity);
+        background->lerpTranslate(translateBackgroundEntity);
     }
 }
 

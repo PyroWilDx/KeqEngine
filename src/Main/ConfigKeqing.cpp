@@ -10,6 +10,7 @@
 #include "Utils/Utils.hpp"
 #include "UI/Button.hpp"
 #include "Keqing.hpp"
+#include "World/Background.hpp"
 
 void ConfigKeqing::RunImpl() {
     SDL_Event event;
@@ -20,6 +21,7 @@ void ConfigKeqing::RunImpl() {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      "res/gfx/background/ConfigKeqing.png");
+    gWorld->getBackground()->fitImgToScreen();
 
     auto *swapKqVAButton = new Button(100, 100, 200, 100);
     swapKqVAButton->setOnClickRelease([](Button *self, int mouseX,
@@ -38,7 +40,7 @@ void ConfigKeqing::RunImpl() {
         }
     });
     SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    swapKqVAButton->addText(Global::userData[DATA_KQ_VOICE_LANG].c_str(), &tmpColor,
+    swapKqVAButton->addText(("VA : " + Global::userData[DATA_KQ_VOICE_LANG]).c_str(), &tmpColor,
                             "res/fonts/JetBrainsMono-Regular.ttf", 16);
     swapKqVAButton->changeColor(COLOR_BLUE);
     gWorld->addButton(swapKqVAButton);
