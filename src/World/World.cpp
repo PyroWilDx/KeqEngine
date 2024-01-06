@@ -108,6 +108,24 @@ void World::updatePixels(int x1, int y1, int x2, int y2, WorldEntity *worldEntit
     }
 }
 
+void World::updatePixels(SDL_Rect *rect, WorldEntity *worldEntity) {
+    updatePixels(rect->x, rect->y, rect->w, rect->h, worldEntity);
+}
+
+void World::refreshPixelsOnRemove(WorldEntity *worldEntity) {
+    for (int i = worldEntity->getX(); i < worldEntity->getX() + worldEntity->getRenderW(); i++) {
+        for (int j = worldEntity->getY(); j < worldEntity->getY() + worldEntity->getRenderW(); j++) {
+            pixels[i][j] = {WORLD_BACKGROUND, -1};
+        }
+    }
+    SDL_Rect intersectArea;
+    for (Block *block : blockVector) {
+        if (block->getCollisionArea(worldEntity, &intersectArea)) {
+            updatePixels(&intersectArea, worldEntity);
+        }
+    }
+}
+
 bool World::xyOutOfBounds(double x, double y) {
     return (x < 0 || x >= background->getTotalW() ||
             y < 0 || y >= background->getTotalH());
@@ -184,9 +202,17 @@ void World::addBlock(Block *block) {
     addWorldEntity(block);
 }
 
-void World::addBlock(int blockCode, double x, double y, int renderW, int renderH) {
+Block *World::addBlock(int blockCode, double x, double y, int renderW, int renderH) {
     auto *block = new Block(blockCode, x, y, renderW, renderH);
     addBlock(block);
+    return block;
+}
+
+void World::removeBlock(Block **block) {
+    removePointerElementFromVector(*block, &blockVector);
+    refreshPixelsOnRemove(*block);
+    delete *block;
+    *block = nullptr;
 }
 
 bool World::isPixelBlock(double x, double y) {
@@ -418,6 +444,9 @@ void World::renderSelf() {
 void World::renderDebugMode() {
     SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
 
+    for (Block *block : blockVector) {
+        block->renderHitBox(gRenderer);
+    }
     for (Monster *monster: monsterVector) {
         monster->renderHitBox(gRenderer);
     }

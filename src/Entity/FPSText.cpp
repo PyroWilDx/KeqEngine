@@ -7,13 +7,12 @@
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
 
-const char *FPSFontPath = "res/fonts/JetBrainsMono-Regular.ttf";
 const SDL_Color FPSTextColor = {COLOR_WHITE_FULL};
 const int FPSFontSize = 40;
 
 FPSText::FPSText()
         : Text(0, 0, "FPS : 0", &FPSTextColor,
-               FPSFontPath, FPSFontSize, false) {
+               FPSFontSize, false) {
     accumulatedFPSTime = 0;
     accumulatedFrames = 0;
 }
