@@ -53,6 +53,8 @@ void myAssert(bool expr, const char *msg = nullptr, const char *err = nullptr);
 
 double getAddAbs(double a, double b);
 
+double lerp(double a, double b, double t);
+
 void fillArrayRandomInt(int intArray[], int length,
                         int start, int end);
 

@@ -8,7 +8,9 @@
 #include <vector>
 #include "MainInterface.hpp"
 
-typedef void (*LvlFuncPointer)();
+class World;
+
+typedef World *(*LvlFuncPointer)();
 
 class GoalGame : public MainInterface<GoalGame> {
 
@@ -17,9 +19,9 @@ public:
 
     static void RunImpl();
 
-    static void Level1();
+    static World * Level1();
 
-    static void Level2();
+    static World * Level2();
 
     static int iLevel;
 

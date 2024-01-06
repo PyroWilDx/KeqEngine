@@ -22,23 +22,7 @@ void GoalGame::RunImpl() {
 
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
-    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     3000, 2000,
-                                     "res/gfx/background/DebugGame.png");
-
-    lvlFuncs[iLevel]();
-    gWorld->addBlock(BLOCK_DIRT,
-                     300, 720 - 200, 900, 500);
-    gWorld->addBlock(BLOCK_DIRT,
-                     1000, 720 - 20, 176, 20);
-    gWorld->addBlock(BLOCK_DIRT,
-                     1120, 720 - 120, 176, 40);
-    gWorld->addBlock(BLOCK_DIRT,
-                     1200, 720 - 180, 176, 40);
-    gWorld->addBlock(BLOCK_DIRT,
-                     1400, 720 - 180, 176, 32);
-    gWorld->addBlock(BLOCK_DIRT,
-                     0, 720 - 200, 3000, 500);
+    World *gWorld = lvlFuncs[iLevel]();
 
     Keqing::initKeqingForPlay(0, 0);
 
@@ -79,10 +63,23 @@ void GoalGame::RunImpl() {
     }
 }
 
-void GoalGame::Level1() {
+World *GoalGame::Level1() {
+    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                                     2000, 720,
+                                     "res/gfx/background/GoalGame_1.png");
 
+    gWorld->addBlock(BLOCK_DIRT,
+                     0, 600, 2000, 160);
+
+    return gWorld;
 }
 
-void GoalGame::Level2() {
+World *GoalGame::Level2() {
+    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                                     3000, 2000,
+                                     "res/gfx/background/HomeMenu.png");
 
+    // TODO
+
+    return gWorld;
 }
