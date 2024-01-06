@@ -10,6 +10,7 @@
 #include "UI/Button.hpp"
 #include "Main/MainInterface.hpp"
 #include "Main/GoalGame.hpp"
+#include "World/Background.hpp"
 
 void GoalGameMenu::RunImpl() {
     SDL_Event event;
@@ -19,7 +20,8 @@ void GoalGameMenu::RunImpl() {
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     "res/gfx/background/HomeMenu.png");
+                                     "res/gfx/background/GoalGameMenu.png");
+    gWorld->getBackground()->fitImgToScreen();
 
     SDL_Color textColor = {COLOR_WHITE_FULL};
     const int nLevel = (int) GoalGame::lvlFuncs.size();

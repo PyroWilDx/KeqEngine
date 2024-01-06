@@ -25,6 +25,10 @@ double getAddAbs(double a, double b) {
     return std::abs(a) + std::abs(b);
 }
 
+double lerp(double a, double b, double t) {
+    return a + t * (b - a);
+}
+
 void fillArrayRandomInt(int intArray[], int length,
                         int start, int end) {
     for (int i = 0; i < length; i++) {

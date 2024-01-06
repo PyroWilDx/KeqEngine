@@ -13,6 +13,7 @@
 #include "World/World.hpp"
 #include "Utils/Utils.hpp"
 #include "Main/GoalGameMenu.hpp"
+#include "World/Background.hpp"
 
 void HomeMenu::RunImpl() {
     SDL_Event event;
@@ -23,6 +24,7 @@ void HomeMenu::RunImpl() {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      "res/gfx/background/HomeMenu.png");
+    gWorld->getBackground()->fitImgToScreen();
 
     auto *runDebugGameButton = new Button(10, 10, 200, 100);
     runDebugGameButton->setOnClickRelease([](Button *self, int mouseX,
