@@ -80,6 +80,8 @@ public:
 
     Block *addBlock(int blockCode, double x, double y, int renderW, int renderH);
 
+    Block *addBlock(int blockCode, double x, double y, int renderW);
+
     void removeBlock(Block **block);
 
     bool isPixelBlock(double x, double y);
