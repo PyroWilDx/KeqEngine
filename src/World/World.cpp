@@ -208,6 +208,10 @@ Block *World::addBlock(int blockCode, double x, double y, int renderW, int rende
     return block;
 }
 
+Block *World::addBlock(int blockCode, double x, double y, int renderW) {
+    return addBlock(blockCode, x, y, renderW, background->getTotalH() - (int) y);
+}
+
 void World::removeBlock(Block **block) {
     removePointerElementFromVector(*block, &blockVector);
     refreshPixelsOnRemove(*block);

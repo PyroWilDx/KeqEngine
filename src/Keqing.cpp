@@ -14,6 +14,7 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
 #include "StructForEntity/Attack.hpp"
+#include "World/Background.hpp"
 
 Keqing *Keqing::instance = nullptr;
 
@@ -313,6 +314,7 @@ Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
     World *gWorld = Global::currentWorld;
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(kqX, kqY);
+    gWorld->getBackground()->hardTranslate(kq);
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
     gWorld->setRenderKeqing(true);
     gWorld->setTranslateEntity(kq);

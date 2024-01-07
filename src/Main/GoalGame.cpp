@@ -26,13 +26,15 @@ void GoalGame::RunImpl() {
 
     Block *goalBlock;
     World *gWorld = lvlFuncs[iLevel](&goalBlock);
+    goalBlock->setHitBoxAuto();
+    goalBlock->resizeToRenderSize();
 
     Keqing *kq = Keqing::initKeqingForPlay(0, 0);
 
     auto *mob = new Slime("Blue");
     mob->setHitBox({1, 4, 14, 12});
     mob->setRenderWHMultiplier(4., 4.);
-    mob->moveToDownLeft(400, 720 - 200);
+    mob->moveTo(200, 0);
     gWorld->addMonster(mob);
 
     int bestTime = -1;
@@ -95,7 +97,7 @@ void GoalGame::RunImpl() {
             if (elapsedTime < bestTime) {
                 execSQL(("UPDATE GoalGame SET bestTime=" +
                          std::to_string(elapsedTime) + " "
-                         "WHERE levelId=" + std::to_string(iLevel)).c_str(),
+                                                       "WHERE levelId=" + std::to_string(iLevel)).c_str(),
                         nullptr, nullptr);
             }
         }
@@ -119,22 +121,41 @@ World *GoalGame::Level1(Block **goalBlock) {
     gWorld->getBackground()->setRGBAMod(100);
 
     gWorld->addBlock(BLOCK_DIRT,
-                     0, 600, 2000, 160);
+                     0, 600, 2000, 120);
 
     *goalBlock = gWorld->addBlock(BLOCK_TNT,
                                   1800, 400, 64, 64);
-    (*goalBlock)->setHitBoxAuto();
-    (*goalBlock)->resizeToRenderSize();
 
     return gWorld;
 }
 
 World *GoalGame::Level2(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     3000, 2000,
-                                     "res/gfx/background/HomeMenu.png");
+                                     2964, 1300,
+                                     "res/gfx/background/GoalGame_2.png");
+    gWorld->getBackground()->setRGBAMod(100);
 
-    // TODO
+    gWorld->addBlock(BLOCK_DIRT,
+                     0, 900, 600);
+    gWorld->addBlock(BLOCK_DIRT,
+                     600, 700, 300);
+    gWorld->addBlock(BLOCK_DIRT,
+                     900, 1100, 400);
+    gWorld->addBlock(BLOCK_DIRT,
+                     1300, 900, 400);
+    gWorld->addBlock(BLOCK_DIRT,
+                     1700, 700, 400);
+    gWorld->addBlock(BLOCK_DIRT,
+                     2100, 520, 200);
+    gWorld->addBlock(BLOCK_DIRT,
+                     2300, 400, 300);
+    gWorld->addBlock(BLOCK_DIRT,
+                     2600, 600, 300);
+    gWorld->addBlock(BLOCK_DIRT,
+                     2900, 800, 64);
+
+    *goalBlock = gWorld->addBlock(BLOCK_TNT,
+                                  2900, 736, 64, 64);
 
     return gWorld;
 }
