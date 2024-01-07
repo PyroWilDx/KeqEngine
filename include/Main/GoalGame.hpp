@@ -20,9 +20,9 @@ public:
 
     static void RunImpl();
 
-    static World * Level1(Block **goalBlock);
+    static World * Level0(Block **goalBlock);
 
-    static World * Level2(Block **goalBlock);
+    static World * Level1(Block **goalBlock);
 
     static int iLevel;
 
