@@ -1,2 +1,4 @@
-sqlite3
-Keqing.db
+*
+!.gitignore
+!.dat
+!init.sql

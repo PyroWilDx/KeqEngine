@@ -1,3 +1,5 @@
+-- sqlite3\sqlite3.exe Keqing.db < init.sql
+
 DROP TABLE GoalGame;
 
 CREATE TABLE GoalGame (
