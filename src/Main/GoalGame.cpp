@@ -16,7 +16,7 @@
 #include "Utils/SQLite3.hpp"
 
 int GoalGame::iLevel = 0;
-std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level1, &Level2};
+std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1};
 
 void GoalGame::RunImpl() {
     SDL_Event event;
@@ -114,7 +114,7 @@ void GoalGame::RunImpl() {
     }
 }
 
-World *GoalGame::Level1(Block **goalBlock) {
+World *GoalGame::Level0(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2000, 720,
                                      "res/gfx/background/GoalGame_1.png");
@@ -129,7 +129,7 @@ World *GoalGame::Level1(Block **goalBlock) {
     return gWorld;
 }
 
-World *GoalGame::Level2(Block **goalBlock) {
+World *GoalGame::Level1(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2964, 1300,
                                      "res/gfx/background/GoalGame_2.png");
