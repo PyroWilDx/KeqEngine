@@ -21,7 +21,7 @@ public:
 
     void setHitBoxAuto();
 
-    void resizeToRenderSize();
+    virtual void resizeToRenderSize();
 
     void getRealSize(double *pW, double *pH) override;
 
