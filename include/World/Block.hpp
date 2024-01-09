@@ -20,6 +20,8 @@ class Block : public WorldEntity {
 public:
     Block(int blockCode, double x, double y, int renderW, int renderH);
 
+    void resizeToRenderSize() override;
+
     void renderSelf(SDL_Renderer *gRenderer) override;
 
     [[nodiscard]] inline int getCode() const { return blockCode; }
@@ -28,6 +30,7 @@ private:
     void setBlockInfo();
 
     int blockCode;
+    bool matchRenderSize;
 
 };
 

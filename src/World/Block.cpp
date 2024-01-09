@@ -8,6 +8,7 @@
 Block::Block(int blockCode, double x, double y, int renderW, int renderH)
         : WorldEntity(x, y, renderW, renderH, WORLD_BLOCK) {
     this->blockCode = blockCode;
+    this->matchRenderSize = false;
     setBlockInfo();
 }
 
@@ -35,6 +36,10 @@ void Block::setBlockInfo() {
     imgTexture = WindowRenderer::getInstance()->loadTexture(imgPath);
 }
 
+void Block::resizeToRenderSize() {
+    matchRenderSize = true;
+}
+
 void Block::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect src = this->getFrame();
 
@@ -42,7 +47,18 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
     if (src.w <= 0 || src.h <= 0) return;
 
     SDL_Rect dst = this->getRenderRect();
-    SDL_Rect blockDst = {dst.x, dst.y, imgFrame.w, imgFrame.h};
+    SDL_Rect blockDst;
+    blockDst.x = dst.x;
+    blockDst.y = dst.y;
+    if (!matchRenderSize) {
+        blockDst.w = imgFrame.w;
+        blockDst.h = imgFrame.h;
+    } else {
+        blockDst.w = dst.w;
+        blockDst.h = dst.h;
+        dst.w = src.w;
+        dst.h = src.h;
+    }
 
     SDL_RendererFlip renderFlip = SDL_FLIP_NONE;
     double renderRotation = this->getRotation();
@@ -65,6 +81,8 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
         blockDst.y = baseY;
         blockDst.x += blockDst.w;
     }
+
+    if (matchRenderSize) return;
 
     double xLeftover = xCoeff - (int) xCoeff;
     double yLeftover = yCoeff - (int) yCoeff;
