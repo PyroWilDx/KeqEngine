@@ -232,7 +232,7 @@ void Particle::initParticle() {
             ATK_SMALL_PARTICLE_COUNT * particleMaxActives[PARTICLE_DMG_ELECTRO_0];
 
     baseParticle->initSprite(PARTICLE_EXPLOSION, "res/gfx/particle/Explosion.png",
-                             32, 32, 48);
+                             64, 64, 48);
     particleMaxActives[PARTICLE_EXPLOSION] = 1;
 
     baseParticle->initSprite(PARTICLE_HUD_START, nullptr,
