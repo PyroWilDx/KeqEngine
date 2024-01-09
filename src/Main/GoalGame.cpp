@@ -13,6 +13,7 @@
 #include "Entity/Slime.hpp"
 #include "World/Background.hpp"
 #include "Entity/Timer.hpp"
+#include "Utils/Sound.hpp"
 #include "Utils/SQLite3.hpp"
 
 int GoalGame::iLevel = 0;
@@ -84,8 +85,10 @@ void GoalGame::RunImpl() {
         if (goalBlock != nullptr && mob->hitBoxCollision(goalBlock)) {
             timer->stop();
             Particle *explosionParticle = Particle::pushParticle(PARTICLE_EXPLOSION, 10,
-                                                                 4.6, 4.6);
+                                                                 3.6, 3.6);
             explosionParticle->moveToEntityCenter(goalBlock);
+            Sound::playAudioChunk("res/sfx/particle/TNTExplosion.ogg");
+
             gWorld->removeBlock(&goalBlock);
 
             int elapsedTime = timer->getElapsedTime();
