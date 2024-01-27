@@ -13,6 +13,9 @@ Block::Block(int blockCode, double x, double y, int renderW, int renderH)
 }
 
 void Block::setBlockInfo() {
+    imgFrame.w = 32;
+    imgFrame.h = 32;
+
     const char *imgPath;
     switch (blockCode) {
         case BLOCK_WALL_INVISIBLE:
@@ -21,18 +24,24 @@ void Block::setBlockInfo() {
             imgTexture = nullptr;
             return;
         case BLOCK_DIRT:
-            imgFrame.w = 32;
-            imgFrame.h = 32;
             imgPath = "res/gfx/block/Dirt.png";
             break;
+        case BLOCK_GRASS:
+            imgPath = "res/gfx/block/Grass.png";
+            break;
+        case BLOCK_SNOW:
+            imgPath = "res/gfx/block/Snow.png";
+            break;
+        case BLOCK_QUARTZ:
+            imgPath = "res/gfx/block/Quartz.png";
+            break;
         case BLOCK_TNT:
-            imgFrame.w = 32;
-            imgFrame.h = 32;
             imgPath = "res/gfx/block/TNT.png";
             break;
         default:
             break;
     }
+
     imgTexture = WindowRenderer::getInstance()->loadTexture(imgPath);
 }
 

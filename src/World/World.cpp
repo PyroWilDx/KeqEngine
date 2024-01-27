@@ -32,6 +32,10 @@ World::World(int screenW, int screenH,
     this->kqAtkLL = nullptr;
     this->monsterAtkLL = nullptr;
 
+    this->colorFilterSpeed = 0.16;
+
+    this->displayMenu = false;
+
     this->pixels = new Pixel *[backgroundTotalW];
     for (int i = 0; i < background->getTotalW(); i++) {
         (this->pixels)[i] = new Pixel[backgroundTotalH];
@@ -119,7 +123,7 @@ void World::refreshPixelsOnRemove(WorldEntity *worldEntity) {
         }
     }
     SDL_Rect intersectArea;
-    for (Block *block : blockVector) {
+    for (Block *block: blockVector) {
         if (block->getCollisionArea(worldEntity, &intersectArea)) {
             updatePixels(&intersectArea, worldEntity);
         }
@@ -210,6 +214,15 @@ Block *World::addBlock(int blockCode, double x, double y, int renderW, int rende
 
 Block *World::addBlock(int blockCode, double x, double y, int renderW) {
     return addBlock(blockCode, x, y, renderW, background->getTotalH() - (int) y);
+}
+
+void World::addCoveredBlock(int blockCode, int coverBlockCode, double x, double y,
+                            int renderW) {
+    auto *block = new Block(blockCode, x, y + 32.,
+                            renderW, background->getTotalH() - ((int) y) - 32);
+    auto *coverBlock = new Block(coverBlockCode, x, y, renderW, 32);
+    addBlock(block);
+    addBlock(coverBlock);
 }
 
 void World::removeBlock(Block **block) {
@@ -316,10 +329,13 @@ Attack *World::addMonsterAtk(LivingEntity *atkIssuer, Entity *followEntity,
     return atk;
 }
 
-void World::enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+void World::enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+                              double speed) {
     if (colorFilter.filterActivated) {
         SDL_Log("Color filter has been overwritten, is it wanted ?");
     }
+
+    colorFilterSpeed = speed;
 
     clearAndShrinkVector(&ignoreFilterEntityVector);
 
@@ -390,8 +406,6 @@ void World::onGameFrame() {
 }
 
 void World::renderFilter() {
-    const double colorFilterSpeed = 0.16;
-
     double targetAlpha = colorFilter.targetAlpha;
 
     if (colorFilter.filterActivated && colorFilter.currAlpha < targetAlpha) {
@@ -459,7 +473,7 @@ void World::renderSelf() {
 void World::renderDebugMode() {
     SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
 
-    for (Block *block : blockVector) {
+    for (Block *block: blockVector) {
         block->renderHitBox(gRenderer);
     }
     for (Monster *monster: monsterVector) {

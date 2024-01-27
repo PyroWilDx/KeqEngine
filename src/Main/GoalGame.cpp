@@ -86,6 +86,9 @@ void GoalGame::RunImpl() {
 
         if (goalBlock != nullptr && mob->hitBoxCollision(goalBlock)) {
             timer->stop();
+
+            kq->kqLock(true, true);
+
             Particle *explosionParticle = Particle::pushParticle(PARTICLE_EXPLOSION, 10,
                                                                  3.6, 3.6);
             explosionParticle->moveToEntityCenter(goalBlock);
@@ -110,14 +113,9 @@ void GoalGame::RunImpl() {
             }
         }
 
-        // World
         gWorld->onGameFrame();
-
-        // Window Rendering
         gWindow->clear();
-
         gWorld->renderSelf();
-
         gWindow->display();
     }
 }
@@ -125,11 +123,11 @@ void GoalGame::RunImpl() {
 World *GoalGame::Level0(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2000, 720,
-                                     "res/gfx/background/GoalGame_1.png");
+                                     "res/gfx/background/GoalGame_0.png");
     gWorld->getBackground()->setRGBAMod(100);
 
-    gWorld->addBlock(BLOCK_DIRT,
-                     0, 600, 2000, 120);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_GRASS,
+                            0, 600, 2000);
 
     *goalBlock = gWorld->addBlock(BLOCK_TNT,
                                   1800, 400, 64, 64);
@@ -140,6 +138,37 @@ World *GoalGame::Level0(Block **goalBlock) {
 World *GoalGame::Level1(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2964, 1300,
+                                     "res/gfx/background/GoalGame_1.png");
+    gWorld->getBackground()->setRGBAMod(100);
+
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            0, 900, 600);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            600, 700, 300);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            900, 1100, 400);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            1300, 900, 400);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            1700, 700, 400);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            2100, 520, 200);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            2300, 400, 300);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            2600, 600, 300);
+    gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
+                            2900, 800, 64);
+
+    *goalBlock = gWorld->addBlock(BLOCK_TNT,
+                                  2900, 736, 64, 64);
+
+    return gWorld;
+}
+
+World *GoalGame::Level2(Block **goalBlock) {
+    World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
+                                     3840, 2160,
                                      "res/gfx/background/GoalGame_2.png");
     gWorld->getBackground()->setRGBAMod(100);
 
@@ -171,6 +200,8 @@ World *GoalGame::Level1(Block **goalBlock) {
 void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     gWorld->setDisplayMenu(true);
 
+    gWorld->enableColorFilter(128, 128, 128, 128, 0.6);
+
     SDL_Color tmpColor;
 
     char winTimeStr[16];
@@ -184,7 +215,7 @@ void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     auto *retryButton = new Button(0, 0, 200, 100);
     retryButton->moveToEntityBelow(winTimeText, 20);
     retryButton->setOnClickRelease([](Button *self, int mouseX,
-                                            int mouseY, void *fParams) {
+                                      int mouseY, void *fParams) {
         bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &GoalGame::Run);
     });
@@ -197,7 +228,7 @@ void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     auto *homeButton = new Button(0, 0, 200, 100);
     homeButton->moveToEntityBelow(retryButton, 20);
     homeButton->setOnClickRelease([](Button *self, int mouseX,
-                                            int mouseY, void *fParams) {
+                                     int mouseY, void *fParams) {
         bool *pGRunning = (bool *) fParams;
         Events::callMainFunc(pGRunning, &HomeMenu::Run);
     });

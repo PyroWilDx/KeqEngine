@@ -11,7 +11,7 @@ const SDL_Color FPSTextColor = {COLOR_WHITE_FULL};
 const int FPSFontSize = 40;
 
 FPSText::FPSText()
-        : Text(0, 0, "FPS : 0", &FPSTextColor,
+        : Text(10, 0, "FPS : 0", &FPSTextColor,
                FPSFontSize, false) {
     accumulatedFPSTime = 0;
     accumulatedFrames = 0;

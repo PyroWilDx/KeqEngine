@@ -222,7 +222,7 @@ public:
 
     void updateAction() override;
 
-    void kqLock(bool shouldLock);
+    void kqLock(bool shouldLock, bool shouldFallWhenLocked = false);
 
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }
 
@@ -263,6 +263,7 @@ private:
     int airPlungeLoopSoundChannel;
     std::vector<LivingEntity *> airPlungeHitEntityVector;
     bool isLocked;
+    bool fallWhenLocked;
 
 };
 
