@@ -9,12 +9,6 @@
 #include <unordered_map>
 #include <SDL2/SDL.h>
 #include "Utils/LinkedList.hpp"
-//#include "Background.hpp"
-//#include "UI/Button.hpp"
-//#include "Block.hpp"
-//#include "BaseEntity/Monster.hpp"
-//#include "StructForEntity/Attack.hpp"
-//#include "Keqing.hpp"
 
 #define GET_NEAREST_WALL_RETURN_NONE (-42)
 
@@ -94,6 +88,8 @@ public:
 
     void addOtherEntity(Entity *otherEntity);
 
+    void addMenuEntity(Entity *menuEntity);
+
     void addKQAtk(Attack *atk);
 
     Attack *addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
@@ -132,6 +128,10 @@ public:
 
     inline void setRenderKeqing(bool renderKeqing_) { renderKeqing = renderKeqing_; }
 
+    inline void setDisplayMenu(bool displayMenu_) {
+        displayMenu = displayMenu_;
+    }
+
     inline void setOnQuit(void (*onQuit_)()) { onQuit = onQuit_; }
 
     inline Background *getBackground() { return background; }
@@ -151,6 +151,8 @@ private:
     LinkedList *monsterAtkLL;
     Filter colorFilter;
     std::vector<Entity *> ignoreFilterEntityVector;
+    bool displayMenu;
+    std::vector<Entity *> menuEntityVector;
     Pixel **pixels;
     int stopSoundOnQuit;
 

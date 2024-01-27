@@ -431,6 +431,21 @@ void Entity::moveAdd(double addX, double addY) {
     y += addY;
 }
 
+void Entity::centerHorizontal(double startX, double maxX, double newY) {
+    int halfW = getW() / 2;
+    x = startX + (maxX - startX) / 2 - halfW;
+    y = newY;
+}
+
+void Entity::moveToScreenCenterHorizontal(double newY) {
+    centerHorizontal(0, SCREEN_BASE_WIDTH, newY);
+}
+
+void Entity::moveToEntityBelow(Entity *entity, double yPadding) {
+    centerHorizontal(entity->x, entity->x + entity->getW(),
+                     entity->y + entity->getH() + yPadding);
+}
+
 void Entity::getRealSize(double *pW, double *pH) {
     if (pW != nullptr)
         *pW = (double) imgFrame.w * renderWMultiplier;
