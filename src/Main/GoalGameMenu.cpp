@@ -65,11 +65,8 @@ void GoalGameMenu::RunImpl() {
         if (!gInfo.gRunning) break;
 
         gWorld->onGameFrame();
-
         gWindow->clear();
-
         gWorld->renderSelf();
-
         gWindow->display();
     }
 }

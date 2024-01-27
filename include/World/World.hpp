@@ -76,6 +76,9 @@ public:
 
     Block *addBlock(int blockCode, double x, double y, int renderW);
 
+    void addCoveredBlock(int blockCode, int coverBlockCode, double x, double y,
+                           int renderW);
+
     void removeBlock(Block **block);
 
     bool isPixelBlock(double x, double y);
@@ -108,7 +111,8 @@ public:
                           double xyArray[][2], int arrayLength,
                           int damage, double kbXVelocity, double kbYVelocity);
 
-    void enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+    void enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
+                           double speed = 0.16);
 
     void disableColorFilter();
 
@@ -150,6 +154,7 @@ private:
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;
     Filter colorFilter;
+    double colorFilterSpeed;
     std::vector<Entity *> ignoreFilterEntityVector;
     bool displayMenu;
     std::vector<Entity *> menuEntityVector;

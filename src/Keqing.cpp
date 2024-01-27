@@ -2672,6 +2672,12 @@ bool Keqing::onGameFrame() {
             moveY();
 
             airAnimate();
+        } else {
+            if (fallWhenLocked) {
+                fallGravity();
+                moveX();
+                moveY();
+            }
         }
     }
 
@@ -2946,8 +2952,9 @@ void Keqing::updateAction() {
     if (isSpriteAnimated(KQ_AIR_PLUNGE)) this->airPlunge();
 }
 
-void Keqing::kqLock(bool shouldLock) {
+void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
     isLocked = shouldLock;
+    fallWhenLocked = shouldFallWhenLocked;
     if (shouldLock) {
         for (int i = KQ_IDLE + 1; i < KQ_ENUM_N; i++) {
             setSpriteAnimated(false, i);
