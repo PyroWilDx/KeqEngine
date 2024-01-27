@@ -24,6 +24,8 @@ public:
 
     static World * Level1(Block **goalBlock);
 
+    static void addWinMenu(World *gWorld, bool *gRunning, int winTime);
+
     static int iLevel;
 
     static std::vector<LvlFuncPointer> lvlFuncs;

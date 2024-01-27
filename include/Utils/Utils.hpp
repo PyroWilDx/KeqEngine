@@ -44,6 +44,9 @@
 #define COLOR_CYAN 0, 255, 255
 #define COLOR_CYAN_FULL COLOR_FULL(COLOR_CYAN)
 
+#define COLOR_KQ 164, 152, 180
+#define COLOR_KQ_FULL COLOR_FULL(COLOR_KQ)
+
 typedef struct f2Params {
     void *fParam0;
     void *fParam1;

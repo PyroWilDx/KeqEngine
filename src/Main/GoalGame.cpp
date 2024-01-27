@@ -15,6 +15,8 @@
 #include "Entity/Timer.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/SQLite3.hpp"
+#include "UI/Button.hpp"
+#include "Main/HomeMenu.hpp"
 
 int GoalGame::iLevel = 0;
 std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1};
@@ -92,6 +94,9 @@ void GoalGame::RunImpl() {
             gWorld->removeBlock(&goalBlock);
 
             int elapsedTime = timer->getElapsedTime();
+
+            addWinMenu(gWorld, &gInfo.gRunning, elapsedTime);
+
             if (bestTime < 0) {
                 execSQL(("INSERT OR IGNORE INTO GoalGame "
                          "VALUES (" + std::to_string(iLevel) + ", " + std::to_string(elapsedTime) + ")").c_str(),
@@ -161,4 +166,44 @@ World *GoalGame::Level1(Block **goalBlock) {
                                   2900, 736, 64, 64);
 
     return gWorld;
+}
+
+void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
+    gWorld->setDisplayMenu(true);
+
+    SDL_Color tmpColor;
+
+    char winTimeStr[16];
+    sprintf(winTimeStr, "Time : %.2f", (double) winTime * 0.001);
+    tmpColor = {COLOR_RED_FULL};
+    auto *winTimeText = new Text(winTimeStr, &tmpColor,
+                                 30, false);
+    winTimeText->moveToScreenCenterHorizontal(200);
+    gWorld->addMenuEntity(winTimeText);
+
+    auto *retryButton = new Button(0, 0, 200, 100);
+    retryButton->moveToEntityBelow(winTimeText, 20);
+    retryButton->setOnClickRelease([](Button *self, int mouseX,
+                                            int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
+        Events::callMainFunc(pGRunning, &GoalGame::Run);
+    });
+    retryButton->setOnClickReleaseParams((void *) gRunning);
+    tmpColor = {COLOR_WHITE_FULL};
+    retryButton->addText("Retry", &tmpColor, 22);
+    retryButton->changeColor(COLOR_KQ);
+    gWorld->addButton(retryButton);
+
+    auto *homeButton = new Button(0, 0, 200, 100);
+    homeButton->moveToEntityBelow(retryButton, 20);
+    homeButton->setOnClickRelease([](Button *self, int mouseX,
+                                            int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
+        Events::callMainFunc(pGRunning, &HomeMenu::Run);
+    });
+    homeButton->setOnClickReleaseParams((void *) gRunning);
+    tmpColor = {COLOR_WHITE_FULL};
+    homeButton->addText("Exit", &tmpColor, 22);
+    homeButton->changeColor(COLOR_KQ);
+    gWorld->addButton(homeButton);
 }

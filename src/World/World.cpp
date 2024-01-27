@@ -268,6 +268,10 @@ void World::addOtherEntity(Entity *otherEntity) {
     otherEntityVecotr.push_back(otherEntity);
 }
 
+void World::addMenuEntity(Entity *menuEntity) {
+    menuEntityVector.push_back(menuEntity);
+}
+
 void World::addKQAtk(Attack *atk) {
     kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
 }
@@ -425,9 +429,6 @@ void World::renderSelf() {
     for (Block *block: blockVector) {
         gWindow->renderEntity(block);
     }
-    for (std::pair<const int, Button *> &it: buttonHashMap) {
-        gWindow->renderEntity(it.second);
-    }
     for (Monster *monster: monsterVector) {
         gWindow->renderEntity(monster);
     }
@@ -442,6 +443,16 @@ void World::renderSelf() {
 
     for (Entity *ignoreFilterEntity: ignoreFilterEntityVector) {
         gWindow->renderEntity(ignoreFilterEntity);
+    }
+
+    for (std::pair<const int, Button *> &it: buttonHashMap) {
+        gWindow->renderEntity(it.second);
+    }
+
+    if (displayMenu) {
+        for (Entity *menuEntity: menuEntityVector) {
+            gWindow->renderEntity(menuEntity);
+        }
     }
 }
 

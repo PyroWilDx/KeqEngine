@@ -79,6 +79,12 @@ public:
 
     void moveAdd(double addX, double addY);
 
+    virtual void centerHorizontal(double startX, double maxX, double newY);
+
+    void moveToScreenCenterHorizontal(double newY);
+
+    void moveToEntityBelow(Entity *entity, double yPadding);
+
     virtual void getRealSize(double *pW, double *pH);
 
     virtual bool shouldTranslate();
@@ -172,6 +178,14 @@ public:
         if (degRotation == 0) {
             degRotation = 360.;
         }
+    }
+
+    [[nodiscard]] virtual inline int getW() const {
+        return imgFrame.w;
+    }
+
+    [[nodiscard]] virtual inline int getH() const {
+        return imgFrame.h;
     }
 
     [[nodiscard]] inline double getX() const { return x; }

@@ -8,7 +8,7 @@
 #include <string>
 #include "BaseEntity/Entity.hpp"
 
-#define DEFAULT_FONT_PATH "res/fonts/JetBrainsMono-Regular.ttf"
+#define DEFAULT_FONT_PATH "res/fonts/MinecraftFont.ttf"
 
 class Text : public Entity {
 
