@@ -35,9 +35,17 @@ public:
 
     inline void setRenderH(int renderH_) { this->renderH = renderH_; }
 
-    inline int getX() { return (int) x; }
+    [[nodiscard]] inline int getW() const override {
+        return getRenderW();
+    }
 
-    inline int getY() { return (int) y; }
+    [[nodiscard]] inline int getH() const override {
+        return getRenderH();
+    }
+
+    [[nodiscard]] inline int getX() { return (int) x; }
+
+    [[nodiscard]] inline int getY() { return (int) y; }
 
     [[nodiscard]] inline int getWorldEntityType() const { return worldEntityType; }
 
