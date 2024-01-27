@@ -19,7 +19,7 @@
 #include "Main/HomeMenu.hpp"
 
 int GoalGame::iLevel = 0;
-std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1};
+std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1, &Level2};
 
 void GoalGame::RunImpl() {
     SDL_Event event;
@@ -168,31 +168,22 @@ World *GoalGame::Level1(Block **goalBlock) {
 
 World *GoalGame::Level2(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     3840, 2160,
+                                     3008, 1692,
                                      "res/gfx/background/GoalGame_2.png");
     gWorld->getBackground()->setRGBAMod(100);
 
-    gWorld->addBlock(BLOCK_DIRT,
-                     0, 900, 600);
-    gWorld->addBlock(BLOCK_DIRT,
-                     600, 700, 300);
-    gWorld->addBlock(BLOCK_DIRT,
-                     900, 1100, 400);
-    gWorld->addBlock(BLOCK_DIRT,
-                     1300, 900, 400);
-    gWorld->addBlock(BLOCK_DIRT,
-                     1700, 700, 400);
-    gWorld->addBlock(BLOCK_DIRT,
-                     2100, 520, 200);
-    gWorld->addBlock(BLOCK_DIRT,
-                     2300, 400, 300);
-    gWorld->addBlock(BLOCK_DIRT,
-                     2600, 600, 300);
-    gWorld->addBlock(BLOCK_DIRT,
-                     2900, 800, 64);
+    gWorld->addBlock(BLOCK_QUARTZ,0, 300, 256);
+    gWorld->addBlock(BLOCK_QUARTZ,256, 460, 256);
+    gWorld->addBlock(BLOCK_QUARTZ,512, 600, 288);
+    gWorld->addBlock(BLOCK_QUARTZ,800, 800, 512);
+    gWorld->addBlock(BLOCK_QUARTZ,1312, 1000, 768);
+    gWorld->addBlock(BLOCK_QUARTZ,2080, 1100, 128);
+    gWorld->addBlock(BLOCK_QUARTZ,2208, 1360, 512);
+    gWorld->addBlock(BLOCK_QUARTZ,2720, 1510, 176);
+    gWorld->addBlock(BLOCK_QUARTZ,2896, 1600, 112);
 
     *goalBlock = gWorld->addBlock(BLOCK_TNT,
-                                  2900, 736, 64, 64);
+                                  2920, 1520, 64, 64);
 
     return gWorld;
 }
