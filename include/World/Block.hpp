@@ -11,6 +11,9 @@
 enum {
     BLOCK_WALL_INVISIBLE = 0,
     BLOCK_DIRT,
+    BLOCK_GRASS,
+    BLOCK_SNOW,
+    BLOCK_QUARTZ,
     BLOCK_TNT,
     BLOCK_ENUM_N
 };
