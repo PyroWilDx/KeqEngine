@@ -33,8 +33,6 @@ public:
 
     void attack();
 
-    bool onGameFrame() override;
-
     void AI() override;
 
     void hurt() override;
