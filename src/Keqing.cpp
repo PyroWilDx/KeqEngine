@@ -2689,6 +2689,10 @@ bool Keqing::onGameFrame() {
     return doNext;
 }
 
+bool Keqing::isInvincible() {
+    return isSpriteAnimated(KQ_BURST);
+}
+
 void Keqing::hurt() {
     LivingEntity::hurt();
 }

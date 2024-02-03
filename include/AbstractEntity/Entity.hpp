@@ -85,6 +85,8 @@ public:
 
     void moveToEntityBelow(Entity *entity, double yPadding);
 
+    double distTo(Entity *entity);
+
     virtual void getRealSize(double *pW, double *pH);
 
     virtual bool shouldTranslate();

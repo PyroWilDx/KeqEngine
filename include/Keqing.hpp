@@ -210,6 +210,8 @@ public:
 
     bool onGameFrame() override;
 
+    bool isInvincible() override;
+
     void hurt() override;
 
     void setFacingEast(bool facingEast_) override;
