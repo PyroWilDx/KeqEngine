@@ -446,6 +446,12 @@ void Entity::moveToEntityBelow(Entity *entity, double yPadding) {
                      entity->y + entity->getH() + yPadding);
 }
 
+double Entity::distTo(Entity *entity) {
+    double xDiff = entity->getX() - getX();
+    double yDiff = entity->getY() - getY();
+    return std::sqrt(xDiff * xDiff + yDiff * yDiff);
+}
+
 void Entity::getRealSize(double *pW, double *pH) {
     if (pW != nullptr)
         *pW = (double) imgFrame.w * renderWMultiplier;

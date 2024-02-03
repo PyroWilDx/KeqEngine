@@ -23,6 +23,8 @@ class Slime : public Monster {
 public:
     explicit Slime(const std::string &colorString);
 
+    void jump();
+
     void attack();
 
     bool onGameFrame() override;
@@ -34,6 +36,14 @@ public:
     void updateAction() override;
 
 private:
+    static double kqMaxDist;
+    static double kqAtkDist;
+
+    static int jumpCd;
+    static int atkCd;
+
+    int lastJumpTime;
+    int lastAtkTime;
 
 };
 
