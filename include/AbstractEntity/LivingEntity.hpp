@@ -30,7 +30,7 @@ public:
 
     void setDmgFacingEast(double kbXV);
 
-    bool damageSelf(int damage, double kbXV, double kbVY);
+    virtual bool damageSelf(int damage, double kbXV, double kbYV);
 
     virtual void hurt() = 0;
 

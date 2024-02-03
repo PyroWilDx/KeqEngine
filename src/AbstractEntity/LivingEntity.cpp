@@ -77,12 +77,12 @@ void LivingEntity::setDmgFacingEast(double kbXV) {
     if (kbXV != 0) facingEast = (kbXV < 0);
 }
 
-bool LivingEntity::damageSelf(int damage, double kbXV, double kbVY) {
+bool LivingEntity::damageSelf(int damage, double kbXV, double kbYV) {
     if (isInvincible()) return false;
 
     hp -= damage;
-    hurtKbVY = kbVY;
-    yVelocity = kbVY;
+    hurtKbVY = kbYV;
+    yVelocity = kbYV;
     setDmgFacingEast(kbXV);
     if (!isFacingEast()) kbXV = -kbXV;
     hurtKbXV = kbXV;
@@ -90,7 +90,7 @@ bool LivingEntity::damageSelf(int damage, double kbXV, double kbVY) {
     const double minKbAdded = 0.4;
     const double maxKbAdded = 2.;
     const double diffKbAdded = maxKbAdded - minKbAdded;
-    double addLockTime = getAddAbs(kbXV, kbVY);
+    double addLockTime = getAddAbs(kbXV, kbYV);
     addLockTime = std::min(addLockTime, maxKbAdded);
     addLockTime = std::max(addLockTime, minKbAdded);
     addLockTime -= minKbAdded;

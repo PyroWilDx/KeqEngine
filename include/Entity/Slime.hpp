@@ -8,6 +8,12 @@
 #include <string>
 #include "AbstractEntity/Monster.hpp"
 
+#define SLIME_MAX_DIST 600.
+#define SLIME_ATK_DIST 90.
+
+#define SLIME_JUMP_CD 300
+#define SLIME_ATK_CD 600
+
 enum {
     SLIME_IDLE,
     SLIME_WALK,
@@ -36,12 +42,6 @@ public:
     void updateAction() override;
 
 private:
-    static double kqMaxDist;
-    static double kqAtkDist;
-
-    static int jumpCd;
-    static int atkCd;
-
     int lastJumpTime;
     int lastAtkTime;
 
