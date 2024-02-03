@@ -160,8 +160,12 @@ void handleTime() {
 }
 
 void getScreenXYCoeff(double *pXCoeff, double *pYCoeff) {
-    *pXCoeff = (double) Global::renderWindowWidth / SCREEN_BASE_WIDTH;
-    *pYCoeff = (double) Global::renderWindowHeight / SCREEN_BASE_HEIGHT;
+    if (pXCoeff != nullptr) {
+        *pXCoeff = (double) Global::renderWindowWidth / SCREEN_BASE_WIDTH;
+    }
+    if (pYCoeff != nullptr) {
+        *pYCoeff = (double) Global::renderWindowHeight / SCREEN_BASE_HEIGHT;
+    }
 }
 
 void shiftXYFromScreenPosition(int *pX, int *pY) {

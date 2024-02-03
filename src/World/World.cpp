@@ -221,6 +221,7 @@ void World::addCoveredBlock(int blockCode, int coverBlockCode, double x, double 
     auto *block = new Block(blockCode, x, y + 32.,
                             renderW, background->getTotalH() - ((int) y) - 32);
     auto *coverBlock = new Block(coverBlockCode, x, y, renderW, 32);
+    coverBlock->resizeToRenderSizeOnY();
     addBlock(block);
     addBlock(coverBlock);
 }

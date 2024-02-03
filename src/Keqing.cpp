@@ -2707,11 +2707,12 @@ bool Keqing::isInvincible() {
 bool Keqing::damageSelf(int damage, double kbXV, double kbYV) {
     bool wasHurt = isSpriteAnimated(KQ_HURT);
     bool res = LivingEntity::damageSelf(damage, kbXV, kbYV);
+    if (res) {
+        goToFrame(0, KQ_HURT);
 
-    goToFrame(0, KQ_HURT);
-
-    if (!wasHurt) {
-        soundSheet->playRandomSoundStartString("DmgLight", KQ_HURT);
+        if (!wasHurt) {
+            soundSheet->playRandomSoundStartString("DmgLight", KQ_HURT);
+        }
     }
 
     return res;
