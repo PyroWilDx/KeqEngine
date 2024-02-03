@@ -214,7 +214,7 @@ Keqing::Keqing()
 
     initSprite(KQ_HURT, "res/gfx/keqing/Hurt.png",
                96, 96, 6, INT32_MAX);
-    setXYShift(-4, 0, -32, KQ_HURT);
+    setXYShift(-12, 0, -24, KQ_HURT);
 
     setSoundSheet();
 
@@ -301,6 +301,17 @@ void Keqing::setSoundSheet() {
                                "Burst0.ogg",
                                "Burst1.ogg",
                                "Burst2.ogg");
+
+    soundSheet->pushSoundPaths(KQ_HURT,
+                               "DmgLight0.ogg",
+                               "DmgLight1.ogg",
+                               "DmgLight2.ogg",
+                               "DmgLight3.ogg",
+                               "DmgHeavy0.ogg",
+                               "DmgHeavy1.ogg",
+                               "DmgHeavy2.ogg",
+                               "DmgHeavy3.ogg",
+                               "DmgHeavy4.ogg");
 }
 
 void Keqing::initKeqing() {
@@ -2693,8 +2704,25 @@ bool Keqing::isInvincible() {
     return isSpriteAnimated(KQ_BURST);
 }
 
+bool Keqing::damageSelf(int damage, double kbXV, double kbYV) {
+    bool wasHurt = isSpriteAnimated(KQ_HURT);
+    bool res = LivingEntity::damageSelf(damage, kbXV, kbYV);
+
+    goToFrame(0, KQ_HURT);
+
+    if (!wasHurt) {
+        soundSheet->playRandomSoundStartString("DmgLight", KQ_HURT);
+    }
+
+    return res;
+}
+
 void Keqing::hurt() {
     LivingEntity::hurt();
+
+    if (!isInAir() && timeSinceHurt > 200) {
+        goToFrame(-1, KQ_HURT);
+    }
 }
 
 void Keqing::setFacingEast(bool facingEast_) {
