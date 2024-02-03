@@ -35,9 +35,11 @@ void GoalGame::RunImpl() {
     Keqing *kq = Keqing::initKeqingForPlay(0, 0);
 
     auto *mob = new Slime("Blue");
+    mob->setDoAI(false);
     mob->setHitBox({1, 4, 14, 12});
     mob->setRenderWHMultiplier(4., 4.);
     mob->moveTo(200, 0);
+    mob->setFacingEast(false);
     gWorld->addMonster(mob);
 
     int bestTime = -1;

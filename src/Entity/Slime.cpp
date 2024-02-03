@@ -22,10 +22,6 @@ Slime::Slime(const std::string &colorString) :
                16, 16, 5, 60);
     setSpriteNext(SLIME_IDLE, SLIME_IDLE);
 
-    initSprite(SLIME_WALK, (pathStart + "Walk.png").c_str(),
-               16, 16, 7, 60);
-    setSpriteNext(SLIME_WALK, SLIME_WALK);
-
     initSprite(SLIME_JUMP, (pathStart + "Jump.png").c_str(),
                32, 32, 10, 76);
     setXYShift(-8, -16, -8, SLIME_JUMP);
@@ -39,6 +35,8 @@ Slime::Slime(const std::string &colorString) :
     initSprite(SLIME_DEATH, (pathStart + "Death.png").c_str(),
                16, 16, 5, 60);
     setSpriteFrameLengthFromTo(INT32_MAX, -1, -1, SLIME_DEATH);
+
+    setSpriteAnimated(true, SLIME_IDLE);
 }
 
 void Slime::jump() {
@@ -81,33 +79,16 @@ void Slime::attack() {
     }
 }
 
-bool Slime::onGameFrame() {
-    bool doNext = Monster::onGameFrame();
-
-    if (doNext) {
-        fallGravity();
-
-        AI();
-
-        updateAction();
-
-        moveX();
-        moveY();
-    }
-
-    animateSprite();
-
-    return doNext;
-}
-
 void Slime::AI() {
     if (isHurt()) return;
 
     Keqing *kq = Keqing::getInstance();
     double kqDist = distTo(kq);
     if (kqDist < SLIME_ATK_DIST && Global::currentTime - lastAtkTime > SLIME_ATK_CD) {
-        setFacingEast(x < kq->getX());
-        setSpriteAnimated(true, SLIME_ATK);
+        if (!isInAir()) {
+            setFacingEast(x < kq->getX());
+            setSpriteAnimated(true, SLIME_ATK);
+        }
     } else if (kqDist < SLIME_MAX_DIST && Global::currentTime - lastJumpTime > SLIME_JUMP_CD) {
         if (!isSpriteAnimated(SLIME_JUMP)) {
             setFacingEast(x < kq->getX());

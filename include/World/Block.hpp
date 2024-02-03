@@ -25,6 +25,8 @@ public:
 
     void resizeToRenderSize() override;
 
+    void resizeToRenderSizeOnY();
+
     void renderSelf(SDL_Renderer *gRenderer) override;
 
     [[nodiscard]] inline int getCode() const { return blockCode; }
@@ -34,6 +36,7 @@ private:
 
     int blockCode;
     bool matchRenderSize;
+    bool matchRenderSizeOnY;
 
 };
 

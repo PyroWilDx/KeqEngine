@@ -4,11 +4,13 @@
 
 #include "World/Block.hpp"
 #include "WindowRenderer.hpp"
+#include "Utils/Utils.hpp"
 
 Block::Block(int blockCode, double x, double y, int renderW, int renderH)
         : WorldEntity(x, y, renderW, renderH, WORLD_BLOCK) {
     this->blockCode = blockCode;
     this->matchRenderSize = false;
+    this->matchRenderSizeOnY = false;
     setBlockInfo();
 }
 
@@ -49,6 +51,10 @@ void Block::resizeToRenderSize() {
     matchRenderSize = true;
 }
 
+void Block::resizeToRenderSizeOnY() {
+    matchRenderSizeOnY = true;
+}
+
 void Block::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect src = this->getFrame();
 
@@ -59,9 +65,20 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect blockDst;
     blockDst.x = dst.x;
     blockDst.y = dst.y;
+    double xScreenCoeff, yScreenCoeff;
+    getScreenXYCoeff(&xScreenCoeff, &yScreenCoeff);
     if (!matchRenderSize) {
-        blockDst.w = imgFrame.w;
-        blockDst.h = imgFrame.h;
+        if (!matchRenderSizeOnY) {
+            blockDst.w = (int) (imgFrame.w * xScreenCoeff);
+            blockDst.h = (int) (imgFrame.h * yScreenCoeff);
+            dst.w = (int) (dst.w / xScreenCoeff);
+            dst.h = (int) (dst.h / yScreenCoeff);
+        } else {
+            blockDst.w = dst.h;
+            blockDst.h = dst.h;
+            dst.w = (int) (dst.w / xScreenCoeff);
+            dst.h = src.h;
+        }
     } else {
         blockDst.w = dst.w;
         blockDst.h = dst.h;
@@ -78,8 +95,8 @@ void Block::renderSelf(SDL_Renderer *gRenderer) {
 
     int baseX = blockDst.x;
     int baseY = blockDst.y;
-    double xCoeff = ((double) dst.w / (double) this->getFrame().w);
-    double yCoeff = ((double) dst.h / (double) this->getFrame().h);
+    double xCoeff = ((double) dst.w / (double) src.w);
+    double yCoeff = ((double) dst.h / (double) src.h);
     for (int i = 0; i < (int) xCoeff; i++) {
         for (int j = 0; j < (int) yCoeff; j++) {
             SDL_RenderCopyEx(gRenderer, this->getTexture(),
