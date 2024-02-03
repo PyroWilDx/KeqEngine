@@ -88,6 +88,9 @@ void approxEllipse(double xyArray[][2], int N,
 void cutEllipseHalf(double xyArray[][2], int N, int HalfN,
                     double xyArrayHalfRight[][2], double xyArrayHalfLeft[][2]);
 
+void cutEllipseHalfHorzt(double xyArray[][2], int N, int HalfN,
+                    double xyArrayHalfUp[][2], double xyArrayHalfDown[][2]);
+
 void shiftXYArray(double xyArray[][2], int N,
                   double xShift, double yShift);
 

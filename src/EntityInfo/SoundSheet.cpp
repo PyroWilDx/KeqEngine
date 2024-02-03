@@ -3,7 +3,7 @@
 //
 
 #include <string>
-#include "StructForEntity/SoundSheet.hpp"
+#include "EntityInfo/SoundSheet.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/Utils.hpp"

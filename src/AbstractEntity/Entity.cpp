@@ -3,7 +3,7 @@
 //
 
 #include <cmath>
-#include "BaseEntity/Entity.hpp"
+#include "AbstractEntity/Entity.hpp"
 #include "Utils/Global.hpp"
 #include "WindowRenderer.hpp"
 #include "World/World.hpp"

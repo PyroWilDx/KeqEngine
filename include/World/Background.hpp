@@ -5,7 +5,7 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include "BaseEntity/WorldEntity.hpp"
+#include "AbstractEntity/WorldEntity.hpp"
 
 #define LERP_T 0.056
 

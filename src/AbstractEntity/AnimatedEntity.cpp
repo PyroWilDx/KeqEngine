@@ -3,10 +3,10 @@
 //
 
 #include <numeric>
-#include "BaseEntity/AnimatedEntity.hpp"
+#include "AbstractEntity/AnimatedEntity.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Global.hpp"
-#include "StructForEntity/SoundSheet.hpp"
+#include "EntityInfo/SoundSheet.hpp"
 
 AnimatedEntity::AnimatedEntity(int spriteArrayLength)
         : Entity(), spriteArray(spriteArrayLength) {

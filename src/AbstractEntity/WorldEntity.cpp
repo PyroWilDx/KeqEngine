@@ -2,7 +2,7 @@
 // Created by pyrowildx on 09/07/2023.
 //
 
-#include "BaseEntity/WorldEntity.hpp"
+#include "AbstractEntity/WorldEntity.hpp"
 #include "WindowRenderer.hpp"
 
 int WorldEntity::entityCount = 0;

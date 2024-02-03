@@ -7,7 +7,7 @@
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
-#include "StructForEntity/Attack.hpp"
+#include "EntityInfo/Attack.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
 

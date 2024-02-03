@@ -6,7 +6,7 @@
 #define TEXT_HPP
 
 #include <string>
-#include "BaseEntity/Entity.hpp"
+#include "AbstractEntity/Entity.hpp"
 
 #define DEFAULT_FONT_PATH "res/fonts/MinecraftFont.ttf"
 

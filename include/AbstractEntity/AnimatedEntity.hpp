@@ -6,7 +6,7 @@
 #define ANIMATEDENTITY_HPP
 
 #include "Entity.hpp"
-#include "StructForEntity/SpriteArray.hpp"
+#include "EntityInfo/SpriteArray.hpp"
 
 class SoundSheet;
 

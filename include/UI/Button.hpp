@@ -5,7 +5,7 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
-#include "BaseEntity/WorldEntity.hpp"
+#include "AbstractEntity/WorldEntity.hpp"
 
 #define BASE_OUTLINE 6
 
