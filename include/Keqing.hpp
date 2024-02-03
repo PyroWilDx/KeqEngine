@@ -212,6 +212,8 @@ public:
 
     bool isInvincible() override;
 
+    bool damageSelf(int damage, double kbXV, double kbYV) override;
+
     void hurt() override;
 
     void setFacingEast(bool facingEast_) override;

@@ -9,12 +9,6 @@
 #include "World/World.hpp"
 #include "Utils/Utils.hpp"
 
-double Slime::kqMaxDist = 600.;
-double Slime::kqAtkDist = 90.;
-
-int Slime::jumpCd = 300;
-int Slime::atkCd = 600;
-
 Slime::Slime(const std::string &colorString) :
         Monster(0.002, 1, SLIME_ENUM_N,
                 SLIME_DEATH, SLIME_JUMP) {
@@ -111,10 +105,10 @@ void Slime::AI() {
 
     Keqing *kq = Keqing::getInstance();
     double kqDist = distTo(kq);
-    if (kqDist < kqAtkDist && Global::currentTime - lastAtkTime > atkCd) {
+    if (kqDist < SLIME_ATK_DIST && Global::currentTime - lastAtkTime > SLIME_ATK_CD) {
         setFacingEast(x < kq->getX());
         setSpriteAnimated(true, SLIME_ATK);
-    } else if (kqDist < kqMaxDist && Global::currentTime - lastJumpTime > jumpCd) {
+    } else if (kqDist < SLIME_MAX_DIST && Global::currentTime - lastJumpTime > SLIME_JUMP_CD) {
         if (!isSpriteAnimated(SLIME_JUMP)) {
             setFacingEast(x < kq->getX());
             setSpriteAnimated(true, SLIME_JUMP);
