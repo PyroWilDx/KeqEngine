@@ -9,11 +9,11 @@
 #include "Utils/Global.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/Random.hpp"
-#include "StructForEntity/SoundSheet.hpp"
+#include "EntityInfo/SoundSheet.hpp"
 #include "World/World.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
-#include "StructForEntity/Attack.hpp"
+#include "EntityInfo/Attack.hpp"
 #include "World/Background.hpp"
 
 Keqing *Keqing::instance = nullptr;
@@ -45,6 +45,7 @@ Keqing::Keqing()
     this->airESkillFloatCpt = 0;
     this->airPlungeLoopSoundChannel = 0;
     this->isLocked = false;
+    this->fallWhenLocked = false;
 
     initSprite(KQ_IDLE, "res/gfx/keqing/Idle.png",
                96, 96, 18, 60);
@@ -393,7 +394,9 @@ void Keqing::reset() {
     airASkillCloned = false;
     airESkillFloatCpt = 0;
     airPlungeLoopSoundChannel = 0;
+    airPlungeHitEntityVector.clear();
     isLocked = false;
+    fallWhenLocked = false;
 }
 
 void Keqing::colorSprite(Uint32 rgba, Sprite *sprite) {

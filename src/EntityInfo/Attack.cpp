@@ -13,10 +13,10 @@
 #endif
 
 #include <deque>
-#include "StructForEntity/Attack.hpp"
+#include "EntityInfo/Attack.hpp"
 #include "Utils/Global.hpp"
-#include "BaseEntity/Entity.hpp"
-#include "BaseEntity/LivingEntity.hpp"
+#include "AbstractEntity/Entity.hpp"
+#include "AbstractEntity/LivingEntity.hpp"
 #include "Utils/Utils.hpp"
 #include "World/World.hpp"
 #include "World/Background.hpp"

@@ -6,7 +6,7 @@
 #define BLOCK_HPP
 
 #include <cmath>
-#include "BaseEntity/WorldEntity.hpp"
+#include "AbstractEntity/WorldEntity.hpp"
 
 enum {
     BLOCK_WALL_INVISIBLE = 0,

@@ -11,8 +11,8 @@
 #include "World/Background.hpp"
 #include "World/Block.hpp"
 #include "UI/Button.hpp"
-#include "StructForEntity/Attack.hpp"
-#include "BaseEntity/Monster.hpp"
+#include "EntityInfo/Attack.hpp"
+#include "AbstractEntity/Monster.hpp"
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
 

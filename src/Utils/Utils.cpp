@@ -107,13 +107,32 @@ void approxEllipse(double xyArray[][2], const int N,
 
 void cutEllipseHalf(double xyArray[][2], int N, int HalfN,
                     double xyArrayHalfRight[][2], double xyArrayHalfLeft[][2]) {
-    std::memcpy(xyArrayHalfRight, xyArray,
-                sizeof(double[2]) * ((HalfN / 2) + 1));
-    std::memcpy(xyArrayHalfRight + (HalfN / 2) + 1,
-                xyArray + 30, sizeof(double[2]) * (HalfN / 2));
+    if (xyArrayHalfRight != nullptr) {
+        std::memcpy(xyArrayHalfRight, xyArray,
+                    sizeof(double[2]) * ((HalfN / 2) + 1));
+        std::memcpy(xyArrayHalfRight + (HalfN / 2) + 1,
+                    xyArray + N - (HalfN / 2), sizeof(double[2]) * (HalfN / 2));
+    }
 
-    std::memcpy(xyArrayHalfLeft, xyArray + 10,
-                sizeof(double[2]) * HalfN);
+    if (xyArrayHalfLeft != nullptr) {
+        std::memcpy(xyArrayHalfLeft, xyArray + (HalfN / 2),
+                    sizeof(double[2]) * HalfN);
+    }
+}
+
+void cutEllipseHalfHorzt(double xyArray[][2], int N, int HalfN,
+                         double xyArrayHalfUp[][2], double xyArrayHalfDown[][2]) {
+    if (xyArrayHalfUp != nullptr) {
+        std::memcpy(xyArrayHalfUp, xyArray + HalfN - 1,
+                    sizeof(double[2]) * HalfN);
+        std::memcpy(xyArrayHalfUp + HalfN - 1, xyArray,
+                    sizeof(double[2]));
+    }
+
+    if (xyArrayHalfDown != nullptr) {
+        std::memcpy(xyArrayHalfDown, xyArray,
+                    sizeof(double[2]) * HalfN);
+    }
 }
 
 void shiftXYArray(double xyArray[][2], const int N,

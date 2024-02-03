@@ -6,7 +6,7 @@
 #define SLIME_HPP
 
 #include <string>
-#include "BaseEntity/Monster.hpp"
+#include "AbstractEntity/Monster.hpp"
 
 enum {
     SLIME_IDLE,
@@ -22,6 +22,8 @@ class Slime : public Monster {
 
 public:
     explicit Slime(const std::string &colorString);
+
+    void attack();
 
     bool onGameFrame() override;
 
