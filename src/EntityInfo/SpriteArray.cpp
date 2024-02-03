@@ -2,7 +2,7 @@
 // Created by pyrowildx on 16/07/2023.
 //
 
-#include "StructForEntity/SpriteArray.hpp"
+#include "EntityInfo/SpriteArray.hpp"
 
 SpriteArray::SpriteArray(int spriteArrayLength) {
     this->spriteArrayLength = spriteArrayLength;

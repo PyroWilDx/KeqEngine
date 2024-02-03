@@ -6,7 +6,7 @@
 #define KEQING_HPP
 
 #include <vector>
-#include "BaseEntity/LivingEntity.hpp"
+#include "AbstractEntity/LivingEntity.hpp"
 
 class Particle;
 

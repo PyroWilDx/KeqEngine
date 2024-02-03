@@ -3,7 +3,7 @@
 //
 
 #include <algorithm>
-#include "BaseEntity/LivingEntity.hpp"
+#include "AbstractEntity/LivingEntity.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
 
