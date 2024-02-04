@@ -22,7 +22,7 @@ public:
 
     void setDoAI(bool doAI_) { doAI = doAI_; }
 
-private:
+protected:
     bool doAI;
 
 };
