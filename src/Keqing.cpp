@@ -24,7 +24,7 @@ const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 Keqing::Keqing()
         : LivingEntity(0.0024, 2000, KQ_ENUM_N,
                        KQ_HURT, KQ_JUMP) {
-    setHitBox({0, 12, 60, 84});
+    setHitBox({0, 18, 60, 78});
 
     this->wasInAir = false;
     this->jumpPressTime = 0;
@@ -2053,6 +2053,10 @@ void pushBurstSlashAtk(int dmg, double kbXV, double kbYV,
         atkLeft->setHitSound("KQHitBurstFinalSlash.wav");
         atkRight->setHitSound("KQHitBurstFinalSlash.wav");
     }
+
+    if (typeSlash != -1) {
+        Global::currentWorld->getBackground()->shakeScreen(4, 4, 200);
+    }
 }
 
 const int cSlashFrameDuration = 8;
@@ -2216,6 +2220,8 @@ void Keqing::RBurst() {
         aoeWaveParticle->fadeAway();
 
         Particle::removeParticle(PARTICLE_KQ_BURST_CLONE);
+
+        Global::currentWorld->getBackground()->shakeScreen(32, 20, 600);
 
         Sound::playAudioChunk("res/sfx/particle/KQBurstEnd.ogg");
 

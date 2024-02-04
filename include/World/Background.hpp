@@ -21,11 +21,19 @@ public:
 
     bool shouldTranslate() override;
 
+    void fitScreen();
+
     void translateTo(int x, int y);
 
     void hardTranslate(Entity *entity);
 
     void lerpTranslate(Entity *entity);
+
+    void shakeScreen(int shakeForceX, int shakeForceY, int sDuration);
+
+    void doShake();
+
+    void renderSelf(SDL_Renderer *gRenderer) override;
 
     [[nodiscard]] inline int getTotalW() const { return totalWidth; }
 
@@ -40,6 +48,10 @@ private:
     int baseFrameW;
     int baseFrameH;
 
+    int baseShakeX, baseShakeY;
+    int lastShakeX, lastShakeY;
+    int shakeDuration;
+    int shakeDurationLeft;
 };
 
 #endif
