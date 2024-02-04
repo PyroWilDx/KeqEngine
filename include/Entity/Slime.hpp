@@ -35,6 +35,8 @@ public:
 
     void AI() override;
 
+    int isInvincible() override;
+
     void hurt() override;
 
     void updateAction() override;

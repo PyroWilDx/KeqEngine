@@ -22,7 +22,7 @@ const int NAtkMax = 4;
 const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 
 Keqing::Keqing()
-        : LivingEntity(0.0024, 1, KQ_ENUM_N,
+        : LivingEntity(0.0024, 2000, KQ_ENUM_N,
                        KQ_HURT, KQ_JUMP) {
     setHitBox({0, 12, 60, 84});
 
@@ -386,6 +386,8 @@ void Keqing::reset() {
     facingEast = true;
     xVelocity = 0;
     yVelocity = 0;
+
+    healFull();
 
     wasInAir = false;
     jumpPressTime = 0;
@@ -1652,16 +1654,16 @@ void Keqing::createLightningStelitto() {
         SDL_Rect particleRect = particle->getHitBox();
         particleRect.x += (int) particle->getX();
         particleRect.y += (int) particle->getY();
-        SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
-        const int rectH = 2;
-        SDL_Rect dstRect = {particleRect.x,
-                            particleRect.y + particleRect.h,
-                            particleRect.w,
-                            rectH};
-        WindowRenderer::renderRect(&dstRect, true,
-                                   COLOR_BLACK_FULL,
-                                   gRenderer,
-                                   false, true);
+//        SDL_Renderer *gRenderer = WindowRenderer::getInstance()->getRenderer();
+//        const int rectH = 2;
+//        SDL_Rect dstRect = {particleRect.x,
+//                            particleRect.y + particleRect.h,
+//                            particleRect.w,
+//                            rectH};
+//        WindowRenderer::renderRect(&dstRect, true,
+//                                   COLOR_BLACK_FULL,
+//                                   gRenderer,
+//                                   false, true);
 
         if (particle->isNewestFrame(1)) {
             Keqing::pushParticleOnSkillBlink(particle);
@@ -2700,8 +2702,11 @@ bool Keqing::onGameFrame() {
     return doNext;
 }
 
-bool Keqing::isInvincible() {
-    return isSpriteAnimated(KQ_BURST);
+int Keqing::isInvincible() {
+    if (isSpriteAnimated(KQ_BURST)) {
+        return INVINCIBLE_ALL;
+    }
+    return LivingEntity::isInvincible();
 }
 
 bool Keqing::damageSelf(int damage, double kbXV, double kbYV) {

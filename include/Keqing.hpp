@@ -210,7 +210,7 @@ public:
 
     bool onGameFrame() override;
 
-    bool isInvincible() override;
+    int isInvincible() override;
 
     bool damageSelf(int damage, double kbXV, double kbYV) override;
 
