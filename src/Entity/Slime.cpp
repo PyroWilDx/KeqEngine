@@ -10,7 +10,7 @@
 #include "Utils/Utils.hpp"
 
 Slime::Slime(const std::string &colorString) :
-        Monster(0.002, 1, SLIME_ENUM_N,
+        Monster(0.002, 1000, SLIME_ENUM_N,
                 SLIME_DEATH, SLIME_JUMP) {
     setHitBox({0, 0, 16, 16});
 
@@ -68,7 +68,7 @@ void Slime::attack() {
 
         Attack *atk =
                 Global::currentWorld->addMonsterAtk(this, atkPolyPtsUp, HalfPolyN,
-                                                    10, 1.0, -0.4);
+                                                    100, 1.0, -0.4);
         atk->setShouldRemove([](Attack *atk, void *fParams) {
             return !atk->getAtkIssuer()->isSpriteAnimated(SLIME_ATK);
         }, nullptr);
@@ -101,6 +101,13 @@ void Slime::AI() {
     if (!isInAir()) { // Can Only Move When Jumping
         xVelocity = 0;
     }
+}
+
+int Slime::isInvincible() {
+    if (!doAI) {
+        return INVINCIBLE_DAMAGE;
+    }
+    return Monster::isInvincible();
 }
 
 void Slime::hurt() {

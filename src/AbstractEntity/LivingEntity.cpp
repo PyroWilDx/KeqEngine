@@ -6,13 +6,15 @@
 #include "AbstractEntity/LivingEntity.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
+#include "WindowRenderer.hpp"
 
 LivingEntity::LivingEntity(double gravityWeight, int baseHp,
                            int spriteArrayLength, int hurtSpriteCode,
                            int stateChangerEndSpriteCode)
         : AnimatedEntity(spriteArrayLength) {
     this->gravityWeight = gravityWeight;
-    this->hp = baseHp;
+    this->maxHp = baseHp;
+    this->currHp = baseHp;
     this->hurtSpriteCode = hurtSpriteCode;
     this->hurtKbXV = 0;
     this->hurtKbVY = 0;
@@ -69,8 +71,32 @@ bool LivingEntity::onGameFrame() {
     return doNext;
 }
 
-bool LivingEntity::isInvincible() {
-    return false;
+void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
+    AnimatedEntity::renderSelf(gRenderer);
+
+    int hpBarX = (int) (getX() + hitBox.x);
+    int hpBarY = (int) (getY() + hitBox.y - HP_BAR_HEIGHT - 6.);
+    int hpBarMaxW = hitBox.w;
+    int hpBarW = (int) (hpBarMaxW * ((double) currHp / maxHp));
+    if (hpBarW < 0) hpBarW = 0;
+    int borderLength = 2;
+    SDL_Rect hpRectBorder = {hpBarX - borderLength,
+                             hpBarY - borderLength,
+                             hpBarMaxW + borderLength * 2,
+                             HP_BAR_HEIGHT + borderLength * 2};
+    SDL_Rect hpRect = {hpBarX, hpBarY, hpBarW, HP_BAR_HEIGHT};
+    WindowRenderer::renderRect(&hpRectBorder, true, COLOR_BLACK_FULL,
+                               gRenderer, false);
+    WindowRenderer::renderRect(&hpRect, true, COLOR_RED_FULL,
+                               gRenderer, false);
+}
+
+void LivingEntity::healFull() {
+    currHp = maxHp;
+}
+
+int LivingEntity::isInvincible() {
+    return INVINCIBLE_NONE;
 }
 
 void LivingEntity::setDmgFacingEast(double kbXV) {
@@ -78,9 +104,9 @@ void LivingEntity::setDmgFacingEast(double kbXV) {
 }
 
 bool LivingEntity::damageSelf(int damage, double kbXV, double kbYV) {
-    if (isInvincible()) return false;
+    if (isInvincible() == INVINCIBLE_ALL) return false;
 
-    hp -= damage;
+    if (isInvincible() != INVINCIBLE_DAMAGE) currHp -= damage;
     hurtKbVY = kbYV;
     yVelocity = kbYV;
     setDmgFacingEast(kbXV);
