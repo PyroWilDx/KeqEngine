@@ -19,7 +19,8 @@ Slime::Slime(const std::string &colorString) :
 
     std::string pathStart = "res/gfx/slime/" + colorString;
     initSprite(SLIME_IDLE, (pathStart + "Idle.png").c_str(),
-               16, 16, 5, 60);
+               32, 32, 5, 60);
+    setXYShift(-8, -16, -8, SLIME_IDLE);
     setSpriteNext(SLIME_IDLE, SLIME_IDLE);
 
     initSprite(SLIME_JUMP, (pathStart + "Jump.png").c_str(),
@@ -33,7 +34,8 @@ Slime::Slime(const std::string &colorString) :
     setSpriteFrameLengthFromTo(600, 4, 4, SLIME_ATK);
 
     initSprite(SLIME_DEATH, (pathStart + "Death.png").c_str(),
-               16, 16, 5, 60);
+               32, 32, 5, 60);
+    setXYShift(-8, -16, -8, SLIME_DEATH);
     setSpriteFrameLengthFromTo(INT32_MAX, -1, -1, SLIME_DEATH);
 
     setSpriteAnimated(true, SLIME_IDLE);
