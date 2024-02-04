@@ -2125,6 +2125,31 @@ void Keqing::RBurst() {
                 Particle::getParticle(PARTICLE_HUD_BURST_ICON);
         burstIconHud->setRGBAMod(COLOR_WHITE, HUD_SB_USED_ALPHA);
 
+        Particle *timerHud =
+                Particle::pushParticle(PARTICLE_HUD_SKILL_BURST_TIMER,
+                                       KQ_BURST_COOLDOWN / HUD_SB_TIMER_FRAME_N,
+                                       HUD_SB_CIRCLE_M * 1.468,
+                                       HUD_SB_CIRCLE_M * 1.468);
+        timerHud->moveToEntityCenter(burstIconHud);
+        timerHud->xyShift(1.42, 1.42);
+
+        timerHud->setOnRemove([](Particle *removedParticle) {
+            Particle *burstCircleHud =
+                    Particle::pushParticle(PARTICLE_HUD_BURST_CIRCLE, INT32_MAX,
+                                           HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
+            burstCircleHud->moveToEntityCenter(
+                    Particle::getParticle(PARTICLE_HUD_BURST_ICON));
+            burstCircleHud->setRGBAMod(0);
+            burstCircleHud->setOnRender([](Particle *particle) {
+                if (!particle->isNewestFrame(1)) {
+                    particle->setRGBAMod(COLOR_MAX);
+                    Particle *burstIconHud = Particle::getParticle(PARTICLE_HUD_BURST_ICON);
+                    burstIconHud->setRGBAMod(COLOR_WHITE_FULL);
+                    particle->setOnRender(nullptr);
+                }
+            });
+        });
+
         Particle *aoeParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_AOE,
                                        80, aoeBaseWHM, aoeBaseWHM);
