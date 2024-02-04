@@ -5,9 +5,6 @@ voir si ya dla place en dessous. Et meme faire tomber plus vite
 
 set an electro mode texture for keqing, just create two spritearray and set it accordingly!
 
-for future if i want multiple instance for keqing, just do a vector of instances
-and getInstance() returns by default the first one. or a selected index.
-
 damaging kb should take into account the weight of the entity
 
 maybe in attacks, add the attack sprite used, and check if the sprite if still animated in theonremove func
