@@ -81,7 +81,7 @@ enum {
 #define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
 #define KQ_BURST_NUMBER_OF_SLASH 8
 #define KQ_BURST_NUMBER_OF_CLONE 5
-#define KQ_BURST_COOLDOWN 10000
+#define KQ_BURST_COOLDOWN 12000
 
 class Keqing : public LivingEntity {
 
