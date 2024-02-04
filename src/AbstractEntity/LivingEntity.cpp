@@ -75,7 +75,7 @@ void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
     AnimatedEntity::renderSelf(gRenderer);
 
     int hpBarX = (int) (getX() + hitBox.x);
-    int hpBarY = (int) (getY() + hitBox.y - HP_BAR_HEIGHT - 6.);
+    int hpBarY = (int) (getY() + hitBox.y - HP_BAR_HEIGHT - HP_BAR_GAP);
     int hpBarMaxW = hitBox.w;
     int hpBarW = (int) (hpBarMaxW * ((double) currHp / maxHp));
     if (hpBarW < 0) hpBarW = 0;
