@@ -20,6 +20,8 @@ public:
 
     virtual void AI() = 0;
 
+    void onDeath() override;
+
     void setDoAI(bool doAI_) { doAI = doAI_; }
 
 protected:

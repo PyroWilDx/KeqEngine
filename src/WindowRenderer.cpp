@@ -65,8 +65,8 @@ void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled,
     SDL_Rect dstRect = *pDstRect;
     if (!shifted) {
         if (translate) {
-            dstRect.x -= Global::currentWorld->getBackground()->getFrame().x;
-            dstRect.y -= Global::currentWorld->getBackground()->getFrame().y;
+            dstRect.x -= Global::gWorld->getBackground()->getFrame().x;
+            dstRect.y -= Global::gWorld->getBackground()->getFrame().y;
         }
         double xCoeff, yCoeff;
         getScreenXYCoeff(&xCoeff, &yCoeff);

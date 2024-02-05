@@ -187,8 +187,8 @@ void getMouseAbsoluteXY(int *pMouseX, int *pMouseY) {
 
 void getMouseAbsoluteXYNotTranslated(int *pMouseX, int *pMouseY) {
     getMouseAbsoluteXY(pMouseX, pMouseY);
-    *pMouseX += Global::currentWorld->getBackground()->getFrame().x;
-    *pMouseY += Global::currentWorld->getBackground()->getFrame().y;
+    *pMouseX += Global::gWorld->getBackground()->getFrame().x;
+    *pMouseY += Global::gWorld->getBackground()->getFrame().y;
 }
 
 int getSDLKeyRelation(int SDLKey, bool isKeyboard) {

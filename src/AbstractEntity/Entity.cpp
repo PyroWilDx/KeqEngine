@@ -59,7 +59,7 @@ Entity::Entity(double x, double y, int frameW, int frameH,
 Entity::~Entity() {
     clearTexture();
 
-    Global::currentWorld->onEntityRemove(this);
+    Global::gWorld->onEntityRemove(this);
 }
 
 void Entity::setRGBAMod(Uint8 a) {
@@ -104,7 +104,7 @@ std::vector<double> *Entity::getYArrayToCheck() const {
 bool Entity::checkXCollision(bool checkRight) {
     bool res = false;
 
-    World *gWorld = Global::currentWorld;
+    World *gWorld = Global::gWorld;
     std::vector<double> *yToCheck = getYArrayToCheck();
 
     if (checkRight) {
@@ -145,7 +145,7 @@ bool Entity::checkXCollision(bool checkRight) {
 bool Entity::checkYCollision(bool checkDown) {
     bool res = false;
 
-    World *gWorld = Global::currentWorld;
+    World *gWorld = Global::gWorld;
     std::vector<double> *xToCheck = getXArrayToCheck();
 
     if (checkDown) {
@@ -302,7 +302,7 @@ double Entity::moveYNoCheck() {
 }
 
 bool Entity::isHittingWallHorizontallySide(bool sideLeft) const {
-    World *gWorld = Global::currentWorld;
+    World *gWorld = Global::gWorld;
 
     double xCheck = x + (double) hitBox.x;
     if (!sideLeft) xCheck += (double) hitBox.w;
@@ -326,7 +326,7 @@ bool Entity::isHittingWallHorizontally() const {
 }
 
 bool Entity::isHittingWallVerticallySide(bool sideUp) const {
-    World *gWorld = Global::currentWorld;
+    World *gWorld = Global::gWorld;
 
     double yCheck = y + hitBox.y;
     if (!sideUp) yCheck += hitBox.h;
@@ -354,7 +354,7 @@ bool Entity::isHittingCeiling() const {
 }
 
 bool Entity::isHittingWall() const {
-    World *gWorld = Global::currentWorld;
+    World *gWorld = Global::gWorld;
 
     std::vector<double> *xToCheck = getXArrayToCheck();
     std::vector<double> *yToCheck = getYArrayToCheck();
@@ -471,7 +471,7 @@ SDL_Rect Entity::getRenderRect() {
     getRealSize(&realW, &realH);
 
     if (shouldTranslate()) {
-        SDL_Rect backgroundFrame = Global::currentWorld->getBackground()->getFrame();
+        SDL_Rect backgroundFrame = Global::gWorld->getBackground()->getFrame();
         dstX -= (double) backgroundFrame.x;
         dstY -= (double) backgroundFrame.y;
     }

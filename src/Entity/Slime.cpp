@@ -69,8 +69,8 @@ void Slime::attack() {
                             atkPolyPtsUp, nullptr);
 
         Attack *atk =
-                Global::currentWorld->addMonsterAtk(this, atkPolyPtsUp, HalfPolyN,
-                                                    100, 1.0, -0.4);
+                Global::gWorld->addMonsterAtk(this, atkPolyPtsUp, HalfPolyN,
+                                              100, 1.0, -0.4);
         atk->setShouldRemove([](Attack *atk, void *fParams) {
             return !atk->getAtkIssuer()->isSpriteAnimated(SLIME_ATK);
         }, nullptr);

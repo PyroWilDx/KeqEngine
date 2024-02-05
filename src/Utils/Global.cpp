@@ -23,7 +23,8 @@ int Global::lastPressedTime[KEY_ENUM_N];
 int Global::currentTime;
 int Global::dt;
 
-World *Global::currentWorld;
+gStateInfo *Global::gInfo;
+World *Global::gWorld;
 
 void Global::initGlobal() {
     readUserData();
@@ -44,7 +45,8 @@ void Global::initGlobal() {
     currentTime = getTime();
     dt = 10;
 
-    currentWorld = nullptr;
+    gInfo = nullptr;
+    gWorld = nullptr;
 }
 
 void Global::cleanUp() {
@@ -109,17 +111,17 @@ void Global::saveUserData(const char *key, std::string &valStr) {
 World *Global::setWorld(int screenW, int screenH,
                         int backgroundTotalW, int backgroundTotalH,
                         const char *backgroundImgPath) {
-    if (currentWorld != nullptr) deleteWorld();
+    if (gWorld != nullptr) deleteWorld();
 
-    currentWorld = new World(screenW, screenH,
-                             backgroundTotalW, backgroundTotalH,
-                             backgroundImgPath);
-    return currentWorld;
+    gWorld = new World(screenW, screenH,
+                       backgroundTotalW, backgroundTotalH,
+                       backgroundImgPath);
+    return gWorld;
 }
 
 void Global::deleteWorld() {
-    if (currentWorld != nullptr) {
-        delete currentWorld;
-        currentWorld = nullptr;
+    if (gWorld != nullptr) {
+        delete gWorld;
+        gWorld = nullptr;
     }
 }

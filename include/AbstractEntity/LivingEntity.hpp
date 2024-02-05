@@ -45,7 +45,9 @@ public:
 
     virtual bool damageSelf(int damage, double kbXV, double kbYV);
 
-    virtual void hurt() = 0;
+    virtual void hurt();
+
+    virtual inline void onDeath() {};
 
     virtual void updateAction() = 0;
 
@@ -56,6 +58,7 @@ public:
 protected:
     int maxHp;
     int currHp;
+    bool isDead;
     int hurtSpriteCode;
     double hurtKbXV;
     double hurtKbVY;

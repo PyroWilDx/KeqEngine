@@ -278,6 +278,13 @@ void World::addMonster(Monster *monster) {
     monsterVector.push_back(monster);
 }
 
+void World::removeMonster(Monster *monster) {
+    monsterVector.erase(
+            std::remove(monsterVector.begin(), monsterVector.end(), monster),
+            monsterVector.end());
+    delete monster;
+}
+
 void World::addOtherEntity(Entity *otherEntity) {
     otherEntityVecotr.push_back(otherEntity);
 }
