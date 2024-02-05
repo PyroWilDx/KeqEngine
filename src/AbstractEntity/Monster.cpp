@@ -3,6 +3,8 @@
 //
 
 #include "AbstractEntity/Monster.hpp"
+#include "Utils/Global.hpp"
+#include "World/World.hpp"
 
 Monster::Monster(double gravityWeight, int baseHp,
                  int spriteArrayLength, int hurtSpriteCode,
@@ -34,4 +36,8 @@ bool Monster::onGameFrame() {
     animateSprite();
 
     return doNext;
+}
+
+void Monster::onDeath() {
+    Global::gWorld->removeMonster(this);
 }

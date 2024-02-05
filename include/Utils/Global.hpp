@@ -54,7 +54,8 @@ public:
     static int currentTime;
     static int dt;
 
-    static World *currentWorld;
+    static gStateInfo *gInfo;
+    static World *gWorld;
 
 private:
 

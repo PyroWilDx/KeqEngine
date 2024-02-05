@@ -9,6 +9,7 @@
 #include "AbstractEntity/LivingEntity.hpp"
 
 class Particle;
+class Button;
 
 enum {
     KQ_IDLE = 0,
@@ -216,6 +217,8 @@ public:
 
     void hurt() override;
 
+    void onDeath() override;
+
     void setFacingEast(bool facingEast_) override;
 
     bool canDoAction(int spriteCode);
@@ -269,6 +272,8 @@ private:
     bool isLocked;
     bool fallWhenLocked;
 
+    void (*fOnDeathRetryButton)(Button *, int, int, void *);
+    void *fParamsRetryButton;
 };
 
 #endif
