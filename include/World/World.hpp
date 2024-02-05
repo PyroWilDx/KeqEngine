@@ -89,6 +89,8 @@ public:
 
     void addMonster(Monster *monster);
 
+    void removeMonster(Monster *monster);
+
     void addOtherEntity(Entity *otherEntity);
 
     void addMenuEntity(Entity *menuEntity);

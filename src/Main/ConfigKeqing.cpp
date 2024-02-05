@@ -15,6 +15,7 @@
 void ConfigKeqing::RunImpl() {
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+    Global::gInfo = &gInfo;
 
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 

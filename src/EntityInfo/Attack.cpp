@@ -302,8 +302,8 @@ void Attack::renderSelf(SDL_Renderer *gRenderer) {
     Sint16 xArray[length], yArray[length];
     int i = 0;
     for (const BoostPoint &point: atkPolygon.outer()) {
-        double xDouble = point.x() - (double) Global::currentWorld->getBackground()->getFrame().x;
-        double yDouble = point.y() - (double) Global::currentWorld->getBackground()->getFrame().y;
+        double xDouble = point.x() - (double) Global::gWorld->getBackground()->getFrame().x;
+        double yDouble = point.y() - (double) Global::gWorld->getBackground()->getFrame().y;
         xDouble *= xCoeff;
         yDouble *= yCoeff;
         int xInt = (int) xDouble;

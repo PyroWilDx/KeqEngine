@@ -77,11 +77,11 @@ void Events::onWindowResize(int newW, int newH) {
 }
 
 void Events::onMouse(SDL_Event *event) {
-    if (Global::currentWorld != nullptr) {
+    if (Global::gWorld != nullptr) {
         int mouseX = event->button.x;
         int mouseY = event->button.y;
         getMouseAbsoluteXY(&mouseX, &mouseY);
-        Global::currentWorld->clickPixel(mouseX, mouseY, event->type);
+        Global::gWorld->clickPixel(mouseX, mouseY, event->type);
     }
 }
 

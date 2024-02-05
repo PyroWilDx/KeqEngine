@@ -16,7 +16,7 @@
 #include "Utils/Sound.hpp"
 #include "Utils/SQLite3.hpp"
 #include "UI/Button.hpp"
-#include "Main/HomeMenu.hpp"
+#include "Utils/Draw.hpp"
 
 int GoalGame::iLevel = 0;
 std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1, &Level2};
@@ -24,6 +24,7 @@ std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1, &Level2};
 void GoalGame::RunImpl() {
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
+    Global::gInfo = &gInfo;
 
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
@@ -174,15 +175,15 @@ World *GoalGame::Level2(Block **goalBlock) {
                                      "res/gfx/background/GoalGame_2.png");
     gWorld->getBackground()->setRGBAMod(100);
 
-    gWorld->addBlock(BLOCK_QUARTZ,0, 300, 256);
-    gWorld->addBlock(BLOCK_QUARTZ,256, 460, 256);
-    gWorld->addBlock(BLOCK_QUARTZ,512, 600, 288);
-    gWorld->addBlock(BLOCK_QUARTZ,800, 800, 512);
-    gWorld->addBlock(BLOCK_QUARTZ,1312, 1000, 768);
-    gWorld->addBlock(BLOCK_QUARTZ,2080, 1100, 128);
-    gWorld->addBlock(BLOCK_QUARTZ,2208, 1360, 512);
-    gWorld->addBlock(BLOCK_QUARTZ,2720, 1510, 176);
-    gWorld->addBlock(BLOCK_QUARTZ,2896, 1600, 112);
+    gWorld->addBlock(BLOCK_QUARTZ, 0, 300, 256);
+    gWorld->addBlock(BLOCK_QUARTZ, 256, 460, 256);
+    gWorld->addBlock(BLOCK_QUARTZ, 512, 600, 288);
+    gWorld->addBlock(BLOCK_QUARTZ, 800, 800, 512);
+    gWorld->addBlock(BLOCK_QUARTZ, 1312, 1000, 768);
+    gWorld->addBlock(BLOCK_QUARTZ, 2080, 1100, 128);
+    gWorld->addBlock(BLOCK_QUARTZ, 2208, 1360, 512);
+    gWorld->addBlock(BLOCK_QUARTZ, 2720, 1510, 176);
+    gWorld->addBlock(BLOCK_QUARTZ, 2896, 1600, 112);
 
     *goalBlock = gWorld->addBlock(BLOCK_TNT,
                                   2920, 1520, 64, 64);
@@ -192,10 +193,10 @@ World *GoalGame::Level2(Block **goalBlock) {
 
 void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     gWorld->setDisplayMenu(true);
-
     gWorld->enableColorFilter(128, 128, 128, 128, 0.6);
 
     SDL_Color tmpColor;
+    SDL_Rect tmpRect;
 
     char winTimeStr[16];
     sprintf(winTimeStr, "Time : %.2f", (double) winTime * 0.001);
@@ -205,29 +206,15 @@ void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     winTimeText->moveToScreenCenterHorizontal(200);
     gWorld->addMenuEntity(winTimeText);
 
-    auto *retryButton = new Button(0, 0, 200, 100);
-    retryButton->moveToEntityBelow(winTimeText, 20);
-    retryButton->setOnClickRelease([](Button *self, int mouseX,
-                                      int mouseY, void *fParams) {
-        bool *pGRunning = (bool *) fParams;
-        Events::callMainFunc(pGRunning, &GoalGame::Run);
-    });
-    retryButton->setOnClickReleaseParams((void *) gRunning);
-    tmpColor = {COLOR_WHITE_FULL};
-    retryButton->addText("Retry", &tmpColor, 22);
-    retryButton->changeColor(COLOR_KQ);
-    gWorld->addButton(retryButton);
+    tmpRect = {0, 0, 200, 100};
+    Button *retryButton = Draw::drawRetryButton(&tmpRect, winTimeText,
+                          [](Button *self, int mouseX,
+                             int mouseY, void *fParams) {
+                              bool *pGRunning = (bool *) fParams;
+                              Events::callMainFunc(pGRunning, &GoalGame::Run);
+                          },
+                          (void *) gRunning);
 
-    auto *homeButton = new Button(0, 0, 200, 100);
-    homeButton->moveToEntityBelow(retryButton, 20);
-    homeButton->setOnClickRelease([](Button *self, int mouseX,
-                                     int mouseY, void *fParams) {
-        bool *pGRunning = (bool *) fParams;
-        Events::callMainFunc(pGRunning, &HomeMenu::Run);
-    });
-    homeButton->setOnClickReleaseParams((void *) gRunning);
-    tmpColor = {COLOR_WHITE_FULL};
-    homeButton->addText("Exit", &tmpColor, 22);
-    homeButton->changeColor(COLOR_KQ);
-    gWorld->addButton(homeButton);
+    tmpRect = {0, 0, 200, 100};
+    Draw::drawHomeButton(&tmpRect, retryButton, gRunning);
 }

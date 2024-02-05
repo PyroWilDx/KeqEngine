@@ -15,6 +15,9 @@
 #include "Utils/Utils.hpp"
 #include "EntityInfo/Attack.hpp"
 #include "World/Background.hpp"
+#include "Entity/Text.hpp"
+#include "Utils/Draw.hpp"
+#include "UI/Button.hpp"
 
 Keqing *Keqing::instance = nullptr;
 
@@ -46,6 +49,9 @@ Keqing::Keqing()
     this->airPlungeLoopSoundChannel = 0;
     this->isLocked = false;
     this->fallWhenLocked = false;
+
+    this->fOnDeathRetryButton = nullptr;
+    this->fParamsRetryButton = nullptr;
 
     initSprite(KQ_IDLE, "res/gfx/keqing/Idle.png",
                96, 96, 18, 60);
@@ -323,7 +329,7 @@ void Keqing::initKeqing() {
 }
 
 Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
-    World *gWorld = Global::currentWorld;
+    World *gWorld = Global::gWorld;
     Keqing *kq = Keqing::getInstance();
     kq->moveTo(kqX, kqY);
     gWorld->getBackground()->hardTranslate(kq);
@@ -410,6 +416,9 @@ void Keqing::reset() {
     airPlungeHitEntityVector.clear();
     isLocked = false;
     fallWhenLocked = false;
+
+    fOnDeathRetryButton = nullptr;
+    fParamsRetryButton = nullptr;
 }
 
 void Keqing::colorSprite(Uint32 rgba, Sprite *sprite) {
@@ -489,7 +498,7 @@ void Keqing::moveX() {
         double vX = x + addX;
         if (addX >= 0) vX += hitBox.x + hitBox.w;
         double yDown = y + hitBox.y + hitBox.h;
-        if (Global::currentWorld->isPixelSurface(vX, yDown)) {
+        if (Global::gWorld->isPixelSurface(vX, yDown)) {
             Entity::moveX();
         }
     }
@@ -760,8 +769,8 @@ void Keqing::NAtk() {
                  {16,  20},
                  {30,  0}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.2036, -0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.2036, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -786,8 +795,8 @@ void Keqing::NAtk() {
                  {50,  14},
                  {54,  -12}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.32, -0.26);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.32, -0.26);
         atk->setAtkDuration(getSpriteLengthFromTo(7, 8, KQ_NATK));
         atk->setHitSound("KQHitSwordWeak1.ogg");
         atk->setClassicParticle(0, false);
@@ -808,8 +817,8 @@ void Keqing::NAtk() {
                  {76,  8},
                  {72,  4}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.48, -0.36);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.48, -0.36);
         atk->setAtkDuration(getSpriteLengthFromTo(13, 14, KQ_NATK));
         atk->setHitSound("KQHitSwordWeak2.ogg");
         atk->setClassicParticle(0, false);
@@ -834,8 +843,8 @@ void Keqing::NAtk() {
                  {54,  6},
                  {32,  -34}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.16, -0.4);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.16, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(21, 22, KQ_NATK));
         atk->setHitSound("KQHitSwordMedium0.ogg");
         atk->setClassicParticle(0, false);
@@ -864,8 +873,8 @@ void Keqing::NAtk() {
                  {74,  -8},
                  {70,  -22}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.26, 0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.26, 0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(24, 25, KQ_NATK));
         atk->setHitSound("KQHitSwordMedium1.ogg");
         atk->setClassicParticle(0, false);
@@ -880,8 +889,8 @@ void Keqing::NAtk() {
                  {114, 22},
                  {84,  30}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 1., -0.2);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 1., -0.2);
         atk->setAtkDuration(getSpriteLengthFromTo(30, 32, KQ_NATK));
         atk->setHitSound("KQHitSwordStrong1.ogg");
         atk->setClassicParticle(2, false);
@@ -911,9 +920,9 @@ void Keqing::checkESkillOnCAtk() {
                 if (!kq->isFacingEast()) kbXV = -kbXV;
 
                 Attack *atk =
-                        Global::currentWorld->addKQAtk(kq, particle,
-                                                       atkPolyPts, N,
-                                                       10, kbXV, -0.32);
+                        Global::gWorld->addKQAtk(kq, particle,
+                                                 atkPolyPts, N,
+                                                 10, kbXV, -0.32);
                 atk->setAtkDuration(60);
                 atk->setHitSound("KQHitSkillExplosion.wav");
                 atk->setClassicParticle(1, true);
@@ -959,9 +968,9 @@ void Keqing::CAtk() {
             shiftXYArray(atkPolyPts, N,
                          20, 0);
             Attack *atk =
-                    Global::currentWorld->addKQAtk(this, CAtkParticle,
-                                                   atkPolyPts, N,
-                                                   10, 0.8, -0.2);
+                    Global::gWorld->addKQAtk(this, CAtkParticle,
+                                             atkPolyPts, N,
+                                             10, 0.8, -0.2);
             atk->setAtkDuration(CAtkParticle->getSpriteLengthFromTo(1, 1));
             atk->setHitSound("KQHitSwordWeak1.ogg");
             atk->setClassicParticle(0, false);
@@ -974,9 +983,9 @@ void Keqing::CAtk() {
             shiftXYArray(atkPolyPts, N,
                          20, 0);
             Attack *atk =
-                    Global::currentWorld->addKQAtk(this, CAtkParticle,
-                                                   atkPolyPts, N,
-                                                   10, 1.2, -0.26);
+                    Global::gWorld->addKQAtk(this, CAtkParticle,
+                                             atkPolyPts, N,
+                                             10, 1.2, -0.26);
             atk->setAtkDuration(CAtkParticle->getSpriteLengthFromTo(3, 3));
             atk->setHitSound("KQHitSwordStrong1.ogg");
             atk->setClassicParticle(2, false);
@@ -1017,8 +1026,8 @@ void Keqing::upNAtk() {
                  {-8,  -36},
                  {-14, 22}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, -0.142, -0.582);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, -0.142, -0.582);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 3, KQ_UP_NATK));
         atk->setHitSound("KQHitSwordMedium0.ogg");
         atk->setClassicParticle(1, false);
@@ -1051,8 +1060,8 @@ void Keqing::upCAtk() {
             approxEllipse(atkPolyPts, N,
                           0, -16, 48, 56);
             Attack *atk =
-                    Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0, -0.6);
+                    Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                             10, 0, -0.6);
             atk->setAtkDuration(upCAtkParticle->getSpriteLengthFromTo(1, 1));
             atk->setHitSound("KQHitSwordWeak1.ogg");
             atk->setClassicParticle(0, false);
@@ -1063,8 +1072,8 @@ void Keqing::upCAtk() {
             approxEllipse(atkPolyPts, N,
                           0, -36, 36, 70);
             Attack *atk =
-                    Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                                   10, 0, -1.);
+                    Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                             10, 0, -1.);
             atk->setAtkDuration(upCAtkParticle->getSpriteLengthFromTo(3, 3));
             atk->setHitSound("KQHitSwordStrong1.ogg");
             atk->setClassicParticle(2, false);
@@ -1094,8 +1103,8 @@ void Keqing::crouchNAtk() {
                  {48,  42},
                  {48,  30}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.142, -0.452);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.142, -0.452);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_CROUCH_NATK));
         atk->setHitSound("KQHitSwordWeak2.ogg");
         atk->setClassicParticle(1, false);
@@ -1135,15 +1144,15 @@ void Keqing::crouchCAtk() {
                            atkPolyPtsRight, atkPolyPtsLeft);
 
             Attack *atkLeft =
-                    Global::currentWorld->addKQAtk(this, atkPolyPtsLeft, HalfPolyN,
-                                                   10, -0.2, 0.6);
+                    Global::gWorld->addKQAtk(this, atkPolyPtsLeft, HalfPolyN,
+                                             10, -0.2, 0.6);
             atkLeft->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(1, 1));
             atkLeft->setHitSound("KQHitSwordWeak1.ogg");
             atkLeft->setClassicParticle(0, false);
 
             Attack *atkRight =
-                    Global::currentWorld->addKQAtk(this, atkPolyPtsRight, HalfPolyN,
-                                                   10, 0.2, 0.6);
+                    Global::gWorld->addKQAtk(this, atkPolyPtsRight, HalfPolyN,
+                                             10, 0.2, 0.6);
             atkRight->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(1, 1));
             atkRight->setHitSound("KQHitSwordWeak1.ogg");
             atkRight->setClassicParticle(0, false);
@@ -1163,15 +1172,15 @@ void Keqing::crouchCAtk() {
                            atkPolyPtsRight, atkPolyPtsLeft);
 
             Attack *atkLeft =
-                    Global::currentWorld->addKQAtk(this, atkPolyPtsLeft, HalfPolyN,
-                                                   10, -0.8, -0.32);
+                    Global::gWorld->addKQAtk(this, atkPolyPtsLeft, HalfPolyN,
+                                             10, -0.8, -0.32);
             atkLeft->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(3, 3));
             atkLeft->setHitSound("KQHitSwordStrong1.ogg");
             atkLeft->setClassicParticle(2, false);
 
             Attack *atkRight =
-                    Global::currentWorld->addKQAtk(this, atkPolyPtsRight, HalfPolyN,
-                                                   10, 0.8, -0.32);
+                    Global::gWorld->addKQAtk(this, atkPolyPtsRight, HalfPolyN,
+                                             10, 0.8, -0.32);
             atkRight->setAtkDuration(crouchCAtkParticle->getSpriteLengthFromTo(3, 3));
             atkRight->setHitSound("KQHitSwordStrong1.ogg");
             atkRight->setClassicParticle(2, false);
@@ -1232,8 +1241,8 @@ void Keqing::runNAtk() {
                  {-34, 18},
                  {2,   24}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.72, -0.4);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.72, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(4, 4, KQ_RUN_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -1256,8 +1265,8 @@ void Keqing::runNAtk() {
                  {-2,  -6},
                  {-26, 14}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.82, -0.8);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.82, -0.8);
         atk->setAtkDuration(getSpriteLengthFromTo(5, 6, KQ_RUN_NATK));
         atk->setHitSound("KQHitSwordMedium1.ogg");
         atk->setClassicParticle(1, false);
@@ -1390,8 +1399,8 @@ void Keqing::ASkillFlip() {
                      {40,  -28},
                      {54,  -24}};
             Attack *KqAtk =
-                    Global::currentWorld->addKQAtk(this, KqAtkPolyPts, KqN,
-                                                   10, -0.82, -0.56);
+                    Global::gWorld->addKQAtk(this, KqAtkPolyPts, KqN,
+                                             10, -0.82, -0.56);
             KqAtk->setAtkDuration(getSpriteLengthFromTo(7, 8, KQ_SKILL_FLIP));
             KqAtk->setHitSound("KQHitSkillFlipSword.wav");
             KqAtk->setClassicParticle(1, true);
@@ -1405,9 +1414,9 @@ void Keqing::ASkillFlip() {
                           0, 0,
                           (0.96 * M_PI) / 4., false);
             Attack *PtAtk =
-                    Global::currentWorld->addKQAtk(this, flipSlashParticle,
-                                                   PtAtkPolyPts, PtN,
-                                                   10, 1.06, 0.6);
+                    Global::gWorld->addKQAtk(this, flipSlashParticle,
+                                             PtAtkPolyPts, PtN,
+                                             10, 1.06, 0.6);
             PtAtk->setAtkDuration(flipSlashParticle->getSpriteLengthFromTo(0, 1));
             PtAtk->setHitSound("KQHitSkillFlipParticle.wav");
             PtAtk->setClassicParticle(2, true);
@@ -1513,9 +1522,9 @@ void Keqing::ASkillCloneGeneral() {
                             };
 
                     Attack *atkLeft =
-                            Global::currentWorld->addKQAtk(kq, cloneIdleParticle,
-                                                           atkPolyPtsLeft, N,
-                                                           10, -0.56, -0.26);
+                            Global::gWorld->addKQAtk(kq, cloneIdleParticle,
+                                                     atkPolyPtsLeft, N,
+                                                     10, -0.56, -0.26);
                     atkLeft->setClassicParticle(0, true);
                     atkLeft->setOnHit(atkOnHit,
                                       (void *) cloneIdleParticle);
@@ -1523,9 +1532,9 @@ void Keqing::ASkillCloneGeneral() {
                                              nullptr);
 
                     Attack *atkRight =
-                            Global::currentWorld->addKQAtk(kq, cloneIdleParticle,
-                                                           atkPolyPtsRight, N,
-                                                           10, 0.56, -0.26);
+                            Global::gWorld->addKQAtk(kq, cloneIdleParticle,
+                                                     atkPolyPtsRight, N,
+                                                     10, 0.56, -0.26);
                     atkRight->setClassicParticle(0, true);
                     atkRight->setOnHit(atkOnHit,
                                        (void *) cloneIdleParticle);
@@ -1771,9 +1780,9 @@ void Keqing::createSkillProjParticle() {
     double kbXV = 0.4 * cos(angle);
     double kbYV = 0.4 * sin(angle);
     Attack *atk =
-            Global::currentWorld->addKQAtk(kq, projParticle,
-                                           atkPolyPts, N,
-                                           10, kbXV, kbYV);
+            Global::gWorld->addKQAtk(kq, projParticle,
+                                     atkPolyPts, N,
+                                     10, kbXV, kbYV);
     atk->setHitSound("KQHitSkillProj.wav");
     atk->setClassicParticle(0, true);
     atk->setUniqueEntityHit(true);
@@ -1958,8 +1967,8 @@ void Keqing::ESkillSlashGeneral() {
                  {-76, 22},
                  {-76, -10}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.82, -0.42);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.82, -0.42);
         atk->setAtkDuration(getSpriteLengthFromTo(7, 9, SKILL_SLASH_CODE));
         atk->setHitSound("KQHitSkillSlash.wav");
         atk->setClassicParticle(1, true);
@@ -2003,14 +2012,14 @@ void pushBurstSlashAtk(int dmg, double kbXV, double kbYV,
                    atkPolyPtsRight, atkPolyPtsLeft);
 
     Attack *atkLeft =
-            Global::currentWorld->addKQAtk(kq, atkPolyPtsLeft, HalfPolyN,
-                                           dmg, -kbXV, kbYV);
+            Global::gWorld->addKQAtk(kq, atkPolyPtsLeft, HalfPolyN,
+                                     dmg, -kbXV, kbYV);
     atkLeft->setAtkDuration(duration);
     atkLeft->setClassicParticle(nParticle[typeSlash + 1], true);
 
     Attack *atkRight =
-            Global::currentWorld->addKQAtk(kq, atkPolyPtsRight, HalfPolyN,
-                                           dmg, kbXV, kbYV);
+            Global::gWorld->addKQAtk(kq, atkPolyPtsRight, HalfPolyN,
+                                     dmg, kbXV, kbYV);
     atkRight->setAtkDuration(duration);
     atkRight->setClassicParticle(nParticle[typeSlash + 1], true);
 
@@ -2055,7 +2064,7 @@ void pushBurstSlashAtk(int dmg, double kbXV, double kbYV,
     }
 
     if (typeSlash != -1) {
-        Global::currentWorld->getBackground()->shakeScreen(4, 4, 200);
+        Global::gWorld->getBackground()->shakeScreen(4, 4, 200);
     }
 }
 
@@ -2089,7 +2098,7 @@ void pushCloneSlashParticle(Particle *removedParticle) {
         cSlashParticle->xyShift(cSlashXShift[cSlashCount], cSlashYShift[cSlashCount]);
         cSlashParticle->setRotation(cSlashRotations[cSlashCount]);
         cSlashParticle->setOnRemove(&pushCloneSlashParticle);
-        Global::currentWorld->addIgnoreFilterEntity(cSlashParticle);
+        Global::gWorld->addIgnoreFilterEntity(cSlashParticle);
 
         kq->setBurstCloneSlashCount(cSlashCount + 1);
 
@@ -2121,8 +2130,8 @@ void Keqing::RBurst() {
 
     if (isNewestFrame(0, KQ_BURST)) { // Burst Start
         // 114, 86, 180
-        Global::currentWorld->enableColorFilter(74, 46, 140, 60);
-        Global::currentWorld->addIgnoreFilterEntity(this);
+        Global::gWorld->enableColorFilter(74, 46, 140, 60);
+        Global::gWorld->addIgnoreFilterEntity(this);
 
         Particle::removeParticle(PARTICLE_HUD_BURST_CIRCLE);
         Particle *burstIconHud =
@@ -2157,13 +2166,13 @@ void Keqing::RBurst() {
         Particle *aoeParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_AOE,
                                        80, aoeBaseWHM, aoeBaseWHM);
-        Global::currentWorld->addIgnoreFilterEntity(aoeParticle);
+        Global::gWorld->addIgnoreFilterEntity(aoeParticle);
 
         Particle *aoeWaveParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_AOE_WAVE,
                                        60, aoeBaseWHM, aoeBaseWHM);
         aoeWaveParticle->setRGBAMod(COLOR_WHITE, 128);
-        Global::currentWorld->addIgnoreFilterEntity(aoeWaveParticle);
+        Global::gWorld->addIgnoreFilterEntity(aoeWaveParticle);
 
         soundSheet->playRandomSound(KQ_BURST);
         Sound::playAudioChunk("res/sfx/particle/KQBurstStart.ogg");
@@ -2177,7 +2186,7 @@ void Keqing::RBurst() {
         Particle *vanishParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_VANISH, 60);
         vanishParticle->setEntity(this);
-        Global::currentWorld->addIgnoreFilterEntity(vanishParticle);
+        Global::gWorld->addIgnoreFilterEntity(vanishParticle);
 
     } else if (isNewestFrame(13, KQ_BURST)) { // Clone Slash Start
         pushCloneSlashParticle(nullptr);
@@ -2189,7 +2198,7 @@ void Keqing::RBurst() {
         cloneParticle->xyShift(0, -46);
         cloneParticle->delaySprite(cSlashFrameDuration);
         cloneParticle->stopOnFrame(-1);
-        Global::currentWorld->addIgnoreFilterEntity(cloneParticle);
+        Global::gWorld->addIgnoreFilterEntity(cloneParticle);
 
         Sound::playAudioChunk("res/sfx/particle/KQBurstRapid.ogg");
 
@@ -2202,7 +2211,7 @@ void Keqing::RBurst() {
         Particle *finalSlashParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_FINAL_SLASH, 80);
         finalSlashParticle->moveToEntityCenter(aoeParticle);
-        Global::currentWorld->addIgnoreFilterEntity(finalSlashParticle);
+        Global::gWorld->addIgnoreFilterEntity(finalSlashParticle);
 
         Particle *burstCloneParticle =
                 Particle::getParticle(PARTICLE_KQ_BURST_CLONE);
@@ -2213,7 +2222,7 @@ void Keqing::RBurst() {
                                            1.2, 1.2);
             cloneVanishParticle->moveToEntityCenter(burstCloneParticle);
             cloneVanishParticle->xyShift(cVanishXShift[i], cVanishYShift[i]);
-            Global::currentWorld->addIgnoreFilterEntity(cloneVanishParticle);
+            Global::gWorld->addIgnoreFilterEntity(cloneVanishParticle);
         }
 
         aoeParticle->fadeAway();
@@ -2221,7 +2230,7 @@ void Keqing::RBurst() {
 
         Particle::removeParticle(PARTICLE_KQ_BURST_CLONE);
 
-        Global::currentWorld->getBackground()->shakeScreen(32, 20, 600);
+        Global::gWorld->getBackground()->shakeScreen(32, 20, 600);
 
         Sound::playAudioChunk("res/sfx/particle/KQBurstEnd.ogg");
 
@@ -2230,7 +2239,7 @@ void Keqing::RBurst() {
                           80, -1);
 
     } else if (isNewestFrame(-1, KQ_BURST)) {
-        Global::currentWorld->disableColorFilter();
+        Global::gWorld->disableColorFilter();
     }
 
     // Enlarge Circle
@@ -2261,7 +2270,7 @@ void Keqing::RBurst() {
                                                cAppearDuration);
                 cloneAppearParticle->moveToEntityCenter(this);
                 cloneAppearParticle->xyShift(cAppearXShift[i], cAppearYShift[i]);
-                Global::currentWorld->addIgnoreFilterEntity(cloneAppearParticle);
+                Global::gWorld->addIgnoreFilterEntity(cloneAppearParticle);
             }
         }
 
@@ -2291,7 +2300,7 @@ void Keqing::RBurst() {
                                           40, 2);
                     }
                 });
-                Global::currentWorld->addIgnoreFilterEntity(slashParticle);
+                Global::gWorld->addIgnoreFilterEntity(slashParticle);
             }
         }
     }
@@ -2338,8 +2347,8 @@ void Keqing::airNAtk() {
                  {-40, 12},
                  {-32, 20}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.1, -0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 2, KQ_AIR_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -2360,8 +2369,8 @@ void Keqing::airNAtk() {
                  {-62, 6},
                  {-60, 14}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.1, -0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(3, 3, KQ_AIR_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -2380,8 +2389,8 @@ void Keqing::airNAtk() {
                  {40,  -10},
                  {22,  -20}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.1, -0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(4, 4, KQ_AIR_NATK));
         atk->setHitSound("KQHitSwordWeak1.ogg");
         atk->setClassicParticle(0, false);
@@ -2404,8 +2413,8 @@ void Keqing::airNAtk() {
                  {60, 8},
                  {48, -16}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.1, -0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(5, 5, KQ_AIR_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -2434,8 +2443,8 @@ void Keqing::airNAtk() {
                  {52,  12},
                  {70,  2}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0.1, -0.1);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0.1, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(6, 7, KQ_AIR_NATK));
         atk->setHitSound("KQHitSwordMedium1.ogg");
         atk->setClassicParticle(0, false);
@@ -2464,8 +2473,8 @@ void Keqing::airUpNAtk() {
                  {8,  34},
                  {14, -6}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, -0.08, -0.42);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, -0.08, -0.42);
         atk->setAtkDuration(getSpriteLengthFromTo(2, 2, KQ_AIR_UP_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -2482,8 +2491,8 @@ void Keqing::airUpNAtk() {
                  {38, 12},
                  {-2, -64}};
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0, -0.76);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0, -0.76);
         atk->setAtkDuration(getSpriteLengthFromTo(3, 4, KQ_AIR_UP_NATK));
         atk->setHitSound("KQHitSwordMedium0.ogg");
         atk->setClassicParticle(1, false);
@@ -2646,8 +2655,8 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
         approxEllipse(atkPolyPts, N,
                       26, -8, 16, 50);
         Attack *atk =
-                Global::currentWorld->addKQAtk(this, atkPolyPts, N,
-                                               10, 0, 0.8);
+                Global::gWorld->addKQAtk(this, atkPolyPts, N,
+                                         10, 0, 0.8);
         atk->setHitSound("KQHitSwordStrong0.ogg");
         atk->setClassicParticle(0, false);
         atk->setOnHit([](Attack *atk, LivingEntity *hitEntity,
@@ -2677,15 +2686,15 @@ void Keqing::airPlunge() { // Plunge Attack in Genshin
                  {8,   42},
                  {-46, 42}};
         Attack *atkLeft =
-                Global::currentWorld->addKQAtk(this, atkPolyPtsLeft, N,
-                                               10, -0.6, -0.4);
+                Global::gWorld->addKQAtk(this, atkPolyPtsLeft, N,
+                                         10, -0.6, -0.4);
         atkLeft->setHitSound("KQHitAirPlungeGround.wav");
         atkLeft->setAtkDuration(40);
         atkLeft->setClassicParticle(2, false);
 
         Attack *atkRight =
-                Global::currentWorld->addKQAtk(this, atkPolyPtsRight, N,
-                                               20, 0.6, -0.4);
+                Global::gWorld->addKQAtk(this, atkPolyPtsRight, N,
+                                         20, 0.6, -0.4);
         atkRight->setHitSound("KQHitAirPlungeGround.wav");
         atkRight->setAtkDuration(40);
         atkRight->setClassicParticle(2, false);
@@ -2722,7 +2731,7 @@ bool Keqing::onGameFrame() {
         } else {
             if (fallWhenLocked) {
                 fallGravity();
-                moveX();
+//                moveX();
                 moveY();
             }
         }
@@ -2760,6 +2769,34 @@ void Keqing::hurt() {
     if (!isInAir() && timeSinceHurt > 200) {
         goToFrame(-1, KQ_HURT);
     }
+}
+
+void Keqing::onDeath() {
+    World *gWorld = Global::gWorld;
+
+    gWorld->setDisplayMenu(true);
+    gWorld->enableColorFilter(COLOR_MAX, 0, 0, 96, 0.6);
+
+    SDL_Color tmpColor;
+    SDL_Rect tmpRect;
+
+    tmpColor = {COLOR_RED_FULL};
+    Text *deathText = new Text("You Died", &tmpColor, 60, false);
+    deathText->moveToScreenCenterHorizontal(200);
+    gWorld->addOtherEntity(deathText);
+
+    if (fOnDeathRetryButton != nullptr) {
+        tmpRect = {0, 0, 200, 100};
+        Button *retryButton = Draw::drawRetryButton(&tmpRect, deathText,
+                                                    fOnDeathRetryButton, fParamsRetryButton);
+        tmpRect = {0, 0, 200, 100};
+        Draw::drawHomeButton(&tmpRect, retryButton, &Global::gInfo->gRunning);
+    } else {
+        tmpRect = {0, 0, 200, 100};
+        Draw::drawHomeButton(&tmpRect, deathText, &Global::gInfo->gRunning);
+    }
+
+    kqLock(true, true);
 }
 
 void Keqing::setFacingEast(bool facingEast_) {

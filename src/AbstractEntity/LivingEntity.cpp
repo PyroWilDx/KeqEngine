@@ -15,6 +15,7 @@ LivingEntity::LivingEntity(double gravityWeight, int baseHp,
     this->gravityWeight = gravityWeight;
     this->maxHp = baseHp;
     this->currHp = baseHp;
+    this->isDead = false;
     this->hurtSpriteCode = hurtSpriteCode;
     this->hurtKbXV = 0;
     this->hurtKbVY = 0;
@@ -104,9 +105,15 @@ void LivingEntity::setDmgFacingEast(double kbXV) {
 }
 
 bool LivingEntity::damageSelf(int damage, double kbXV, double kbYV) {
+    if (isDead) return false;
     if (isInvincible() == INVINCIBLE_ALL) return false;
 
     if (isInvincible() != INVINCIBLE_DAMAGE) currHp -= damage;
+    if (currHp <= 0) {
+        onDeath();
+        isDead = true;
+        return false;
+    }
     hurtKbVY = kbYV;
     yVelocity = kbYV;
     setDmgFacingEast(kbXV);
