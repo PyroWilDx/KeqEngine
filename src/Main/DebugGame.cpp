@@ -42,7 +42,7 @@ void DebugGame::RunImpl() {
     slime1->moveToDownLeft(1540, 720 - 200);
     gWorld->addMonster(slime1);
 
-    auto *slime2 = new Slime("Blue");
+    auto *slime2 = new Slime("Red");
     slime2->setHitBox({1, 4, 14, 12});
     slime2->setRenderWHMultiplier(4., 4.);
     slime2->moveToDownLeft(1600, 720 - 200);
