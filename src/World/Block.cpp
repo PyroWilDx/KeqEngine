@@ -41,6 +41,7 @@ void Block::setBlockInfo() {
             imgPath = "res/gfx/block/TNT.png";
             break;
         default:
+            imgPath = "";
             break;
     }
 
