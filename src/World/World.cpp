@@ -242,7 +242,8 @@ bool World::isPixelSurface(double x, double y) {
 }
 
 int World::getNearestWallFrom(double x, double y, int direction) {
-    int addX, addY;
+    int addX = 0;
+    int addY = 0;
     if (direction == KEY_Z) {
         addX = 0;
         addY = -1;
