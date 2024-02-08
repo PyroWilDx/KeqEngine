@@ -217,7 +217,7 @@ public:
 
     void hurt() override;
 
-    void onDeath() override;
+    bool onDeath() override;
 
     void setFacingEast(bool facingEast_) override;
 

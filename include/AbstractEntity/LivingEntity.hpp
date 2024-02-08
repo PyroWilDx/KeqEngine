@@ -47,11 +47,11 @@ public:
 
     virtual void hurt();
 
-    virtual inline void onDeath() {};
+    virtual inline bool onDeath() = 0;
 
-    virtual void updateAction() = 0;
+    virtual void updateAction();
 
-    [[nodiscard]] inline bool isHurt() { return isSpriteAnimated(hurtSpriteCode); };
+    bool isHurt();
 
     [[nodiscard]] inline int getHp() const { return currHp; }
 
