@@ -9,8 +9,6 @@
 
 class Monster : public LivingEntity {
 
-    using LivingEntity::LivingEntity;
-
 public:
     Monster(double gravityWeight, int baseHp,
             int spriteArrayLength, int hurtSpriteCode,
@@ -20,7 +18,9 @@ public:
 
     virtual void AI() = 0;
 
-    void onDeath() override;
+    bool onDeath() override;
+
+    virtual bool animDeath() = 0;
 
     void setDoAI(bool doAI_) { doAI = doAI_; }
 

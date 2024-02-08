@@ -10,7 +10,7 @@
 #include "World/Block.hpp"
 #include "Keqing.hpp"
 #include "Entity/Particle.hpp"
-#include "Entity/Slime.hpp"
+#include "Monster/Slime.hpp"
 #include "World/Background.hpp"
 #include "Entity/Timer.hpp"
 #include "Utils/Sound.hpp"
@@ -76,12 +76,6 @@ void GoalGame::RunImpl() {
             Events::handleBasicEvents(&event, &key, &gInfo);
         }
         if (!gInfo.gRunning) break;
-
-        // Dev Mode
-        if (gInfo.gPaused) {
-            if (!gInfo.runFrame) continue;
-            else gInfo.runFrame = false;
-        }
 
         if (!timer->hasStarted() && !kq->isInAir()) {
             timer->start();

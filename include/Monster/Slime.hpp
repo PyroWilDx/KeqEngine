@@ -39,10 +39,16 @@ public:
 
     void hurt() override;
 
+    bool onDeath() override;
+
+    bool animDeath() override;
+
     void updateAction() override;
 
 private:
+    double currJumpXVelocity;
     int lastJumpTime;
+    int currJumpCd;
     int lastAtkTime;
 
 };

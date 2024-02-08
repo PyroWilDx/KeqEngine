@@ -13,3 +13,5 @@ for coloring keqing
      FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
 
 idée de jeu : plusieurs waves où il faut survivre et tuer les mobs, rapportant de la monnaie pour acheter des améliorations de dégats, ou régénération...
+
+multiply all atk by atk% and artefact, weapons..., function to get atk

@@ -14,6 +14,7 @@
 #include "Utils/Utils.hpp"
 #include "Main/GoalGameMenu.hpp"
 #include "World/Background.hpp"
+#include "Main/SlashEm.hpp"
 
 void HomeMenu::RunImpl() {
     SDL_Event event;
@@ -50,6 +51,18 @@ void HomeMenu::RunImpl() {
     runGoalGameButton->addText("Goal Game", &tmpColor, 16);
     runGoalGameButton->changeColor(COLOR_WHITE);
     gWorld->addButton(runGoalGameButton);
+
+    auto *runSlashEmButton = new Button(220, 120, 200, 100);
+    runSlashEmButton->setOnClickRelease([](Button *self, int mouseX,
+                                            int mouseY, void *fParams) {
+        bool *pGRunning = (bool *) fParams;
+        Events::callMainFunc(pGRunning, &SlashEm::Run);
+    });
+    runSlashEmButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
+    tmpColor = {COLOR_BLACK_FULL};
+    runSlashEmButton->addText("Slash'Em", &tmpColor, 16);
+    runSlashEmButton->changeColor(COLOR_WHITE);
+    gWorld->addButton(runSlashEmButton);
 
     auto *runConfigKqButton = new Button(10, 230, 200, 100);
     runConfigKqButton->setOnClickRelease([](Button *self, int mouseX,

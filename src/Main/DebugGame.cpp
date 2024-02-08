@@ -7,7 +7,7 @@
 #include "Utils/Global.hpp"
 #include "Keqing.hpp"
 #include "Utils/Events.hpp"
-#include "Entity/Slime.hpp"
+#include "Monster/Slime.hpp"
 #include "Entity/FPSText.hpp"
 #include "World/World.hpp"
 #include "Entity/Particle.hpp"

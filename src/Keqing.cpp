@@ -2771,7 +2771,7 @@ void Keqing::hurt() {
     }
 }
 
-void Keqing::onDeath() {
+bool Keqing::onDeath() {
     World *gWorld = Global::gWorld;
 
     gWorld->setDisplayMenu(true);
@@ -2797,6 +2797,8 @@ void Keqing::onDeath() {
     }
 
     kqLock(true, true);
+
+    return false;
 }
 
 void Keqing::setFacingEast(bool facingEast_) {

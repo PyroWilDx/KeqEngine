@@ -20,15 +20,15 @@ bool Monster::onGameFrame() {
 
     if (doNext) {
         fallGravity();
-
-        if (doAI) {
-            AI();
+        if (!isDead) {
+            if (doAI) AI();
+            else setSpriteAnimated(true, 0); // Idle
+            updateAction();
         } else {
-            setSpriteAnimated(true, 0); // Idle
+            bool deletedSelf = animDeath();
+            if (deletedSelf) return false;
+            hurt();
         }
-
-        updateAction();
-
         moveX();
         moveY();
     }
@@ -38,6 +38,7 @@ bool Monster::onGameFrame() {
     return doNext;
 }
 
-void Monster::onDeath() {
-    Global::gWorld->removeMonster(this);
+bool Monster::onDeath() {
+    doAI = false;
+    return false;
 }

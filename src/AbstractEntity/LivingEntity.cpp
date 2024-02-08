@@ -75,6 +75,8 @@ bool LivingEntity::onGameFrame() {
 void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
     AnimatedEntity::renderSelf(gRenderer);
 
+    if (isDead) return;
+
     int hpBarX = (int) (getX() + hitBox.x);
     int hpBarY = (int) (getY() + hitBox.y - HP_BAR_HEIGHT - HP_BAR_GAP);
     int hpBarMaxW = hitBox.w;
@@ -110,9 +112,9 @@ bool LivingEntity::damageSelf(int damage, double kbXV, double kbYV) {
 
     if (isInvincible() != INVINCIBLE_DAMAGE) currHp -= damage;
     if (currHp <= 0) {
-        onDeath();
+        bool deletedEntity = onDeath();
+        if (deletedEntity) return false;
         isDead = true;
-        return false;
     }
     hurtKbVY = kbYV;
     yVelocity = kbYV;
@@ -136,7 +138,7 @@ bool LivingEntity::damageSelf(int damage, double kbXV, double kbYV) {
 }
 
 void LivingEntity::hurt() {
-    double addX = 0.0012;
+    const double addX = 0.0012;
     xVelocity = (xVelocity < 0) ?
                 std::min(xVelocity + addX * Global::dt, 0.) :
                 std::max(xVelocity - addX * Global::dt, 0.);
@@ -153,7 +155,9 @@ void LivingEntity::hurt() {
     }
 
     if (xVelocity == 0 && yVelocity == 0) {
-        setSpriteAnimated(false, hurtSpriteCode);
+        if (!isDead) {
+            setSpriteAnimated(false, hurtSpriteCode);
+        }
     }
 }
 
@@ -165,4 +169,8 @@ void LivingEntity::updateAction() {
     }
 
     if (isHurt()) this->hurt();
+}
+
+bool LivingEntity::isHurt() {
+    return isSpriteAnimated(hurtSpriteCode) || isDead;
 }

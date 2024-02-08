@@ -2,19 +2,22 @@
 // Created by pyrowildx on 24/07/2023.
 //
 
-#include "Entity/Slime.hpp"
+#include "Monster/Slime.hpp"
 #include "Keqing.hpp"
 #include "Utils/Global.hpp"
 #include "EntityInfo/Attack.hpp"
 #include "World/World.hpp"
 #include "Utils/Utils.hpp"
+#include "Utils/Random.hpp"
 
-Slime::Slime(const std::string &colorString) :
-        Monster(0.002, 1000, SLIME_ENUM_N,
-                SLIME_DEATH, SLIME_JUMP) {
+Slime::Slime(const std::string &colorString)
+        : Monster(0.002, 1000, SLIME_ENUM_N,
+                  SLIME_DEATH, SLIME_JUMP) {
     setHitBox({0, 0, 16, 16});
 
+    this->currJumpXVelocity = 0;
     this->lastJumpTime = 0;
+    this->currJumpCd = 0;
     this->lastAtkTime = 0;
 
     std::string pathStart = "res/gfx/slime/" + colorString;
@@ -36,22 +39,25 @@ Slime::Slime(const std::string &colorString) :
     initSprite(SLIME_DEATH, (pathStart + "Death.png").c_str(),
                32, 32, 5, 60);
     setXYShift(-8, -16, -8, SLIME_DEATH);
-    setSpriteFrameLengthFromTo(INT32_MAX, -1, -1, SLIME_DEATH);
+    setSpriteFrameLengthFromTo(INT32_MAX, 2, 2, SLIME_DEATH);
 
     setSpriteAnimated(true, SLIME_IDLE);
 }
 
 void Slime::jump() {
-    if (isNewestFrame(2, SLIME_JUMP)) {
+    if (isNewestFrame(0, SLIME_JUMP)) {
+        currJumpXVelocity = Random::getRandomReal(0.126, 0.242);
+    } else if (isNewestFrame(2, SLIME_JUMP)) {
         yVelocity = -0.46;
     }
 
     if (isFrameBetween(2, 7, SLIME_JUMP)) {
-        xVelocity = 0.16;
+        xVelocity = currJumpXVelocity;
     }
 
     if (willFrameFinish(-1, SLIME_JUMP)) {
         lastJumpTime = Global::currentTime;
+        currJumpCd = Random::getRandomInt(100, 420);
     }
 }
 
@@ -84,20 +90,20 @@ void Slime::attack() {
 void Slime::AI() {
     if (isHurt()) return;
 
+    setSpriteAnimated(true, SLIME_IDLE);
+
     Keqing *kq = Keqing::getInstance();
     double kqDist = distTo(kq);
-    if (kqDist < SLIME_ATK_DIST && Global::currentTime - lastAtkTime > SLIME_ATK_CD) {
-        if (!isInAir()) {
+    if (!isInAir()) {
+        if (kqDist < SLIME_ATK_DIST && Global::currentTime - lastAtkTime > SLIME_ATK_CD) {
             setFacingEast(x < kq->getX());
             setSpriteAnimated(true, SLIME_ATK);
+        } else if (kqDist < SLIME_MAX_DIST && Global::currentTime - lastJumpTime > currJumpCd) {
+            if (!isSpriteAnimated(SLIME_JUMP)) {
+                setFacingEast(x < kq->getX());
+                setSpriteAnimated(true, SLIME_JUMP);
+            }
         }
-    } else if (kqDist < SLIME_MAX_DIST && Global::currentTime - lastJumpTime > SLIME_JUMP_CD) {
-        if (!isSpriteAnimated(SLIME_JUMP)) {
-            setFacingEast(x < kq->getX());
-            setSpriteAnimated(true, SLIME_JUMP);
-        }
-    } else {
-        setSpriteAnimated(true, SLIME_IDLE);
     }
 
     if (!isInAir()) { // Can Only Move When Jumping
@@ -114,6 +120,22 @@ int Slime::isInvincible() {
 
 void Slime::hurt() {
     LivingEntity::hurt();
+}
+
+bool Slime::onDeath() {
+    Monster::onDeath();
+
+    setSpriteFrameLengthFromTo(80, 0, -1, SLIME_DEATH);
+    goToFrame(0, SLIME_DEATH);
+    return false;
+}
+
+bool Slime::animDeath() {
+    if (willFrameFinish(-1, SLIME_DEATH)) {
+        Global::gWorld->removeMonster(this);
+        return true;
+    }
+    return false;
 }
 
 void Slime::updateAction() {
