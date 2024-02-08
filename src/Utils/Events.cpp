@@ -28,12 +28,10 @@ void Events::onWindowResize(int newW, int newH) {
     if (wCoeff < hCoeff) {
         newRenderW = newW;
         newRenderH = SCREEN_BASE_HEIGHT * wCoeff;
-    }
-    if (wCoeff == hCoeff) {
+    } else if (wCoeff == hCoeff) {
         newRenderW = newW;
         newRenderH = newH;
-    }
-    if (hCoeff < wCoeff) {
+    } else { // hCoeff < wCoeff
         newRenderW = SCREEN_BASE_WIDTH * hCoeff;
         newRenderH = newH;
     }
@@ -91,7 +89,7 @@ void Events::onQuit(gStateInfo *gInfo) {
 
 void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
     int SDLKey;
-    int key;
+    int key = KEY_UNDEFINED;
 
     switch (event->type) {
         case SDL_QUIT:

@@ -111,7 +111,7 @@ void Attack::setHitSound(std::string &fileName) {
 
 void Attack::setKQHitSoundRandom(int atkStrength) {
     std::string startName;
-    int nSound;
+    int nSound = 0;
     if (atkStrength == 0) {
         startName = std::string("KQHitSwordHitWeak");
         nSound = 3;

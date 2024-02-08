@@ -3006,7 +3006,6 @@ void Keqing::updateActionFromKey() {
                 spriteCode = KQ_RUN;
             }
         }
-
     }
 
     if (canDoAction(spriteCode)) setSpriteAnimated(true, spriteCode);
