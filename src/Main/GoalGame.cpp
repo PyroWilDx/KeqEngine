@@ -35,13 +35,11 @@ void GoalGame::RunImpl() {
 
     Keqing *kq = Keqing::initKeqingForPlay(0, 0);
 
-    auto *mob = new Slime("Blue");
-    mob->setDoAI(false);
-    mob->setHitBox({1, 4, 14, 12});
-    mob->setRenderWHMultiplier(4., 4.);
-    mob->moveTo(200, 0);
-    mob->setFacingEast(false);
-    gWorld->addMonster(mob);
+    auto *slime = new Slime("Blue");
+    slime->setDoAI(false);
+    slime->moveTo(200, 0);
+    slime->setFacingEast(false);
+    gWorld->addMonster(slime);
 
     int bestTime = -1;
     execSQL(("SELECT bestTime "
@@ -81,7 +79,7 @@ void GoalGame::RunImpl() {
             timer->start();
         }
 
-        if (goalBlock != nullptr && mob->hitBoxCollision(goalBlock)) {
+        if (goalBlock != nullptr && slime->hitBoxCollision(goalBlock)) {
             timer->stop();
 
             kq->kqLock(true, true);

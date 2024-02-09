@@ -11,16 +11,18 @@
 #include "Utils/Random.hpp"
 
 Slime::Slime(const std::string &colorString)
-        : Monster(0.002, 1000, SLIME_ENUM_N,
-                  SLIME_DEATH, SLIME_JUMP) {
-    setHitBox({0, 0, 16, 16});
+        : Monster(0.002, 1000,
+                  SLIME_ENUM_N, SLIME_DEATH,
+                  SLIME_JUMP, 32) {
+    setHitBox({1, 4, 14, 12});
+    setRenderWHMultiplier(4., 4.);
 
     this->currJumpXVelocity = 0;
     this->lastJumpTime = 0;
     this->currJumpCd = 0;
     this->lastAtkTime = 0;
 
-    std::string pathStart = "res/gfx/slime/" + colorString;
+    std::string pathStart = "res/gfx/monster/slime/" + colorString;
     initSprite(SLIME_IDLE, (pathStart + "Idle.png").c_str(),
                32, 32, 5, 60);
     setXYShift(-8, -16, -8, SLIME_IDLE);
@@ -119,7 +121,7 @@ int Slime::isInvincible() {
 }
 
 void Slime::hurt() {
-    LivingEntity::hurt();
+    Monster::hurt();
 }
 
 bool Slime::onDeath() {
@@ -139,16 +141,7 @@ bool Slime::animDeath() {
 }
 
 void Slime::updateAction() {
-    LivingEntity::updateAction();
-
-    bool first = true;
-    for (int i = SLIME_ENUM_N - 1; i >= 0; i--) {
-        if (first && isSpriteAnimated(i)) {
-            first = false;
-            continue;
-        }
-        if (!first) setSpriteAnimated(false, i);
-    }
+    Monster::updateAction();
 
     if (isSpriteAnimated(SLIME_JUMP)) this->jump();
     if (isSpriteAnimated(SLIME_ATK)) this->attack();
