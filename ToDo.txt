@@ -3,8 +3,6 @@ add intro, parry, taunt...
 appuie rapid 2 fois sur S, check si la platforme fait moins de X height, si oui,
 voir si ya dla place en dessous. Et meme faire tomber plus vite
 
-fix E interrupt bug
-
 set an electro mode texture for keqing, just create two spritearray and set it accordingly!
 
 damaging kb should take into account the weight of the entity
@@ -13,5 +11,3 @@ for coloring keqing
      FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
 
 idée de jeu : plusieurs waves où il faut survivre et tuer les mobs, rapportant de la monnaie pour acheter des améliorations de dégats, ou régénération...
-
-atk hit entity vector to unordered map to be faster

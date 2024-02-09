@@ -189,7 +189,7 @@ BoostPoint Attack::isHittingEntity(LivingEntity *dstEntity) {
 }
 
 void Attack::checkEntityHit(LivingEntity *dstEntity) {
-    if (uniqueEntityHit && !hitEntityVector.empty()) {
+    if (uniqueEntityHit && !hitEntitySet.empty()) {
         shouldRemove = [](Attack *atk, void *fParams) {
             return true;
         };
@@ -212,7 +212,8 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
     if (!isDamaged) return;
 
     if (onHit != nullptr) onHit(this, dstEntity, onHitParams);
-    hitEntityVector.push_back(dstEntity);
+    bool firstHit = hitEntitySet.empty();
+    hitEntitySet.insert(dstEntity);
 
     if (!hitSoundPath.empty()) {
         Sound::playAudioChunk(hitSoundPath.c_str());
@@ -279,7 +280,7 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
         }
     }
 
-    if (atkDamage > 0) {
+    if (firstHit && atkDamage > 0) {
         DamageText *dmgText;
         if (!isElectro) dmgText = new DamageText(atkDamage);
         else dmgText = new DamageText(atkDamage, &Colors::dColorKq);
@@ -290,8 +291,7 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
 }
 
 bool Attack::haveHitEntity(LivingEntity *checkEntity) {
-    return std::find(hitEntityVector.begin(), hitEntityVector.end(),
-                     checkEntity) != hitEntityVector.end();
+    return hitEntitySet.find(checkEntity) != hitEntitySet.end();
 }
 
 void Attack::onGameFrame() {

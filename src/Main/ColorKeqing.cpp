@@ -38,6 +38,7 @@ void ColorKeqing::RunImpl() {
         auto *selfColorPicker = (ColorPicker *) self;
         Uint32 rgba = selfColorPicker->getCurrentRGBA();
         Keqing *kq = Keqing::getInstance();
+        kq->setFacingEast(true);
         kq->kqLock(true);
         kq->moveToDownLeft(0, SCREEN_BASE_HEIGHT);
         kq->colorCurrSprite(rgba);

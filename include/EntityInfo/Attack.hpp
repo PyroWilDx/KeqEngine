@@ -6,7 +6,7 @@
 #define ATTACK_HPP
 
 #include <string>
-#include <vector>
+#include <unordered_set>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
@@ -106,7 +106,7 @@ private:
     Particle *bigParticle;
     Particle *smallParticle;
     bool uniqueEntityHit;
-    std::vector<LivingEntity *> hitEntityVector;
+    std::unordered_set<LivingEntity *> hitEntitySet;
     Attack *atkCompanion;
 
     void (*onHit)(Attack *, LivingEntity *, void *);

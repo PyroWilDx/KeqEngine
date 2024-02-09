@@ -11,7 +11,7 @@
 #include "Utils/Random.hpp"
 
 Slime::Slime(const std::string &colorString)
-        : Monster(0.002, 1000000,
+        : Monster(0.002, 10000000,
                   SLIME_ENUM_N, SLIME_DEATH,
                   SLIME_JUMP, 32) {
     setHitBox({1, 4, 14, 12});
