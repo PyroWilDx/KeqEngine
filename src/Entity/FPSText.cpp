@@ -9,7 +9,8 @@
 
 FPSText::FPSText()
         : Text(10, 0, "FPS : 0", &Colors::dColorWhite,
-               38, false) {
+               38, &Colors::dColorBlack, 2,
+               false) {
     accumulatedFPSTime = 0;
     accumulatedFrames = 0;
 }

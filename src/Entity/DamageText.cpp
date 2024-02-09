@@ -5,9 +5,11 @@
 #include "Entity/DamageText.hpp"
 #include "Utils/Global.hpp"
 #include "World/World.hpp"
+#include "Utils/Colors.hpp"
 
 DamageText::DamageText(int atkDamage, SDL_Color *textColor)
-        : Text(std::to_string(atkDamage).c_str(), textColor, 16) {
+        : Text(std::to_string(atkDamage).c_str(), textColor, 16,
+               &Colors::dColorBlack, 2) {
 
 }
 

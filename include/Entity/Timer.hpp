@@ -10,6 +10,9 @@
 class Timer : public Text {
 
 public:
+    Timer(double x, double y, SDL_Color *timerTextColor,
+          int timerFontSize, SDL_Color *outlColor, int outlSize);
+
     Timer(double x, double y, SDL_Color *timerTextColor, int timerFontSize);
 
     ~Timer() override = default;
