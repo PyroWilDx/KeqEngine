@@ -12,7 +12,9 @@ class Monster : public LivingEntity {
 public:
     Monster(double gravityWeight, int baseHp,
             int spriteArrayLength, int hurtSpriteCode,
-            int stateChangerEndSpriteCode);
+            int stateChangerEndSpriteCode, int frameW);
+
+    void moveToEntityCenterFront(Entity *centerEntity, bool takeFaceEast = true);
 
     bool onGameFrame() override;
 
@@ -22,9 +24,12 @@ public:
 
     virtual bool animDeath() = 0;
 
+    void updateAction() override;
+
     void setDoAI(bool doAI_) { doAI = doAI_; }
 
 protected:
+    int frameW;
     bool doAI;
 
 };

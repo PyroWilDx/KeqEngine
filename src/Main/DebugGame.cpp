@@ -30,21 +30,15 @@ void DebugGame::RunImpl() {
 
     Keqing::initKeqingForPlay(0, 0);
 
-    auto *slime = new Slime("Blue");
-    slime->setHitBox({1, 4, 14, 12});
-    slime->setRenderWHMultiplier(4., 4.);
-    slime->moveToDownLeft(400, 720 - 200);
-    gWorld->addMonster(slime);
+    auto *slime0 = new Slime("Blue");
+    slime0->moveToDownLeft(400, 720 - 200);
+    gWorld->addMonster(slime0);
 
     auto *slime1 = new Slime("Blue");
-    slime1->setHitBox({1, 4, 14, 12});
-    slime1->setRenderWHMultiplier(4., 4.);
     slime1->moveToDownLeft(1540, 720 - 200);
     gWorld->addMonster(slime1);
 
     auto *slime2 = new Slime("Red");
-    slime2->setHitBox({1, 4, 14, 12});
-    slime2->setRenderWHMultiplier(4., 4.);
     slime2->moveToDownLeft(1600, 720 - 200);
     gWorld->addMonster(slime2);
 
