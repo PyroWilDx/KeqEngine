@@ -8,9 +8,9 @@
 #include "World/World.hpp"
 #include "Utils/Global.hpp"
 #include "UI/Button.hpp"
-#include "Main/MainInterface.hpp"
 #include "Main/GoalGame.hpp"
 #include "World/Background.hpp"
+#include "Utils/Colors.hpp"
 
 void GoalGameMenu::RunImpl() {
     SDL_Event event;
@@ -24,7 +24,6 @@ void GoalGameMenu::RunImpl() {
                                      "res/gfx/background/GoalGameMenu.png");
     gWorld->getBackground()->fitImgToScreen();
 
-    SDL_Color textColor = {COLOR_WHITE_FULL};
     const int nLevel = (int) GoalGame::lvlFuncs.size();
     const int padding = 10;
     int x = padding;
@@ -52,8 +51,9 @@ void GoalGameMenu::RunImpl() {
         fParams->fParam0 = (void *) fParam0;
         fParams->fParam1 = (void *) &(gInfo.gRunning);
         lButton->setOnClickReleaseParams((void *) fParams);
-        lButton->addText(("Lvl " + std::to_string(i)).c_str(), &textColor, 16);
-        lButton->changeColor(COLOR_GREEN);
+        lButton->addText(("Lvl " + std::to_string(i)).c_str(),
+                         &Colors::dColorWhite, 16);
+        lButton->changeColor(&Colors::dColorGreen);
         gWorld->addButton(lButton);
     }
 

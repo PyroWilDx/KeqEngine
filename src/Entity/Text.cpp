@@ -4,12 +4,11 @@
 
 #include <SDL2/SDL_ttf.h>
 #include "Entity/Text.hpp"
-#include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
+#include "Utils/Colors.hpp"
 
 Text::Text(const char *textStr, int fontSize, bool translateBackground_) {
-    SDL_Color defaultColor = {COLOR_WHITE_FULL};
-    loadTextTexture(textStr, &defaultColor, DEFAULT_FONT_PATH,
+    loadTextTexture(textStr, &Colors::dColorWhite, DEFAULT_FONT_PATH,
                     fontSize, translateBackground_);
 }
 
@@ -45,12 +44,11 @@ void Text::loadTextTexture(const char *textStr, const SDL_Color *textColor, cons
                            int fontSize, bool translateBackground_) {
     clearTexture();
 
-    SDL_Color tmpColor;
-    if (textColor != nullptr) tmpColor = *textColor;
-    else tmpColor = {COLOR_WHITE_FULL};
+    if (textColor != nullptr) currColor = *textColor;
+    else currColor = Colors::dColorWhite;
 
     TTF_Font *font = TTF_OpenFont(fontPath, fontSize);
-    SDL_Surface *textSurface = TTF_RenderText_Solid(font, textStr, tmpColor);
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, textStr, currColor);
     imgTexture = SDL_CreateTextureFromSurface(WindowRenderer::getInstance()->getRenderer(), textSurface);
     imgFrame.w = textSurface->w;
     imgFrame.h = textSurface->h;
@@ -58,11 +56,10 @@ void Text::loadTextTexture(const char *textStr, const SDL_Color *textColor, cons
     TTF_CloseFont(font);
     SDL_FreeSurface(textSurface);
 
-    this->currText = std::string(textStr);
-    this->currColor = tmpColor;
-    this->currFontPath = std::string(fontPath);
-    this->currFontSize = fontSize;
-    this->translateBackground = translateBackground_;
+    currText = std::string(textStr);
+    currFontPath = std::string(fontPath);
+    currFontSize = fontSize;
+    translateBackground = translateBackground_;
 }
 
 void Text::changeText(const char *textStr) {

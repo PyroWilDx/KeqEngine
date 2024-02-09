@@ -17,6 +17,7 @@
 #include "Utils/SQLite3.hpp"
 #include "UI/Button.hpp"
 #include "Utils/Draw.hpp"
+#include "Utils/Colors.hpp"
 
 int GoalGame::iLevel = 0;
 std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1, &Level2};
@@ -61,8 +62,7 @@ void GoalGame::RunImpl() {
     bestTimeText->moveTo(6., 2.);
     gWorld->addOtherEntity(bestTimeText);
 
-    SDL_Color timerColor = {COLOR_RED_FULL};
-    auto *timer = new Timer(6., 26., &timerColor, 30);
+    auto *timer = new Timer(6., 26., &Colors::dColorRed, 30);
     gWorld->addOtherEntity(timer);
 
     while (gInfo.gRunning) {
@@ -187,13 +187,11 @@ void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     gWorld->setDisplayMenu(true);
     gWorld->enableColorFilter(128, 128, 128, 128, 0.6);
 
-    SDL_Color tmpColor;
     SDL_Rect tmpRect;
 
     char winTimeStr[16];
     sprintf(winTimeStr, "Time : %.2f", (double) winTime * 0.001);
-    tmpColor = {COLOR_RED_FULL};
-    auto *winTimeText = new Text(winTimeStr, &tmpColor,
+    auto *winTimeText = new Text(winTimeStr, &Colors::dColorRed,
                                  30, false);
     winTimeText->moveToScreenCenterHorizontal(200);
     gWorld->addMenuEntity(winTimeText);

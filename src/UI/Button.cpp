@@ -5,8 +5,8 @@
 #include <algorithm>
 #include "UI/Button.hpp"
 #include "WindowRenderer.hpp"
-#include "Utils/Utils.hpp"
 #include "Entity/Text.hpp"
+#include "Utils/Colors.hpp"
 
 Button::Button(double x, double y, int renderW, int renderH, bool rmOutline)
         : WorldEntity(x, y, renderW, renderH, WORLD_BUTTON),
@@ -21,7 +21,7 @@ Button::Button(double x, double y, int renderW, int renderH, bool rmOutline)
     this->onDestroyParams = nullptr;
     this->swapColorOnClick = true;
     this->buttonState = BUTTON_IDLE;
-    this->buttonColor = {COLOR_WHITE_FULL};
+    this->buttonColor = Colors::dColorWhite;
     this->buttonText = nullptr;
     this->outlineThickness = BASE_OUTLINE;
     this->outlineDarkerCoeff = 40;
@@ -59,21 +59,21 @@ void Button::translateOutline(double fromX, double fromY, int fromRW, int fromRH
     setRenderH(fromRH - 2 * outlineThickness);
 }
 
-void Button::changeColor(Uint8 r, Uint8 g, Uint8 b) {
-    buttonColor.r = r;
-    buttonColor.g = g;
-    buttonColor.b = b;
+void Button::changeColor(SDL_Color *changeColor) {
+    buttonColor.r = changeColor->r;
+    buttonColor.g = changeColor->g;
+    buttonColor.b = changeColor->b;
 }
 
-void Button::addText(const char *text, const SDL_Color *color, int fontSize) {
+void Button::addText(const char *textStr, const SDL_Color *textColor, int fontSize) {
     delete buttonText;
 
-    buttonText = new Text(text, color, fontSize, false);
+    buttonText = new Text(textStr, textColor, fontSize, false);
     buttonText->moveToEntityCenter(this);
 }
 
-void Button::changeText(const char *text) {
-    buttonText->changeText(text);
+void Button::changeText(const char *textStr) {
+    buttonText->changeText(textStr);
     buttonText->moveToEntityCenter(this);
 }
 

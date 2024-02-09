@@ -83,7 +83,7 @@ void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled,
     if (filled) SDL_RenderFillRect(gRenderer_, &dstRect);
     else SDL_RenderDrawRect(gRenderer_, &dstRect);
 
-    SDL_SetRenderDrawColor(gRenderer_, COLOR_BLACK_FULL);
+    SDL_SetRenderDrawColor(gRenderer_, 0, 0, 0, 0);
 }
 
 void WindowRenderer::renderEntity(Entity *entity) {

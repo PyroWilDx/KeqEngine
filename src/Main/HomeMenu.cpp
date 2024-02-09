@@ -15,6 +15,7 @@
 #include "Main/GoalGameMenu.hpp"
 #include "World/Background.hpp"
 #include "Main/SlashEm.hpp"
+#include "Utils/Colors.hpp"
 
 void HomeMenu::RunImpl() {
     SDL_Event event;
@@ -35,9 +36,8 @@ void HomeMenu::RunImpl() {
         Events::callMainFunc(pGRunning, &DebugGame::Run);
     });
     runDebugGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    runDebugGameButton->addText("Debug Game", &tmpColor, 16);
-    runDebugGameButton->changeColor(COLOR_BLUE);
+    runDebugGameButton->addText("Debug Game", &Colors::dColorWhite, 16);
+    runDebugGameButton->changeColor(&Colors::dColorBlue);
     gWorld->addButton(runDebugGameButton);
 
     auto *runGoalGameButton = new Button(10, 120, 200, 100);
@@ -47,9 +47,8 @@ void HomeMenu::RunImpl() {
         Events::callMainFunc(pGRunning, &GoalGameMenu::Run);
     });
     runGoalGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    tmpColor = {COLOR_BLACK_FULL};
-    runGoalGameButton->addText("Goal Game", &tmpColor, 16);
-    runGoalGameButton->changeColor(COLOR_WHITE);
+    runGoalGameButton->addText("Goal Game", &Colors::dColorBlack, 16);
+    runGoalGameButton->changeColor(&Colors::dColorWhite);
     gWorld->addButton(runGoalGameButton);
 
     auto *runSlashEmButton = new Button(220, 120, 200, 100);
@@ -59,9 +58,8 @@ void HomeMenu::RunImpl() {
         Events::callMainFunc(pGRunning, &SlashEm::Run);
     });
     runSlashEmButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    tmpColor = {COLOR_BLACK_FULL};
-    runSlashEmButton->addText("Slash'Em", &tmpColor, 16);
-    runSlashEmButton->changeColor(COLOR_WHITE);
+    runSlashEmButton->addText("Slash'Em", &Colors::dColorBlack, 16);
+    runSlashEmButton->changeColor(&Colors::dColorWhite);
     gWorld->addButton(runSlashEmButton);
 
     auto *runConfigKqButton = new Button(10, 230, 200, 100);
@@ -71,15 +69,13 @@ void HomeMenu::RunImpl() {
         Events::callMainFunc(pGRunning, &ConfigKeqing::Run);
     });
     runConfigKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    tmpColor = {COLOR_WHITE_FULL};
-    runConfigKqButton->addText("Config Keqing", &tmpColor, 16);
-    runConfigKqButton->changeColor(COLOR_RED);
+    runConfigKqButton->addText("Config Keqing", &Colors::dColorWhite, 16);
+    runConfigKqButton->changeColor(&Colors::dColorRed);
     gWorld->addButton(runConfigKqButton);
 
     int currVolume = std::stoi(Global::userData[DATA_GAME_VOLUME]);
-    tmpColor = {COLOR_GREEN_FULL};
     auto *volumeSlider = new VolumeSlider(880, 10, 390,
-                                          &tmpColor, currVolume);
+                                          &Colors::dColorGreen, currVolume);
     auto fSetVolume = [](Button *self, int mouseX,
                          int mouseY, void *fParams) {
         auto *selfVolumeSlider = (VolumeSlider *) self;

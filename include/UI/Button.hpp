@@ -31,11 +31,11 @@ public:
 
     void translateOutline(double fromX, double fromY, int fromRW, int fromRH);
 
-    void changeColor(Uint8 r, Uint8 g, Uint8 b);
+    void changeColor(SDL_Color *changeColor);
 
-    void addText(const char *text, const SDL_Color *color, int fontSize);
+    void addText(const char *textStr, const SDL_Color *textColor, int fontSize);
 
-    void changeText(const char *text);
+    void changeText(const char *textStr);
 
     inline bool shouldTranslate() override { return false; }
 
@@ -84,6 +84,8 @@ public:
         fOnDestroy = fOnDestroy_;
         onDestroyParams = fParams;
     }
+
+    inline void setSwapColorOnClick(bool swapColorOnClick_) { swapColorOnClick = swapColorOnClick_; }
 
     inline void setState(ButtonState buttonState_) { buttonState = buttonState_; }
 

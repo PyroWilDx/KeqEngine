@@ -18,35 +18,6 @@
 
 #define KEY_PRESS_SHORT_DURATION 100
 
-#define COLOR_MAX 255
-#define COLOR_MAX_DBL 255.
-
-#define COLOR_FULL(COLOR) COLOR, 255
-
-#define COLOR_WHITE 255, 255, 255
-#define COLOR_WHITE_FULL COLOR_FULL(COLOR_WHITE)
-
-#define COLOR_BLACK 0, 0, 0
-#define COLOR_BLACK_FULL COLOR_FULL(COLOR_BLACK)
-
-#define COLOR_RED 255, 0, 0
-#define COLOR_RED_FULL COLOR_FULL(COLOR_RED)
-
-#define COLOR_GREEN 0, 255, 0
-#define COLOR_GREEN_FULL COLOR_FULL(COLOR_GREEN)
-
-#define COLOR_BLUE 0, 0, 255
-#define COLOR_BLUE_FULL COLOR_FULL(COLOR_BLUE)
-
-#define COLOR_GRAY 156, 156, 156
-#define COLOR_GRAY_FULL COLOR_FULL(COLOR_GRAY)
-
-#define COLOR_CYAN 0, 255, 255
-#define COLOR_CYAN_FULL COLOR_FULL(COLOR_CYAN)
-
-#define COLOR_KQ 164, 152, 180
-#define COLOR_KQ_FULL COLOR_FULL(COLOR_KQ)
-
 typedef struct f2Params {
     void *fParam0;
     void *fParam1;
@@ -88,7 +59,7 @@ void approxEllipse(double xyArray[][2], int N,
 void cutEllipseHalf(double xyArray[][2], int N, int HalfN,
                     double xyArrayHalfRight[][2], double xyArrayHalfLeft[][2]);
 
-void cutEllipseHalfHorzt(double xyArray[][2], int N, int HalfN,
+void cutEllipseHalfHorzt(double xyArray[][2], int HalfN,
                     double xyArrayHalfUp[][2], double xyArrayHalfDown[][2]);
 
 void shiftXYArray(double xyArray[][2], int N,

@@ -27,8 +27,6 @@ public:
 
     static Button *drawHomeButton(SDL_Rect *btRect, Entity *upperEntity, bool *gRunning);
 
-    static SDL_Color dColorKq;
-
 private:
 
 };
