@@ -11,6 +11,7 @@
 #include "World/World.hpp"
 #include "World/Background.hpp"
 #include "World/Block.hpp"
+#include "Monster/MobDropper.hpp"
 
 void SlashEm::RunImpl() {
     SDL_Event event;
@@ -27,7 +28,11 @@ void SlashEm::RunImpl() {
     gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_GRASS,
                             0, 520, 2000);
 
-    Keqing *kq = Keqing::initKeqingForPlay(0, 0);
+    auto *mobDropper = new MobDropper();
+    mobDropper->moveTo(8, 8);
+    gWorld->addMonster(mobDropper);
+
+    Keqing::initKeqingForPlay(32, 120);
 
     while (gInfo.gRunning) {
         handleTime();

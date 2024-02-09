@@ -28,6 +28,7 @@ Keqing::Keqing()
         : LivingEntity(0.0024, 2000, KQ_ENUM_N,
                        KQ_HURT, KQ_JUMP) {
     setHitBox({0, 18, 60, 78});
+    setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
 
     this->wasInAir = false;
     this->jumpPressTime = 0;
@@ -222,6 +223,8 @@ Keqing::Keqing()
                96, 96, 6, INT32_MAX);
     setXYShift(-12, 0, -24, KQ_HURT);
 
+    setSpriteAnimated(true, KQ_IDLE);
+
     setSoundSheet();
 
     Uint32 rgba = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
@@ -331,6 +334,7 @@ void Keqing::initKeqing() {
 Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
     World *gWorld = Global::gWorld;
     Keqing *kq = Keqing::getInstance();
+    kq->reset();
     kq->moveTo(kqX, kqY);
     gWorld->getBackground()->hardTranslate(kq);
     kq->setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
@@ -389,6 +393,8 @@ void Keqing::reset() {
     for (int i = 0; i < KQ_ENUM_N; i++) {
         setSpriteAnimated(false, i);
     }
+    setSpriteAnimated(true, KQ_IDLE);
+
     facingEast = true;
     xVelocity = 0;
     yVelocity = 0;
@@ -2773,6 +2779,8 @@ void Keqing::hurt() {
 
 bool Keqing::onDeath() {
     World *gWorld = Global::gWorld;
+
+    gWorld->setRenderKeqing(false);
 
     gWorld->setDisplayMenu(true);
     gWorld->enableColorFilter(COLOR_MAX, 0, 0, 96, 0.6);

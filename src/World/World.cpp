@@ -71,11 +71,6 @@ World::~World() {
         delete entity;
     }
 
-    if (renderKeqing) {
-        Keqing *kq = Keqing::getInstance();
-        if (kq != nullptr) kq->reset();
-    }
-
     LLFree(monsterAtkLL, LLFreeAtkF);
     LLFree(kqAtkLL, LLFreeAtkF);
 
@@ -370,11 +365,13 @@ void World::onGameFrame() {
     Sound::onGameFrame();
     Particle::animateAll();
 
-    for (Monster *monster: monsterVector) {
-        monster->onGameFrame();
+    const int nMonster = monsterVector.size();
+    for (int i = 0; i < nMonster; i++) {
+        monsterVector[i]->onGameFrame();
     }
-    for (Entity *entity: otherEntityVecotr) {
-        entity->onGameFrame();
+    const int nOtherEntity = otherEntityVecotr.size();
+    for (int i = 0; i < nOtherEntity; i++) {
+        otherEntityVecotr[i]->onGameFrame();
     }
     if (renderKeqing) Keqing::getInstance()->onGameFrame();
 
@@ -388,7 +385,7 @@ void World::onGameFrame() {
     monsterAtkLL = LLIterateMayRemove(monsterAtkLL, fAtkShouldRemove, nullptr,
                                       LLFreeAtkF);
 
-    auto fAtkOnGameFrame = [](void *value, void *fParams) {
+    const auto fAtkOnGameFrame = [](void *value, void *fParams) {
         auto *atk = (Attack *) value;
         atk->onGameFrame();
     };

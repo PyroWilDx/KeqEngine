@@ -72,6 +72,8 @@ public:
 
     int getSpriteLengthFromTo(int startFrame, int endFrame, int spriteCode = 0);
 
+    inline int getSpriteArrayLength() { return spriteArray.getSpriteArrayLength(); }
+
     inline Sprite *getSprite(int spriteCode = 0) { return (&spriteArray[spriteCode]); }
 
     inline int getCurrentSpriteCode() { return currentSprite->sCode; }

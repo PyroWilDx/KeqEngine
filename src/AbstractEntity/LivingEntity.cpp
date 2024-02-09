@@ -96,6 +96,7 @@ void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
 
 void LivingEntity::healFull() {
     currHp = maxHp;
+    isDead = false;
 }
 
 int LivingEntity::isInvincible() {
