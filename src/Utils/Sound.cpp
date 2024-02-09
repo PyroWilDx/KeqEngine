@@ -15,8 +15,8 @@ void Sound::initSound() {
     int volume = (int) (MIX_MAX_VOLUME * (volumePercent / 100.));
     Mix_Volume(-1, volume);
 
-    for (int i = 0; i < MIX_CHANNEL_N; i++) {
-        chunkArray[i] = nullptr;
+    for (auto &c : chunkArray) {
+        c = nullptr;
     }
     currentAudioMusic = nullptr;
 }

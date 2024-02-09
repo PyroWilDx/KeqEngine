@@ -103,7 +103,7 @@ void Global::saveUserData(const char *key, std::string &valStr) {
     file.open(DATA_PATH, std::ofstream::out | std::ofstream::trunc);
     myAssert(file.is_open(), "Error Opening Data File (For Save).");
 
-    file.write(finalStr.c_str(), finalStr.size());
+    file.write(finalStr.c_str(), (long long) finalStr.size());
 
     file.close();
 }

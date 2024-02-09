@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "UI/ColorPicker.hpp"
 #include "WindowRenderer.hpp"
-#include "Utils/Utils.hpp"
 #include "Utils/Colors.hpp"
 
 ColorPicker::ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA)

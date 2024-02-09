@@ -3,8 +3,6 @@
 //
 
 #include "AbstractEntity/Monster.hpp"
-#include "Utils/Global.hpp"
-#include "World/World.hpp"
 
 Monster::Monster(double gravityWeight, int baseHp,
                  int spriteArrayLength, int hurtSpriteCode,

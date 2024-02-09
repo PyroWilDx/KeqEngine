@@ -447,7 +447,7 @@ void Entity::moveToEntityBelow(Entity *entity, double yPadding) {
                      entity->y + entity->getH() + yPadding);
 }
 
-double Entity::distTo(Entity *entity) {
+double Entity::distTo(Entity *entity) const {
     double xDiff = entity->getX() - getX();
     double yDiff = entity->getY() - getY();
     return std::sqrt(xDiff * xDiff + yDiff * yDiff);
