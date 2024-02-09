@@ -9,6 +9,16 @@
 #include "World/World.hpp"
 #include "Main/HomeMenu.hpp"
 
+SDL_Color Draw::dColorKq = {COLOR_KQ_FULL};
+
+void Draw::initDraw() {
+
+}
+
+void Draw::cleanUp() {
+
+}
+
 Button *Draw::drawRetryButton(SDL_Rect *btRect, Entity *upperEntity,
                            void (*fOnClickRelease)(Button *, int, int, void *),
                            void *fParams) {

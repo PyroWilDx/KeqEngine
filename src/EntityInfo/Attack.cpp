@@ -23,6 +23,8 @@
 #include "Entity/Particle.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Sound.hpp"
+#include "Entity/DamageText.hpp"
+#include "Utils/Colors.hpp"
 
 #define BIG_PARTICLE_FRAME_LENGTH 40
 #define SMALL_PARTICLE_FRAME_LENGTH BIG_PARTICLE_FRAME_LENGTH
@@ -82,6 +84,7 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
     this->hitSoundPath.clear();
+    this->isElectro = false;
     this->bigParticle = nullptr;
     this->smallParticle = nullptr;
     this->uniqueEntityHit = false;
@@ -128,8 +131,10 @@ void Attack::setKQHitSoundRandom(int atkStrength) {
     setHitSound(finalName);
 }
 
-void Attack::setClassicParticle(int n, bool electro) {
+void Attack::setClassicParticle(int n, bool atkElectro) {
     myAssert(n >= 0 && n <= 2, "Index must be 0, 1 or 2");
+
+    isElectro = atkElectro;
 
     const int nCode = 8;
     const int allCodes[nCode] = {
@@ -142,7 +147,7 @@ void Attack::setClassicParticle(int n, bool electro) {
             PARTICLE_DMG_ELECTRO_2,
             PARTICLE_DMG_ELECTRO_MINI
     };
-    int addI = (nCode / 2) * electro;
+    int addI = (nCode / 2) * atkElectro;
     bigParticle = new Particle(allCodes[n + addI],
                                BIG_PARTICLE_FRAME_LENGTH,
                                1., 1.);
@@ -272,6 +277,15 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
 
             Particle::pushFast(smallParticleClone);
         }
+    }
+
+    if (atkDamage > 0) {
+        DamageText *dmgText;
+        if (!isElectro) dmgText = new DamageText(atkDamage);
+        else dmgText = new DamageText(atkDamage, &Colors::dColorKq);
+        dmgText->moveToEntityCenter(dstEntity, false);
+        dmgText->moveAdd(0, -dstEntity->getHitBox().h);
+        Global::gWorld->addDamageText(dmgText);
     }
 }
 

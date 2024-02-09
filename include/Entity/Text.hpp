@@ -13,26 +13,26 @@
 class Text : public Entity {
 
 public:
-    Text(const char *text, int fontSize, bool translateBackground_ = true);
+    Text(const char *textStr, int fontSize, bool translateBackground_ = true);
 
-    Text(const char *text, const SDL_Color *color,
-               int fontSize, bool translateBackground_ = true);
-
-    Text(const char *text, const SDL_Color *color, const char *fontPath,
+    Text(const char *textStr, const SDL_Color *textColor,
          int fontSize, bool translateBackground_ = true);
 
-    Text(double x, double y, const char *text, const SDL_Color *color,
+    Text(const char *textStr, const SDL_Color *textColor, const char *fontPath,
          int fontSize, bool translateBackground_ = true);
 
-    Text(double x, double y, const char *text, const SDL_Color *color,
+    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
+         int fontSize, bool translateBackground_ = true);
+
+    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
          const char *fontPath, int fontSize, bool translateBackground_ = true);
 
     ~Text() override = default;
 
-    void loadTextTexture(const char *text, const SDL_Color *color, const char *fontPath,
+    void loadTextTexture(const char *textStr, const SDL_Color *textColor, const char *fontPath,
                          int fontSize, bool translateBackground_ = true);
 
-    void changeText(const char *text);
+    void changeText(const char *textStr);
 
     inline bool shouldTranslate() override { return translateBackground; }
 

@@ -15,5 +15,3 @@ for coloring keqing
 idée de jeu : plusieurs waves où il faut survivre et tuer les mobs, rapportant de la monnaie pour acheter des améliorations de dégats, ou régénération...
 
 atk hit entity vector to unordered map to be faster
-
-display atk damage
