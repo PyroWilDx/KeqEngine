@@ -1,9 +1,6 @@
 add intro, parry, taunt...
 
-appuie rapid 2 fois sur S, check si la platforme fait moins de X height, si oui,
-voir si ya dla place en dessous. Et meme faire tomber plus vite
-
-set an electro mode texture for keqing, just create two spritearray and set it accordingly!
+add jump and fall effects
 
 damaging kb should take into account the weight of the entity
 

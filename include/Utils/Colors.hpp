@@ -19,6 +19,7 @@ public:
     static void cleanUp();
 
     static SDL_Color dColorKq;
+    static SDL_Color dColorElectroDmgText;
     static SDL_Color dColorWhite;
     static SDL_Color dColorBlack;
     static SDL_Color dColorGray;

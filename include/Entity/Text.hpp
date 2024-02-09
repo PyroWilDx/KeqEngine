@@ -13,19 +13,22 @@
 class Text : public Entity {
 
 public:
-    Text(const char *textStr, int fontSize, bool translateBackground_ = true);
+    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
+         const char *fontPath, int fontSize, SDL_Color *outlColor,
+         int outlSize, bool translateBackground_ = true);
+
+    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
+         int fontSize, SDL_Color *outlColor, int outlSize,
+         bool translateBackground_ = true);
+
+    Text(const char *textStr, const SDL_Color *textColor, int fontSize,
+         SDL_Color *outlColor, int outlSize, bool translateBackground_ = true);
 
     Text(const char *textStr, const SDL_Color *textColor, int fontSize,
          bool translateBackground_ = true);
 
-    Text(const char *textStr, const SDL_Color *textColor, const char *fontPath,
-         int fontSize, bool translateBackground_ = true);
+    Text(const char *textStr, int fontSize, bool translateBackground_ = true);
 
-    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
-         int fontSize, bool translateBackground_ = true);
-
-    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
-         const char *fontPath, int fontSize, bool translateBackground_ = true);
 
     ~Text() override = default;
 
@@ -42,6 +45,8 @@ private:
     SDL_Color currColor;
     std::string currFontPath;
     int currFontSize;
+    SDL_Color currOutlColor;
+    int currOutlSize;
     bool translateBackground;
 
 };

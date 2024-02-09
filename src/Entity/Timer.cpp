@@ -5,12 +5,21 @@
 #include "Entity/Timer.hpp"
 #include "Utils/Global.hpp"
 
-Timer::Timer(double x, double y, SDL_Color *timerTextColor, int timerFontSize)
+Timer::Timer(double x, double y, SDL_Color *timerTextColor,
+             int timerFontSize, SDL_Color *outlColor, int outlSize)
         : Text(x, y, "0", timerTextColor,
-               timerFontSize, false) {
+               timerFontSize, outlColor, outlSize,
+               false) {
     this->started = false;
     this->stopped = false;
     this->elapsedTime = 0;
+}
+
+Timer::Timer(double x, double y, SDL_Color *timerTextColor,
+             int timerFontSize)
+        : Timer(x, y, timerTextColor,
+                timerFontSize, nullptr, 0) {
+
 }
 
 void Timer::start() {
