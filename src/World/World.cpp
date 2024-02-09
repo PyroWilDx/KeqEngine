@@ -289,25 +289,28 @@ void World::addMenuEntity(Entity *menuEntity) {
     menuEntityVector.push_back(menuEntity);
 }
 
-void World::addKQAtk(Attack *atk) {
+void World::addKQAtk(Attack *atk, double atkPercent) {
+    Keqing *kq = Keqing::getInstance();
+    atk->setAtkDamage((int) (atkPercent * kq->getTotalAtk() *
+                             kq->getBonusDmgMultiplier() * kq->getCritDmg()));
     kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
 }
 
 Attack *World::addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                        int damage, double kbXVelocity, double kbYVelocity) {
+                        double atkPercent, double kbXVelocity, double kbYVelocity) {
     auto *atk = new Attack(atkIssuer, xyArray, arrayLength,
-                           damage, kbXVelocity, kbYVelocity);
-    addKQAtk(atk);
+                           0, kbXVelocity, kbYVelocity);
+    addKQAtk(atk, atkPercent);
     return atk;
 }
 
 Attack *World::addKQAtk(LivingEntity *atkIssuer, Entity *followEntity,
                         double xyArray[][2], int arrayLength,
-                        int damage, double kbXVelocity, double kbYVelocity) {
+                        double atkPercent, double kbXVelocity, double kbYVelocity) {
     auto *atk = new Attack(atkIssuer, followEntity,
                            xyArray, arrayLength,
-                           damage, kbXVelocity, kbYVelocity);
-    addKQAtk(atk);
+                           0, kbXVelocity, kbYVelocity);
+    addKQAtk(atk, atkPercent);
     return atk;
 }
 

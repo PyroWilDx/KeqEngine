@@ -231,6 +231,12 @@ public:
 
     void kqLock(bool shouldLock, bool shouldFallWhenLocked = false);
 
+    int getTotalAtk();
+
+    double getBonusDmgMultiplier();
+
+    double getCritDmg();
+
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }
 
     inline void addAirPlungeHitEntity(LivingEntity *hitEntity) { airPlungeHitEntityVector.push_back(hitEntity); }

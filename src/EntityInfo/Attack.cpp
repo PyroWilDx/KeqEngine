@@ -51,7 +51,7 @@ void calcPoint(double *pX, double *pY,
 
 Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
                double xyArray[][2], int arrayLength,
-               int damage, double kbXVelocity, double kbYVelocity) {
+               int atkDamage, double kbXVelocity, double kbYVelocity) {
     this->atkIssuer = atkIssuer_;
     this->followEntity = followEntity;
 
@@ -71,7 +71,7 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     bst_geo::append(atkPolygon, BoostPoint(xPoint, yPoint));
     bst_geo::correct(atkPolygon);
 
-    this->damage = damage;
+    this->atkDamage = atkDamage;
     if (!followEntity->isFacingEast()) kbXVelocity = -kbXVelocity;
     this->kbXVelocity = kbXVelocity;
     this->kbYVelocity = kbYVelocity;
@@ -89,10 +89,10 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
 }
 
 Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
-               int damage, double kbXVelocity, double kbYVelocity)
+               int atkDamage, double kbXVelocity, double kbYVelocity)
         : Attack(atkIssuer_, atkIssuer_,
                  xyArray, arrayLength,
-                 damage, kbXVelocity, kbYVelocity) {
+                 atkDamage, kbXVelocity, kbYVelocity) {
 
 }
 
@@ -202,7 +202,7 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
     double upperBoundPercent = 1. + maxPercentGap;
     double rdKbXV = kbXVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
     double rdKbYV = kbYVelocity * Random::getRandomReal(lowerBoundPercent, upperBoundPercent);
-    bool isDamaged = dstEntity->damageSelf(damage, rdKbXV, rdKbYV);
+    bool isDamaged = dstEntity->damageSelf(atkDamage, rdKbXV, rdKbYV);
 
     if (!isDamaged) return;
 

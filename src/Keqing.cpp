@@ -3080,3 +3080,15 @@ void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
         setSpriteAnimated(true, KQ_IDLE);
     }
 }
+
+int Keqing::getTotalAtk() {
+    return 1000;
+}
+
+double Keqing::getBonusDmgMultiplier() {
+    return 1.1;
+}
+
+double Keqing::getCritDmg() {
+    return 3.36;
+}

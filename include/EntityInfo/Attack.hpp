@@ -29,10 +29,10 @@ class Attack {
 public:
     Attack(LivingEntity *atkIssuer_, Entity *followEntity,
            double xyArray[][2], int arrayLength,
-           int damage, double kbXVelocity, double kbYVelocity);
+           int atkDamage, double kbXVelocity, double kbYVelocity);
 
     Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
-           int damage, double kbXVelocity, double kbYVelocity);
+           int atkDamage, double kbXVelocity, double kbYVelocity);
 
     ~Attack();
 
@@ -59,6 +59,8 @@ public:
     bool shouldSelfRemove();
 
     inline void setFollowEntity(Entity *followEntity_) { followEntity = followEntity_; }
+
+    inline void setAtkDamage(int atkDamage_) { atkDamage = atkDamage_; }
 
     inline void setKbXVelocity(double kbXVelocity_) { kbXVelocity = kbXVelocity_; }
 
@@ -94,7 +96,7 @@ private:
     Entity *followEntity;
     double followEntityLastX, followEntityLastY;
     BoostPolygon atkPolygon;
-    int damage;
+    int atkDamage;
     double kbXVelocity;
     double kbYVelocity;
     int atkTimeAcc;
