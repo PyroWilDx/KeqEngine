@@ -66,6 +66,11 @@ public:
 
     inline void setKbYVelocity(double kbYVelocity_) { kbYVelocity = kbYVelocity_; }
 
+    inline void setDmgTextSettings(int dmgTextFontSize_, int dmgTextDuration_) {
+        dmgTextFontSize = dmgTextFontSize_;
+        dmgTextDuration = dmgTextDuration_;
+    }
+
     inline void setBigParticle(Particle *bigParticle_) { bigParticle = bigParticle_; }
 
     inline void setSmallParticle(Particle *smallParticle_) { smallParticle = smallParticle_; }
@@ -102,6 +107,8 @@ private:
     int atkTimeAcc;
     int atkDuration;
     std::string hitSoundPath;
+    int dmgTextFontSize;
+    int dmgTextDuration;
     bool isElectro;
     Particle *bigParticle;
     Particle *smallParticle;

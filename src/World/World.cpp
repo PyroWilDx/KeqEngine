@@ -283,21 +283,8 @@ void World::removeMonster(Monster *monster) {
     delete monster;
 }
 
-void World::addDamageText(DamageText *dmgText) {
-    dmgTextSet.insert(dmgText);
-}
-
-void World::removeDamageText(DamageText *dmgText) {
-    dmgTextSet.erase(dmgText);
-    delete dmgText;
-}
-
 void World::addOtherEntity(Entity *otherEntity) {
     otherEntityVecotr.push_back(otherEntity);
-}
-
-void World::addMenuEntity(Entity *menuEntity) {
-    menuEntityVector.push_back(menuEntity);
 }
 
 void World::addKQAtk(Attack *atk, double atkPercent) {
@@ -375,6 +362,20 @@ void World::addIgnoreFilterEntity(Entity *ignoreFilterEntity) {
     ignoreFilterEntityVector.push_back(ignoreFilterEntity);
 }
 
+void World::pushBackDamageText(DamageText *dmgText) {
+    dmgTextLL.push_back(dmgText);
+}
+
+void World::popFrontDamageText() {
+    DamageText *dmgText = dmgTextLL.front();
+    dmgTextLL.pop_front();
+    delete dmgText;
+}
+
+void World::addMenuEntity(Entity *menuEntity) {
+    menuEntityVector.push_back(menuEntity);
+}
+
 void World::onGameFrame() {
     Sound::onGameFrame();
 
@@ -391,12 +392,6 @@ void World::onGameFrame() {
     if (renderKeqing) Keqing::getInstance()->onGameFrame();
 
     Particle::animateAll();
-
-    auto itDmgText = dmgTextSet.begin();
-    while (itDmgText != dmgTextSet.end()) {
-        (*itDmgText)->onGameFrame();
-        itDmgText++;
-    }
 
     // Attacks
     auto fAtkShouldRemove = [](void *value, void *fParams) {
@@ -428,6 +423,12 @@ void World::onGameFrame() {
         auto *kq_ = (Keqing *) fParams;
         atk->checkEntityHit(kq_);
     }, (void *) Keqing::getInstance());
+
+    auto itDmgText = dmgTextLL.begin();
+    while (itDmgText != dmgTextLL.end()) {
+        (*itDmgText)->onGameFrame();
+        itDmgText++;
+    }
 
     if (translateBackgroundEntity != nullptr) {
         background->lerpTranslate(translateBackgroundEntity);
@@ -487,14 +488,14 @@ void World::renderSelf() {
 
     Particle::renderAll();
 
-    for (DamageText *dmgText: dmgTextSet) {
-        gWindow->renderEntity(dmgText);
-    }
-
     renderFilter();
 
     for (Entity *ignoreFilterEntity: ignoreFilterEntityVector) {
         gWindow->renderEntity(ignoreFilterEntity);
+    }
+
+    for (DamageText *dmgText: dmgTextLL) {
+        gWindow->renderEntity(dmgText);
     }
 
     for (std::pair<const int, Button *> &it: buttonHashMap) {

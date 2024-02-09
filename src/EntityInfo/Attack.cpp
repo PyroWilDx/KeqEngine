@@ -83,7 +83,9 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->onHitParams = nullptr;
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
-    this->hitSoundPath.clear();
+    this->hitSoundPath = std::string();
+    this->dmgTextFontSize = 0;
+    this->dmgTextDuration = 0;
     this->isElectro = false;
     this->bigParticle = nullptr;
     this->smallParticle = nullptr;
@@ -283,10 +285,20 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
     if (firstHit && atkDamage > 0) {
         DamageText *dmgText;
         if (!isElectro) dmgText = new DamageText(atkDamage);
-        else dmgText = new DamageText(atkDamage, &Colors::dColorElectroDmgText);
+        else {
+            if (dmgTextFontSize == 0 && dmgTextDuration == 0) {
+                dmgText = new DamageText(atkDamage,
+                                         &Colors::dColorElectroDmgText);
+            } else {
+                dmgText = new DamageText(atkDamage,
+                                         &Colors::dColorElectroDmgText,
+                                         dmgTextFontSize,
+                                         dmgTextDuration);
+            }
+        }
         dmgText->moveToEntityCenter(dstEntity, false);
         dmgText->moveAdd(0, -dstEntity->getHitBox().h);
-        Global::gWorld->addDamageText(dmgText);
+        Global::gWorld->pushBackDamageText(dmgText);
     }
 }
 
