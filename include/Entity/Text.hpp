@@ -15,8 +15,8 @@ class Text : public Entity {
 public:
     Text(const char *textStr, int fontSize, bool translateBackground_ = true);
 
-    Text(const char *textStr, const SDL_Color *textColor,
-         int fontSize, bool translateBackground_ = true);
+    Text(const char *textStr, const SDL_Color *textColor, int fontSize,
+         bool translateBackground_ = true);
 
     Text(const char *textStr, const SDL_Color *textColor, const char *fontPath,
          int fontSize, bool translateBackground_ = true);
@@ -29,8 +29,7 @@ public:
 
     ~Text() override = default;
 
-    void loadTextTexture(const char *textStr, const SDL_Color *textColor, const char *fontPath,
-                         int fontSize, bool translateBackground_ = true);
+    void loadTextTexture();
 
     void changeText(const char *textStr);
 

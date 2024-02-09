@@ -85,7 +85,7 @@ public:
 
     void moveToEntityBelow(Entity *entity, double yPadding);
 
-    double distTo(Entity *entity);
+    double distTo(Entity *entity) const;
 
     virtual void getRealSize(double *pW, double *pH);
 
