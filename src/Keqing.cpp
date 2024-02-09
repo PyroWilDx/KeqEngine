@@ -1823,6 +1823,8 @@ void Keqing::ESkillGeneral() {
     getESkillSpriteCodes(&SKILL_CODE, &SKILL_AIMING_CODE, nullptr);
 
     if (isNewestFrame(0, SKILL_CODE)) {
+        pauseSprite(false, SKILL_CODE);
+
         Sound::playAudioChunk("res/sfx/particle/KQSkillStart.ogg");
 
     } else if (isNewestFrame(6, SKILL_CODE)) {
@@ -2755,7 +2757,9 @@ bool Keqing::onGameFrame() {
 }
 
 int Keqing::isInvincible() {
-    if (isSpriteAnimated(KQ_BURST)) {
+    if (isSpriteAnimated(KQ_SKILL_SLASH) ||
+        isSpriteAnimated(KQ_AIR_SKILL_SLASH) ||
+        isSpriteAnimated(KQ_BURST)) {
         return INVINCIBLE_ALL;
     }
     return LivingEntity::isInvincible();
@@ -2765,6 +2769,10 @@ bool Keqing::damageSelf(int damage, double kbXV, double kbYV) {
     bool wasHurt = isSpriteAnimated(KQ_HURT);
     bool res = LivingEntity::damageSelf(damage, kbXV, kbYV);
     if (res) {
+        if (isSpriteAnimated(KQ_SKILL_AIMING) || isSpriteAnimated(KQ_AIR_SKILL_AIMING)) {
+            Particle::removeParticle(PARTICLE_KQ_SKILL_CURSOR);
+        }
+
         goToFrame(0, KQ_HURT);
 
         if (!wasHurt) {
