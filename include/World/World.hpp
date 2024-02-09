@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
+#include <list>
 #include <SDL2/SDL.h>
 #include "Utils/LinkedList.hpp"
 
@@ -93,13 +93,7 @@ public:
 
     void removeMonster(Monster *monster);
 
-    void addDamageText(DamageText *dmgText);
-
-    void removeDamageText(DamageText *dmgText);
-
     void addOtherEntity(Entity *otherEntity);
-
-    void addMenuEntity(Entity *menuEntity);
 
     void addKQAtk(Attack *atk, double atkPercent);
 
@@ -125,6 +119,12 @@ public:
     void disableColorFilter();
 
     void addIgnoreFilterEntity(Entity *ignoreFilterEntity);
+
+    void pushBackDamageText(DamageText *dmgText);
+
+    void popFrontDamageText();
+
+    void addMenuEntity(Entity *menuEntity);
 
     void onGameFrame();
 
@@ -161,10 +161,10 @@ private:
     bool renderKeqing;
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;
-    std::unordered_set<DamageText *> dmgTextSet;
     Filter colorFilter;
     double colorFilterSpeed;
     std::vector<Entity *> ignoreFilterEntityVector;
+    std::list<DamageText *> dmgTextLL;
     bool displayMenu;
     std::vector<Entity *> menuEntityVector;
     Pixel **pixels;
