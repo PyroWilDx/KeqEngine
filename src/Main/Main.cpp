@@ -21,6 +21,8 @@
 #include "Utils/Random.hpp"
 #include "Utils/Utils.hpp"
 #include "Entity/Particle.hpp"
+#include "Utils/Draw.hpp"
+#include "Utils/Colors.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -45,6 +47,8 @@ int main(int argc, char *argv[]) {
     WindowRenderer::initWindowRenderer("Keqing", SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT);
     Global::initGlobal();
     Sound::initSound();
+    Colors::initColors();
+    Draw::initDraw();
     Events::initEvents();
     Random::initRandom();
     Keqing::initKeqing();
@@ -56,6 +60,8 @@ int main(int argc, char *argv[]) {
     Keqing::cleanUp();
     Random::cleanUp();
     Events::cleanUp();
+    Draw::cleanUp();
+    Colors::cleanUp();
     Sound::cleanUp();
     Global::cleanUp();
     WindowRenderer::cleanUp();

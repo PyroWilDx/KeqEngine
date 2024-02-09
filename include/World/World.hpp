@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <SDL2/SDL.h>
 #include "Utils/LinkedList.hpp"
 
@@ -19,6 +20,7 @@ class Entity;
 class WorldEntity;
 class LivingEntity;
 class Monster;
+class DamageText;
 class Keqing;
 class Attack;
 
@@ -91,6 +93,10 @@ public:
 
     void removeMonster(Monster *monster);
 
+    void addDamageText(DamageText *dmgText);
+
+    void removeDamageText(DamageText *dmgText);
+
     void addOtherEntity(Entity *otherEntity);
 
     void addMenuEntity(Entity *menuEntity);
@@ -155,6 +161,7 @@ private:
     bool renderKeqing;
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;
+    std::unordered_set<DamageText *> dmgTextSet;
     Filter colorFilter;
     double colorFilterSpeed;
     std::vector<Entity *> ignoreFilterEntityVector;
