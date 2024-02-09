@@ -10,6 +10,7 @@
 #include "World/World.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
+#include "Utils/Colors.hpp"
 
 void ColorKeqing::RunImpl() {
     SDL_Event event;
@@ -58,9 +59,8 @@ void ColorKeqing::RunImpl() {
         kq->colorAllSprites(colorPicker->getCurrentRGBA());
         kq->kqLock(false);
     }, (void *) colorPicker);
-    SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    setKqColorButton->addText("Set Color", &tmpColor, 20);
-    setKqColorButton->changeColor(COLOR_BLUE);
+    setKqColorButton->addText("Set Color", &Colors::dColorWhite, 20);
+    setKqColorButton->changeColor(&Colors::dColorBlue);
     gWorld->addButton(setKqColorButton);
 
     auto *resetKqColorButton = new Button(900, 100, 300, 200);
@@ -72,9 +72,8 @@ void ColorKeqing::RunImpl() {
         kq->kqLock(false);
         colorPicker->fillPixels(KQ_BASE_COLOR);
     }, (void *) colorPicker);
-    tmpColor = {COLOR_WHITE_FULL};
-    resetKqColorButton->addText("Reset Color", &tmpColor, 20);
-    resetKqColorButton->changeColor(COLOR_GRAY);
+    resetKqColorButton->addText("Reset Color", &Colors::dColorWhite, 20);
+    resetKqColorButton->changeColor(&Colors::dColorGray);
     gWorld->addButton(resetKqColorButton);
 
     Keqing *kq = Keqing::getInstance();

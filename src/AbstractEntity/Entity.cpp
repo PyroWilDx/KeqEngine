@@ -9,6 +9,7 @@
 #include "World/World.hpp"
 #include "Utils/Utils.hpp"
 #include "World/Background.hpp"
+#include "Utils/Colors.hpp"
 
 Entity::Entity()
         : imgFrame({0, 0, 0, 0}), hitBox(imgFrame) {
@@ -619,7 +620,7 @@ void Entity::renderHitBox(SDL_Renderer *gRenderer) {
         dstHitBox.x += (int) x;
         dstHitBox.y += (int) y;
         WindowRenderer::renderRect(&dstHitBox, false,
-                                   COLOR_RED_FULL,
+                                   COLOR_MAX, 0, 0, COLOR_MAX,
                                    gRenderer,
                                    false, true);
     }

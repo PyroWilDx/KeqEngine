@@ -18,6 +18,7 @@
 #include "Entity/Text.hpp"
 #include "Utils/Draw.hpp"
 #include "UI/Button.hpp"
+#include "Utils/Colors.hpp"
 
 Keqing *Keqing::instance = nullptr;
 
@@ -349,7 +350,8 @@ Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
             Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE_BG, INT32_MAX,
                                    HUD_SB_CIRCLE_M, HUD_SB_CIRCLE_M);
     skillCircleBG->moveTo(hudSkillCircleX, hudSBCircleY);
-    skillCircleBG->setRGBAMod(COLOR_WHITE, hudSBCircleBGAlpha);
+    skillCircleBG->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX,
+                              hudSBCircleBGAlpha);
 
     Particle *skillCircle =
             Particle::pushParticle(PARTICLE_HUD_SKILL_CIRCLE, INT32_MAX,
@@ -364,7 +366,8 @@ Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
     skillCircle->getRealSize(&hudSCW, nullptr);
     burstCircleBG->moveTo(hudSkillCircleX + hudSCW,
                           hudSBCircleY);
-    burstCircleBG->setRGBAMod(COLOR_WHITE, hudSBCircleBGAlpha);
+    burstCircleBG->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX,
+                              hudSBCircleBGAlpha);
 
     Particle *burstCircle =
             Particle::pushParticle(PARTICLE_HUD_BURST_CIRCLE, INT32_MAX,
@@ -1597,7 +1600,8 @@ void Keqing::updateSkillHudIcon() {
                                        INT32_MAX,
                                        HUB_SB_ICON_M, HUB_SB_ICON_M);
         skillIcon1->moveToEntityCenter(skillCircleHud);
-        skillIcon1->setRGBAMod(COLOR_WHITE, HUD_SB_USED_ALPHA);
+        skillIcon1->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX,
+                               HUD_SB_USED_ALPHA);
 
         int elapsedTime = getTime() - Keqing::getInstance()->getESkillUseTime();
         Particle *timerHud =
@@ -1615,7 +1619,7 @@ void Keqing::updateSkillHudIcon() {
                     Particle::getParticle(PARTICLE_HUD_SKILL_CIRCLE_BG));
             skillCircleHud->setRGBAMod(HUD_SKILL1_CIRCLE_RGBA);
             Particle *skillIcon1Hud = Particle::getParticle(PARTICLE_HUD_SKILL_ICON_1);
-            skillIcon1Hud->setRGBAMod(COLOR_WHITE_FULL);
+            skillIcon1Hud->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
         });
 
         Particle::removeParticle(PARTICLE_HUD_SKILL_CIRCLE);
@@ -1676,7 +1680,7 @@ void Keqing::createLightningStelitto() {
 //                            particleRect.w,
 //                            rectH};
 //        WindowRenderer::renderRect(&dstRect, true,
-//                                   COLOR_BLACK_FULL,
+//                                   0, 0, 0, COLOR_MAX,
 //                                   gRenderer,
 //                                   false, true);
 
@@ -2142,7 +2146,8 @@ void Keqing::RBurst() {
         Particle::removeParticle(PARTICLE_HUD_BURST_CIRCLE);
         Particle *burstIconHud =
                 Particle::getParticle(PARTICLE_HUD_BURST_ICON);
-        burstIconHud->setRGBAMod(COLOR_WHITE, HUD_SB_USED_ALPHA);
+        burstIconHud->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX,
+                                 HUD_SB_USED_ALPHA);
 
         Particle *timerHud =
                 Particle::pushParticle(PARTICLE_HUD_SKILL_BURST_TIMER,
@@ -2163,7 +2168,7 @@ void Keqing::RBurst() {
                 if (!particle->isNewestFrame(1)) {
                     particle->setRGBAMod(COLOR_MAX);
                     Particle *burstIconHud = Particle::getParticle(PARTICLE_HUD_BURST_ICON);
-                    burstIconHud->setRGBAMod(COLOR_WHITE_FULL);
+                    burstIconHud->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX);
                     particle->setOnRender(nullptr);
                 }
             });
@@ -2177,7 +2182,8 @@ void Keqing::RBurst() {
         Particle *aoeWaveParticle =
                 Particle::pushParticle(PARTICLE_KQ_BURST_AOE_WAVE,
                                        60, aoeBaseWHM, aoeBaseWHM);
-        aoeWaveParticle->setRGBAMod(COLOR_WHITE, 128);
+        aoeWaveParticle->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX,
+                                    128);
         Global::gWorld->addIgnoreFilterEntity(aoeWaveParticle);
 
         soundSheet->playRandomSound(KQ_BURST);
@@ -2785,11 +2791,9 @@ bool Keqing::onDeath() {
     gWorld->setDisplayMenu(true);
     gWorld->enableColorFilter(COLOR_MAX, 0, 0, 96, 0.6);
 
-    SDL_Color tmpColor;
     SDL_Rect tmpRect;
 
-    tmpColor = {COLOR_RED_FULL};
-    Text *deathText = new Text("You Died", &tmpColor, 60, false);
+    Text *deathText = new Text("You Died", &Colors::dColorRed, 60, false);
     deathText->moveToScreenCenterHorizontal(200);
     gWorld->addOtherEntity(deathText);
 

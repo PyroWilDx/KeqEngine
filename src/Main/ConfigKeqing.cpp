@@ -11,6 +11,7 @@
 #include "UI/Button.hpp"
 #include "Keqing.hpp"
 #include "World/Background.hpp"
+#include "Utils/Colors.hpp"
 
 void ConfigKeqing::RunImpl() {
     SDL_Event event;
@@ -40,10 +41,9 @@ void ConfigKeqing::RunImpl() {
             }
         }
     });
-    SDL_Color tmpColor = {COLOR_WHITE_FULL};
     swapKqVAButton->addText(("VA : " + Global::userData[DATA_KQ_VOICE_LANG]).c_str(),
-                            &tmpColor, 16);
-    swapKqVAButton->changeColor(COLOR_BLUE);
+                            &Colors::dColorWhite, 16);
+    swapKqVAButton->changeColor(&Colors::dColorBlue);
     gWorld->addButton(swapKqVAButton);
 
     auto *runColorKqButton = new Button(100, 210, 200, 100);
@@ -53,9 +53,8 @@ void ConfigKeqing::RunImpl() {
         Events::callMainFunc(pGRunning, &ColorKeqing::Run);
     });
     runColorKqButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    tmpColor = {COLOR_WHITE_FULL};
-    runColorKqButton->addText("Color Keqing", &tmpColor, 16);
-    runColorKqButton->changeColor(COLOR_GREEN);
+    runColorKqButton->addText("Color Keqing", &Colors::dColorWhite, 16);
+    runColorKqButton->changeColor(&Colors::dColorGreen);
     gWorld->addButton(runColorKqButton);
 
     while (gInfo.gRunning) {

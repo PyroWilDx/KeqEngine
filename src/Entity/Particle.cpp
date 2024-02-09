@@ -8,6 +8,7 @@
 #include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
 #include "EntityInfo/Attack.hpp"
+#include "Utils/Colors.hpp"
 
 Particle *Particle::baseParticle = new Particle(true);
 
@@ -333,15 +334,15 @@ void Particle::animateAll() {
             currParticle->animateSprite();
 
             if (currParticle->fadeParams.baseAlpha != -1) {
-                Uint8 alpha;
-                SDL_GetTextureAlphaMod(currParticle->imgTexture, &alpha);
-                alpha -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
-                                ((double) currParticle->fadeParams.baseAlpha / COLOR_MAX_DBL));
-                if (alpha < 20) {
+                Uint8 a;
+                SDL_GetTextureAlphaMod(currParticle->imgTexture, &a);
+                a -= (int) ((double) Global::dt * currParticle->fadeParams.speed *
+                            ((double) currParticle->fadeParams.baseAlpha / COLOR_MAX));
+                if (a < 20) {
                     removeParticle(spriteCode, i);
                     continue;
                 }
-                currParticle->setRGBAMod(COLOR_WHITE, alpha);
+                currParticle->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX, a);
                 continue;
             }
 

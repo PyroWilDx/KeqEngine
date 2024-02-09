@@ -73,7 +73,7 @@ void Slime::attack() {
         approxEllipse(atkPolyPts, N, xShift, 52, 68, 80);
 
         double atkPolyPtsUp[HalfPolyN][2];
-        cutEllipseHalfHorzt(atkPolyPts, N, HalfPolyN,
+        cutEllipseHalfHorzt(atkPolyPts, HalfPolyN,
                             atkPolyPtsUp, nullptr);
 
         Attack *atk =
