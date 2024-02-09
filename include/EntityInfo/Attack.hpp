@@ -42,7 +42,7 @@ public:
 
     void setKQHitSoundRandom(int atkStrength);
 
-    void setClassicParticle(int n, bool electro);
+    void setClassicParticle(int n, bool atkElectro);
 
     static BoostPolygon getPolygonFromEntity(Entity *dstEntity);
 
@@ -102,6 +102,7 @@ private:
     int atkTimeAcc;
     int atkDuration;
     std::string hitSoundPath;
+    bool isElectro;
     Particle *bigParticle;
     Particle *smallParticle;
     bool uniqueEntityHit;

@@ -15,6 +15,7 @@
 #include "AbstractEntity/Monster.hpp"
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
+#include "Entity/DamageText.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
@@ -281,6 +282,15 @@ void World::removeMonster(Monster *monster) {
     delete monster;
 }
 
+void World::addDamageText(DamageText *dmgText) {
+    dmgTextSet.insert(dmgText);
+}
+
+void World::removeDamageText(DamageText *dmgText) {
+    dmgTextSet.erase(dmgText);
+    delete dmgText;
+}
+
 void World::addOtherEntity(Entity *otherEntity) {
     otherEntityVecotr.push_back(otherEntity);
 }
@@ -366,17 +376,26 @@ void World::addIgnoreFilterEntity(Entity *ignoreFilterEntity) {
 
 void World::onGameFrame() {
     Sound::onGameFrame();
-    Particle::animateAll();
 
-    const int nMonster = monsterVector.size();
+    const int nMonster = (int) monsterVector.size();
     for (int i = 0; i < nMonster; i++) {
         monsterVector[i]->onGameFrame();
     }
-    const int nOtherEntity = otherEntityVecotr.size();
+
+    const int nOtherEntity = (int) otherEntityVecotr.size();
     for (int i = 0; i < nOtherEntity; i++) {
         otherEntityVecotr[i]->onGameFrame();
     }
+
     if (renderKeqing) Keqing::getInstance()->onGameFrame();
+
+    Particle::animateAll();
+
+    auto itDmgText = dmgTextSet.begin();
+    while (itDmgText != dmgTextSet.end()) {
+        (*itDmgText)->onGameFrame();
+        itDmgText++;
+    }
 
     // Attacks
     auto fAtkShouldRemove = [](void *value, void *fParams) {
@@ -448,19 +467,28 @@ void World::renderFilter() {
 
 void World::renderSelf() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
+
     gWindow->renderEntity(background);
+
     for (Block *block: blockVector) {
         gWindow->renderEntity(block);
     }
+
     for (Monster *monster: monsterVector) {
         gWindow->renderEntity(monster);
     }
+
     for (Entity *otherEntity: otherEntityVecotr) {
         gWindow->renderEntity(otherEntity);
     }
+
     if (renderKeqing) gWindow->renderEntity(Keqing::getInstance());
 
     Particle::renderAll();
+
+    for (DamageText *dmgText: dmgTextSet) {
+        gWindow->renderEntity(dmgText);
+    }
 
     renderFilter();
 
