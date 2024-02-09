@@ -95,14 +95,14 @@ public:
 
     void addMenuEntity(Entity *menuEntity);
 
-    void addKQAtk(Attack *atk);
+    void addKQAtk(Attack *atk, double atkPercent);
 
     Attack *addKQAtk(LivingEntity *atkIssuer, double xyArray[][2], int arrayLength,
-                     int damage, double kbXVelocity, double kbYVelocity);
+                     double atkPercent, double kbXVelocity, double kbYVelocity);
 
     Attack *addKQAtk(LivingEntity *atkIssuer, Entity *followEntity,
                      double xyArray[][2], int arrayLength,
-                     int damage, double kbXVelocity, double kbYVelocity);
+                     double atkPercent, double kbXVelocity, double kbYVelocity);
 
     void addMonsterAtk(Attack *atk);
 
