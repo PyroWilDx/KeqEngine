@@ -2073,6 +2073,8 @@ void pushBurstSlashAtk(int dmg, double kbXV, double kbYV,
     if (typeSlash == -1) {
         atkLeft->setHitSound("KQHitBurstFinalSlash.wav");
         atkRight->setHitSound("KQHitBurstFinalSlash.wav");
+        atkLeft->setDmgTextSettings(30, 1200);
+        atkRight->setDmgTextSettings(30, 1200);
     }
 
     if (typeSlash != -1) {
