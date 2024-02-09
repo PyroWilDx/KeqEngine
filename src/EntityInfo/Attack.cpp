@@ -330,8 +330,8 @@ void Attack::renderSelf(SDL_Renderer *gRenderer) {
     filledPolygonRGBA(gRenderer,
                       xArray, yArray,
                       (int) length,
-                      COLOR_GREEN, 180);
-    SDL_SetRenderDrawColor(gRenderer, COLOR_BLACK_FULL);
+                      0, COLOR_MAX, 0, 180);
+    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, COLOR_MAX);
 }
 
 bool Attack::shouldSelfRemove() {

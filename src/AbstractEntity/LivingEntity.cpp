@@ -7,6 +7,7 @@
 #include "Utils/Global.hpp"
 #include "Utils/Utils.hpp"
 #include "WindowRenderer.hpp"
+#include "Utils/Colors.hpp"
 
 LivingEntity::LivingEntity(double gravityWeight, int baseHp,
                            int spriteArrayLength, int hurtSpriteCode,
@@ -88,9 +89,11 @@ void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
                              hpBarMaxW + borderLength * 2,
                              HP_BAR_HEIGHT + borderLength * 2};
     SDL_Rect hpRect = {hpBarX, hpBarY, hpBarW, HP_BAR_HEIGHT};
-    WindowRenderer::renderRect(&hpRectBorder, true, COLOR_BLACK_FULL,
+    WindowRenderer::renderRect(&hpRectBorder, true,
+                               0, 0, 0, COLOR_MAX,
                                gRenderer, false);
-    WindowRenderer::renderRect(&hpRect, true, COLOR_RED_FULL,
+    WindowRenderer::renderRect(&hpRect, true,
+                               COLOR_MAX, 0, 0, COLOR_MAX,
                                gRenderer, false);
 }
 

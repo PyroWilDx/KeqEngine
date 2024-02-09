@@ -5,14 +5,11 @@
 #include <cstdio>
 #include "Entity/FPSText.hpp"
 #include "Utils/Global.hpp"
-#include "Utils/Utils.hpp"
-
-const SDL_Color FPSTextColor = {COLOR_WHITE_FULL};
-const int FPSFontSize = 40;
+#include "Utils/Colors.hpp"
 
 FPSText::FPSText()
-        : Text(10, 0, "FPS : 0", &FPSTextColor,
-               FPSFontSize, false) {
+        : Text(10, 0, "FPS : 0", &Colors::dColorWhite,
+               38, false) {
     accumulatedFPSTime = 0;
     accumulatedFrames = 0;
 }

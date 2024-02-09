@@ -11,6 +11,7 @@
 #include "World/World.hpp"
 #include "World/Background.hpp"
 #include "Utils/Random.hpp"
+#include "Utils/Colors.hpp"
 
 void myAssert(bool expr, const char *msg, const char *err) {
     if (!expr) {
@@ -120,7 +121,7 @@ void cutEllipseHalf(double xyArray[][2], int N, int HalfN,
     }
 }
 
-void cutEllipseHalfHorzt(double xyArray[][2], int N, int HalfN,
+void cutEllipseHalfHorzt(double xyArray[][2], int HalfN,
                          double xyArrayHalfUp[][2], double xyArrayHalfDown[][2]) {
     if (xyArrayHalfUp != nullptr) {
         std::memcpy(xyArrayHalfUp, xyArray + HalfN - 1,
@@ -272,9 +273,9 @@ void Uint32RGBAToUint8RGBA(Uint32 rgba, Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a) 
 
 void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
               double *pH, double *pS, double *pV) {
-    double fr = (double) r / COLOR_MAX_DBL;
-    double fg = (double) g / COLOR_MAX_DBL;
-    double fb = (double) b / COLOR_MAX_DBL;
+    double fr = (double) r / COLOR_MAX;
+    double fg = (double) g / COLOR_MAX;
+    double fb = (double) b / COLOR_MAX;
 
     double maxVal = std::max(fr, std::max(fg, fb));
     double minVal = std::min(fr, std::min(fg, fb));
@@ -315,7 +316,7 @@ void RGBToHSV(Uint8 r, Uint8 g, Uint8 b,
 void HSVToRGB(double h, double s, double v,
               Uint8 *pR, Uint8 *pG, Uint8 *pB) {
     if (s == 0) {
-        *pR = *pG = *pB = (Uint8) (v * COLOR_MAX_DBL);
+        *pR = *pG = *pB = (Uint8) (v * COLOR_MAX);
         return;
     }
 
@@ -330,34 +331,34 @@ void HSVToRGB(double h, double s, double v,
 
     switch (i) {
         case 0:
-            r = (Uint8) (v * COLOR_MAX_DBL);
-            g = (Uint8) (t * COLOR_MAX_DBL);
-            b = (Uint8) (p * COLOR_MAX_DBL);
+            r = (Uint8) (v * COLOR_MAX);
+            g = (Uint8) (t * COLOR_MAX);
+            b = (Uint8) (p * COLOR_MAX);
             break;
         case 1:
-            r = (Uint8) (q * COLOR_MAX_DBL);
-            g = (Uint8) (v * COLOR_MAX_DBL);
-            b = (Uint8) (p * COLOR_MAX_DBL);
+            r = (Uint8) (q * COLOR_MAX);
+            g = (Uint8) (v * COLOR_MAX);
+            b = (Uint8) (p * COLOR_MAX);
             break;
         case 2:
-            r = (Uint8) (p * COLOR_MAX_DBL);
-            g = (Uint8) (v * COLOR_MAX_DBL);
-            b = (Uint8) (t * COLOR_MAX_DBL);
+            r = (Uint8) (p * COLOR_MAX);
+            g = (Uint8) (v * COLOR_MAX);
+            b = (Uint8) (t * COLOR_MAX);
             break;
         case 3:
-            r = (Uint8) (p * COLOR_MAX_DBL);
-            g = (Uint8) (q * COLOR_MAX_DBL);
-            b = (Uint8) (v * COLOR_MAX_DBL);
+            r = (Uint8) (p * COLOR_MAX);
+            g = (Uint8) (q * COLOR_MAX);
+            b = (Uint8) (v * COLOR_MAX);
             break;
         case 4:
-            r = (Uint8) (t * COLOR_MAX_DBL);
-            g = (Uint8) (p * COLOR_MAX_DBL);
-            b = (Uint8) (v * COLOR_MAX_DBL);
+            r = (Uint8) (t * COLOR_MAX);
+            g = (Uint8) (p * COLOR_MAX);
+            b = (Uint8) (v * COLOR_MAX);
             break;
         default:
-            r = (Uint8) (v * COLOR_MAX_DBL);
-            g = (Uint8) (p * COLOR_MAX_DBL);
-            b = (Uint8) (q * COLOR_MAX_DBL);
+            r = (Uint8) (v * COLOR_MAX);
+            g = (Uint8) (p * COLOR_MAX);
+            b = (Uint8) (q * COLOR_MAX);
             break;
     }
 

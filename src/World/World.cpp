@@ -20,7 +20,8 @@
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
              const char *backgroundImgPath)
-        : colorFilter({COLOR_BLACK, 0, 0, false}) {
+        : colorFilter({0, 0, 0, 0,
+                       0, false}) {
     this->background = new Background(screenW, screenH,
                                       backgroundTotalW, backgroundTotalH,
                                       backgroundImgPath);

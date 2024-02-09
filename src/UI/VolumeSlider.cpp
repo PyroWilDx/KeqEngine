@@ -7,17 +7,17 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
 #include "Entity/Text.hpp"
+#include "Utils/Colors.hpp"
 
 VolumeSlider::VolumeSlider(double x, double y, int renderW,
                            SDL_Color *filledColor, int currVolume)
         : Button(x, y, renderW, renderW / 10, 0),
           filledColor() {
-    this->swapColorOnClick = false;
-    this->changeColor(COLOR_WHITE);
-    SDL_Color blackColor = {COLOR_BLACK_FULL};
+    setSwapColorOnClick(false);
+    changeColor(&Colors::dColorWhite);
     char volTxt[4];
     sprintf(volTxt, "%d\n", currVolume);
-    this->addText(volTxt, &blackColor, 16);
+    addText(volTxt, &Colors::dColorBlack, 16);
 
     this->filledColor = *filledColor;
     this->pickerX = getPickerXFromVolume(currVolume);

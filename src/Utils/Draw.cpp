@@ -4,12 +4,10 @@
 
 #include "Utils/Draw.hpp"
 #include "UI/Button.hpp"
-#include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
 #include "World/World.hpp"
 #include "Main/HomeMenu.hpp"
-
-SDL_Color Draw::dColorKq = {COLOR_KQ_FULL};
+#include "Utils/Colors.hpp"
 
 void Draw::initDraw() {
 
@@ -29,9 +27,8 @@ Button *Draw::drawRetryButton(SDL_Rect *btRect, Entity *upperEntity,
     }
     retryButton->setOnClickRelease(fOnClickRelease);
     retryButton->setOnClickReleaseParams(fParams);
-    SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    retryButton->addText("Retry", &tmpColor, 22);
-    retryButton->changeColor(COLOR_KQ);
+    retryButton->addText("Retry", &Colors::dColorWhite, 22);
+    retryButton->changeColor(&Colors::dColorKq);
     Global::gWorld->addButton(retryButton);
 
     return retryButton;
@@ -49,9 +46,8 @@ Button *Draw::drawHomeButton(SDL_Rect *btRect, Entity *upperEntity, bool *gRunni
         Events::callMainFunc(pGRunning, &HomeMenu::Run);
     });
     homeButton->setOnClickReleaseParams((void *) gRunning);
-    SDL_Color tmpColor = {COLOR_WHITE_FULL};
-    homeButton->addText("Exit", &tmpColor, 22);
-    homeButton->changeColor(COLOR_KQ);
+    homeButton->addText("Exit", &Colors::dColorWhite, 22);
+    homeButton->changeColor(&Colors::dColorKq);
     Global::gWorld->addButton(homeButton);
 
     return homeButton;
