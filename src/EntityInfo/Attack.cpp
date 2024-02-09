@@ -283,7 +283,7 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
     if (firstHit && atkDamage > 0) {
         DamageText *dmgText;
         if (!isElectro) dmgText = new DamageText(atkDamage);
-        else dmgText = new DamageText(atkDamage, &Colors::dColorKq);
+        else dmgText = new DamageText(atkDamage, &Colors::dColorElectroDmgText);
         dmgText->moveToEntityCenter(dstEntity, false);
         dmgText->moveAdd(0, -dstEntity->getHitBox().h);
         Global::gWorld->addDamageText(dmgText);

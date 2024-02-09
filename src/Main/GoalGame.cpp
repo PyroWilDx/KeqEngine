@@ -62,7 +62,8 @@ void GoalGame::RunImpl() {
     bestTimeText->moveTo(6., 2.);
     gWorld->addOtherEntity(bestTimeText);
 
-    auto *timer = new Timer(6., 26., &Colors::dColorRed, 30);
+    auto *timer = new Timer(6., 26., &Colors::dColorRed,
+                            30, &Colors::dColorBlack, 2);
     gWorld->addOtherEntity(timer);
 
     while (gInfo.gRunning) {
@@ -192,18 +193,19 @@ void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     char winTimeStr[16];
     sprintf(winTimeStr, "Time : %.2f", (double) winTime * 0.001);
     auto *winTimeText = new Text(winTimeStr, &Colors::dColorRed,
-                                 30, false);
+                                 30, &Colors::dColorBlack,
+                                 2, false);
     winTimeText->moveToScreenCenterHorizontal(200);
     gWorld->addMenuEntity(winTimeText);
 
     tmpRect = {0, 0, 200, 100};
     Button *retryButton = Draw::drawRetryButton(&tmpRect, winTimeText,
-                          [](Button *self, int mouseX,
-                             int mouseY, void *fParams) {
-                              bool *pGRunning = (bool *) fParams;
-                              Events::callMainFunc(pGRunning, &GoalGame::Run);
-                          },
-                          (void *) gRunning);
+                                                [](Button *self, int mouseX,
+                                                   int mouseY, void *fParams) {
+                                                    bool *pGRunning = (bool *) fParams;
+                                                    Events::callMainFunc(pGRunning, &GoalGame::Run);
+                                                },
+                                                (void *) gRunning);
 
     tmpRect = {0, 0, 200, 100};
     Draw::drawHomeButton(&tmpRect, retryButton, gRunning);

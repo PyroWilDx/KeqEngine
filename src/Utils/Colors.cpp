@@ -5,6 +5,7 @@
 #include "Utils/Colors.hpp"
 
 SDL_Color Colors::dColorKq = {164, 152, 180, COLOR_MAX};
+SDL_Color Colors::dColorElectroDmgText = {194, 116, 230, COLOR_MAX};
 SDL_Color Colors::dColorWhite = {COLOR_MAX, COLOR_MAX, COLOR_MAX, COLOR_MAX};
 SDL_Color Colors::dColorBlack = {0, 0, 0, COLOR_MAX};
 SDL_Color Colors::dColorGray = {156, 156, 156, COLOR_MAX};
