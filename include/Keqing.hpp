@@ -8,6 +8,46 @@
 #include <vector>
 #include "AbstractEntity/LivingEntity.hpp"
 
+
+#define KQ_BASE_COLOR 2861694463
+
+#define KQ_WIDTH_MULTIPLIER 1.
+#define KQ_HEIGHT_MULTIPLIER 1.
+
+#define KQ_WALK_VELOCITY 0.4
+#define KQ_RUN_VELOCITY 0.6
+#define KQ_AIR_WALK_VELOCITY 0.38
+#define KQ_DASH_VELOCITY 0.8
+
+#define KQ_JUMP_BASE_VELOCITY 1.
+#define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
+#define KQ_AIR_DASH_VELOCITY 0.8
+
+#define KQ_SKILL_FLIP_MAX_COUNT 2
+#define KQ_SKILL_FLIP_BASE_Y_VELOCITY 0.62
+#define KQ_SKILL_FLIP_BASE_X_VELOCITY 0.44
+
+#define KQ_SKILL_CLONE_X_VELOCITY 0.6
+#define KQ_SKILL_CLONE_DURATION 8000
+
+#define KQ_SKILL_AIR_AIMING_FLOAT_FRAME_N 120
+#define KQ_SKILL_AIR_AIMING_FLOAT_VELOCITY 0.024
+#define KQ_LIGHTNING_STELITTO_VELOCITY 2.4
+#define KQ_SKILL_TP_MAX_DISTANCE 360
+#define KQ_SKILL_COOLDOWN 7000
+#define KQ_LIGHTNING_STILETTO_DURATION 6000
+
+#define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
+#define KQ_BURST_NUMBER_OF_SLASH 8
+#define KQ_BURST_NUMBER_OF_CLONE 5
+#define KQ_BURST_COOLDOWN 12000
+#define KQ_BURST_CRIT_DURATION 8000
+#define KQ_BURST_CRIT_BUFF 0.2
+
+#define KQ_BASE_ATK 2000
+#define KQ_BASE_CRIT_RATE 0.8
+#define KQ_BASE_CRIT_DAMAGE 3.36
+
 class Particle;
 class Button;
 
@@ -50,39 +90,6 @@ enum {
     KQ_HURT,
     KQ_ENUM_N
 };
-
-#define KQ_BASE_COLOR 2861694463
-
-#define KQ_WIDTH_MULTIPLIER 1.
-#define KQ_HEIGHT_MULTIPLIER 1.
-
-#define KQ_WALK_VELOCITY 0.4
-#define KQ_RUN_VELOCITY 0.6
-#define KQ_AIR_WALK_VELOCITY 0.38
-#define KQ_DASH_VELOCITY 0.8
-
-#define KQ_JUMP_BASE_VELOCITY 1.
-#define KQ_AIR_DOUBLE_JUMP_BASE_VELOCITY 0.8
-#define KQ_AIR_DASH_VELOCITY 0.8
-
-#define KQ_SKILL_FLIP_MAX_COUNT 2
-#define KQ_SKILL_FLIP_BASE_Y_VELOCITY 0.62
-#define KQ_SKILL_FLIP_BASE_X_VELOCITY 0.44
-
-#define KQ_SKILL_CLONE_X_VELOCITY 0.6
-#define KQ_SKILL_CLONE_DURATION 8000
-
-#define KQ_SKILL_AIR_AIMING_FLOAT_FRAME_N 120
-#define KQ_SKILL_AIR_AIMING_FLOAT_VELOCITY 0.024
-#define KQ_LIGHTNING_STELITTO_VELOCITY 2.4
-#define KQ_SKILL_TP_MAX_DISTANCE 360
-#define KQ_SKILL_COOLDOWN 7000
-#define KQ_LIGHTNING_STILETTO_DURATION 6000
-
-#define KQ_BURST_NUMBER_OF_CLONE_SLASH 6
-#define KQ_BURST_NUMBER_OF_SLASH 8
-#define KQ_BURST_NUMBER_OF_CLONE 5
-#define KQ_BURST_COOLDOWN 12000
 
 class Keqing : public LivingEntity {
 
@@ -233,11 +240,11 @@ public:
 
     int getTotalAtk();
 
-    double getBonusDmgMultiplier() override;
+    double getBonusDamageMultiplier() override;
 
     double getCritRate();
 
-    double getCritDmg();
+    double getCritDamage();
 
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }
 
@@ -271,6 +278,7 @@ private:
     double ESkillX, ESkillY;
     int ESkillUseTime;
     int RBurstCloneSlashCount;
+    int RBurstLastUseTime;
     bool airDoubleJumped;
     bool airDashed;
     bool airASkillCloned;
