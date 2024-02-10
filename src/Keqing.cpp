@@ -44,6 +44,7 @@ Keqing::Keqing()
     this->ESkillY = 0;
     this->ESkillUseTime = 0;
     this->RBurstCloneSlashCount = 0;
+    this->RBurstLastUseTime = 0;
     this->airDoubleJumped = false;
     this->airDashed = false;
     this->airASkillCloned = false;
@@ -417,6 +418,7 @@ void Keqing::reset() {
     ESkillY = 0;
     ESkillUseTime = 0;
     RBurstCloneSlashCount = 0;
+    RBurstLastUseTime = 0;
     airDoubleJumped = false;
     airDashed = false;
     airASkillCloned = false;
@@ -2216,6 +2218,8 @@ void Keqing::RBurst() {
         soundSheet->playRandomSound(KQ_BURST);
         Sound::playAudioChunk("res/sfx/particle/KQBurstStart.ogg");
 
+        RBurstLastUseTime = Global::currentTime;
+
     } else if (isNewestFrame(4, KQ_BURST)) {
         // Push Atk
         pushBurstSlashAtk(1.58, DBL_MIN, -DBL_MIN,
@@ -3120,17 +3124,21 @@ void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
 }
 
 int Keqing::getTotalAtk() {
-    return 2000;
+    return KQ_BASE_ATK;
 }
 
-double Keqing::getBonusDmgMultiplier() {
+double Keqing::getBonusDamageMultiplier() {
     return 1.1;
 }
 
 double Keqing::getCritRate() {
-    return 0.8;
+    double critRate = KQ_BASE_CRIT_RATE;
+    if (Global::currentTime - RBurstLastUseTime < KQ_BURST_CRIT_DURATION) {
+        critRate += KQ_BURST_CRIT_BUFF;
+    }
+    return critRate;
 }
 
-double Keqing::getCritDmg() {
-    return 3.36;
+double Keqing::getCritDamage() {
+    return KQ_BASE_CRIT_DAMAGE;
 }

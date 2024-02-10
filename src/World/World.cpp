@@ -292,7 +292,7 @@ void World::addKQAtk(Attack *atk, double atkPercent) {
     Keqing *kq = Keqing::getInstance();
     double atkDamage = atkPercent * kq->getTotalAtk();
     if (Random::getRandomReal() < kq->getCritRate()) {
-        atkDamage *= kq->getCritDmg();
+        atkDamage *= kq->getCritDamage();
         atk->setDmgTextSettings(&Colors::dColorYellow,
                                 DT_DEFAULT_AVG_FONT_SIZE,
                                 DT_DEFAULT_AVG_DISPLAY_DURATION,
