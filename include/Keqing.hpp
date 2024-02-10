@@ -235,6 +235,8 @@ public:
 
     double getBonusDmgMultiplier();
 
+    double getCritRate();
+
     double getCritDmg();
 
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }

@@ -10,6 +10,8 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
+#include "Entity/DamageText.hpp"
+#include "Utils/Colors.hpp"
 
 #define ATK_SMALL_PARTICLE_COUNT 12
 
@@ -66,16 +68,19 @@ public:
 
     inline void setKbYVelocity(double kbYVelocity_) { kbYVelocity = kbYVelocity_; }
 
-    inline void setDmgTextSettings(int dmgTextFontSize_, int dmgTextDuration_) {
-        dmgTextFontSize = dmgTextFontSize_;
-        dmgTextDuration = dmgTextDuration_;
-    }
-
     inline void setBigParticle(Particle *bigParticle_) { bigParticle = bigParticle_; }
 
     inline void setSmallParticle(Particle *smallParticle_) { smallParticle = smallParticle_; }
 
     inline void setUniqueEntityHit(bool uniqueEntityHit_) { uniqueEntityHit = uniqueEntityHit_; }
+
+    inline void setDmgTextSettings(SDL_Color *dmgTextColor_, int dmgTextFontSize_,
+                                   int dmgTextDuration_, double dmgTextYOffset_) {
+        if (dmgTextColor_ != nullptr) dmgTextColor = dmgTextColor_;
+        if (dmgTextFontSize_ != 0) dmgTextFontSize = dmgTextFontSize_;
+        if (dmgTextDuration_ != 0) dmgTextDuration = dmgTextDuration_;
+        if (dmgTextYOffset_ != 0) dmgTextYOffset = dmgTextYOffset_;
+    }
 
     inline void setOnHit(void (*onHit_)(Attack *, LivingEntity *, void *), void *fParams) {
         onHit = onHit_;
@@ -107,14 +112,15 @@ private:
     int atkTimeAcc;
     int atkDuration;
     std::string hitSoundPath;
-    int dmgTextFontSize;
-    int dmgTextDuration;
-    bool isElectro;
     Particle *bigParticle;
     Particle *smallParticle;
     bool uniqueEntityHit;
     std::unordered_set<LivingEntity *> hitEntitySet;
     Attack *atkCompanion;
+    SDL_Color *dmgTextColor;
+    int dmgTextFontSize;
+    int dmgTextDuration;
+    double dmgTextYOffset;
 
     void (*onHit)(Attack *, LivingEntity *, void *);
 

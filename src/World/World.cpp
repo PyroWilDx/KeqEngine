@@ -16,6 +16,7 @@
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
 #include "Entity/DamageText.hpp"
+#include "Utils/Random.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
@@ -289,8 +290,15 @@ void World::addOtherEntity(Entity *otherEntity) {
 
 void World::addKQAtk(Attack *atk, double atkPercent) {
     Keqing *kq = Keqing::getInstance();
-    atk->setAtkDamage((int) (atkPercent * kq->getTotalAtk() *
-                             kq->getBonusDmgMultiplier() * kq->getCritDmg()));
+    double atkDamage = atkPercent * kq->getTotalAtk() * kq->getBonusDmgMultiplier();
+    if (Random::getRandomReal() < kq->getCritRate()) {
+        atkDamage *= kq->getCritDmg();
+        atk->setDmgTextSettings(&Colors::dColorYellow,
+                                DT_DEFAULT_AVG_FONT_SIZE,
+                                DT_DEFAULT_AVG_DISPLAY_DURATION,
+                                0);
+    }
+    atk->setAtkDamage((int) atkDamage);
     kqAtkLL = LLInsertHead(kqAtkLL, (void *) atk);
 }
 

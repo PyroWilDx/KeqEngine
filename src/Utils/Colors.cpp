@@ -12,6 +12,7 @@ SDL_Color Colors::dColorGray = {156, 156, 156, COLOR_MAX};
 SDL_Color Colors::dColorRed = {COLOR_MAX, 0, 0, COLOR_MAX};
 SDL_Color Colors::dColorGreen = {0, COLOR_MAX, 0, COLOR_MAX};
 SDL_Color Colors::dColorBlue = {0, 0, COLOR_MAX, COLOR_MAX};
+SDL_Color Colors::dColorYellow = {COLOR_MAX, COLOR_MAX, 0, COLOR_MAX};
 SDL_Color Colors::dColorCyan = {0, COLOR_MAX, COLOR_MAX, COLOR_MAX};
 
 void Colors::initColors() {

@@ -779,7 +779,7 @@ void Keqing::NAtk() {
                  {30,  0}};
         Attack *atk =
                 Global::gWorld->addKQAtk(this, atkPolyPts, N,
-                                         10, 0.2036, -0.1);
+                                         0.811, 0.2036, -0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(1, 2, KQ_NATK));
         atk->setHitSound("KQHitSwordWeak0.ogg");
         atk->setClassicParticle(0, false);
@@ -2073,8 +2073,14 @@ void pushBurstSlashAtk(int dmg, double kbXV, double kbYV,
     if (typeSlash == -1) {
         atkLeft->setHitSound("KQHitBurstFinalSlash.wav");
         atkRight->setHitSound("KQHitBurstFinalSlash.wav");
-        atkLeft->setDmgTextSettings(30, 1200);
-        atkRight->setDmgTextSettings(30, 1200);
+        atkLeft->setDmgTextSettings(nullptr,
+                                    42,
+                                    DT_DEFAULT_LONG_DISPLAY_DURATION,
+                                    -30);
+        atkRight->setDmgTextSettings(nullptr,
+                                     42,
+                                     DT_DEFAULT_LONG_DISPLAY_DURATION,
+                                     -30);
     }
 
     if (typeSlash != -1) {
@@ -3096,11 +3102,15 @@ void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
 }
 
 int Keqing::getTotalAtk() {
-    return 1000;
+    return 2000;
 }
 
 double Keqing::getBonusDmgMultiplier() {
     return 1.1;
+}
+
+double Keqing::getCritRate() {
+    return 0.8;
 }
 
 double Keqing::getCritDmg() {

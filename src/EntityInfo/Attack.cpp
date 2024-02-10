@@ -79,18 +79,19 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->kbYVelocity = kbYVelocity;
     this->atkTimeAcc = 0;
     this->atkDuration = 0;
+    this->hitSoundPath = std::string();
+    this->bigParticle = nullptr;
+    this->smallParticle = nullptr;
+    this->uniqueEntityHit = false;
+    this->dmgTextColor = &Colors::dColorWhite;
+    this->dmgTextFontSize = DT_DEFAULT_FONT_SIZE;
+    this->dmgTextDuration = DT_DEFAULT_DISPLAY_DURATION;
+    this->dmgTextYOffset = 0;
+    this->atkCompanion = nullptr;
     this->onHit = nullptr;
     this->onHitParams = nullptr;
     this->shouldRemove = nullptr;
     this->shouldRemoveParams = nullptr;
-    this->hitSoundPath = std::string();
-    this->dmgTextFontSize = 0;
-    this->dmgTextDuration = 0;
-    this->isElectro = false;
-    this->bigParticle = nullptr;
-    this->smallParticle = nullptr;
-    this->uniqueEntityHit = false;
-    this->atkCompanion = nullptr;
 }
 
 Attack::Attack(LivingEntity *atkIssuer_, double xyArray[][2], int arrayLength,
@@ -136,7 +137,11 @@ void Attack::setKQHitSoundRandom(int atkStrength) {
 void Attack::setClassicParticle(int n, bool atkElectro) {
     myAssert(n >= 0 && n <= 2, "Index must be 0, 1 or 2");
 
-    isElectro = atkElectro;
+    if (atkElectro) {
+        dmgTextColor = &Colors::dColorElectroDmgText;
+        dmgTextFontSize = DT_DEFAULT_BIG_FONT_SIZE;
+        dmgTextDuration = DT_DEFAULT_AVG_DISPLAY_DURATION;
+    }
 
     const int nCode = 8;
     const int allCodes[nCode] = {
@@ -283,21 +288,12 @@ void Attack::checkEntityHit(LivingEntity *dstEntity) {
     }
 
     if (firstHit && atkDamage > 0) {
-        DamageText *dmgText;
-        if (!isElectro) dmgText = new DamageText(atkDamage);
-        else {
-            if (dmgTextFontSize == 0 && dmgTextDuration == 0) {
-                dmgText = new DamageText(atkDamage,
-                                         &Colors::dColorElectroDmgText);
-            } else {
-                dmgText = new DamageText(atkDamage,
-                                         &Colors::dColorElectroDmgText,
-                                         dmgTextFontSize,
-                                         dmgTextDuration);
-            }
-        }
-        dmgText->moveToEntityCenter(dstEntity, false);
-        dmgText->moveAdd(0, -dstEntity->getHitBox().h);
+        auto *dmgText = new DamageText(atkDamage,
+                                       dmgTextColor,
+                                       dmgTextFontSize,
+                                       dmgTextDuration);
+        dmgText->moveToEntityCenterIgnoreRenderWH(dstEntity);
+        dmgText->moveAdd(0, -dstEntity->getHitBox().h + dmgTextYOffset);
         Global::gWorld->pushBackDamageText(dmgText);
     }
 }
