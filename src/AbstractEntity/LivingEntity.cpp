@@ -178,3 +178,7 @@ void LivingEntity::updateAction() {
 bool LivingEntity::isHurt() {
     return isSpriteAnimated(hurtSpriteCode) || isDead;
 }
+
+double LivingEntity::getBonusDmgMultiplier() {
+    return 1.;
+}

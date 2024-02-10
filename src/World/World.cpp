@@ -290,7 +290,7 @@ void World::addOtherEntity(Entity *otherEntity) {
 
 void World::addKQAtk(Attack *atk, double atkPercent) {
     Keqing *kq = Keqing::getInstance();
-    double atkDamage = atkPercent * kq->getTotalAtk() * kq->getBonusDmgMultiplier();
+    double atkDamage = atkPercent * kq->getTotalAtk();
     if (Random::getRandomReal() < kq->getCritRate()) {
         atkDamage *= kq->getCritDmg();
         atk->setDmgTextSettings(&Colors::dColorYellow,

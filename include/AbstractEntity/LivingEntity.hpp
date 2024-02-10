@@ -53,6 +53,8 @@ public:
 
     bool isHurt();
 
+    virtual double getBonusDmgMultiplier();
+
     [[nodiscard]] inline int getHp() const { return currHp; }
 
 protected:

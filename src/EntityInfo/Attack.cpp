@@ -80,6 +80,7 @@ Attack::Attack(LivingEntity *atkIssuer_, Entity *followEntity,
     this->atkTimeAcc = 0;
     this->atkDuration = 0;
     this->hitSoundPath = std::string();
+    this->isElemental = false;
     this->bigParticle = nullptr;
     this->smallParticle = nullptr;
     this->uniqueEntityHit = false;
@@ -134,10 +135,16 @@ void Attack::setKQHitSoundRandom(int atkStrength) {
     setHitSound(finalName);
 }
 
+void Attack::setElementalAtkTrue() {
+    isElemental = true;
+    atkDamage = (int) (atkDamage * atkIssuer->getBonusDmgMultiplier());
+}
+
 void Attack::setClassicParticle(int n, bool atkElectro) {
     myAssert(n >= 0 && n <= 2, "Index must be 0, 1 or 2");
 
     if (atkElectro) {
+        setElementalAtkTrue();
         dmgTextColor = &Colors::dColorElectroDmgText;
         dmgTextFontSize = DT_DEFAULT_BIG_FONT_SIZE;
         dmgTextDuration = DT_DEFAULT_AVG_DISPLAY_DURATION;
