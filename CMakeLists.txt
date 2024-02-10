@@ -7,6 +7,7 @@ set(HEADER_DIRS "${ROOT_DIR}/include")
 set(SRC_DIR "${ROOT_DIR}/src")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 
 # Profiler
