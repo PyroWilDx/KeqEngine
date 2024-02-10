@@ -2787,6 +2787,8 @@ bool Keqing::onGameFrame() {
 
 int Keqing::isInvincible() {
     if ((isSpriteAnimated(KQ_NATK) && isFrameBetween(30, 32, KQ_NATK)) ||
+        isSpriteAnimated(KQ_DASH) ||
+        isSpriteAnimated(KQ_AIR_DASH) ||
         isSpriteAnimated(KQ_SKILL_SLASH) ||
         isSpriteAnimated(KQ_AIR_SKILL_SLASH) ||
         isSpriteAnimated(KQ_BURST)) {

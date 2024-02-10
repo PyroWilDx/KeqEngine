@@ -12,6 +12,7 @@
 #include "World/Background.hpp"
 #include "World/Block.hpp"
 #include "Monster/MobDropper.hpp"
+#include "Entity/FPSText.hpp"
 
 void SlashEm::RunImpl() {
     SDL_Event event;
@@ -33,6 +34,9 @@ void SlashEm::RunImpl() {
     gWorld->addMonster(mobDropper);
 
     Keqing::initKeqingForPlay(32, 120);
+
+    auto *gFPSText = new FPSText();
+    gWorld->addOtherEntity(gFPSText);
 
     while (gInfo.gRunning) {
         handleTime();
