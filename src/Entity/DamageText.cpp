@@ -11,22 +11,18 @@ DamageText::DamageText(int atkDamage, SDL_Color *textColor, int fontSize,
                        int dmgTextDuration)
         : Text(std::to_string(atkDamage).c_str(), textColor, fontSize,
                &Colors::dColorBlack, 2) {
-    setRenderWHMultiplier(BIG_RM, BIG_RM);
+    setRenderWHMultiplier(DT_BIG_RM, DT_BIG_RM);
 
     this->displayDuration = dmgTextDuration;
     this->finishResize = false;
 }
 
-DamageText::DamageText(int atkDamage, SDL_Color *textColor)
-        : DamageText(atkDamage, textColor, DEFAULT_BIG_FONT_SIZE,
-                     DEFAULT_DISPLAY_DURATION) {
-
-}
-
-DamageText::DamageText(int atkDamage)
-        : DamageText(atkDamage, nullptr, DEFAULT_FONT_SIZE,
-                     DEFAULT_DISPLAY_DURATION) {
-
+void DamageText::moveToEntityCenterIgnoreRenderWH(Entity *centerEntity) {
+    double lastRWM = renderWMultiplier;
+    double lastRHM = renderHMultiplier;
+    setRenderWHMultiplier(1., 1.);
+    moveToEntityCenter(centerEntity, false);
+    setRenderWHMultiplier(lastRWM, lastRHM);
 }
 
 bool DamageText::onGameFrame() {
