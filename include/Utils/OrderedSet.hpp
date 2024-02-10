@@ -8,6 +8,12 @@
 #include <unordered_set>
 #include <vector>
 
+#ifdef __unix__
+
+#include <cstddef>
+
+#endif
+
 template<class T>
 class OrderedSet {
 
