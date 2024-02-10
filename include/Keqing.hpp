@@ -133,7 +133,7 @@ public:
 
     void NAtk();
 
-    static void checkESkillOnCAtk();
+    void checkESkillOnCAtk();
 
     void CAtk();
 
