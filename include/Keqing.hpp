@@ -233,7 +233,7 @@ public:
 
     int getTotalAtk();
 
-    double getBonusDmgMultiplier();
+    double getBonusDmgMultiplier() override;
 
     double getCritRate();
 
