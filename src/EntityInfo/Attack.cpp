@@ -137,7 +137,7 @@ void Attack::setKQHitSoundRandom(int atkStrength) {
 
 void Attack::setElementalAtkTrue() {
     isElemental = true;
-    atkDamage = (int) (atkDamage * atkIssuer->getBonusDmgMultiplier());
+    atkDamage = (int) (atkDamage * atkIssuer->getBonusDamageMultiplier());
 }
 
 void Attack::setClassicParticle(int n, bool atkElectro) {
