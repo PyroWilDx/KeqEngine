@@ -805,7 +805,7 @@ void Keqing::NAtk() {
                  {54,  -12}};
         Attack *atk =
                 Global::gWorld->addKQAtk(this, atkPolyPts, N,
-                                         10, 0.32, -0.26);
+                                         0.811, 0.32, -0.26);
         atk->setAtkDuration(getSpriteLengthFromTo(7, 8, KQ_NATK));
         atk->setHitSound("KQHitSwordWeak1.ogg");
         atk->setClassicParticle(0, false);
@@ -827,7 +827,7 @@ void Keqing::NAtk() {
                  {72,  4}};
         Attack *atk =
                 Global::gWorld->addKQAtk(this, atkPolyPts, N,
-                                         10, 0.48, -0.36);
+                                         1.08, 0.48, -0.36);
         atk->setAtkDuration(getSpriteLengthFromTo(13, 14, KQ_NATK));
         atk->setHitSound("KQHitSwordWeak2.ogg");
         atk->setClassicParticle(0, false);
@@ -853,7 +853,7 @@ void Keqing::NAtk() {
                  {32,  -34}};
         Attack *atk =
                 Global::gWorld->addKQAtk(this, atkPolyPts, N,
-                                         10, 0.16, -0.4);
+                                         0.622, 0.16, -0.4);
         atk->setAtkDuration(getSpriteLengthFromTo(21, 22, KQ_NATK));
         atk->setHitSound("KQHitSwordMedium0.ogg");
         atk->setClassicParticle(0, false);
@@ -883,7 +883,7 @@ void Keqing::NAtk() {
                  {70,  -22}};
         Attack *atk =
                 Global::gWorld->addKQAtk(this, atkPolyPts, N,
-                                         10, 0.26, 0.1);
+                                         0.68, 0.26, 0.1);
         atk->setAtkDuration(getSpriteLengthFromTo(24, 25, KQ_NATK));
         atk->setHitSound("KQHitSwordMedium1.ogg");
         atk->setClassicParticle(0, false);
@@ -899,7 +899,7 @@ void Keqing::NAtk() {
                  {84,  30}};
         Attack *atk =
                 Global::gWorld->addKQAtk(this, atkPolyPts, N,
-                                         10, 1., -0.2);
+                                         1.32, 1., -0.2);
         atk->setAtkDuration(getSpriteLengthFromTo(30, 32, KQ_NATK));
         atk->setHitSound("KQHitSwordStrong1.ogg");
         atk->setClassicParticle(2, false);
@@ -915,28 +915,22 @@ void Keqing::checkESkillOnCAtk() {
         skillExplosionParticle->moveToEntityCenter(skillIdleParticle,
                                                    false);
 
-        skillExplosionParticle->setOnRender([](Particle *particle) {
-            Keqing *kq = Keqing::getInstance();
+        // Push Atk
+        const int N = 40;
+        double atkPolyPts[N][2];
+        approxEllipse(atkPolyPts, N,
+                      0, 0, 60., 60.);
 
-            if (particle->isNewestFrame(0)) {
-                // Push Atk
-                const int N = 40;
-                double atkPolyPts[N][2];
-                approxEllipse(atkPolyPts, N,
-                              0, 0, 60., 60.);
+        double kbXV = 0.6;
+        if (!isFacingEast()) kbXV = -kbXV;
 
-                double kbXV = 0.6;
-                if (!kq->isFacingEast()) kbXV = -kbXV;
-
-                Attack *atk =
-                        Global::gWorld->addKQAtk(kq, particle,
-                                                 atkPolyPts, N,
-                                                 10, kbXV, -0.32);
-                atk->setAtkDuration(60);
-                atk->setHitSound("KQHitSkillExplosion.wav");
-                atk->setClassicParticle(1, true);
-            }
-        });
+        Attack *atk =
+                Global::gWorld->addKQAtk(this, skillExplosionParticle,
+                                         atkPolyPts, N,
+                                         10, kbXV, -0.32);
+        atk->setAtkDuration(60);
+        atk->setHitSound("KQHitSkillExplosion.wav");
+        atk->setClassicParticle(1, true);
 
         Particle::removeParticle(PARTICLE_HUD_SKILL_ICON_2);
     }

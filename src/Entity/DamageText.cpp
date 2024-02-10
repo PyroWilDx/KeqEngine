@@ -30,7 +30,6 @@ bool DamageText::onGameFrame() {
 
     if (doNext) {
         if (timeSinceCreation > displayDuration) {
-            Global::gWorld->popFrontDamageText();
             return false;
         }
         if (timeSinceCreation > displayDuration - COLOR_MAX / 2) {
