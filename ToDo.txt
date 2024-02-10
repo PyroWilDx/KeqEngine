@@ -4,6 +4,9 @@ add jump and fall effects
 
 damaging kb should take into account the weight of the entity
 
+check if atk is really erlectro to apply bonyus dmg
+give 15% crit after burst
+
 for coloring keqing
      FAIRE UN BOUTON POUR CHAQUE COMPARTIMENT
 

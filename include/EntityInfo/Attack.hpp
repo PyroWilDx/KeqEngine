@@ -44,6 +44,8 @@ public:
 
     void setKQHitSoundRandom(int atkStrength);
 
+    void setElementalAtkTrue();
+
     void setClassicParticle(int n, bool atkElectro);
 
     static BoostPolygon getPolygonFromEntity(Entity *dstEntity);
@@ -99,7 +101,9 @@ public:
         atkCompanion_->atkCompanion = this;
     }
 
-    inline LivingEntity *getAtkIssuer() { return atkIssuer; }
+    [[nodiscard]] inline LivingEntity *getAtkIssuer() const { return atkIssuer; }
+
+    [[nodiscard]] inline bool getIsElemental() const { return isElemental; }
 
 private:
     LivingEntity *atkIssuer;
@@ -112,6 +116,7 @@ private:
     int atkTimeAcc;
     int atkDuration;
     std::string hitSoundPath;
+    bool isElemental;
     Particle *bigParticle;
     Particle *smallParticle;
     bool uniqueEntityHit;
