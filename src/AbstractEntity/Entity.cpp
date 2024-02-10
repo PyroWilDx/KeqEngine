@@ -13,17 +13,18 @@
 
 Entity::Entity()
         : imgFrame({0, 0, 0, 0}), hitBox(imgFrame) {
-    x = 0;
-    y = 0;
-    xVelocity = 0;
-    yVelocity = 0;
-    gravityWeight = 0;
-    subjectToGravity = true;
-    facingEast = true;
-    imgTexture = nullptr;
-    renderWMultiplier = 1;
-    renderHMultiplier = 1;
-    degRotation = 0;
+    this->x = 0;
+    this->y = 0;
+    this->xVelocity = 0;
+    this->yVelocity = 0;
+    this->gravityWeight = 0;
+    this->subjectToGravity = true;
+    this->facingEast = true;
+    this->imgTexture = nullptr;
+    this->doClearTexture = true;
+    this->renderWMultiplier = 1;
+    this->renderHMultiplier = 1;
+    this->degRotation = 0;
     this->timeSinceCreation = 0;
 }
 
@@ -35,20 +36,20 @@ Entity::Entity(double x, double y)
 
 Entity::Entity(double x, double y, int frameW, int frameH)
         : Entity(x, y) {
-    imgFrame.w = frameW;
-    imgFrame.h = frameH;
+    this->imgFrame.w = frameW;
+    this->imgFrame.h = frameH;
 }
 
 Entity::Entity(double x, double y, int frameW, int frameH, const char *imgPath)
         : Entity(x, y, frameW, frameH) {
-    hitBox = imgFrame;
-    imgTexture = WindowRenderer::getInstance()->loadTexture(imgPath);
+    this->hitBox = imgFrame;
+    this->imgTexture = WindowRenderer::getInstance()->loadTexture(imgPath);
 }
 
 Entity::Entity(double x, double y, double renderWM, double renderHM)
         : Entity(x, y) {
-    renderWMultiplier = renderWM;
-    renderHMultiplier = renderHM;
+    this->renderWMultiplier = renderWM;
+    this->renderHMultiplier = renderHM;
 }
 
 Entity::Entity(double x, double y, int frameW, int frameH,
@@ -677,7 +678,7 @@ bool Entity::hitBoxCollision(Entity *entity) const {
 }
 
 void Entity::clearTexture() {
-    if (imgTexture != nullptr) {
+    if (imgTexture != nullptr && doClearTexture) {
         SDL_DestroyTexture(imgTexture);
         imgTexture = nullptr;
     }

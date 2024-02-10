@@ -80,7 +80,8 @@ class Particle : public AnimatedEntity {
 public:
     explicit Particle(bool isBaseParticle);
 
-    Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier);
+    Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier,
+             bool doLoadTexture = true);
 
     static void initParticle();
 
