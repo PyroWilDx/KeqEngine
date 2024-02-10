@@ -432,10 +432,16 @@ void World::onGameFrame() {
         atk->checkEntityHit(kq_);
     }, (void *) Keqing::getInstance());
 
+    int rmCount = 0;
     auto itDmgText = dmgTextLL.begin();
     while (itDmgText != dmgTextLL.end()) {
-        (*itDmgText)->onGameFrame();
+        if (!(*itDmgText)->onGameFrame()) {
+            rmCount++;
+        }
         itDmgText++;
+    }
+    for (int i = 0; i < rmCount; i++) {
+        popFrontDamageText();
     }
 
     if (translateBackgroundEntity != nullptr) {
