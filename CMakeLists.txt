@@ -42,10 +42,13 @@ if (WIN32)
     message(STATUS "Building for Windows")
 
 elseif (UNIX AND NOT APPLE)
-    set(LIB_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -lprofiler")
+    set(LIB_FLAGS "-lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lSDL2_gfx -lsqlite3 -lprofiler")
 
     set(HEADER_DIRS ${HEADER_DIRS} "/usr/include/SDL2")
     set(PLATFORM_LIB_FLAGS ${LIB_FLAGS})
+
+    find_package(SQLite3 REQUIRED)
+    include_directories(${SQLite3_INCLUDE_DIRS})
 
     message(STATUS "Building for Linux")
 
