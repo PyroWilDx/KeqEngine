@@ -1,6 +1,6 @@
 -- sqlite3\sqlite3.exe Keqing.db < init.sql
 
-DROP TABLE GoalGame;
+DROP TABLE IF EXISTS GoalGame;
 
 CREATE TABLE GoalGame (
     levelId INT PRIMARY KEY,
