@@ -225,6 +225,7 @@ protected:
     SDL_Rect imgFrame;
     SDL_Rect hitBox;
     SDL_Texture *imgTexture;
+    bool doClearTexture;
     double renderWMultiplier, renderHMultiplier;
     double degRotation;
     int timeSinceCreation;

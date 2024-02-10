@@ -29,15 +29,20 @@ Particle::Particle(bool isBaseParticle)
     if (isBaseParticle) imgTexture = getSprite()->sTexture;
 }
 
-Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier)
+Particle::Particle(int spriteCode, int frameLength, double wMultiplier, double hMultiplier,
+                   bool doLoadTexture)
         : Particle(false) {
     this->particleCode = spriteCode;
     Sprite *baseSprite = baseParticle->getSprite(spriteCode);
     Sprite *currentSprite = getSprite();
     *currentSprite = *baseSprite;
     currentSprite->sCode = 0;
-    currentSprite->sTexture = WindowRenderer::getInstance()->loadTexture(
-            currentSprite->imgPath);
+    if (doLoadTexture) {
+        currentSprite->sTexture =
+                WindowRenderer::getInstance()->loadTexture(currentSprite->imgPath);
+    } else {
+        doClearTexture = false;
+    }
     AnimatedEntity::setSpriteAnimated(true);
     currentSprite->sFrameLengths = new int[currentSprite->sFrameN];
     setSpriteFrameLengthFromTo(frameLength, 0, -1);
@@ -199,7 +204,7 @@ void Particle::initParticle() {
 
     baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_0, "res/gfx/particle/DMGPhysical0.png",
                              96, 96, 8);
-    particleMaxActives[PARTICLE_DMG_PHYSICAL_0] = 16;
+    particleMaxActives[PARTICLE_DMG_PHYSICAL_0] = 96;
 
     baseParticle->initSprite(PARTICLE_DMG_PHYSICAL_1, "res/gfx/particle/DMGPhysical1.png",
                              128, 128, 8);
@@ -216,7 +221,7 @@ void Particle::initParticle() {
 
     baseParticle->initSprite(PARTICLE_DMG_ELECTRO_0, "res/gfx/particle/DMGElectro0.png",
                              96, 96, 8);
-    particleMaxActives[PARTICLE_DMG_ELECTRO_0] = 16;
+    particleMaxActives[PARTICLE_DMG_ELECTRO_0] = 96;
 
     baseParticle->initSprite(PARTICLE_DMG_ELECTRO_1, "res/gfx/particle/DMGElectro1.png",
                              128, 128, 8);
@@ -496,7 +501,8 @@ Particle *Particle::cloneSelf(int onRenderParamsSize) {
     auto *newParticle = new Particle(particleCode,
                                      0,
                                      renderWMultiplier,
-                                     renderHMultiplier);
+                                     renderHMultiplier,
+                                     false);
     std::memcpy(newParticle->getSprite()->sFrameLengths,
                 getSprite()->sFrameLengths,
                 getSprite()->sFrameN * sizeof(getSprite()->sFrameLengths[0]));
