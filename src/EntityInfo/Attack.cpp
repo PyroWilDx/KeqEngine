@@ -164,10 +164,12 @@ void Attack::setClassicParticle(int n, bool atkElectro) {
     int addI = (nCode / 2) * atkElectro;
     bigParticle = new Particle(allCodes[n + addI],
                                BIG_PARTICLE_FRAME_LENGTH,
-                               1., 1.);
+                               1., 1.,
+                               false);
     smallParticle = new Particle(allCodes[3 + addI],
                                  SMALL_PARTICLE_FRAME_LENGTH,
-                                 1., 1.);
+                                 1., 1.,
+                                 false);
 }
 
 BoostPolygon Attack::getPolygonFromEntity(Entity *dstEntity) {
