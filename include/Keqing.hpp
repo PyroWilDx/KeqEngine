@@ -8,7 +8,6 @@
 #include <vector>
 #include "AbstractEntity/LivingEntity.hpp"
 
-
 #define KQ_BASE_COLOR 2861694463
 
 #define KQ_WIDTH_MULTIPLIER 1.
@@ -44,12 +43,16 @@
 #define KQ_BURST_CRIT_DURATION 8000
 #define KQ_BURST_CRIT_BUFF 0.2
 
-#define KQ_BASE_ATK 2000
-#define KQ_BASE_CRIT_RATE 0.8
-#define KQ_BASE_CRIT_DAMAGE 3.36
+#define KQ_BASE_ATK 300
+#define KQ_BASE_CRIT_RATE 0.06
+#define KQ_BASE_CRIT_DAMAGE 0.96
 
 class Particle;
+
 class Button;
+
+class Inventory;
+
 
 enum {
     KQ_IDLE = 0,
@@ -94,6 +97,8 @@ enum {
 class Keqing : public LivingEntity {
 
 public:
+    ~Keqing();
+
     void setSoundSheetStartPath();
 
     void setSoundSheet();
@@ -102,7 +107,7 @@ public:
 
     static Keqing *initKeqingForPlay(double kqX, double kqY);
 
-    static inline Keqing *getInstance() { return instance; }
+    static inline Keqing *getInstance() { return kqInstance; }
 
     static void cleanUp();
 
@@ -265,7 +270,7 @@ public:
 private:
     Keqing();
 
-    static Keqing *instance;
+    static Keqing *kqInstance;
 
     bool wasInAir;
     int jumpPressTime;
@@ -288,7 +293,10 @@ private:
     bool isLocked;
     bool fallWhenLocked;
 
+    Inventory *kqInventory;
+
     void (*fOnDeathRetryButton)(Button *, int, int, void *);
+
     void *fParamsRetryButton;
 };
 

@@ -19,8 +19,10 @@
 #include "Utils/Draw.hpp"
 #include "UI/Button.hpp"
 #include "Utils/Colors.hpp"
+#include "EntityInfo/Weapon.hpp"
+#include "EntityInfo/Inventory.hpp"
 
-Keqing *Keqing::instance = nullptr;
+Keqing *Keqing::kqInstance = nullptr;
 
 const int NAtkMax = 4;
 const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
@@ -52,6 +54,8 @@ Keqing::Keqing()
     this->airPlungeLoopSoundChannel = 0;
     this->isLocked = false;
     this->fallWhenLocked = false;
+
+    this->kqInventory = new Inventory();
 
     this->fOnDeathRetryButton = nullptr;
     this->fParamsRetryButton = nullptr;
@@ -233,6 +237,10 @@ Keqing::Keqing()
     colorAllSprites(rgba);
 }
 
+Keqing::~Keqing() {
+    delete kqInventory;
+}
+
 void Keqing::setSoundSheetStartPath() {
     std::string soundStartPath = "res/sfx/keqing/" + Global::userData[DATA_KQ_VOICE_LANG];
     soundSheet->setSoundStartPath(soundStartPath);
@@ -326,8 +334,8 @@ void Keqing::setSoundSheet() {
 }
 
 void Keqing::initKeqing() {
-    if (instance == nullptr) {
-        instance = new Keqing();
+    if (kqInstance == nullptr) {
+        kqInstance = new Keqing();
     } else {
         SDL_Log("Keqing already initialized !");
     }
@@ -389,8 +397,8 @@ Keqing *Keqing::initKeqingForPlay(double kqX, double kqY) {
 }
 
 void Keqing::cleanUp() {
-    delete instance;
-    instance = nullptr;
+    delete kqInstance;
+    kqInstance = nullptr;
 }
 
 void Keqing::reset() {
@@ -427,6 +435,9 @@ void Keqing::reset() {
     airPlungeHitEntityVector.clear();
     isLocked = false;
     fallWhenLocked = false;
+
+    delete kqInventory;
+    kqInventory = new Inventory();
 
     fOnDeathRetryButton = nullptr;
     fParamsRetryButton = nullptr;
@@ -3126,11 +3137,18 @@ void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
 }
 
 int Keqing::getTotalAtk() {
-    return KQ_BASE_ATK;
+    Weapon *kqWeapon = kqInventory->getWeapon();
+    int flatAtk = KQ_BASE_ATK + kqWeapon->getWAtkFlat();
+    SDL_Log("tot %f\n",  flatAtk * kqWeapon->getWAtkMultiplier());
+    SDL_Log("tot2 %d\n",  kqWeapon->getWAtkFlat());
+    SDL_Log("f %d\n",  flatAtk);
+    SDL_Log("m  %f\n",  kqWeapon->getWAtkMultiplier());
+
+    return (int) (flatAtk * kqWeapon->getWAtkMultiplier());
 }
 
 double Keqing::getBonusDamageMultiplier() {
-    return 1.1;
+    return 1. + kqInventory->getWeapon()->getWElMultiplier();
 }
 
 double Keqing::getCritRate() {
@@ -3138,9 +3156,9 @@ double Keqing::getCritRate() {
     if (Global::currTime - RBurstLastUseTime < KQ_BURST_CRIT_DURATION) {
         critRate += KQ_BURST_CRIT_BUFF;
     }
-    return critRate;
+    return critRate + kqInventory->getWeapon()->getWCritRate();
 }
 
 double Keqing::getCritDamage() {
-    return KQ_BASE_CRIT_DAMAGE;
+    return 1. + KQ_BASE_CRIT_DAMAGE + kqInventory->getWeapon()->getWCritDamage();
 }

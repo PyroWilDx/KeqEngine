@@ -3,15 +3,18 @@
 //
 
 #include "EntityInfo/Inventory.hpp"
+#include "EntityInfo/Weapon.hpp"
+#include "EntityInfo/Artifact.hpp"
 
 Inventory::Inventory() {
-    weapon
+    pWeapon = new Weapon(DULL_BLADE);
+    artfVector = std::vector<Artifact *>();
 }
 
 Inventory::~Inventory() {
-    delete weapon;
+    delete pWeapon;
 
-    for (Artifact *artifact: artifactVector) {
+    for (Artifact *artifact: artfVector) {
         delete artifact;
     }
 }
