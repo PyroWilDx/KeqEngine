@@ -20,10 +20,10 @@
 #include "Utils/Utils.hpp"
 #include "World/World.hpp"
 #include "World/Background.hpp"
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Sound.hpp"
-#include "Entity/DamageText.hpp"
+#include "Text/DamageText.hpp"
 #include "Utils/Colors.hpp"
 
 #define BIG_PARTICLE_FRAME_LENGTH 40

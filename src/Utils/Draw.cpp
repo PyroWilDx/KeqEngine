@@ -8,7 +8,7 @@
 #include "World/World.hpp"
 #include "Main/HomeMenu.hpp"
 #include "Utils/Colors.hpp"
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 
 bool Draw::isDisplayingMenu = false;
 Text *Draw::menuText = nullptr;
@@ -67,8 +67,8 @@ void Draw::drawPlayMenu() {
     gWorld->setDisplayMenu(true);
     gWorld->enableColorFilter(156, 156, 156, 96, 0.8);
 
-    menuText = new Text("Menu", &Colors::dColorRed, 60, false);
-    menuText->moveToScreenCenterHorizontal(200);
+    menuText = new Text("Menu", &Colors::dColorWhite, 60, false);
+    menuText->moveToScreenCenterHorizontal(100);
     gWorld->addMenuEntity(menuText);
 
     menuResumeButton = new Button(0, 0, 200, 100);

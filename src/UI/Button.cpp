@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "UI/Button.hpp"
 #include "WindowRenderer.hpp"
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 #include "Utils/Colors.hpp"
 
 Button::Button(double x, double y, int renderW, int renderH, bool rmOutline)

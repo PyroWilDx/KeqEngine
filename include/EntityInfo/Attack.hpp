@@ -10,7 +10,7 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
-#include "Entity/DamageText.hpp"
+#include "Text/DamageText.hpp"
 #include "Utils/Colors.hpp"
 
 #define ATK_SMALL_PARTICLE_COUNT 12

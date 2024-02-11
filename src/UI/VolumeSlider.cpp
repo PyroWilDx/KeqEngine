@@ -6,7 +6,7 @@
 #include "UI/VolumeSlider.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 #include "Utils/Colors.hpp"
 
 VolumeSlider::VolumeSlider(double x, double y, int renderW,
