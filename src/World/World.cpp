@@ -123,16 +123,45 @@ void World::updatePixels(SDL_Rect *rect, WorldEntity *worldEntity) {
     updatePixels(rect->x, rect->y, rect->w, rect->h, worldEntity);
 }
 
+void World::refreshPixelsOnMove(WorldEntity *worldEntity, SDL_Rect *lastRect) {
+    for (int i = lastRect->x; i < lastRect->x + lastRect->w; i++) {
+        for (int j = lastRect->y; j < lastRect->y + lastRect->h; j++) {
+            pixels[i][j] = {WORLD_BACKGROUND, -1};
+        }
+    }
+
+    SDL_Rect intersectArea;
+    for (std::pair<const int, Button *> &it: buttonHashMap) {
+        if (it.second == worldEntity) continue;
+        if (it.second->getCollisionArea(lastRect, &intersectArea)) {
+            updatePixels(&intersectArea, it.second);
+        }
+    }
+    for (Block *block: blockVector) {
+        if (block == worldEntity) continue;
+        if (block->getCollisionArea(lastRect, &intersectArea)) {
+            updatePixels(&intersectArea, block);
+        }
+    }
+
+    addWorldEntity(worldEntity);
+}
+
 void World::refreshPixelsOnRemove(WorldEntity *worldEntity) {
     for (int i = worldEntity->getX(); i < worldEntity->getX() + worldEntity->getRenderW(); i++) {
-        for (int j = worldEntity->getY(); j < worldEntity->getY() + worldEntity->getRenderW(); j++) {
+        for (int j = worldEntity->getY(); j < worldEntity->getY() + worldEntity->getRenderH(); j++) {
             pixels[i][j] = {WORLD_BACKGROUND, -1};
         }
     }
     SDL_Rect intersectArea;
+    for (std::pair<const int, Button *> &it: buttonHashMap) {
+        if (it.second->getCollisionArea(worldEntity, &intersectArea)) {
+            updatePixels(&intersectArea, it.second);
+        }
+    }
     for (Block *block: blockVector) {
         if (block->getCollisionArea(worldEntity, &intersectArea)) {
-            updatePixels(&intersectArea, worldEntity);
+            updatePixels(&intersectArea, block);
         }
     }
 }

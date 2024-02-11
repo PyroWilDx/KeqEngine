@@ -25,6 +25,7 @@ void ColorKeqing::RunImpl() {
                                      "res/gfx/background/ColorKeqing.png");
     gWorld->setOnQuit([]() {
         Keqing *kq = Keqing::getInstance();
+        if (kq == nullptr) return;
         if (kq->getIsLocked()) {
             Uint32 rgba = cvStringToUint32(Global::userData[DATA_KQ_COLOR]);
             kq->colorCurrSprite(rgba);

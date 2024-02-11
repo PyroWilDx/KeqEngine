@@ -429,14 +429,12 @@ void Entity::moveToDownLeft(double xLeft, double yDown) {
 }
 
 void Entity::moveAdd(double addX, double addY) {
-    x += addX;
-    y += addY;
+    moveTo(x + addX, y + addY);
 }
 
 void Entity::centerHorizontal(double startX, double maxX, double newY) {
-    int halfW = getW() / 2;
-    x = startX + (maxX - startX) / 2 - halfW;
-    y = newY;
+    double halfW = getW() / 2.;
+    moveTo(startX + (maxX - startX) / 2. - halfW, newY);
 }
 
 void Entity::moveToScreenCenterHorizontal(double newY) {

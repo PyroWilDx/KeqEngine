@@ -23,13 +23,17 @@ public:
 
     virtual void resizeToRenderSize();
 
+    void moveTo(double x_, double y_) override;
+
     void getRealSize(double *pW, double *pH) override;
 
     void addImage(const char *imgPath, int frameW = 0, int frameH = 0);
 
     bool isPixelInSelfRect(double pixelX, double pixelY);
 
-    bool getCollisionArea(WorldEntity *worldEntity, SDL_Rect *result);
+    bool getCollisionArea(SDL_Rect *collRect, SDL_Rect *resultRect);
+
+    bool getCollisionArea(WorldEntity *worldEntity, SDL_Rect *resultRect);
 
     inline void setRenderW(int renderW_) { this->renderW = renderW_; }
 
