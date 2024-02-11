@@ -109,7 +109,14 @@ void GoalGame::RunImpl() {
             }
         }
 
-        gWorld->onGameFrame();
+        if (gInfo.gPaused && !Draw::isDisplayingMenu) {
+            Draw::drawPlayMenu();
+        } else if (!gInfo.gPaused && Draw::isDisplayingMenu) {
+            Draw::removePlayMenu();
+        }
+
+        if (!Draw::isDisplayingMenu) gWorld->onGameFrame();
+        else gWorld->onGameFrameMenu();
         gWindow->clear();
         gWorld->renderSelf();
         gWindow->display();
