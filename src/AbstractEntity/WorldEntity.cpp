@@ -4,6 +4,8 @@
 
 #include "AbstractEntity/WorldEntity.hpp"
 #include "WindowRenderer.hpp"
+#include "Utils/Global.hpp"
+#include "World/World.hpp"
 
 int WorldEntity::entityCount = 0;
 
@@ -25,6 +27,14 @@ void WorldEntity::resizeToRenderSize() {
     imgFrame.h = getRenderH();
 }
 
+void WorldEntity::moveTo(double x_, double y_) {
+    SDL_Rect lastRect = {getX(), getY(), renderW, renderH};
+
+    Entity::moveTo(x_, y_);
+
+    Global::gWorld->refreshPixelsOnMove(this, &lastRect);
+}
+
 void WorldEntity::getRealSize(double *pW, double *pH) {
     if (pW != nullptr) *pW = renderW;
     if (pH != nullptr) *pH = renderH;
@@ -42,9 +52,14 @@ bool WorldEntity::isPixelInSelfRect(double pixelX, double pixelY) {
             pixelY <= y + renderH);
 }
 
-bool WorldEntity::getCollisionArea(WorldEntity *worldEntity, SDL_Rect *result) {
+bool WorldEntity::getCollisionArea(SDL_Rect *collRect, SDL_Rect *resultRect) {
+    SDL_Rect rect1 = {getX(), getY(), renderW, renderH};
+    return SDL_IntersectRect(&rect1, collRect, resultRect);
+}
+
+bool WorldEntity::getCollisionArea(WorldEntity *worldEntity, SDL_Rect *resultRect) {
     SDL_Rect rect1 = {getX(), getY(), renderW, renderH};
     SDL_Rect rect2 = {worldEntity->getX(), worldEntity->getY(),
                       worldEntity->renderW, worldEntity->renderH};
-    return SDL_IntersectRect(&rect1, &rect2, result);
+    return SDL_IntersectRect(&rect1, &rect2, resultRect);
 }

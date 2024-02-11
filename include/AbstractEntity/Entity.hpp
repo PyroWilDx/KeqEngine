@@ -71,7 +71,7 @@ public:
 
     void cancelGravity(double factor = 1);
 
-    void moveTo(double x_, double y_);
+    virtual void moveTo(double x_, double y_);
 
     void moveToCenter(double x_, double y_);
 

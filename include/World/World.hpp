@@ -58,6 +58,8 @@ public:
 
     void updatePixels(SDL_Rect *rect, WorldEntity *worldEntity);
 
+    void refreshPixelsOnMove(WorldEntity *worldEntity, SDL_Rect *lastRect);
+
     void refreshPixelsOnRemove(WorldEntity *worldEntity);
 
     bool xyOutOfBounds(double x, double y);

@@ -65,7 +65,7 @@ void Draw::drawPlayMenu() {
     World *gWorld = Global::gWorld;
 
     gWorld->setDisplayMenu(true);
-    gWorld->enableColorFilter(156, 156, 156, 96, 0.6);
+    gWorld->enableColorFilter(156, 156, 156, 96, 0.8);
 
     menuText = new Text("Menu", &Colors::dColorRed, 60, false);
     menuText->moveToScreenCenterHorizontal(200);
