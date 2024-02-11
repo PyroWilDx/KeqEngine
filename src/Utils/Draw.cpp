@@ -60,7 +60,7 @@ Button *Draw::drawHomeButton(SDL_Rect *btRect, Entity *upperEntity, bool *gRunni
 }
 
 void Draw::drawPlayMenu() {
-    if (isDisplayingMenu) return;
+    if (isDisplayingMenu || Global::gWorld->isDisplayingMenu()) return;
 
     World *gWorld = Global::gWorld;
 

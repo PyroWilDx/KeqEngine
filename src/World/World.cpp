@@ -413,6 +413,10 @@ void World::removeMenuEntity(Entity *menuEntity) {
     delete menuEntity;
 }
 
+bool World::isDisplayingMenu() {
+    return !menuEntityVector.empty();
+}
+
 void World::onGameFrame() {
     Sound::onGameFrame();
 
