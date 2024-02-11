@@ -58,7 +58,7 @@ void Slime::jump() {
     }
 
     if (willFrameFinish(-1, SLIME_JUMP)) {
-        lastJumpTime = Global::currentTime;
+        lastJumpTime = Global::currTime;
         currJumpCd = Random::getRandomInt(100, 420);
     }
 }
@@ -85,7 +85,7 @@ void Slime::attack() {
     }
 
     if (willFrameFinish(-1, SLIME_ATK)) {
-        lastAtkTime = Global::currentTime;
+        lastAtkTime = Global::currTime;
     }
 }
 
@@ -97,10 +97,10 @@ void Slime::AI() {
     Keqing *kq = Keqing::getInstance();
     double kqDist = distTo(kq);
     if (!isInAir()) {
-        if (kqDist < SLIME_ATK_DIST && Global::currentTime - lastAtkTime > SLIME_ATK_CD) {
+        if (kqDist < SLIME_ATK_DIST && Global::currTime - lastAtkTime > SLIME_ATK_CD) {
             setFacingEast(x < kq->getX());
             setSpriteAnimated(true, SLIME_ATK);
-        } else if (kqDist < SLIME_MAX_DIST && Global::currentTime - lastJumpTime > currJumpCd) {
+        } else if (kqDist < SLIME_MAX_DIST && Global::currTime - lastJumpTime > currJumpCd) {
             if (!isSpriteAnimated(SLIME_JUMP)) {
                 setFacingEast(x < kq->getX());
                 setSpriteAnimated(true, SLIME_JUMP);

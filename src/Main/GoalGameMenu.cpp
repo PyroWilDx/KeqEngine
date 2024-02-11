@@ -11,6 +11,7 @@
 #include "Main/GoalGame.hpp"
 #include "World/Background.hpp"
 #include "Utils/Colors.hpp"
+#include "Main/HomeMenu.hpp"
 
 void GoalGameMenu::RunImpl() {
     SDL_Event event;
@@ -64,6 +65,11 @@ void GoalGameMenu::RunImpl() {
             Events::handleBasicEvents(&event, nullptr, &gInfo);
         }
         if (!gInfo.gRunning) break;
+
+        if (gInfo.gPaused) {
+            Events::callMainFunc(&gInfo.gRunning, &HomeMenu::Run);
+            break;
+        }
 
         gWorld->onGameFrame();
         gWindow->clear();

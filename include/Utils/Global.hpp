@@ -11,6 +11,8 @@
 #include <sqlite3.h>
 #include "Utils/Events.hpp"
 
+#define BASE_TIME 1'000'000
+
 #define DATA_PATH "data/.dat"
 #define DB_PATH "data/Keqing.db"
 #define DATA_KQ_VOICE_LANG "KeqingVoiceLang"
@@ -51,7 +53,8 @@ public:
     static int pressedTime[KEY_ENUM_N];
     static int lastPressedTime[KEY_ENUM_N];
 
-    static int currentTime;
+    static int lastRealTime;
+    static int currTime;
     static int dt;
 
     static gStateInfo *gInfo;

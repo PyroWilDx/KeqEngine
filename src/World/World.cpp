@@ -17,6 +17,7 @@
 #include "Utils/Global.hpp"
 #include "Entity/DamageText.hpp"
 #include "Utils/Random.hpp"
+#include "Utils/Draw.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
@@ -50,6 +51,8 @@ World::World(int screenW, int screenH,
     stopSoundOnQuit = STOP_SOUND_ALL;
 
     onQuit = nullptr;
+
+    Draw::isDisplayingMenu = false;
 }
 
 auto LLFreeAtkF = [](void *value) {
@@ -67,11 +70,17 @@ World::~World() {
     for (Block *block: blockVector) {
         delete block;
     }
+
     for (Monster *monster: monsterVector) {
         delete monster;
     }
-    for (Entity *entity: otherEntityVecotr) {
-        delete entity;
+
+    for (Entity *otherEntity: otherEntityVector) {
+        delete otherEntity;
+    }
+
+    for (Entity *menuEntity: menuEntityVector) {
+        delete menuEntity;
     }
 
     LLFree(monsterAtkLL, LLFreeAtkF);
@@ -161,6 +170,13 @@ void World::addButton(Button *button) {
 
 bool World::isPixelButton(double x, double y) {
     return (getPixel(x, y).worldType == WORLD_BUTTON);
+}
+
+void World::removeButton(Button **button) {
+    buttonHashMap.erase((*button)->getWorldCode());
+    refreshPixelsOnRemove(*button);
+    delete *button;
+    *button = nullptr;
 }
 
 void World::clickPixel(double x, double y, Uint32 eventType) {
@@ -278,14 +294,23 @@ void World::addMonster(Monster *monster) {
 }
 
 void World::removeMonster(Monster *monster) {
-    monsterVector.erase(
-            std::remove(monsterVector.begin(), monsterVector.end(), monster),
-            monsterVector.end());
+    monsterVector.erase(std::remove(monsterVector.begin(),
+                                    monsterVector.end(),
+                                    monster),
+                        monsterVector.end());
     delete monster;
 }
 
 void World::addOtherEntity(Entity *otherEntity) {
-    otherEntityVecotr.push_back(otherEntity);
+    otherEntityVector.push_back(otherEntity);
+}
+
+void World::removeOtherEntity(Entity *otherEntity) {
+    otherEntityVector.erase(std::remove(otherEntityVector.begin(),
+                                        otherEntityVector.end(),
+                                        otherEntity),
+                            otherEntityVector.end());
+    delete otherEntity;
 }
 
 void World::addKQAtk(Attack *atk, double atkPercent) {
@@ -344,10 +369,6 @@ Attack *World::addMonsterAtk(LivingEntity *atkIssuer, Entity *followEntity,
 
 void World::enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
                               double speed) {
-    if (colorFilter.filterActivated) {
-        SDL_Log("Color filter has been overwritten, is it wanted ?");
-    }
-
     colorFilterSpeed = speed;
 
     clearAndShrinkVector(&ignoreFilterEntityVector);
@@ -384,6 +405,14 @@ void World::addMenuEntity(Entity *menuEntity) {
     menuEntityVector.push_back(menuEntity);
 }
 
+void World::removeMenuEntity(Entity *menuEntity) {
+    menuEntityVector.erase(std::remove(menuEntityVector.begin(),
+                                       menuEntityVector.end(),
+                                       menuEntity),
+                           menuEntityVector.end());
+    delete menuEntity;
+}
+
 void World::onGameFrame() {
     Sound::onGameFrame();
 
@@ -392,9 +421,9 @@ void World::onGameFrame() {
         monsterVector[i]->onGameFrame();
     }
 
-    const int nOtherEntity = (int) otherEntityVecotr.size();
+    const int nOtherEntity = (int) otherEntityVector.size();
     for (int i = 0; i < nOtherEntity; i++) {
-        otherEntityVecotr[i]->onGameFrame();
+        otherEntityVector[i]->onGameFrame();
     }
 
     if (renderKeqing) Keqing::getInstance()->onGameFrame();
@@ -444,8 +473,22 @@ void World::onGameFrame() {
         popFrontDamageText();
     }
 
+    if (displayMenu) {
+        for (Entity *menuEntity: menuEntityVector) {
+            menuEntity->onGameFrame();
+        }
+    }
+
     if (translateBackgroundEntity != nullptr) {
         background->lerpTranslate(translateBackgroundEntity);
+    }
+}
+
+void World::onGameFrameMenu() {
+    if (!displayMenu) return;
+
+    for (Entity *menuEntity: menuEntityVector) {
+        menuEntity->onGameFrame();
     }
 }
 
@@ -494,7 +537,7 @@ void World::renderSelf() {
         gWindow->renderEntity(monster);
     }
 
-    for (Entity *otherEntity: otherEntityVecotr) {
+    for (Entity *otherEntity: otherEntityVector) {
         gWindow->renderEntity(otherEntity);
     }
 
@@ -532,7 +575,7 @@ void World::renderDebugMode() {
     for (Monster *monster: monsterVector) {
         monster->renderHitBox(gRenderer);
     }
-    for (Entity *entity: otherEntityVecotr) {
+    for (Entity *entity: otherEntityVector) {
         entity->renderHitBox(gRenderer);
     }
     if (renderKeqing) Keqing::getInstance()->renderHitBox(gRenderer);
@@ -552,6 +595,6 @@ void World::onEntityRemove(Entity *removedEntity) {
     auto ptrRemovedEntity = (void *) removedEntity;
 
     removePointerElementFromVector(ptrRemovedEntity, &monsterVector);
-    removePointerElementFromVector(ptrRemovedEntity, &otherEntityVecotr);
+    removePointerElementFromVector(ptrRemovedEntity, &otherEntityVector);
     removePointerElementFromVector(ptrRemovedEntity, &ignoreFilterEntityVector);
 }

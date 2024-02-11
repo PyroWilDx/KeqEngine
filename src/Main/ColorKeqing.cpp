@@ -11,6 +11,7 @@
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
 #include "Utils/Colors.hpp"
+#include "Main/ConfigKeqing.hpp"
 
 void ColorKeqing::RunImpl() {
     SDL_Event event;
@@ -89,6 +90,11 @@ void ColorKeqing::RunImpl() {
             Events::handleBasicEvents(&event, nullptr, &gInfo);
         }
         if (!gInfo.gRunning) break;
+
+        if (gInfo.gPaused) {
+            Events::callMainFunc(&gInfo.gRunning, &ConfigKeqing::Run);
+            break;
+        }
 
         gWorld->onGameFrame();
         gWindow->clear();

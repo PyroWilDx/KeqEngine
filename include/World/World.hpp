@@ -68,6 +68,8 @@ public:
 
     void addButton(Button *button);
 
+    void removeButton(Button **button);
+
     bool isPixelButton(double x, double y);
 
     void clickPixel(double x, double y, Uint32 eventType);
@@ -94,6 +96,8 @@ public:
     void removeMonster(Monster *monster);
 
     void addOtherEntity(Entity *otherEntity);
+
+    void removeOtherEntity(Entity *otherEntity);
 
     void addKQAtk(Attack *atk, double atkPercent);
 
@@ -126,7 +130,11 @@ public:
 
     void addMenuEntity(Entity *menuEntity);
 
+    void removeMenuEntity(Entity *menuEntity);
+
     void onGameFrame();
+
+    void onGameFrameMenu();
 
     void renderFilter();
 
@@ -157,7 +165,7 @@ private:
     Button *activeButton;
     std::vector<Block *> blockVector;
     std::vector<Monster *> monsterVector;
-    std::vector<Entity *> otherEntityVecotr;
+    std::vector<Entity *> otherEntityVector;
     bool renderKeqing;
     LinkedList *kqAtkLL;
     LinkedList *monsterAtkLL;

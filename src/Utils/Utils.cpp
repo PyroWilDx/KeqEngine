@@ -155,9 +155,11 @@ int getTime() {
 }
 
 void handleTime() {
-    int currentTime = getTime();
-    Global::dt = currentTime - Global::currentTime;
-    Global::currentTime = currentTime;
+    Global::dt = getTime() - Global::lastRealTime;
+    if (!Global::gInfo->gPaused) {
+        Global::currTime += Global::dt;
+    }
+    Global::lastRealTime = getTime();
 }
 
 void getScreenXYCoeff(double *pXCoeff, double *pYCoeff) {
@@ -220,7 +222,7 @@ int updatePressedKeys(int SDLKey, bool keyPressed, bool isKeyboard) {
             Global::pressedKeys[key] = keyPressed;
             if (keyPressed) {
                 Global::lastPressedTime[key] = Global::pressedTime[key];
-                Global::pressedTime[key] = Global::currentTime;
+                Global::pressedTime[key] = Global::currTime;
             }
         }
     }
@@ -232,7 +234,7 @@ bool isKeyPressed(int key) {
 }
 
 bool isKeyPressedRecent(int key) {
-    return ((Global::currentTime - Global::pressedTime[key]) < KEY_PRESS_SHORT_DURATION);
+    return ((Global::currTime - Global::pressedTime[key]) < KEY_PRESS_SHORT_DURATION);
 }
 
 bool isKeyPressedShort(int key) {
