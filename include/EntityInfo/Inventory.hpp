@@ -6,8 +6,10 @@
 #define INVENTORY_HPP
 
 #include <vector>
-#include "Weapon.hpp"
-#include "Artifact.hpp"
+
+class Weapon;
+
+class Artifact;
 
 class Inventory {
 
@@ -16,9 +18,11 @@ public:
 
     ~Inventory();
 
+    [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
+
 private:
-    Weapon *weapon;
-    std::vector<Artifact *> artifactVector;
+    Weapon *pWeapon;
+    std::vector<Artifact *> artfVector;
 
 
 };
