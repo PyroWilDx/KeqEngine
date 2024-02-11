@@ -2,7 +2,7 @@
 // Created by pyrow on 09/02/2024.
 //
 
-#include "Entity/DamageText.hpp"
+#include "Text/DamageText.hpp"
 #include "Utils/Global.hpp"
 #include "World/World.hpp"
 #include "Utils/Colors.hpp"

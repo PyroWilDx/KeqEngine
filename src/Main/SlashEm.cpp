@@ -12,7 +12,7 @@
 #include "World/Background.hpp"
 #include "World/Block.hpp"
 #include "Monster/MobDropper.hpp"
-#include "Entity/FPSText.hpp"
+#include "Text/FPSText.hpp"
 #include "Utils/Draw.hpp"
 
 void SlashEm::RunImpl() {

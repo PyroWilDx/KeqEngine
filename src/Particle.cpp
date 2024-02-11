@@ -2,7 +2,7 @@
 // Created by pyrowildx on 06/06/23.
 //
 
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 #include "Keqing.hpp"
 #include "Utils/Global.hpp"
 #include "WindowRenderer.hpp"

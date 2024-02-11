@@ -5,7 +5,7 @@
 #include <cmath>
 #include <SDL2/SDL_image.h>
 #include "Keqing.hpp"
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Sound.hpp"
 #include "Utils/Random.hpp"
@@ -15,7 +15,7 @@
 #include "Utils/Utils.hpp"
 #include "EntityInfo/Attack.hpp"
 #include "World/Background.hpp"
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 #include "Utils/Draw.hpp"
 #include "UI/Button.hpp"
 #include "Utils/Colors.hpp"

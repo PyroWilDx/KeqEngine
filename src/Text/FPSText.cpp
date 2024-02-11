@@ -3,7 +3,7 @@
 //
 
 #include <cstdio>
-#include "Entity/FPSText.hpp"
+#include "Text/FPSText.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Colors.hpp"
 

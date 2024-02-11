@@ -20,7 +20,7 @@
 #include "Utils/Sound.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Utils.hpp"
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 #include "Utils/Draw.hpp"
 #include "Utils/Colors.hpp"
 

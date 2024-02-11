@@ -2,7 +2,7 @@
 // Created by pyrow on 06/01/2024.
 //
 
-#include "Entity/Timer.hpp"
+#include "Text/Timer.hpp"
 #include "Utils/Global.hpp"
 
 Timer::Timer(double x, double y, SDL_Color *timerTextColor,

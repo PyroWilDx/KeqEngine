@@ -8,9 +8,9 @@
 #include "Keqing.hpp"
 #include "Utils/Events.hpp"
 #include "Monster/Slime.hpp"
-#include "Entity/FPSText.hpp"
+#include "Text/FPSText.hpp"
 #include "World/World.hpp"
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 #include "Utils/Utils.hpp"
 #include "World/Block.hpp"
 

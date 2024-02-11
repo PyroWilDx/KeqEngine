@@ -5,7 +5,7 @@
 #ifndef DAMAGETEXT_HPP
 #define DAMAGETEXT_HPP
 
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 
 #define DT_DEFAULT_FONT_SIZE 16
 #define DT_DEFAULT_AVG_FONT_SIZE 18
