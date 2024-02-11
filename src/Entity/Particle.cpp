@@ -485,7 +485,7 @@ void Particle::fadeAway(double speed) {
 void Particle::renderSelf(SDL_Renderer *gRenderer) {
     AnimatedEntity::renderSelf(gRenderer);
 
-    if (onRender != nullptr) onRender(this);
+    if (onRender != nullptr && !Global::gInfo->gPaused) onRender(this);
 }
 
 void Particle::removeSelf() {

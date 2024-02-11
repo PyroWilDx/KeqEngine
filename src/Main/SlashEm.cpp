@@ -13,6 +13,7 @@
 #include "World/Block.hpp"
 #include "Monster/MobDropper.hpp"
 #include "Entity/FPSText.hpp"
+#include "Utils/Draw.hpp"
 
 void SlashEm::RunImpl() {
     SDL_Event event;
@@ -48,7 +49,14 @@ void SlashEm::RunImpl() {
         }
         if (!gInfo.gRunning) break;
 
-        gWorld->onGameFrame();
+        if (gInfo.gPaused && !Draw::isDisplayingMenu) {
+            Draw::drawPlayMenu();
+        } else if (!gInfo.gPaused && Draw::isDisplayingMenu) {
+            Draw::removePlayMenu();
+        }
+
+        if (!Draw::isDisplayingMenu) gWorld->onGameFrame();
+        else gWorld->onGameFrameMenu();
         gWindow->clear();
         gWorld->renderSelf();
         gWindow->display();

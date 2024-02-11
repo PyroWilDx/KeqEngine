@@ -11,6 +11,7 @@
 
 class Entity;
 class Button;
+class Text;
 
 class Draw {
 
@@ -27,7 +28,16 @@ public:
 
     static Button *drawHomeButton(SDL_Rect *btRect, Entity *upperEntity, bool *gRunning);
 
+    static void drawPlayMenu();
+
+    static void removePlayMenu();
+
+    static bool isDisplayingMenu;
+
 private:
+    static Text *menuText;
+    static Button *menuResumeButton;
+    static Button *menuExitButton;
 
 };
 

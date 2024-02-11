@@ -12,6 +12,7 @@
 #include "Keqing.hpp"
 #include "World/Background.hpp"
 #include "Utils/Colors.hpp"
+#include "Main/HomeMenu.hpp"
 
 void ConfigKeqing::RunImpl() {
     SDL_Event event;
@@ -64,6 +65,11 @@ void ConfigKeqing::RunImpl() {
             Events::handleBasicEvents(&event, nullptr, &gInfo);
         }
         if (!gInfo.gRunning) break;
+
+        if (gInfo.gPaused) {
+            Events::callMainFunc(&gInfo.gRunning, &HomeMenu::Run);
+            break;
+        }
 
         gWorld->onGameFrame();
         gWindow->clear();

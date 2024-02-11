@@ -1622,7 +1622,7 @@ void Keqing::updateSkillHudIcon() {
         skillIcon1->setRGBAMod(COLOR_MAX, COLOR_MAX, COLOR_MAX,
                                HUD_SB_USED_ALPHA);
 
-        int elapsedTime = getTime() - Keqing::getInstance()->getESkillUseTime();
+        int elapsedTime = Global::currTime - Keqing::getInstance()->getESkillUseTime();
         Particle *timerHud =
                 Particle::pushParticle(PARTICLE_HUD_SKILL_BURST_TIMER,
                                        (KQ_SKILL_COOLDOWN - elapsedTime) / HUD_SB_TIMER_FRAME_N,
@@ -1847,7 +1847,7 @@ void Keqing::ESkillGeneral() {
         Sound::playAudioChunk("res/sfx/particle/KQSkillStart.ogg");
 
     } else if (isNewestFrame(6, SKILL_CODE)) {
-        ESkillUseTime = Global::currentTime;
+        ESkillUseTime = Global::currTime;
 
         Keqing::updateSkillHudIcon();
 
@@ -2218,7 +2218,7 @@ void Keqing::RBurst() {
         soundSheet->playRandomSound(KQ_BURST);
         Sound::playAudioChunk("res/sfx/particle/KQBurstStart.ogg");
 
-        RBurstLastUseTime = Global::currentTime;
+        RBurstLastUseTime = Global::currTime;
 
     } else if (isNewestFrame(4, KQ_BURST)) {
         // Push Atk
@@ -2835,7 +2835,7 @@ bool Keqing::onDeath() {
 
     Text *deathText = new Text("You Died", &Colors::dColorRed, 60, false);
     deathText->moveToScreenCenterHorizontal(200);
-    gWorld->addOtherEntity(deathText);
+    gWorld->addMenuEntity(deathText);
 
     if (fOnDeathRetryButton != nullptr) {
         tmpRect = {0, 0, 200, 100};
@@ -3135,7 +3135,7 @@ double Keqing::getBonusDamageMultiplier() {
 
 double Keqing::getCritRate() {
     double critRate = KQ_BASE_CRIT_RATE;
-    if (Global::currentTime - RBurstLastUseTime < KQ_BURST_CRIT_DURATION) {
+    if (Global::currTime - RBurstLastUseTime < KQ_BURST_CRIT_DURATION) {
         critRate += KQ_BURST_CRIT_BUFF;
     }
     return critRate;

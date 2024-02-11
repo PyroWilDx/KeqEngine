@@ -112,7 +112,10 @@ void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
             SDLKey = event->key.keysym.sym;
             switch (SDLKey) {
                 case SDLK_ESCAPE:
-                    Events::callMainFunc(&gInfo->gRunning, &HomeMenu::Run);
+                    gInfo->gPaused = !gInfo->gPaused;
+                    if (gInfo->debugMode) {
+                        Events::callMainFunc(&gInfo->gRunning, &HomeMenu::Run);
+                    }
                     break;
 
                 case SDLK_F11: {
@@ -128,15 +131,18 @@ void Events::handleBasicEvents(SDL_Event *event, int *pKey, gStateInfo *gInfo) {
                 }
 
                 case SDLK_BACKSPACE:
-                    gInfo->gPaused = !gInfo->gPaused;
-                    if (gInfo->gPaused) gInfo->lastDt = Global::dt;
-                    if (!gInfo->gPaused) Global::currentTime = getTime();
+                    if (gInfo->debugMode) {
+                        gInfo->gPaused = !gInfo->gPaused;
+                        if (gInfo->gPaused) gInfo->lastDt = Global::dt;
+                    }
                     break;
 
                 case SDLK_RETURN:
-                    if (gInfo->gPaused) {
-                        gInfo->runFrame = true;
-                        Global::dt = gInfo->lastDt;
+                    if (gInfo->debugMode) {
+                        if (gInfo->gPaused) {
+                            gInfo->runFrame = true;
+                            Global::dt = gInfo->lastDt;
+                        }
                     }
                     break;
 

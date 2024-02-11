@@ -20,7 +20,8 @@ bool Global::pressedKeys[KEY_ENUM_N];
 int Global::pressedTime[KEY_ENUM_N];
 int Global::lastPressedTime[KEY_ENUM_N];
 
-int Global::currentTime;
+int Global::lastRealTime;
+int Global::currTime;
 int Global::dt;
 
 gStateInfo *Global::gInfo;
@@ -42,7 +43,8 @@ void Global::initGlobal() {
         lastPressedTime[i] = 0;
     }
 
-    currentTime = getTime();
+    lastRealTime = getTime();
+    currTime = BASE_TIME;
     dt = 10;
 
     gInfo = nullptr;
