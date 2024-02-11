@@ -132,6 +132,8 @@ public:
 
     void removeMenuEntity(Entity *menuEntity);
 
+    bool isDisplayingMenu();
+
     void onGameFrame();
 
     void onGameFrameMenu();
