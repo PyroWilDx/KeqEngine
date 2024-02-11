@@ -2,15 +2,16 @@
 // Created by pyrow on 11/02/2024.
 //
 
+#include <SDL2/SDL_log.h>
 #include "EntityInfo/Weapon.hpp"
 
 std::unordered_map<std::string, WeaponInfo> Weapon::gWeapons = {
         {DULL_BLADE,   {200, 0,
-                               0, 0,     6.}},
-        {LION_ROAR,    {560, 1.413,
-                               0, 0,     22.}},
+                               0, 0,     0.06}},
+        {LION_ROAR,    {560, 0.413,
+                               0, 0,     0.22}},
         {MISTSPLITTER, {730, 0,
-                               0, 0.441, 30.}}
+                               0, 0.441, 0.32}}
 };
 
 Weapon::Weapon(const char *wNameCStr)
@@ -21,7 +22,7 @@ Weapon::Weapon(const char *wNameCStr)
 
     double lM = getLevelMultiplier();
     wAtkFlat = (int) (lM * wInfo.maxAtkFlat);
-    wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
+    wAtkMultiplier = 1. + (lM * wInfo.maxAtkMultiplier);
     wCritRate = lM * wInfo.maxCritRate;
     wCritDamage = lM * wInfo.maxCritDamage;
     wElMultiplier = wInfo.wElMultiplier;
@@ -38,7 +39,7 @@ void Weapon::levelUpAndUpdateStats() {
 
     double lM = getLevelMultiplier();
     wAtkFlat = (int) (lM * wInfo.maxAtkFlat);
-    wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
+    wAtkMultiplier = 1. + (lM * wInfo.maxAtkMultiplier);
     wCritRate = lM * wInfo.maxCritRate;
     wCritDamage = lM * wInfo.maxCritDamage;
 }

@@ -31,6 +31,16 @@ public:
 
     void levelUpAndUpdateStats();
 
+    [[nodiscard]] inline int getWAtkFlat() const { return wAtkFlat; }
+
+    [[nodiscard]] inline double getWAtkMultiplier() const { return wAtkMultiplier; }
+
+    [[nodiscard]] inline double getWCritRate() const { return wCritRate; }
+
+    [[nodiscard]] inline double getWCritDamage() const { return wCritDamage; }
+
+    [[nodiscard]] inline double getWElMultiplier() const { return wElMultiplier; }
+
     static std::unordered_map<std::string, WeaponInfo> gWeapons;
 
 private:
