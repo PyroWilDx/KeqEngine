@@ -5,7 +5,7 @@
 #ifndef FPSTEXT_HPP
 #define FPSTEXT_HPP
 
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 
 class FPSText : public Text {
 

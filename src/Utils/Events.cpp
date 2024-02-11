@@ -8,7 +8,7 @@
 #include "WindowRenderer.hpp"
 #include "World/World.hpp"
 #include "Main/HomeMenu.hpp"
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 
 void Events::initEvents() {
 

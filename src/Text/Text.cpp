@@ -3,7 +3,7 @@
 //
 
 #include <SDL2/SDL_ttf.h>
-#include "Entity/Text.hpp"
+#include "Text/Text.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Colors.hpp"
 

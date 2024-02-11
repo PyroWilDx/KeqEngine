@@ -6,7 +6,7 @@
 #include "Utils/Events.hpp"
 #include "Keqing.hpp"
 #include "Utils/Sound.hpp"
-#include "Entity/Particle.hpp"
+#include "Particle.hpp"
 #include "WindowRenderer.hpp"
 #include "World/Background.hpp"
 #include "World/Block.hpp"
@@ -15,7 +15,7 @@
 #include "AbstractEntity/Monster.hpp"
 #include "Utils/Utils.hpp"
 #include "Utils/Global.hpp"
-#include "Entity/DamageText.hpp"
+#include "Text/DamageText.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Draw.hpp"
 
