@@ -3137,14 +3137,15 @@ void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
 }
 
 int Keqing::getTotalAtk() {
-    Weapon *kqWeapon = kqInventory->getWeapon();
-    int flatAtk = KQ_BASE_ATK + kqWeapon->getWAtkFlat();
-    SDL_Log("tot %f\n",  flatAtk * kqWeapon->getWAtkMultiplier());
-    SDL_Log("tot2 %d\n",  kqWeapon->getWAtkFlat());
-    SDL_Log("f %d\n",  flatAtk);
-    SDL_Log("m  %f\n",  kqWeapon->getWAtkMultiplier());
+    return (int) std::round(getTotalFlatAtk() * getTotalAtkMultiplier());
+}
 
-    return (int) (flatAtk * kqWeapon->getWAtkMultiplier());
+int Keqing::getTotalFlatAtk() {
+    return KQ_BASE_ATK + kqInventory->getWeapon()->getWAtkFlat();
+}
+
+double Keqing::getTotalAtkMultiplier() {
+    return 1. + kqInventory->getWeapon()->getWAtkMultiplier();
 }
 
 double Keqing::getBonusDamageMultiplier() {

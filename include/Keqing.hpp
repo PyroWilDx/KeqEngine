@@ -245,6 +245,10 @@ public:
 
     int getTotalAtk();
 
+    int getTotalFlatAtk();
+
+    double getTotalAtkMultiplier();
+
     double getBonusDamageMultiplier() override;
 
     double getCritRate();

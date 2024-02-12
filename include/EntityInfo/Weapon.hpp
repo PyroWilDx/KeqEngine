@@ -27,7 +27,7 @@ class Weapon {
 public:
     explicit Weapon(const char *wNameCStr);
 
-    [[nodiscard]] double getLevelMultiplier() const;
+    [[nodiscard]] double getLevelCoeff() const;
 
     void levelUpAndUpdateStats();
 
