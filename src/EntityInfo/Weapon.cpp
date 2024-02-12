@@ -2,7 +2,7 @@
 // Created by pyrow on 11/02/2024.
 //
 
-#include <SDL2/SDL_log.h>
+#include <cmath>
 #include "EntityInfo/Weapon.hpp"
 
 std::unordered_map<std::string, WeaponInfo> Weapon::gWeapons = {
@@ -20,15 +20,15 @@ Weapon::Weapon(const char *wNameCStr)
     wInfo = Weapon::gWeapons[wName];
     wLevel = 1;
 
-    double lM = getLevelMultiplier();
-    wAtkFlat = (int) (lM * wInfo.maxAtkFlat);
-    wAtkMultiplier = 1. + (lM * wInfo.maxAtkMultiplier);
+    double lM = getLevelCoeff();
+    wAtkFlat = (int) std::round(lM * wInfo.maxAtkFlat);
+    wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
     wCritRate = lM * wInfo.maxCritRate;
     wCritDamage = lM * wInfo.maxCritDamage;
     wElMultiplier = wInfo.wElMultiplier;
 }
 
-double Weapon::getLevelMultiplier() const {
+double Weapon::getLevelCoeff() const {
     return (double) wLevel / WEAPON_MAX_LEVEL;
 }
 
@@ -37,9 +37,9 @@ void Weapon::levelUpAndUpdateStats() {
 
     wLevel++;
 
-    double lM = getLevelMultiplier();
-    wAtkFlat = (int) (lM * wInfo.maxAtkFlat);
-    wAtkMultiplier = 1. + (lM * wInfo.maxAtkMultiplier);
+    double lM = getLevelCoeff();
+    wAtkFlat = (int) std::round(lM * wInfo.maxAtkFlat);
+    wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
     wCritRate = lM * wInfo.maxCritRate;
     wCritDamage = lM * wInfo.maxCritDamage;
 }

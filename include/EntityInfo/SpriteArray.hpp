@@ -5,8 +5,7 @@
 #ifndef SPRITE_HPP
 #define SPRITE_HPP
 
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_log.h>
+#include <SDL2/SDL.h>
 
 class SpriteArray;
 
