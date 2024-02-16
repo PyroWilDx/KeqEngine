@@ -29,7 +29,7 @@ public:
 
     [[nodiscard]] double getLevelCoeff() const;
 
-    void levelUpAndUpdateStats();
+    bool levelUpAndUpdateStats();
 
     [[nodiscard]] inline int getWAtkFlat() const { return wAtkFlat; }
 

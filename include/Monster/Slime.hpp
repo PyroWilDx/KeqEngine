@@ -8,7 +8,7 @@
 #include <string>
 #include "AbstractEntity/Monster.hpp"
 
-#define SLIME_MAX_DIST 600.
+#define SLIME_MAX_DIST 800.
 #define SLIME_ATK_DIST 90.
 
 #define SLIME_JUMP_CD 300

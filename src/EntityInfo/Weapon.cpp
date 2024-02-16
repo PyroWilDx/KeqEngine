@@ -32,8 +32,8 @@ double Weapon::getLevelCoeff() const {
     return (double) wLevel / WEAPON_MAX_LEVEL;
 }
 
-void Weapon::levelUpAndUpdateStats() {
-    if (wLevel >= WEAPON_MAX_LEVEL) return;
+bool Weapon::levelUpAndUpdateStats() {
+    if (wLevel >= WEAPON_MAX_LEVEL) return false;
 
     wLevel++;
 
@@ -42,4 +42,6 @@ void Weapon::levelUpAndUpdateStats() {
     wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
     wCritRate = lM * wInfo.maxCritRate;
     wCritDamage = lM * wInfo.maxCritDamage;
+
+    return true;
 }

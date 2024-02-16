@@ -2,6 +2,7 @@
 // Created by pyrow on 11/02/2024.
 //
 
+#include <algorithm>
 #include "EntityInfo/Artifact.hpp"
 #include "Utils/Random.hpp"
 
@@ -42,8 +43,11 @@ std::unordered_map<int, double> Artifact::statLvlUpMinValueMap = {
 };
 
 Artifact::Artifact(int artfType)
-        : artfLevel(1), mainStat(),
+        : artfLevel(1), remainingStats(), mainStat(),
           subStat1(), subStat2(), subStat3(), subStat4() {
+    for (int i = 0; i < STAT_N; i++) {
+        remainingStats[i] = i;
+    }
     int rd;
     switch (artfType) {
         case ARTIFACT_FLOWER:
@@ -67,9 +71,72 @@ Artifact::Artifact(int artfType)
         default:
             break;
     }
+    eraseStat(mainStat.statType);
     mainStat.statValue = getLevelCoeff() * Artifact::mainStatMaxValueMap[mainStat.statType];
+    subStat1.statType = getRandomStatAndErase();
+    subStat2.statType = getRandomStatAndErase();
+    subStat3.statType = getRandomStatAndErase();
+    subStat4.statType = getRandomStatAndErase();
+    rollSubStat(&subStat1);
+    rollSubStat(&subStat2);
+    rollSubStat(&subStat3);
+    rollSubStat(&subStat4);
+}
+
+void Artifact::eraseStat(int statType) {
+    remainingStats.erase(
+            std::remove(remainingStats.begin(), remainingStats.end(), statType),
+            remainingStats.end()
+    );
+}
+
+int Artifact::getRandomStat() {
+    int rdIndex = Random::getRandomIntEndExcl(0, (int) remainingStats.size());
+    return remainingStats[rdIndex];
+}
+
+int Artifact::getRandomStatAndErase() {
+    int rdStat = getRandomStat();
+    eraseStat(rdStat);
+    return rdStat;
+}
+
+void Artifact::rollSubStat(StatInfo *subStat) {
+    double minRoll = statLvlUpMinValueMap[subStat->statType];
+    double maxRoll = minRoll * ROLL_MAX_VALUE_PERCENT;
+    subStat->statValue += Random::getRandomReal(minRoll, maxRoll);
 }
 
 double Artifact::getLevelCoeff() const {
     return (double) artfLevel / ARTIFACT_MAX_LEVEL;
+}
+
+bool Artifact::levelUp() {
+    if (artfLevel >= ARTIFACT_MAX_LEVEL) return false;
+
+    artfLevel++;
+
+    if (artfLevel % 4 == 0) {
+        int rdSubStat = Random::getRandomInt(1, 4);
+        switch (rdSubStat) {
+            case 1:
+                rollSubStat(&subStat1);
+                break;
+            case 2:
+                rollSubStat(&subStat2);
+                break;
+            case 3:
+                rollSubStat(&subStat3);
+                break;
+            case 4:
+                rollSubStat(&subStat4);
+                break;
+            default:
+                return false;
+        }
+    }
+
+    mainStat.statValue = getLevelCoeff() * mainStatMaxValueMap[mainStat.statType];
+
+    return true;
 }

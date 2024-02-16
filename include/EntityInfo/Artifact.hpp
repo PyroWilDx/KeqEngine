@@ -27,7 +27,8 @@ enum {
     STAT_ATK_PERCENT,
     STAT_CRIT_RATE,
     STAT_CRIT_DAMAGE,
-    STAT_ELEMENTAL_DAMAGE
+    STAT_ELEMENTAL_DAMAGE,
+    STAT_N
 };
 
 typedef struct StatInfo {
@@ -40,7 +41,17 @@ class Artifact {
 public:
     explicit Artifact(int artfType);
 
-    double getLevelCoeff() const;
+    void eraseStat(int statType);
+
+    int getRandomStat();
+
+    int getRandomStatAndErase();
+
+    static void rollSubStat(StatInfo *subStat);
+
+    bool levelUp();
+
+    [[nodiscard]] double getLevelCoeff() const;
 
     static const std::vector<int> sandsMainStats;
     static const std::vector<int> gobletMainStats;
@@ -52,6 +63,7 @@ public:
 
 private:
     int artfLevel;
+    std::vector<int> remainingStats;
     StatInfo mainStat;
     StatInfo subStat1;
     StatInfo subStat2;
