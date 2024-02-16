@@ -36,8 +36,8 @@ void SlashEm::RunImpl() {
 
     Keqing::initKeqingForPlay(32, 120);
 
-    auto *gFPSText = new FPSText();
-    gWorld->addOtherEntity(gFPSText);
+//    auto *gFPSText = new FPSText();
+//    gWorld->addOtherEntity(gFPSText);
 
     while (gInfo.gRunning) {
         handleTime();
