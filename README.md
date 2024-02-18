@@ -1,13 +1,5 @@
 # Keqing (2023 - 2024)
 
-#### ――――――――――
+## Description
 
-- *Language* : C++.
-- *Library* : SDL2, Boost.
-- *ꞮDE* : CLion.
-
-#### ――――――――――
-
-From Scratch.
-
-#### ――――――――――
+[https://pyrowildx.github.io/html/Keqing.html](https://pyrowildx.github.io/html/Keqing.html)
