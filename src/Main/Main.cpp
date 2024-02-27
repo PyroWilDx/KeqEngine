@@ -23,6 +23,7 @@
 #include "Particle.hpp"
 #include "Utils/Draw.hpp"
 #include "Utils/Colors.hpp"
+#include "Main/ShowTest.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -54,7 +55,9 @@ int main(int argc, char *argv[]) {
     Keqing::initKeqing();
     Particle::initParticle();
 
-    HomeMenu::Run();
+    if (argc == 0) HomeMenu::Run();
+    else ShowTest::Run();
+
 
     Particle::cleanUp();
     Keqing::cleanUp();

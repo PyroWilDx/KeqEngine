@@ -465,14 +465,14 @@ void Keqing::colorSprite(Uint32 rgba, Sprite *sprite) {
 
         bool change = false;
         // Hair (Green)
-        if (h >= 120 && h <= 180) {
+        if (h >= 120 && h <= 130) {
             h = rgbH + (h - 120);
 
             change = true;
         }
 
         // Outfit & Gloves (Red)
-        if ((h >= 330 && h <= 360) || (h >= 0 && h <= 30)) {
+        if ((s > 0.6) && ((h >= 330 && h <= 360) || (h >= 0 && h <= 30))) {
             if (h >= 330 && h <= 360)
                 h = rgbH + (h - 330);
             else if (h >= 0 && h <= 30)
@@ -1491,7 +1491,7 @@ void Keqing::ASkillCloneGeneral() {
                     Particle::pushParticle(PARTICLE_KQ_SKILL_CLONE_SPAWN, 42);
             cloneSpawnParticle->setFacingEast(isFacingEast());
             cloneSpawnParticle->moveToCenter(ASkillCloneCenterX, ASkillCloneCenterY);
-            cloneSpawnParticle->xyShift(16, 2);
+            cloneSpawnParticle->xyShift(16, -1);
 
             cloneSpawnParticle->setOnRender([](Particle *particle) {
                 if (particle->willFrameFinish(3)) {

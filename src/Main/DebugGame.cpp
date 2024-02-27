@@ -32,19 +32,22 @@ void DebugGame::RunImpl() {
     Keqing::initKeqingForPlay(0, 0);
 
     auto *slime0 = new Slime("Blue");
+    slime0->setDoAI(false);
     slime0->moveToDownLeft(400, 720 - 200);
     gWorld->addMonster(slime0);
 
     auto *slime1 = new Slime("Blue");
+    slime1->setDoAI(false);
     slime1->moveToDownLeft(1540, 720 - 200);
     gWorld->addMonster(slime1);
 
     auto *slime2 = new Slime("Red");
+    slime2->setDoAI(false);
     slime2->moveToDownLeft(1600, 720 - 200);
     gWorld->addMonster(slime2);
 
-    auto *gFPSText = new FPSText();
-    gWorld->addOtherEntity(gFPSText);
+//    auto *gFPSText = new FPSText();
+//    gWorld->addOtherEntity(gFPSText);
 
     while (gInfo.gRunning) {
         handleTime();

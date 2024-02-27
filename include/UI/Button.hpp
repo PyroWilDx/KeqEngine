@@ -89,6 +89,8 @@ public:
 
     inline void setState(ButtonState buttonState_) { buttonState = buttonState_; }
 
+    inline void setOutlineThickness(int outlineThickness_) { outlineThickness = outlineThickness_; }
+
     [[nodiscard]] inline Text *getButtonText() const { return buttonText; }
 
 protected:
