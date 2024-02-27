@@ -2076,7 +2076,8 @@ void pushBurstSlashAtk(double slashDmgPercent, double kbXV, double kbYV,
         };
         auto atkShouldRemove = [](Attack *atk, void *fParams) {
             Keqing *kq = Keqing::getInstance();
-            return (kq->willFrameFinish(12, KQ_BURST));
+            return (kq->willFrameFinish(12, KQ_BURST) ||
+                    kq->isFrameBetween(13, -1, KQ_BURST));
         };
         atkRight->setOnHit(atkOnHit, nullptr);
         atkLeft->setOnHit(atkOnHit, nullptr);

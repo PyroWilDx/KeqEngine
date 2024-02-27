@@ -12,6 +12,7 @@
 #include "World/World.hpp"
 #include "Particle.hpp"
 #include "Utils/Utils.hpp"
+#include "World/Background.hpp"
 #include "World/Block.hpp"
 
 void DebugGame::RunImpl() {
@@ -25,6 +26,7 @@ void DebugGame::RunImpl() {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      3000, 720,
                                      "res/gfx/background/DebugGame.png");
+    gWorld->getBackground()->setRGBAMod(120);
 
     gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_GRASS,
                             0, 520, 3000);
@@ -46,8 +48,8 @@ void DebugGame::RunImpl() {
     slime2->moveToDownLeft(1600, 720 - 200);
     gWorld->addMonster(slime2);
 
-//    auto *gFPSText = new FPSText();
-//    gWorld->addOtherEntity(gFPSText);
+    auto *gFPSText = new FPSText();
+    gWorld->addOtherEntity(gFPSText);
 
     while (gInfo.gRunning) {
         handleTime();

@@ -55,9 +55,8 @@ int main(int argc, char *argv[]) {
     Keqing::initKeqing();
     Particle::initParticle();
 
-    if (argc == 0) HomeMenu::Run();
+    if (argc == 1) HomeMenu::Run();
     else ShowTest::Run();
-
 
     Particle::cleanUp();
     Keqing::cleanUp();
