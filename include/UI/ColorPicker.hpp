@@ -7,6 +7,8 @@
 
 #include "UI/Button.hpp"
 
+class VolumeSlider;
+
 class ColorPicker : public Button {
 
 public:
@@ -17,6 +19,8 @@ public:
     void fillPixels(Uint32 currRGBA);
 
     [[nodiscard]] Uint32 getCurrentRGBA() const;
+
+    [[nodiscard]] Uint32 getCurrentRGBASlided() const;
 
     void onClick(int mouseX, int mouseY) override;
 
@@ -31,6 +35,7 @@ public:
 private:
     Uint32 **absPixels;
     int pickerX, pickerY;
+//    VolumeSlider *blackSlider;
 
 };
 

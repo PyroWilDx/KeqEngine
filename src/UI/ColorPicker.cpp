@@ -6,12 +6,20 @@
 #include "UI/ColorPicker.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Colors.hpp"
+#include "Utils/Global.hpp"
+#include "UI/VolumeSlider.hpp"
+#include "World/World.hpp"
 
 ColorPicker::ColorPicker(double x, double y, int renderW, int renderH, Uint32 currRGBA)
         : Button(x, y, renderW, renderH, 0) {
     swapColorOnClick = false;
     pickerX = WorldEntity::getX();
     pickerY = WorldEntity::getY();
+//    blackSlider = new VolumeSlider(x + renderW + 10, y, renderH,
+//                                   &Colors::dColorBlack, 100);
+//    blackSlider->setRotation(M_PI / 2.);
+//    blackSlider->setOutlineThickness(6);
+//    Global::gWorld->addButton(blackSlider);
 
     absPixels = new Uint32 *[renderW];
     for (int i = 0; i < renderW; i++) {
@@ -104,6 +112,16 @@ Uint32 ColorPicker::getCurrentRGBA() const {
     return absPixels[pickerX][pickerY];
 }
 
+Uint32 ColorPicker::getCurrentRGBASlided() const {
+//    Uint32 rgba = getCurrentRGBA();
+//    Uint32 rgb = rgba & 0xFFFFFF00;
+//    Uint32 a = rgba & 0x000000FF;
+//    rgb *= (Uint32) (blackSlider->getCurrentVolume() / 100.);
+//    rgb = rgb & 0xFFFFFF00;
+//    return rgb + a;
+    return getCurrentRGBA();
+}
+
 void ColorPicker::onClick(int mouseX, int mouseY) {
     setPickerXY(mouseX, mouseY);
 
@@ -130,7 +148,7 @@ void ColorPicker::renderSelf(SDL_Renderer *gRenderer) {
                           cursorSize, cursorSize};
     cursorDst.x += (int) x;
     cursorDst.y += (int) y;
-    WindowRenderer::renderRect(&cursorDst, false,
+    WindowRenderer::renderRect(&cursorDst, true,
                                0, 0, 0, COLOR_MAX,
                                gRenderer,
                                false, false);

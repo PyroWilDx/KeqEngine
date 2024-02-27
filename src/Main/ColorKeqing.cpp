@@ -59,7 +59,7 @@ void ColorKeqing::RunImpl() {
                                            int mouseY, void *fParams) {
         auto *colorPicker = (ColorPicker *) fParams;
         Keqing *kq = Keqing::getInstance();
-        kq->colorAllSprites(colorPicker->getCurrentRGBA());
+        kq->colorAllSprites(colorPicker->getCurrentRGBASlided());
         kq->kqLock(false);
     }, (void *) colorPicker);
     setKqColorButton->addText("Set Color", &Colors::dColorWhite, 20);
