@@ -33,7 +33,7 @@ void ShowTest::RenderingShow() {
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2000, 720,
-                                     "res/gfx/background/GoalGame_0.png");
+                                     "res/gfx/background/ExploSlime0.png");
     gWorld->getBackground()->setRGBAMod(60);
 
     gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_GRASS,

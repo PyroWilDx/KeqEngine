@@ -2,8 +2,8 @@
 // Created by pyrow on 05/01/2024.
 //
 
-#ifndef GOALGAME_HPP
-#define GOALGAME_HPP
+#ifndef EXPLOSLIME_HPP
+#define EXPLOSLIME_HPP
 
 #include <vector>
 #include "MainInterface.hpp"
@@ -13,10 +13,10 @@ class Block;
 
 typedef World *(*LvlFuncPointer)(Block **);
 
-class GoalGame : public MainInterface<GoalGame> {
+class ExploSlime : public MainInterface<ExploSlime> {
 
 public:
-    GoalGame() = delete;
+    ExploSlime() = delete;
 
     static void RunImpl();
 

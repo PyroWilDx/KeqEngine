@@ -2,18 +2,18 @@
 // Created by pyrow on 05/01/2024.
 //
 
-#include "Main/GoalGameMenu.hpp"
+#include "Main/ExploSlimeMenu.hpp"
 #include "WindowRenderer.hpp"
 #include "Utils/Utils.hpp"
 #include "World/World.hpp"
 #include "Utils/Global.hpp"
 #include "UI/Button.hpp"
-#include "Main/GoalGame.hpp"
+#include "Main/ExploSlime.hpp"
 #include "World/Background.hpp"
 #include "Utils/Colors.hpp"
 #include "Main/HomeMenu.hpp"
 
-void GoalGameMenu::RunImpl() {
+void ExploSlimeMenu::RunImpl() {
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
     Global::gInfo = &gInfo;
@@ -22,10 +22,10 @@ void GoalGameMenu::RunImpl() {
 
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
-                                     "res/gfx/background/GoalGameMenu.png");
+                                     "res/gfx/background/ExploSlimeMenu.png");
     gWorld->getBackground()->fitImgToScreen();
 
-    const int nLevel = (int) GoalGame::lvlFuncs.size();
+    const int nLevel = (int) ExploSlime::lvlFuncs.size();
     const int padding = 10;
     int x = padding;
     int y = padding;
@@ -43,8 +43,8 @@ void GoalGameMenu::RunImpl() {
             auto *args = (f2Params *) fParams;
             int iLevel = *(int *) args->fParam0;
             bool *pGRunning = (bool *) args->fParam1;
-            GoalGame::iLevel = iLevel;
-            Events::callMainFunc(pGRunning, &GoalGame::Run);
+            ExploSlime::iLevel = iLevel;
+            Events::callMainFunc(pGRunning, &ExploSlime::Run);
         });
         auto *fParams = new f2Params;
         int *fParam0 = new int;

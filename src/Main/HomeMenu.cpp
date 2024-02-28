@@ -12,7 +12,7 @@
 #include "UI/VolumeSlider.hpp"
 #include "World/World.hpp"
 #include "Utils/Utils.hpp"
-#include "Main/GoalGameMenu.hpp"
+#include "Main/ExploSlimeMenu.hpp"
 #include "World/Background.hpp"
 #include "Main/SlashEm.hpp"
 #include "Utils/Colors.hpp"
@@ -40,16 +40,16 @@ void HomeMenu::RunImpl() {
     runDebugGameButton->changeColor(&Colors::dColorBlue);
     gWorld->addButton(runDebugGameButton);
 
-    auto *runGoalGameButton = new Button(10, 120, 200, 100);
-    runGoalGameButton->setOnClickRelease([](Button *self, int mouseX,
-                                         int mouseY, void *fParams) {
+    auto *runExploSlimeButton = new Button(10, 120, 200, 100);
+    runExploSlimeButton->setOnClickRelease([](Button *self, int mouseX,
+                                              int mouseY, void *fParams) {
         bool *pGRunning = (bool *) fParams;
-        Events::callMainFunc(pGRunning, &GoalGameMenu::Run);
+        Events::callMainFunc(pGRunning, &ExploSlimeMenu::Run);
     });
-    runGoalGameButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
-    runGoalGameButton->addText("Goal Game", &Colors::dColorBlack, 16);
-    runGoalGameButton->changeColor(&Colors::dColorWhite);
-    gWorld->addButton(runGoalGameButton);
+    runExploSlimeButton->setOnClickReleaseParams((void *) &(gInfo.gRunning));
+    runExploSlimeButton->addText("ExploSlime", &Colors::dColorBlack, 16);
+    runExploSlimeButton->changeColor(&Colors::dColorWhite);
+    gWorld->addButton(runExploSlimeButton);
 
     auto *runSlashEmButton = new Button(220, 120, 200, 100);
     runSlashEmButton->setOnClickRelease([](Button *self, int mouseX,

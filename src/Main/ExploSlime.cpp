@@ -2,7 +2,7 @@
 // Created by pyrow on 05/01/2024.
 //
 
-#include "Main/GoalGame.hpp"
+#include "Main/ExploSlime.hpp"
 #include "WindowRenderer.hpp"
 #include "World/World.hpp"
 #include "Utils/Global.hpp"
@@ -19,10 +19,10 @@
 #include "Utils/Draw.hpp"
 #include "Utils/Colors.hpp"
 
-int GoalGame::iLevel = 0;
-std::vector<LvlFuncPointer> GoalGame::lvlFuncs = {&Level0, &Level1, &Level2};
+int ExploSlime::iLevel = 0;
+std::vector<LvlFuncPointer> ExploSlime::lvlFuncs = {&Level0, &Level1, &Level2};
 
-void GoalGame::RunImpl() {
+void ExploSlime::RunImpl() {
     SDL_Event event;
     gStateInfo gInfo = DEFAULT_GAME_STATE_INFO;
     Global::gInfo = &gInfo;
@@ -44,7 +44,7 @@ void GoalGame::RunImpl() {
 
     int bestTime = -1;
     execSQL(("SELECT bestTime "
-             "FROM GoalGame "
+             "FROM ExploSlime "
              "WHERE levelId=" + std::to_string(iLevel)).c_str(),
             [](void *data, int argc, char **argv, char **azColName) -> int {
                 if (argc > 0) {
@@ -97,12 +97,12 @@ void GoalGame::RunImpl() {
             addWinMenu(gWorld, &gInfo.gRunning, elapsedTime);
 
             if (bestTime < 0) {
-                execSQL(("INSERT OR IGNORE INTO GoalGame "
+                execSQL(("INSERT OR IGNORE INTO ExploSlime "
                          "VALUES (" + std::to_string(iLevel) + ", " + std::to_string(elapsedTime) + ")").c_str(),
                         nullptr, nullptr);
             }
             if (elapsedTime < bestTime) {
-                execSQL(("UPDATE GoalGame SET bestTime=" +
+                execSQL(("UPDATE ExploSlime SET bestTime=" +
                          std::to_string(elapsedTime) + " "
                                                        "WHERE levelId=" + std::to_string(iLevel)).c_str(),
                         nullptr, nullptr);
@@ -123,10 +123,10 @@ void GoalGame::RunImpl() {
     }
 }
 
-World *GoalGame::Level0(Block **goalBlock) {
+World *ExploSlime::Level0(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2000, 720,
-                                     "res/gfx/background/GoalGame_0.png");
+                                     "res/gfx/background/ExploSlime0.png");
     gWorld->getBackground()->setRGBAMod(100);
 
     gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_GRASS,
@@ -138,10 +138,10 @@ World *GoalGame::Level0(Block **goalBlock) {
     return gWorld;
 }
 
-World *GoalGame::Level1(Block **goalBlock) {
+World *ExploSlime::Level1(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      2964, 1300,
-                                     "res/gfx/background/GoalGame_1.png");
+                                     "res/gfx/background/ExploSlime1.png");
     gWorld->getBackground()->setRGBAMod(100);
 
     gWorld->addCoveredBlock(BLOCK_DIRT, BLOCK_SNOW,
@@ -169,10 +169,10 @@ World *GoalGame::Level1(Block **goalBlock) {
     return gWorld;
 }
 
-World *GoalGame::Level2(Block **goalBlock) {
+World *ExploSlime::Level2(Block **goalBlock) {
     World *gWorld = Global::setWorld(SCREEN_BASE_WIDTH, SCREEN_BASE_HEIGHT,
                                      3008, 1692,
-                                     "res/gfx/background/GoalGame_2.png");
+                                     "res/gfx/background/ExploSlime2.png");
     gWorld->getBackground()->setRGBAMod(100);
 
     gWorld->addBlock(BLOCK_QUARTZ, 0, 300, 256);
@@ -191,7 +191,7 @@ World *GoalGame::Level2(Block **goalBlock) {
     return gWorld;
 }
 
-void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
+void ExploSlime::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
     gWorld->setDisplayMenu(true);
     gWorld->enableColorFilter(128, 128, 128, 128, 0.6);
 
@@ -210,7 +210,7 @@ void GoalGame::addWinMenu(World *gWorld, bool *gRunning, int winTime) {
                                                 [](Button *self, int mouseX,
                                                    int mouseY, void *fParams) {
                                                     bool *pGRunning = (bool *) fParams;
-                                                    Events::callMainFunc(pGRunning, &GoalGame::Run);
+                                                    Events::callMainFunc(pGRunning, &ExploSlime::Run);
                                                 },
                                                 (void *) gRunning);
 
