@@ -21,6 +21,9 @@ public:
          int fontSize, SDL_Color *outlColor, int outlSize,
          bool translateBackground_ = true);
 
+    Text(double x, double y, const char *textStr, int fontSize,
+         bool translateBackground_ = true);
+
     Text(const char *textStr, const SDL_Color *textColor, int fontSize,
          SDL_Color *outlColor, int outlSize, bool translateBackground_ = true);
 
@@ -28,7 +31,6 @@ public:
          bool translateBackground_ = true);
 
     Text(const char *textStr, int fontSize, bool translateBackground_ = true);
-
 
     ~Text() override = default;
 

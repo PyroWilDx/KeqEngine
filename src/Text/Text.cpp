@@ -27,6 +27,14 @@ Text::Text(double x, double y, const char *textStr, const SDL_Color *textColor,
 
 }
 
+Text::Text(double x, double y, const char *textStr, int fontSize,
+           bool translateBackground_)
+        : Text(x, y, textStr, &Colors::dColorWhite,
+               DEFAULT_FONT_PATH, fontSize, nullptr,
+               0, translateBackground_) {
+
+}
+
 Text::Text(const char *textStr, const SDL_Color *textColor, int fontSize,
            SDL_Color *outlColor, int outlSize, bool translateBackground_)
         : Text(0, 0, textStr, textColor,
