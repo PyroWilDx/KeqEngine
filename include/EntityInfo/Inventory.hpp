@@ -7,9 +7,15 @@
 
 #include <vector>
 
+#define ARTIFACT_COUNT 5
+
 class Weapon;
 
 class Artifact;
+
+class Button;
+
+class Text;
 
 class Inventory {
 
@@ -18,12 +24,18 @@ public:
 
     ~Inventory();
 
+    void equipArtifact(int artfType);
+
     [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
 
 private:
     Weapon *pWeapon;
-    std::vector<Artifact *> artfVector;
+    Button *wpButton;
+    Text *wpText;
 
+    Artifact *artfArray[ARTIFACT_COUNT];
+    Button *artfButtons[ARTIFACT_COUNT];
+    Text *artfTexts[ARTIFACT_COUNT];
 
 };
 
