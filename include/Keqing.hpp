@@ -271,6 +271,8 @@ public:
 
     [[nodiscard]] inline int getIsLocked() const { return isLocked; }
 
+    [[nodiscard]] inline Inventory *getInventory() const { return kqInventory; }
+
 private:
     Keqing();
 

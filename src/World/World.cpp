@@ -201,9 +201,13 @@ bool World::isPixelButton(double x, double y) {
     return (getPixel(x, y).worldType == WORLD_BUTTON);
 }
 
+void World::removeButtonNoFree(Button *button) {
+    buttonHashMap.erase(button->getWorldCode());
+    refreshPixelsOnRemove(button);
+}
+
 void World::removeButton(Button **button) {
-    buttonHashMap.erase((*button)->getWorldCode());
-    refreshPixelsOnRemove(*button);
+    removeButtonNoFree(*button);
     delete *button;
     *button = nullptr;
 }
@@ -397,7 +401,7 @@ Attack *World::addMonsterAtk(LivingEntity *atkIssuer, Entity *followEntity,
 }
 
 void World::enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
-                              double speed) {
+                              double speed, bool restart) {
     colorFilterSpeed = speed;
 
     clearAndShrinkVector(&ignoreFilterEntityVector);
@@ -406,7 +410,7 @@ void World::enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
     colorFilter.g = g;
     colorFilter.b = b;
 
-    colorFilter.currAlpha = 0;
+    if (restart) colorFilter.currAlpha = 0;
     colorFilter.targetAlpha = a;
 
     colorFilter.filterActivated = true;
@@ -434,11 +438,15 @@ void World::addMenuEntity(Entity *menuEntity) {
     menuEntityVector.push_back(menuEntity);
 }
 
-void World::removeMenuEntity(Entity *menuEntity) {
+void World::removeMenuEntityNoFree(Entity *menuEntity) {
     menuEntityVector.erase(std::remove(menuEntityVector.begin(),
                                        menuEntityVector.end(),
                                        menuEntity),
                            menuEntityVector.end());
+}
+
+void World::removeMenuEntity(Entity *menuEntity) {
+    removeMenuEntityNoFree(menuEntity);
     delete menuEntity;
 }
 
