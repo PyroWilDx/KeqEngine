@@ -14,6 +14,7 @@
 #include "Monster/MobDropper.hpp"
 #include "Text/FPSText.hpp"
 #include "Utils/Draw.hpp"
+#include "EntityInfo/Inventory.hpp"
 
 void SlashEm::RunImpl() {
     SDL_Event event;
@@ -34,7 +35,7 @@ void SlashEm::RunImpl() {
     mobDropper->moveTo(8, 8);
     gWorld->addMonster(mobDropper);
 
-    Keqing::initKeqingForPlay(32, 120);
+    Keqing *kq = Keqing::initKeqingForPlay(32, 120);
 
 //    auto *gFPSText = new FPSText();
 //    gWorld->addOtherEntity(gFPSText);
@@ -46,16 +47,30 @@ void SlashEm::RunImpl() {
         int key = KEY_UNDEFINED;
         while (SDL_PollEvent(&event)) {
             Events::handleBasicEvents(&event, &key, &gInfo);
+            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_b) {
+                if (!Draw::isDisplayingMenu) {
+                    gInfo.gPaused = !gInfo.gPaused;
+                    if (gInfo.gPaused) kq->getInventory()->showSelf();
+                    else kq->getInventory()->hideSelf();
+                } else {
+                    Draw::removePlayMenu();
+                    kq->getInventory()->showSelf();
+                }
+            }
         }
         if (!gInfo.gRunning) break;
 
-        if (gInfo.gPaused && !Draw::isDisplayingMenu) {
-            Draw::drawPlayMenu();
-        } else if (!gInfo.gPaused && Draw::isDisplayingMenu) {
-            Draw::removePlayMenu();
+        if (!kq->getInventory()->isShowingSelf()) {
+            if (gInfo.gPaused && !Draw::isDisplayingMenu) {
+                Draw::drawPlayMenu();
+            } else if (!gInfo.gPaused && Draw::isDisplayingMenu) {
+                Draw::removePlayMenu();
+            }
+        } else {
+            if (!gInfo.gPaused) kq->getInventory()->hideSelf();
         }
 
-        if (!Draw::isDisplayingMenu) gWorld->onGameFrame();
+        if (!Draw::isDisplayingMenu && !kq->getInventory()->isShowingSelf()) gWorld->onGameFrame();
         else gWorld->onGameFrameMenu();
         gWindow->clear();
         gWorld->renderSelf();

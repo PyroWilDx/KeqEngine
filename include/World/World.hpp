@@ -70,6 +70,8 @@ public:
 
     void addButton(Button *button);
 
+    void removeButtonNoFree(Button *button);
+
     void removeButton(Button **button);
 
     bool isPixelButton(double x, double y);
@@ -120,7 +122,7 @@ public:
                           int damage, double kbXVelocity, double kbYVelocity);
 
     void enableColorFilter(Uint8 r, Uint8 g, Uint8 b, Uint8 a,
-                           double speed = 0.16);
+                           double speed = 0.16, bool restart = true);
 
     void disableColorFilter();
 
@@ -131,6 +133,8 @@ public:
     void popFrontDamageText();
 
     void addMenuEntity(Entity *menuEntity);
+
+    void removeMenuEntityNoFree(Entity *menuEntity);
 
     void removeMenuEntity(Entity *menuEntity);
 
@@ -158,7 +162,7 @@ public:
 
     inline void setOnQuit(void (*onQuit_)()) { onQuit = onQuit_; }
 
-    inline Background *getBackground() { return background; }
+    [[nodiscard]] inline Background *getBackground() { return background; }
 
 private:
     void addWorldEntity(WorldEntity *worldEntity);
