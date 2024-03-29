@@ -6,6 +6,7 @@
 #define INVENTORY_HPP
 
 #include <vector>
+#include <SDL2/SDL.h>
 
 #define ARTIFACT_COUNT 5
 
@@ -26,7 +27,13 @@ public:
 
     void equipArtifact(int artfType);
 
+    void showSelf();
+
+    void hideSelf();
+
     [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
+
+    [[nodiscard]] inline bool isShowingSelf() const { return isShown; }
 
 private:
     Weapon *pWeapon;
@@ -37,6 +44,7 @@ private:
     Button *artfButtons[ARTIFACT_COUNT];
     Text *artfTexts[ARTIFACT_COUNT];
 
+    bool isShown;
 };
 
 #endif

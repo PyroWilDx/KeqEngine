@@ -46,7 +46,7 @@ Artifact::Artifact(int artfType)
         : artfLevel(1), remainingStats(), mainStat(),
           subStat1(), subStat2(), subStat3(), subStat4() {
     for (int i = 0; i < STAT_N; i++) {
-        remainingStats[i] = i;
+        remainingStats.push_back(i);
     }
     int rd;
     switch (artfType) {

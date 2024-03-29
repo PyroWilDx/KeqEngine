@@ -93,6 +93,7 @@ void Draw::removePlayMenu() {
 
     World *gWorld = Global::gWorld;
 
+    gWorld->setDisplayMenu(false);
     gWorld->disableColorFilter();
 
     gWorld->removeMenuEntity(menuText);
