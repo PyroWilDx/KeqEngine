@@ -28,6 +28,7 @@ public:
     static SDL_Color dColorBlue;
     static SDL_Color dColorYellow;
     static SDL_Color dColorCyan;
+    static SDL_Color dColorOrange;
 
 private:
 

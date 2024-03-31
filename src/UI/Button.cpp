@@ -81,35 +81,40 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
     SDL_Rect dst = getRenderRect();
 //    dst.x += outlineThickness;
 //    dst.y += outlineThickness;
-    SDL_Rect outlineRect = {dst.x - outlineThickness, dst.y - outlineThickness,
-                            dst.w + outlineThickness * 2, dst.h + outlineThickness * 2};
-    SDL_Color outlineRectColor = buttonColor;
-    outlineRectColor.r = std::max((int) outlineRectColor.r - outlineDarkerCoeff, 0);
-    outlineRectColor.g = std::max((int) outlineRectColor.g - outlineDarkerCoeff, 0);
-    outlineRectColor.b = std::max((int) outlineRectColor.b - outlineDarkerCoeff, 0);
-    WindowRenderer::renderRect(&outlineRect, true,
-                               outlineRectColor.r, outlineRectColor.g,
-                               outlineRectColor.b, outlineRectColor.a,
+    if (outlineThickness != 0) {
+        SDL_Rect outlineRect = {dst.x - outlineThickness, dst.y - outlineThickness,
+                                dst.w + outlineThickness * 2, dst.h + outlineThickness * 2};
+        SDL_Color outlineRectColor = buttonColor;
+        outlineRectColor.r = std::max((int) outlineRectColor.r - outlineDarkerCoeff, 0);
+        outlineRectColor.g = std::max((int) outlineRectColor.g - outlineDarkerCoeff, 0);
+        outlineRectColor.b = std::max((int) outlineRectColor.b - outlineDarkerCoeff, 0);
+        WindowRenderer::renderRect(&outlineRect, true,
+                                   outlineRectColor.r, outlineRectColor.g,
+                                   outlineRectColor.b, outlineRectColor.a,
+                                   gRenderer,
+                                   true);
+    }
+
+    SDL_Color renderColor = buttonColor;
+    if (buttonState == BUTTON_CLICKED) {
+        if (swapColorOnClick) {
+            renderColor.r = renderColor.r / 2;
+            renderColor.g = renderColor.g / 2;
+            renderColor.b = renderColor.b / 2;
+        }
+    }
+    WindowRenderer::renderRect(&dst, true,
+                               renderColor.r, renderColor.g,
+                               renderColor.b, renderColor.a,
                                gRenderer,
                                true);
 
     if (imgFrame.w != 0 && imgFrame.h != 0) {
+        if (buttonState == BUTTON_CLICKED) setRGBAMod(COLOR_MAX / 2);
+        else setRGBAMod(COLOR_MAX);
         WorldEntity::renderSelf(gRenderer);
-    } else {
-        SDL_Color renderColor = buttonColor;
-        if (buttonState == BUTTON_CLICKED) {
-            if (swapColorOnClick) {
-                renderColor.r = renderColor.r / 2;
-                renderColor.g = renderColor.g / 2;
-                renderColor.b = renderColor.b / 2;
-            }
-        }
-        WindowRenderer::renderRect(&dst, true,
-                                   renderColor.r, renderColor.g,
-                                   renderColor.b, renderColor.a,
-                                   gRenderer,
-                                   true);
     }
+
     if (buttonText != nullptr) buttonText->renderSelf(gRenderer);
 }
 
