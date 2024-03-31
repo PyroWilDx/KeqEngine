@@ -40,7 +40,7 @@ typedef struct StatInfo {
 class Artifact {
 
 public:
-    explicit Artifact(int artfType);
+    explicit Artifact(int artfType_);
 
     void eraseStat(int statType);
 
@@ -52,9 +52,19 @@ public:
 
     [[nodiscard]] double getLevelCoeff() const;
 
+    [[nodiscard]] StatInfo *getStatInfo(int which);
+
+    [[nodiscard]] inline int getArtfType() const { return artfType; }
+
+    [[nodiscard]] inline int getArtfLevel() const { return artfLevel; }
+
     static void rollSubStat(StatInfo *subStat);
 
     static void getArtifactInfo(int i, std::string *imgPath, std::string *name);
+
+    static const char *getStatName(int statType);
+
+    static bool isStatFlatName(int statType);
 
     static const std::vector<int> sandsMainStats;
     static const std::vector<int> gobletMainStats;
@@ -64,7 +74,11 @@ public:
 
     static std::unordered_map<int, double> statLvlUpMinValueMap;
 
+    static std::unordered_map<int, const char *> statNameMap;
+    static std::unordered_map<int, bool> statIsFlatMap;
+
 private:
+    int artfType;
     int artfLevel;
     std::vector<int> remainingStats;
     StatInfo mainStat;
