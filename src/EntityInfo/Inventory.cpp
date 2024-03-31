@@ -11,6 +11,7 @@
 #include "World/World.hpp"
 #include "Utils/Global.hpp"
 #include "Utils/Colors.hpp"
+#include "UI/FrameText.hpp"
 
 Inventory::Inventory()
         : artfArray(), artfButtons(), artfTexts() {
@@ -33,6 +34,11 @@ Inventory::Inventory()
         equipArtifact(i);
     }
 
+    eqStats = new FrameText(860, 16, 360, 96);
+    eqStats->addTexts({new Text("first text"),
+                       new Text("second text"),
+                       new Text("third text")});
+
     isShown = false;
 }
 
@@ -42,6 +48,7 @@ Inventory::~Inventory() {
         delete wpButton;
         delete wpText;
     }
+
     for (int i = 0; i < ARTIFACT_COUNT; i++) {
         delete artfArray[i];
         if (!isShown) {
@@ -49,6 +56,8 @@ Inventory::~Inventory() {
             delete artfTexts[i];
         }
     }
+
+    if (!isShown) delete eqStats;
 }
 
 void Inventory::equipArtifact(int artfType) {
@@ -87,6 +96,8 @@ void Inventory::showSelf() {
         if (artfTexts[i] != nullptr) gWorld->addMenuEntity(artfTexts[i]);
     }
 
+    gWorld->addMenuEntity(eqStats);
+
     isShown = true;
 }
 
@@ -103,6 +114,8 @@ void Inventory::hideSelf() {
         if (artfButtons[i] != nullptr) gWorld->removeButtonNoFree(artfButtons[i]);
         if (artfTexts[i] != nullptr) gWorld->removeMenuEntityNoFree(artfTexts[i]);
     }
+
+    gWorld->removeMenuEntityNoFree(eqStats);
 
     isShown = false;
 }

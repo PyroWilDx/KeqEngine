@@ -32,6 +32,8 @@ public:
 
     Text(const char *textStr, int fontSize, bool translateBackground_ = true);
 
+    explicit Text(const char *textStr, bool translateBackground_ = true);
+
     ~Text() override = default;
 
     void loadTextTexture();
@@ -41,6 +43,8 @@ public:
     inline bool shouldTranslate() override { return translateBackground; }
 
     [[nodiscard]] inline std::string getCurrentText() const { return currText; }
+
+    [[nodiscard]] inline int getFontSize() const { return currFontSize; }
 
 private:
     std::string currText;
