@@ -110,8 +110,10 @@ void Button::renderSelf(SDL_Renderer *gRenderer) {
                                true);
 
     if (imgFrame.w != 0 && imgFrame.h != 0) {
-        if (buttonState == BUTTON_CLICKED) setRGBAMod(COLOR_MAX / 2);
-        else setRGBAMod(COLOR_MAX);
+        if (swapColorOnClick) {
+            if (buttonState == BUTTON_CLICKED) setRGBAMod(COLOR_MAX / 2);
+            else setRGBAMod(COLOR_MAX);
+        }
         WorldEntity::renderSelf(gRenderer);
     }
 

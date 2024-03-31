@@ -58,6 +58,13 @@ Text::Text(const char *textStr, int fontSize, bool translateBackground_)
 
 }
 
+Text::Text(const char *textStr, bool translateBackground_)
+        : Text(0, 0, textStr, &Colors::dColorWhite,
+               DEFAULT_FONT_PATH, 16, nullptr,
+               0, translateBackground_) {
+
+}
+
 void Text::loadTextTexture() {
     clearTexture();
 

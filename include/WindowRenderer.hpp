@@ -29,6 +29,10 @@ public:
                            SDL_Renderer *gRenderer_,
                            bool shifted, bool translate = true);
 
+    static void renderRect(SDL_Rect *pDstRect, bool filled,
+                           SDL_Color *bgColor, SDL_Renderer *gRenderer_,
+                           bool shifted, bool translate = true);
+
     void renderEntity(Entity *entity);
 
     void display();
