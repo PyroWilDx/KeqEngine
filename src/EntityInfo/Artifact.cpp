@@ -42,9 +42,30 @@ std::unordered_map<int, double> Artifact::statLvlUpMinValueMap = {
         {STAT_ELEMENTAL_DAMAGE, 4.6},
 };
 
-Artifact::Artifact(int artfType)
+std::unordered_map<int, const char *> Artifact::statNameMap = {
+        {STAT_HP_FLAT,          "Flat Hp"},
+        {STAT_HP_PERCENT,       "Hp"},
+        {STAT_ATK_FLAT,         "Flat Attack"},
+        {STAT_ATK_PERCENT,      "Attack"},
+        {STAT_CRIT_RATE,        "Crit Rate"},
+        {STAT_CRIT_DAMAGE,      "Crit Damage"},
+        {STAT_ELEMENTAL_DAMAGE, "Elemental Damage"},
+};
+
+std::unordered_map<int, bool> Artifact::statIsFlatMap = {
+        {STAT_HP_FLAT,          true},
+        {STAT_HP_PERCENT,       false},
+        {STAT_ATK_FLAT,         true},
+        {STAT_ATK_PERCENT,      false},
+        {STAT_CRIT_RATE,        false},
+        {STAT_CRIT_DAMAGE,      false},
+        {STAT_ELEMENTAL_DAMAGE, false},
+};
+
+Artifact::Artifact(int artfType_)
         : artfLevel(1), remainingStats(), mainStat(),
           subStat1(), subStat2(), subStat3(), subStat4() {
+    artfType = artfType_;
     for (int i = 0; i < STAT_N; i++) {
         remainingStats.push_back(i);
     }
@@ -105,6 +126,23 @@ double Artifact::getLevelCoeff() const {
     return (double) artfLevel / ARTIFACT_MAX_LEVEL;
 }
 
+StatInfo *Artifact::getStatInfo(int which) {
+    switch (which) {
+        case 0:
+            return &mainStat;
+        case 1:
+            return &subStat1;
+        case 2:
+            return &subStat2;
+        case 3:
+            return &subStat3;
+        case 4:
+            return &subStat4;
+        default:
+            return nullptr;
+    }
+}
+
 bool Artifact::levelUp() {
     if (artfLevel >= ARTIFACT_MAX_LEVEL) return false;
 
@@ -142,7 +180,7 @@ void Artifact::rollSubStat(StatInfo *subStat) {
 }
 
 void Artifact::getArtifactInfo(int i, std::string *imgPath, std::string *name) {
-    *imgPath = "res/gfx/inventory/";
+    if (imgPath != nullptr) *imgPath = "res/gfx/inventory/";
     switch (i) {
         case 0:
             *name = "Flower";
@@ -163,5 +201,13 @@ void Artifact::getArtifactInfo(int i, std::string *imgPath, std::string *name) {
             *name = "";
             break;
     }
-    *imgPath += "A" + *name + ".png";
+    if (imgPath != nullptr) *imgPath += "A" + *name + ".png";
+}
+
+const char *Artifact::getStatName(int statType) {
+    return statNameMap[statType];
+}
+
+bool Artifact::isStatFlatName(int statType) {
+    return statIsFlatMap[statType];
 }

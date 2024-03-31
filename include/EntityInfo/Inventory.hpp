@@ -35,6 +35,10 @@ public:
 
     [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
 
+    [[nodiscard]] inline Artifact **getArtfArray() const { return (Artifact **) artfArray; }
+
+    [[nodiscard]] inline FrameText *getEqStats() const { return eqStats; }
+
     [[nodiscard]] inline bool isShowingSelf() const { return isShown; }
 
 private:

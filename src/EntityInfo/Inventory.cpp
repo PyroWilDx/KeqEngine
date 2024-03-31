@@ -12,6 +12,7 @@
 #include "Utils/Global.hpp"
 #include "Utils/Colors.hpp"
 #include "UI/FrameText.hpp"
+#include "Keqing.hpp"
 
 Inventory::Inventory()
         : artfArray(), artfButtons(), artfTexts() {
@@ -21,6 +22,28 @@ Inventory::Inventory()
     wpButton = new Button(16, 16, 96, 96, 6);
     wpButton->changeColor(&Colors::dColorCyan);
     wpButton->setTexture(gWindow->loadTexture("res/gfx/inventory/WDullBlade.png"));
+    wpButton->setOnClick([](Button *, int, int, void *) {
+        Inventory *kqInventory = Keqing::getInstance()->getInventory();
+        Weapon *sword = kqInventory->getWeapon();
+        FrameText *frameText = kqInventory->getEqStats();
+        char cName[32], cLvl[32], cFlatAtk[32], cAtk[32], cCritRate[32], cCritDmg[32], cElDmg[32];
+        sprintf(cName, "Name : %s", sword->getName().c_str());
+        sprintf(cLvl, "Level : %d", sword->getLevel());
+        sprintf(cFlatAtk, "Flat Attack : %d", sword->getWAtkFlat());
+        sprintf(cAtk, "Attack : %.2f%%", sword->getWAtkMultiplier());
+        sprintf(cCritRate, "Crit Rate : %.2f%%", sword->getWCritRate());
+        sprintf(cCritDmg, "Crit Damage : %.2f%%", sword->getWCritDamage());
+        sprintf(cElDmg, "Elemental Damage : %.2f%%", sword->getWElMultiplier());
+        frameText->changeTexts({
+                                       new Text(cName),
+                                       new Text(cLvl),
+                                       new Text(cFlatAtk),
+                                       new Text(cAtk),
+                                       new Text(cCritRate),
+                                       new Text(cCritDmg),
+                                       new Text(cElDmg)
+                               });
+    });
     wpText = new Text(16, 120, "Dull Blade",
                       16, false);
 
@@ -34,10 +57,8 @@ Inventory::Inventory()
         equipArtifact(i);
     }
 
-    eqStats = new FrameText(860, 16, 360, 96);
-    eqStats->addTexts({new Text("first text"),
-                       new Text("second text"),
-                       new Text("third text")});
+    eqStats = new FrameText(860, 16, 360, 256);
+    eqStats->addTexts({new Text("Click on an equipment to display info.")});
 
     isShown = false;
 }
@@ -76,6 +97,47 @@ void Inventory::equipArtifact(int artfType) {
                                        96, 96, 6);
     artfButtons[artfType]->changeColor(&Colors::dColorOrange);
     artfButtons[artfType]->setTexture(gWindow->loadTexture(artfImgPath.c_str()));
+    artfButtons[artfType]->setOnClick([](Button *, int, int, void *fParams) {
+        Artifact *artf = (Artifact *) fParams;
+        FrameText *frameText = Keqing::getInstance()->getInventory()->getEqStats();
+        char cName[32], cLvl[32], cMain[32], cSub1[32], cSub2[32], cSub3[32], cSub4[32];
+
+        std::string artfName;
+        Artifact::getArtifactInfo(artf->getArtfType(), nullptr, &artfName);
+        sprintf(cName, "Name : %s", artfName.c_str());
+
+        sprintf(cLvl, "Level : %d", artf->getArtfLevel());
+
+        StatInfo *mainStat = artf->getStatInfo(0);
+        sprintf(cMain, "Main - %s : %.2f%c", Artifact::getStatName(mainStat->statType),
+                mainStat->statValue, Artifact::isStatFlatName(mainStat->statType) ? '\0' : '%');
+
+        StatInfo *subStat1 = artf->getStatInfo(1);
+        sprintf(cSub1, "Sub1 - %s : %.2f%c", Artifact::getStatName(subStat1->statType),
+                subStat1->statValue, Artifact::isStatFlatName(subStat1->statType) ? '\0' : '%');
+
+        StatInfo *subStat2 = artf->getStatInfo(2);
+        sprintf(cSub2, "Sub2 - %s : %.2f%c", Artifact::getStatName(subStat2->statType),
+                subStat2->statValue, Artifact::isStatFlatName(subStat2->statType) ? '\0' : '%');
+
+        StatInfo *subStat3 = artf->getStatInfo(3);
+        sprintf(cSub3, "Sub3 - %s : %.2f%c", Artifact::getStatName(subStat3->statType),
+                subStat3->statValue, Artifact::isStatFlatName(subStat3->statType) ? '\0' : '%');
+
+        StatInfo *subStat4 = artf->getStatInfo(4);
+        sprintf(cSub4, "Sub4 - %s : %.2f%c", Artifact::getStatName(subStat4->statType),
+                subStat4->statValue, Artifact::isStatFlatName(subStat4->statType) ? '\0' : '%');
+
+        frameText->changeTexts({
+                                       new Text(cName),
+                                       new Text(cLvl),
+                                       new Text(cMain),
+                                       new Text(cSub1),
+                                       new Text(cSub2),
+                                       new Text(cSub3),
+                                       new Text(cSub4)
+                               });
+    }, (void *) artfArray[artfType]);
 
     if (artfTexts[artfType] != nullptr) delete artfTexts[artfType];
     artfTexts[artfType] = new Text(itemX, 120, artfName.c_str(),

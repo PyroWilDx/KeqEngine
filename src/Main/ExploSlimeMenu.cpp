@@ -40,18 +40,13 @@ void ExploSlimeMenu::RunImpl() {
         }
         lButton->setOnClickRelease([](Button *self, int mouseX,
                                            int mouseY, void *fParams) {
-            auto *args = (f2Params *) fParams;
-            int iLevel = *(int *) args->fParam0;
-            bool *pGRunning = (bool *) args->fParam1;
+            int iLevel = *(int *) fParams;
             ExploSlime::iLevel = iLevel;
-            Events::callMainFunc(pGRunning, &ExploSlime::Run);
+            Events::callMainFunc(&Global::gInfo->gRunning, &ExploSlime::Run);
         });
-        auto *fParams = new f2Params;
-        int *fParam0 = new int;
-        *fParam0 = i;
-        fParams->fParam0 = (void *) fParam0;
-        fParams->fParam1 = (void *) &(gInfo.gRunning);
-        lButton->setOnClickReleaseParams((void *) fParams);
+        int *pLevel = new int;
+        *pLevel = i;
+        lButton->setOnClickReleaseParams((void *) pLevel);
         lButton->addText(("Lvl " + std::to_string(i)).c_str(),
                          &Colors::dColorWhite, 16);
         lButton->changeColor(&Colors::dColorGreen);
