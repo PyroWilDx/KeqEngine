@@ -86,6 +86,14 @@ void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled,
     SDL_SetRenderDrawColor(gRenderer_, 0, 0, 0, 0);
 }
 
+void WindowRenderer::renderRect(SDL_Rect *pDstRect, bool filled,
+                                SDL_Color *bgColor, SDL_Renderer *gRenderer_,
+                                bool shifted, bool translate) {
+    renderRect(pDstRect, filled,
+               bgColor->r, bgColor->g, bgColor->b, bgColor->a,
+               gRenderer_, shifted, translate);
+}
+
 void WindowRenderer::renderEntity(Entity *entity) {
     entity->renderSelf(gRenderer);
 }

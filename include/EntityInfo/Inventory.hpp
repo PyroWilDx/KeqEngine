@@ -18,6 +18,8 @@ class Button;
 
 class Text;
 
+class FrameText;
+
 class Inventory {
 
 public:
@@ -43,6 +45,8 @@ private:
     Artifact *artfArray[ARTIFACT_COUNT];
     Button *artfButtons[ARTIFACT_COUNT];
     Text *artfTexts[ARTIFACT_COUNT];
+
+    FrameText *eqStats;
 
     bool isShown;
 };
