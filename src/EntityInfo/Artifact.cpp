@@ -101,12 +101,6 @@ int Artifact::getRandomStatAndErase() {
     return rdStat;
 }
 
-void Artifact::rollSubStat(StatInfo *subStat) {
-    double minRoll = statLvlUpMinValueMap[subStat->statType];
-    double maxRoll = minRoll * ROLL_MAX_VALUE_PERCENT;
-    subStat->statValue += Random::getRandomReal(minRoll, maxRoll);
-}
-
 double Artifact::getLevelCoeff() const {
     return (double) artfLevel / ARTIFACT_MAX_LEVEL;
 }
@@ -139,4 +133,35 @@ bool Artifact::levelUp() {
     mainStat.statValue = getLevelCoeff() * mainStatMaxValueMap[mainStat.statType];
 
     return true;
+}
+
+void Artifact::rollSubStat(StatInfo *subStat) {
+    double minRoll = statLvlUpMinValueMap[subStat->statType];
+    double maxRoll = minRoll * ROLL_MAX_VALUE_PERCENT;
+    subStat->statValue += Random::getRandomReal(minRoll, maxRoll);
+}
+
+void Artifact::getArtifactInfo(int i, std::string *imgPath, std::string *name) {
+    *imgPath = "res/gfx/inventory/";
+    switch (i) {
+        case 0:
+            *name = "Flower";
+            break;
+        case 1:
+            *name = "Feather";
+            break;
+        case 2:
+            *name = "Sand";
+            break;
+        case 3:
+            *name = "Goblet";
+            break;
+        case 4:
+            *name = "Circlet";
+            break;
+        default:
+            *name = "";
+            break;
+    }
+    *imgPath += "A" + *name + ".png";
 }

@@ -17,7 +17,7 @@ Inventory::Inventory()
 
     pWeapon = new Weapon(DULL_BLADE);
     wpButton = new Button(16, 16, 96, 96, 0);
-    wpButton->setTexture(gWindow->loadTexture("res/gfx/inventory/DullBlade.png"));
+    wpButton->setTexture(gWindow->loadTexture("res/gfx/inventory/WDullBlade.png"));
     wpText = new Text(16, 120, "Dull Blade",
                       16, false);
 
@@ -36,14 +36,13 @@ Inventory::Inventory()
 
 Inventory::~Inventory() {
     delete pWeapon;
-    for (int i = 0; i < ARTIFACT_COUNT; i++) {
-        delete artfArray[i];
-    }
-
     if (!isShown) {
         delete wpButton;
         delete wpText;
-        for (int i = 0; i < ARTIFACT_COUNT; i++) {
+    }
+    for (int i = 0; i < ARTIFACT_COUNT; i++) {
+        delete artfArray[i];
+        if (!isShown) {
             delete artfButtons[i];
             delete artfTexts[i];
         }
@@ -56,15 +55,18 @@ void Inventory::equipArtifact(int artfType) {
     if (artfArray[artfType] != nullptr) delete artfArray[artfType];
     artfArray[artfType] = new Artifact(artfType);
 
-    double itemX = 16 + (artfType + 2) * 96;
+    double itemX = 16 + (artfType + 2) * 112;
+
+    std::string artfImgPath, artfName;
+    Artifact::getArtifactInfo(artfType, &artfImgPath, &artfName);
 
     if (artfButtons[artfType] != nullptr) delete artfButtons[artfType];
     artfButtons[artfType] = new Button(itemX, 16,
                                        96, 96, 0);
-    artfButtons[artfType]->setTexture(gWindow->loadTexture("res/gfx/inventory/DullBlade.png"));
+    artfButtons[artfType]->setTexture(gWindow->loadTexture(artfImgPath.c_str()));
 
     if (artfTexts[artfType] != nullptr) delete artfTexts[artfType];
-    artfTexts[artfType] = new Text(itemX, 120, "Artifact",
+    artfTexts[artfType] = new Text(itemX, 120, artfName.c_str(),
                                    16, false);
 }
 
