@@ -30,10 +30,10 @@ Inventory::Inventory()
         sprintf(cName, "Name : %s", sword->getName().c_str());
         sprintf(cLvl, "Level : %d", sword->getLevel());
         sprintf(cFlatAtk, "Flat Attack : %d", sword->getWAtkFlat());
-        sprintf(cAtk, "Attack : %.2f%%", sword->getWAtkMultiplier());
-        sprintf(cCritRate, "Crit Rate : %.2f%%", sword->getWCritRate());
-        sprintf(cCritDmg, "Crit Damage : %.2f%%", sword->getWCritDamage());
-        sprintf(cElDmg, "Elemental Damage : %.2f%%", sword->getWElMultiplier());
+        sprintf(cAtk, "Attack : %.2f%%", sword->getWAtkMultiplier() * 100.);
+        sprintf(cCritRate, "Crit Rate : %.2f%%", sword->getWCritRate() * 100.);
+        sprintf(cCritDmg, "Crit Damage : %.2f%%", sword->getWCritDamage() * 100.);
+        sprintf(cElDmg, "Elemental Damage : %.2f%%", sword->getWElMultiplier() * 100.);
         frameText->changeTexts({
                                        new Text(cName),
                                        new Text(cLvl),
@@ -110,23 +110,28 @@ void Inventory::equipArtifact(int artfType) {
 
         StatInfo *mainStat = artf->getStatInfo(0);
         sprintf(cMain, "Main - %s : %.2f%c", Artifact::getStatName(mainStat->statType),
-                mainStat->statValue, Artifact::isStatFlatName(mainStat->statType) ? '\0' : '%');
+                Artifact::isStatFlatName(mainStat->statType) ? mainStat->statValue : mainStat->statValue * 100.,
+                Artifact::isStatFlatName(mainStat->statType) ? '\0' : '%');
 
         StatInfo *subStat1 = artf->getStatInfo(1);
         sprintf(cSub1, "Sub1 - %s : %.2f%c", Artifact::getStatName(subStat1->statType),
-                subStat1->statValue, Artifact::isStatFlatName(subStat1->statType) ? '\0' : '%');
+                Artifact::isStatFlatName(subStat1->statType) ? subStat1->statValue : subStat1->statValue * 100.,
+                Artifact::isStatFlatName(subStat1->statType) ? '\0' : '%');
 
         StatInfo *subStat2 = artf->getStatInfo(2);
         sprintf(cSub2, "Sub2 - %s : %.2f%c", Artifact::getStatName(subStat2->statType),
-                subStat2->statValue, Artifact::isStatFlatName(subStat2->statType) ? '\0' : '%');
+                Artifact::isStatFlatName(subStat2->statType) ? subStat2->statValue : subStat2->statValue * 100.,
+                Artifact::isStatFlatName(subStat2->statType) ? '\0' : '%');
 
         StatInfo *subStat3 = artf->getStatInfo(3);
         sprintf(cSub3, "Sub3 - %s : %.2f%c", Artifact::getStatName(subStat3->statType),
-                subStat3->statValue, Artifact::isStatFlatName(subStat3->statType) ? '\0' : '%');
+                Artifact::isStatFlatName(subStat3->statType) ? subStat3->statValue : subStat3->statValue * 100.,
+                Artifact::isStatFlatName(subStat3->statType) ? '\0' : '%');
 
         StatInfo *subStat4 = artf->getStatInfo(4);
         sprintf(cSub4, "Sub4 - %s : %.2f%c", Artifact::getStatName(subStat4->statType),
-                subStat4->statValue, Artifact::isStatFlatName(subStat4->statType) ? '\0' : '%');
+                Artifact::isStatFlatName(subStat4->statType) ? subStat4->statValue : subStat4->statValue * 100.,
+                Artifact::isStatFlatName(subStat4->statType) ? '\0' : '%');
 
         frameText->changeTexts({
                                        new Text(cName),
