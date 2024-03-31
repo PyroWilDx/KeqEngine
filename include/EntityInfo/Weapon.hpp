@@ -31,6 +31,10 @@ public:
 
     bool levelUpAndUpdateStats();
 
+    [[nodiscard]] inline std::string getName() const { return wName; }
+
+    [[nodiscard]] inline int getLevel() const { return wLevel; }
+
     [[nodiscard]] inline int getWAtkFlat() const { return wAtkFlat; }
 
     [[nodiscard]] inline double getWAtkMultiplier() const { return wAtkMultiplier; }
