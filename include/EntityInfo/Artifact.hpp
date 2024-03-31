@@ -5,6 +5,7 @@
 #ifndef ARTIFACT_HPP
 #define ARTIFACT_HPP
 
+#include <string>
 #include <vector>
 #include <unordered_map>
 
@@ -47,11 +48,13 @@ public:
 
     int getRandomStatAndErase();
 
-    static void rollSubStat(StatInfo *subStat);
-
     bool levelUp();
 
     [[nodiscard]] double getLevelCoeff() const;
+
+    static void rollSubStat(StatInfo *subStat);
+
+    static void getArtifactInfo(int i, std::string *imgPath, std::string *name);
 
     static const std::vector<int> sandsMainStats;
     static const std::vector<int> gobletMainStats;
