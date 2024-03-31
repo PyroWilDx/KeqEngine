@@ -10,13 +10,15 @@
 #include "WindowRenderer.hpp"
 #include "World/World.hpp"
 #include "Utils/Global.hpp"
+#include "Utils/Colors.hpp"
 
 Inventory::Inventory()
         : artfArray(), artfButtons(), artfTexts() {
     WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     pWeapon = new Weapon(DULL_BLADE);
-    wpButton = new Button(16, 16, 96, 96, 0);
+    wpButton = new Button(16, 16, 96, 96, 6);
+    wpButton->changeColor(&Colors::dColorCyan);
     wpButton->setTexture(gWindow->loadTexture("res/gfx/inventory/WDullBlade.png"));
     wpText = new Text(16, 120, "Dull Blade",
                       16, false);
@@ -62,7 +64,8 @@ void Inventory::equipArtifact(int artfType) {
 
     if (artfButtons[artfType] != nullptr) delete artfButtons[artfType];
     artfButtons[artfType] = new Button(itemX, 16,
-                                       96, 96, 0);
+                                       96, 96, 6);
+    artfButtons[artfType]->changeColor(&Colors::dColorOrange);
     artfButtons[artfType]->setTexture(gWindow->loadTexture(artfImgPath.c_str()));
 
     if (artfTexts[artfType] != nullptr) delete artfTexts[artfType];
