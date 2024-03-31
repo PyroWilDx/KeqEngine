@@ -34,12 +34,12 @@ std::unordered_map<int, double> Artifact::mainStatMaxValueMap = {
 
 std::unordered_map<int, double> Artifact::statLvlUpMinValueMap = {
         {STAT_HP_FLAT,          210},
-        {STAT_HP_PERCENT,       4.1},
+        {STAT_HP_PERCENT,       0.041},
         {STAT_ATK_FLAT,         16},
-        {STAT_ATK_PERCENT,      4.1},
-        {STAT_CRIT_RATE,        2.7},
-        {STAT_CRIT_DAMAGE,      5.4},
-        {STAT_ELEMENTAL_DAMAGE, 4.6},
+        {STAT_ATK_PERCENT,      0.041},
+        {STAT_CRIT_RATE,        0.027},
+        {STAT_CRIT_DAMAGE,      0.054},
+        {STAT_ELEMENTAL_DAMAGE, 0.046},
 };
 
 std::unordered_map<int, const char *> Artifact::statNameMap = {
