@@ -21,6 +21,10 @@ FrameText::FrameText(double x, double y, int renderW, int renderH)
 
 }
 
+FrameText::~FrameText() {
+    removeTexts();
+}
+
 void FrameText::addTexts(std::initializer_list<Text *> texts) {
     textVector.insert(textVector.end(), texts.begin(), texts.end());
 }

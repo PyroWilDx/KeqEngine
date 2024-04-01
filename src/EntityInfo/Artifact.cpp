@@ -63,7 +63,8 @@ std::unordered_map<int, bool> Artifact::statIsFlatMap = {
 };
 
 Artifact::Artifact(int artfType_)
-        : artfLevel(1), remainingStats(), mainStat(),
+        : Equipment(ARTIFACT_MAX_LEVEL),
+          remainingStats(), mainStat(),
           subStat1(), subStat2(), subStat3(), subStat4() {
     artfType = artfType_;
     for (int i = 0; i < STAT_N; i++) {
@@ -93,7 +94,7 @@ Artifact::Artifact(int artfType_)
             break;
     }
     eraseStat(mainStat.statType);
-    mainStat.statValue = getLevelCoeff() * Artifact::mainStatMaxValueMap[mainStat.statType];
+    mainStat.statValue = getLevelMultiplier() * Artifact::mainStatMaxValueMap[mainStat.statType];
     subStat1.statType = getRandomStatAndErase();
     subStat2.statType = getRandomStatAndErase();
     subStat3.statType = getRandomStatAndErase();
@@ -122,10 +123,6 @@ int Artifact::getRandomStatAndErase() {
     return rdStat;
 }
 
-double Artifact::getLevelCoeff() const {
-    return (double) artfLevel / ARTIFACT_MAX_LEVEL;
-}
-
 StatInfo *Artifact::getStatInfo(int which) {
     switch (which) {
         case 0:
@@ -143,12 +140,8 @@ StatInfo *Artifact::getStatInfo(int which) {
     }
 }
 
-bool Artifact::levelUp() {
-    if (artfLevel >= ARTIFACT_MAX_LEVEL) return false;
-
-    artfLevel++;
-
-    if (artfLevel % 4 == 0) {
+void Artifact::onLevelUp() {
+    if (getLevel() % 4 == 0) {
         int rdSubStat = Random::getRandomInt(1, 4);
         switch (rdSubStat) {
             case 1:
@@ -164,13 +157,11 @@ bool Artifact::levelUp() {
                 rollSubStat(&subStat4);
                 break;
             default:
-                return false;
+                break;
         }
     }
 
-    mainStat.statValue = getLevelCoeff() * mainStatMaxValueMap[mainStat.statType];
-
-    return true;
+    mainStat.statValue = getLevelMultiplier() * mainStatMaxValueMap[mainStat.statType];
 }
 
 void Artifact::rollSubStat(StatInfo *subStat) {
