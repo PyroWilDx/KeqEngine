@@ -5,6 +5,7 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
+#include <string>
 #include "AbstractEntity/WorldEntity.hpp"
 
 #define BASE_OUTLINE 6

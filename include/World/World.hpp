@@ -14,15 +14,26 @@
 #define GET_NEAREST_WALL_RETURN_NONE (-42)
 
 class Background;
+
 class Button;
+
 class Block;
+
 class Entity;
+
 class WorldEntity;
+
 class LivingEntity;
+
 class Monster;
+
 class DamageText;
+
 class Keqing;
+
 class Attack;
+
+class ToastText;
 
 typedef struct Filter {
     Uint8 r;
@@ -85,7 +96,7 @@ public:
     Block *addBlock(int blockCode, double x, double y, int renderW);
 
     void addCoveredBlock(int blockCode, int coverBlockCode, double x, double y,
-                           int renderW);
+                         int renderW);
 
     void removeBlock(Block **block);
 
@@ -102,6 +113,10 @@ public:
     void addOtherEntity(Entity *otherEntity);
 
     void removeOtherEntity(Entity *otherEntity);
+
+    void showToast(ToastText *toastText);
+
+    void removeToast();
 
     void addKQAtk(Attack *atk, double atkPercent);
 
@@ -183,6 +198,7 @@ private:
     std::list<DamageText *> dmgTextLL;
     bool displayMenu;
     std::vector<Entity *> menuEntityVector;
+    ToastText *currToastText;
     Pixel **pixels;
     int stopSoundOnQuit;
 
