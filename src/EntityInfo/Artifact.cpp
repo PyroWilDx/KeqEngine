@@ -123,8 +123,18 @@ int Artifact::getRandomStatAndErase() {
     return rdStat;
 }
 
-StatInfo *Artifact::getStatInfo(int which) {
-    switch (which) {
+double Artifact::getStatValue(int statType) const {
+    double value = 0;
+    if (mainStat.statType == statType) value += mainStat.statValue;
+    if (subStat1.statType == statType) value += subStat1.statValue;
+    if (subStat2.statType == statType) value += subStat2.statValue;
+    if (subStat3.statType == statType) value += subStat3.statValue;
+    if (subStat4.statType == statType) value += subStat4.statValue;
+    return value;
+}
+
+StatInfo *Artifact::getStatInfo(int i) {
+    switch (i) {
         case 0:
             return &mainStat;
         case 1:
@@ -164,8 +174,8 @@ void Artifact::onLevelUp() {
     mainStat.statValue = getLevelMultiplier() * mainStatMaxValueMap[mainStat.statType];
 }
 
-void Artifact::sprintfStat(char *st, const char *fmt, int which) {
-    StatInfo *artfStat = getStatInfo(which);
+void Artifact::sprintfStat(char *st, const char *fmt, int i) {
+    StatInfo *artfStat = getStatInfo(i);
     sprintf(st, fmt, Artifact::getStatName(artfStat->statType),
             Artifact::isStatFlatName(artfStat->statType) ? artfStat->statValue : artfStat->statValue * 100.,
             Artifact::isStatFlatName(artfStat->statType) ? '\0' : '%');

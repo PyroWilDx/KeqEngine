@@ -43,6 +43,7 @@
 #define KQ_BURST_CRIT_DURATION 8000
 #define KQ_BURST_CRIT_BUFF 0.2
 
+#define KQ_BASE_HP 2000
 #define KQ_BASE_ATK 300
 #define KQ_BASE_CRIT_RATE 0.06
 #define KQ_BASE_CRIT_DAMAGE 0.96
@@ -97,7 +98,7 @@ enum {
 class Keqing : public LivingEntity {
 
 public:
-    ~Keqing();
+    ~Keqing() override;
 
     void setSoundSheetStartPath();
 

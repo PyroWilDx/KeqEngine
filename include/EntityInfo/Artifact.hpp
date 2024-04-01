@@ -51,9 +51,11 @@ public:
 
     void onLevelUp() override;
 
-    [[nodiscard]] StatInfo *getStatInfo(int which);
+    double getStatValue(int statType) const;
 
-    void sprintfStat(char *st, const char *fmt, int which);
+    [[nodiscard]] StatInfo *getStatInfo(int i);
+
+    void sprintfStat(char *st, const char *fmt, int i);
 
     [[nodiscard]] inline int getArtfType() const { return artfType; }
 
