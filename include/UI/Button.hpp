@@ -48,6 +48,8 @@ public:
 
     virtual void onClickRelease(int mouseX, int mouseY, bool isMouseOnButton);
 
+    void simClickRelease();
+
     inline void setOnClick(void (*fOnClick_)(Button *, int, int, void *)) {
         fOnClick = fOnClick_;
     }

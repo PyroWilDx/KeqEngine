@@ -12,9 +12,13 @@ class Text;
 class ToastText : public WorldEntity {
 
 public:
-    ToastText(int renderW, const char *cStr, int showDuration_);
-
     ~ToastText() override;
+
+    static void makeToast(int renderW, const char *cStr, int showDuration_);
+
+    static void makeToast(int renderW, const char *cStr);
+
+    static void makeToast(const char *cStr);
 
     bool shouldTranslate() override;
 
@@ -23,6 +27,8 @@ public:
     void renderSelf(SDL_Renderer *gRenderer) override;
 
 private:
+    ToastText(int renderW, const char *cStr, int showDuration_);
+
     Text *toastText;
     int showDuration;
 
