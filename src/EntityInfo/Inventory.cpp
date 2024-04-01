@@ -235,8 +235,16 @@ void Inventory::replaceWeapon(Weapon *w) {
     pWeapon = w;
 }
 
-Artifact *Inventory::rerollArtifact(int which) {
-    delete artfArray[which];
-    artfArray[which] = new Artifact(which);
-    return artfArray[which];
+Artifact *Inventory::rerollArtifact(int i) {
+    delete artfArray[i];
+    artfArray[i] = new Artifact(i);
+    return artfArray[i];
+}
+
+double Inventory::getArtifactsStatValue(int statType) {
+    double value = 0;
+    for (Artifact *a : artfArray) {
+        value += a->getStatValue(statType);
+    }
+    return value;
 }
