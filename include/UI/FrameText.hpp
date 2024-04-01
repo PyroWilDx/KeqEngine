@@ -18,6 +18,8 @@ public:
 
     FrameText(double x, double y, int renderW, int renderH);
 
+    ~FrameText() override;
+
     void addTexts(std::initializer_list<Text *> texts);
 
     void removeTexts();

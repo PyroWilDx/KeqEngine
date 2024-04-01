@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "EntityInfo/Equipment.hpp"
 
 #define ARTIFACT_MAX_LEVEL 20
 
@@ -37,7 +38,7 @@ typedef struct StatInfo {
     double statValue;
 } StatInfo;
 
-class Artifact {
+class Artifact : public Equipment {
 
 public:
     explicit Artifact(int artfType_);
@@ -48,15 +49,11 @@ public:
 
     int getRandomStatAndErase();
 
-    bool levelUp();
-
-    [[nodiscard]] double getLevelCoeff() const;
+    void onLevelUp() override;
 
     [[nodiscard]] StatInfo *getStatInfo(int which);
 
     [[nodiscard]] inline int getArtfType() const { return artfType; }
-
-    [[nodiscard]] inline int getArtfLevel() const { return artfLevel; }
 
     static void rollSubStat(StatInfo *subStat);
 
@@ -79,7 +76,6 @@ public:
 
 private:
     int artfType;
-    int artfLevel;
     std::vector<int> remainingStats;
     StatInfo mainStat;
     StatInfo subStat1;
