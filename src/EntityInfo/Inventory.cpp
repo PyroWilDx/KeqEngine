@@ -102,12 +102,15 @@ Inventory::Inventory()
                 kqInventory->getWpButton()->setTexture(uW->getTextureFromName());
                 kqInventory->getWpText()->changeText(uW->getName().c_str());
                 kqInventory->setLastSelectedEq(uW);
-                kqInventory->getLastClickedButton()->simClickRelease();
                 ToastText::makeToast("Successfuly Upgraded !");
             } else ToastText::makeToast("Can't be Upgraded.");
         } else {
-
+            auto *a = (Artifact *) e;
+            Artifact *rA = kqInventory->rerollArtifact(a->getArtfType());
+            kqInventory->setLastSelectedEq(rA);
+            ToastText::makeToast("Successfuly Rerolled !");
         }
+        kqInventory->getLastClickedButton()->simClickRelease();
     });
 
     isShown = false;
@@ -148,7 +151,7 @@ void Inventory::equipArtifact(int artfType) {
     artfButtons[artfType]->changeColor(&Colors::dColorOrange);
     artfButtons[artfType]->setTexture(gWindow->loadTexture(artfImgPath.c_str()));
     artfButtons[artfType]->setOnClickRelease([](Button *self, int, int, void *fParams) {
-        auto *artf = (Artifact *) fParams;
+        auto *artf = *(Artifact **) fParams;
         std::string artfName;
         Artifact::getArtifactInfo(artf->getArtfType(), nullptr, &artfName);
         Inventory *kqInventory = Keqing::getInstance()->getInventory();
@@ -176,7 +179,7 @@ void Inventory::equipArtifact(int artfType) {
                                                });
 
         kqInventory->getOtherButton()->changeText("Reroll");
-    }, (void *) artfArray[artfType]);
+    }, (void *) (artfArray + artfType));
 
     if (artfTexts[artfType] != nullptr) delete artfTexts[artfType];
     artfTexts[artfType] = new Text(itemX, 120, artfName.c_str(),
@@ -230,4 +233,10 @@ void Inventory::hideSelf() {
 void Inventory::replaceWeapon(Weapon *w) {
     delete pWeapon;
     pWeapon = w;
+}
+
+Artifact *Inventory::rerollArtifact(int which) {
+    delete artfArray[which];
+    artfArray[which] = new Artifact(which);
+    return artfArray[which];
 }
