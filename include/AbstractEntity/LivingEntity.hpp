@@ -39,6 +39,8 @@ public:
 
     void healFull();
 
+    void addHp(int value);
+
     virtual int isInvincible();
 
     void setDmgFacingEast(double kbXV);
@@ -53,9 +55,11 @@ public:
 
     bool isHurt();
 
-    virtual double getBonusDamageMultiplier();
+    [[nodiscard]] virtual int getMaxHp();
 
-    [[nodiscard]] inline int getHp() const { return currHp; }
+    [[nodiscard]] virtual double getBonusDamageMultiplier();
+
+    [[nodiscard]] int getHp() const { return currHp; }
 
 protected:
     int maxHp;

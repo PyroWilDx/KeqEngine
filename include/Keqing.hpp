@@ -43,7 +43,7 @@
 #define KQ_BURST_CRIT_DURATION 8000
 #define KQ_BURST_CRIT_BUFF 0.2
 
-#define KQ_BASE_HP 2000
+#define KQ_BASE_HP 12000
 #define KQ_BASE_ATK 300
 #define KQ_BASE_CRIT_RATE 0.06
 #define KQ_BASE_CRIT_DAMAGE 0.96
@@ -244,17 +244,19 @@ public:
 
     void kqLock(bool shouldLock, bool shouldFallWhenLocked = false);
 
+    int getMaxHp() override;
+
     int getTotalAtk();
 
     int getTotalFlatAtk();
 
     double getTotalAtkMultiplier();
 
-    double getBonusDamageMultiplier() override;
-
     double getCritRate();
 
     double getCritDamage();
+
+    double getBonusDamageMultiplier() override;
 
     inline void setBurstCloneSlashCount(int burstCloneSlashCount_) { RBurstCloneSlashCount = burstCloneSlashCount_; }
 

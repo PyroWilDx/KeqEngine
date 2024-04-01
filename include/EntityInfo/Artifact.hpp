@@ -51,7 +51,7 @@ public:
 
     void onLevelUp() override;
 
-    double getStatValue(int statType) const;
+    [[nodiscard]] double getStatValue(int statType) const;
 
     [[nodiscard]] StatInfo *getStatInfo(int i);
 

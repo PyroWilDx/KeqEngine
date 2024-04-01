@@ -73,12 +73,17 @@ Inventory::Inventory()
     levelUpButton->changeColor(&Colors::dColorKq);
     levelUpButton->addText("Level Up", &Colors::dColorWhite, 22);
     levelUpButton->setOnClickRelease([](Button *, int, int, void *) {
-        Inventory *kqInventory = Keqing::getInstance()->getInventory();
+        Keqing *kq = Keqing::getInstance();
+        Inventory *kqInventory = kq->getInventory();
         Equipment *e = kqInventory->getLastSelectedEq();
         if (e != nullptr) {
-            if (e->levelUp()) ToastText::makeToast("Equipment Upgraded !");
-            else ToastText::makeToast("Max Level Reached.");
-            kqInventory->getLastClickedButton()->simClickRelease();
+            int kqLastMaxHp = kq->getMaxHp();
+            if (e->levelUp()) {
+                kq->addHp(kq->getMaxHp() - kqLastMaxHp);
+                ToastText::makeToast("Equipment Upgraded !");
+                kqInventory->getLastClickedButton()->simClickRelease();
+                kqInventory->updateKqStatsDisplay();
+            } else ToastText::makeToast("Max Level Reached.");
         } else ToastText::makeToast("No Equipment Selected...");
     });
 
@@ -86,7 +91,8 @@ Inventory::Inventory()
     otherButton->changeColor(&Colors::dColorKq);
     otherButton->addText("Upgrade", &Colors::dColorWhite, 22);
     otherButton->setOnClickRelease([](Button *, int, int, void *) {
-        Inventory *kqInventory = Keqing::getInstance()->getInventory();
+        Keqing *kq = Keqing::getInstance();
+        Inventory *kqInventory = kq->getInventory();
         Equipment *e = kqInventory->getLastSelectedEq();
 
         if (e == nullptr) {
@@ -106,12 +112,17 @@ Inventory::Inventory()
             } else ToastText::makeToast("Can't be Upgraded.");
         } else {
             auto *a = (Artifact *) e;
+            int kqLastMaxHp = kq->getMaxHp();
             Artifact *rA = kqInventory->rerollArtifact(a->getArtfType());
             kqInventory->setLastSelectedEq(rA);
+            kq->addHp(kq->getMaxHp() - kqLastMaxHp);
             ToastText::makeToast("Successfuly Rerolled !");
         }
         kqInventory->getLastClickedButton()->simClickRelease();
+        kqInventory->updateKqStatsDisplay();
     });
+
+    kqStats = new FrameText(860, 300, 360, 256);
 
     isShown = false;
 }
@@ -204,6 +215,9 @@ void Inventory::showSelf() {
     gWorld->addButton(levelUpButton);
     gWorld->addButton(otherButton);
 
+    gWorld->addMenuEntity(kqStats);
+    updateKqStatsDisplay();
+
     wpButton->simClickRelease();
 
     isShown = true;
@@ -227,6 +241,8 @@ void Inventory::hideSelf() {
     gWorld->removeButtonNoFree(levelUpButton);
     gWorld->removeButtonNoFree(otherButton);
 
+    gWorld->removeMenuEntityNoFree(kqStats);
+
     isShown = false;
 }
 
@@ -243,8 +259,29 @@ Artifact *Inventory::rerollArtifact(int i) {
 
 double Inventory::getArtifactsStatValue(int statType) {
     double value = 0;
-    for (Artifact *a : artfArray) {
+    for (Artifact *a: artfArray) {
         value += a->getStatValue(statType);
     }
     return value;
+}
+
+void Inventory::updateKqStatsDisplay() {
+    Keqing *kq = Keqing::getInstance();
+
+    const int N = 96;
+    char cName[N], cHp[N], cAtk[N], cCritRate[N], cCritDmg[N], cElDmg[N];
+    sprintf(cName, "Keqing Stats");
+    sprintf(cHp, "Hp : %d/%d", kq->getHp(), kq->getMaxHp());
+    sprintf(cAtk, "Attack : %d", kq->getTotalAtk());
+    sprintf(cCritRate, "Crit Rate : %.2f%%", kq->getCritRate() * 100.);
+    sprintf(cCritDmg, "Crit Damage : %.2f%%", (kq->getCritDamage() - 1.) * 100.);
+    sprintf(cElDmg, "Elemental Damage : %.2f%%", (kq->getBonusDamageMultiplier() - 1.) * 100.);
+    kqStats->changeTexts({
+                                 new Text(cName),
+                                 new Text(cHp),
+                                 new Text(cAtk),
+                                 new Text(cCritRate),
+                                 new Text(cCritDmg),
+                                 new Text(cElDmg)
+                         });
 }

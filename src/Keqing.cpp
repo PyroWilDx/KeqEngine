@@ -415,8 +415,6 @@ void Keqing::reset() {
     xVelocity = 0;
     yVelocity = 0;
 
-    healFull();
-
     wasInAir = false;
     jumpPressTime = 0;
     yOnLastNAtk = 0;
@@ -445,6 +443,8 @@ void Keqing::reset() {
 
     fOnDeathRetryButton = nullptr;
     fParamsRetryButton = nullptr;
+
+    healFull();
 }
 
 void Keqing::colorSprite(Uint32 rgba, Sprite *sprite) {
@@ -3141,6 +3141,13 @@ void Keqing::kqLock(bool shouldLock, bool shouldFallWhenLocked) {
     }
 }
 
+int Keqing::getMaxHp() {
+    auto value = (double) LivingEntity::getMaxHp();
+    value += kqInventory->getArtifactsStatValue(STAT_HP_FLAT);
+    value *= (1. + kqInventory->getArtifactsStatValue(STAT_HP_PERCENT));
+    return (int) std::round(value);
+}
+
 int Keqing::getTotalAtk() {
     return (int) std::round(getTotalFlatAtk() * getTotalAtkMultiplier());
 }
@@ -3155,12 +3162,6 @@ double Keqing::getTotalAtkMultiplier() {
     return 1. +
            kqInventory->getWeapon()->getWAtkMultiplier() +
            kqInventory->getArtifactsStatValue(STAT_ATK_PERCENT);
-}
-
-double Keqing::getBonusDamageMultiplier() {
-    return 1. +
-           kqInventory->getWeapon()->getWElMultiplier() +
-           kqInventory->getArtifactsStatValue(STAT_ELEMENTAL_DAMAGE);
 }
 
 double Keqing::getCritRate() {
@@ -3178,4 +3179,10 @@ double Keqing::getCritDamage() {
            KQ_BASE_CRIT_DAMAGE +
            kqInventory->getWeapon()->getWCritDamage() +
            kqInventory->getArtifactsStatValue(STAT_CRIT_DAMAGE);
+}
+
+double Keqing::getBonusDamageMultiplier() {
+    return 1. +
+           kqInventory->getWeapon()->getWElMultiplier() +
+           kqInventory->getArtifactsStatValue(STAT_ELEMENTAL_DAMAGE);
 }
