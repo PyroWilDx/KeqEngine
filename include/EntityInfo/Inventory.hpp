@@ -37,11 +37,15 @@ public:
 
     inline void setLastSelectedEq(Equipment *lastSelectedEq_) { lastSelectedEq = lastSelectedEq_; }
 
+    inline void setLastClickedButton(Button *lastClickedButton_) { lastClickedButton = lastClickedButton_; }
+
     [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
 
     [[nodiscard]] inline Artifact **getArtfArray() const { return (Artifact **) artfArray; }
 
     [[nodiscard]] inline Equipment *getLastSelectedEq() const { return lastSelectedEq; }
+
+    [[nodiscard]] inline Button *getLastClickedButton() const { return lastClickedButton; }
 
     [[nodiscard]] inline FrameText *getEqStats() const { return eqStats; }
 
@@ -57,6 +61,7 @@ private:
     Text *artfTexts[ARTIFACT_COUNT];
 
     Equipment *lastSelectedEq;
+    Button *lastClickedButton;
 
     FrameText *eqStats;
     Button *levelUpButton;

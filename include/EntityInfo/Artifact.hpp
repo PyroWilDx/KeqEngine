@@ -53,6 +53,8 @@ public:
 
     [[nodiscard]] StatInfo *getStatInfo(int which);
 
+    void sprintfStat(char *st, const char *fmt, int which);
+
     [[nodiscard]] inline int getArtfType() const { return artfType; }
 
     static void rollSubStat(StatInfo *subStat);
