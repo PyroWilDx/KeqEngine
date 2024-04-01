@@ -17,7 +17,7 @@ FrameText::FrameText(double x, double y, int renderW, int renderH,
 
 FrameText::FrameText(double x, double y, int renderW, int renderH)
         : FrameText(x, y, renderW, renderH,
-                    &Colors::dColorWhite, &Colors::dColorDarkGray) {
+                    &Colors::dColorWhite, &Colors::dColorLightBlack) {
 
 }
 
@@ -27,6 +27,15 @@ FrameText::~FrameText() {
 
 void FrameText::addTexts(std::initializer_list<Text *> texts) {
     textVector.insert(textVector.end(), texts.begin(), texts.end());
+    Text *lastText = nullptr;
+    for (Text *text: textVector) {
+        if (lastText != nullptr)
+            text->moveTo(lastText->getX(),
+                         lastText->getY() + lastText->getFontSize() + 6);
+        else text->moveTo(WorldEntity::getX() + 6, WorldEntity::getY() + 6);
+        text->setTranslateBackground(false);
+        lastText = text;
+    }
 }
 
 void FrameText::removeTexts() {
@@ -39,6 +48,10 @@ void FrameText::removeTexts() {
 void FrameText::changeTexts(std::initializer_list<Text *> texts) {
     removeTexts();
     addTexts(texts);
+}
+
+bool FrameText::shouldTranslate() {
+    return false;
 }
 
 void FrameText::renderSelf(SDL_Renderer *gRenderer) {
@@ -57,13 +70,7 @@ void FrameText::renderSelf(SDL_Renderer *gRenderer) {
                                bgColor, gRenderer,
                                true, false);
 
-    Text *lastText = nullptr;
     for (Text *text: textVector) {
-        if (lastText != nullptr)
-            text->moveTo(lastText->getX(),
-                         lastText->getY() + lastText->getFontSize() + 6);
-        else text->moveTo(WorldEntity::getX() + 6, WorldEntity::getY() + 6);
         text->renderSelf(gRenderer);
-        lastText = text;
     }
 }
