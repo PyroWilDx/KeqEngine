@@ -407,6 +407,9 @@ void Keqing::reset() {
     }
     setSpriteAnimated(true, KQ_IDLE);
 
+    x = 0;
+    y = 0;
+
     facingEast = true;
     xVelocity = 0;
     yVelocity = 0;
