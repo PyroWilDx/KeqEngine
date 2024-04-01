@@ -35,11 +35,17 @@ public:
 
     void hideSelf();
 
+    void replaceWeapon(Weapon *w);
+
     inline void setLastSelectedEq(Equipment *lastSelectedEq_) { lastSelectedEq = lastSelectedEq_; }
 
     inline void setLastClickedButton(Button *lastClickedButton_) { lastClickedButton = lastClickedButton_; }
 
     [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
+
+    [[nodiscard]] inline Button *getWpButton() const { return wpButton; }
+
+    [[nodiscard]] inline Text *getWpText() const { return wpText; }
 
     [[nodiscard]] inline Artifact **getArtfArray() const { return (Artifact **) artfArray; }
 
@@ -48,6 +54,8 @@ public:
     [[nodiscard]] inline Button *getLastClickedButton() const { return lastClickedButton; }
 
     [[nodiscard]] inline FrameText *getEqStats() const { return eqStats; }
+
+    [[nodiscard]] inline Button *getOtherButton() const { return otherButton; }
 
     [[nodiscard]] inline bool isShowingSelf() const { return isShown; }
 

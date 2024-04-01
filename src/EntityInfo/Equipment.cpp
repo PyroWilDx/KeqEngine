@@ -21,3 +21,11 @@ bool Equipment::levelUp() {
 double Equipment::getLevelMultiplier() const {
     return (double) eLevel / maxLevel;
 }
+
+void Equipment::setLevel(int newLevel) {
+    if (newLevel < 1) newLevel = 1;
+    if (newLevel >= maxLevel) newLevel = maxLevel;
+
+    eLevel = newLevel;
+    onLevelUp();
+}

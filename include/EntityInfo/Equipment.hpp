@@ -18,6 +18,8 @@ public:
 
     [[nodiscard]] double getLevelMultiplier() const;
 
+    void setLevel(int newLevel);
+
     [[nodiscard]] inline int getMaxLevel() const { return maxLevel; }
 
     [[nodiscard]] inline int getLevel() const { return eLevel; }
