@@ -7,6 +7,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "Equipment.hpp"
 
 #define WEAPON_MAX_LEVEL 100
 
@@ -22,18 +23,14 @@ typedef struct WeaponInfo {
     double wElMultiplier;
 } WeaponInfo;
 
-class Weapon {
+class Weapon : public Equipment {
 
 public:
     explicit Weapon(const char *wNameCStr);
 
-    [[nodiscard]] double getLevelCoeff() const;
-
-    bool levelUpAndUpdateStats();
+    void onLevelUp() override;
 
     [[nodiscard]] inline std::string getName() const { return wName; }
-
-    [[nodiscard]] inline int getLevel() const { return wLevel; }
 
     [[nodiscard]] inline int getWAtkFlat() const { return wAtkFlat; }
 
@@ -50,7 +47,6 @@ public:
 private:
     std::string wName;
     WeaponInfo wInfo;
-    int wLevel;
     int wAtkFlat;
     double wAtkMultiplier;
     double wCritRate;

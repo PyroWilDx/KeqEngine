@@ -15,12 +15,12 @@ std::unordered_map<std::string, WeaponInfo> Weapon::gWeapons = {
 };
 
 Weapon::Weapon(const char *wNameCStr)
-        : wInfo() {
+        : Equipment(WEAPON_MAX_LEVEL),
+          wInfo() {
     wName = std::string(wNameCStr);
     wInfo = Weapon::gWeapons[wName];
-    wLevel = 1;
 
-    double lM = getLevelCoeff();
+    double lM = getLevelMultiplier();
     wAtkFlat = (int) std::round(lM * wInfo.maxAtkFlat);
     wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
     wCritRate = lM * wInfo.maxCritRate;
@@ -28,20 +28,10 @@ Weapon::Weapon(const char *wNameCStr)
     wElMultiplier = wInfo.wElMultiplier;
 }
 
-double Weapon::getLevelCoeff() const {
-    return (double) wLevel / WEAPON_MAX_LEVEL;
-}
-
-bool Weapon::levelUpAndUpdateStats() {
-    if (wLevel >= WEAPON_MAX_LEVEL) return false;
-
-    wLevel++;
-
-    double lM = getLevelCoeff();
+void Weapon::onLevelUp() {
+    double lM = getLevelMultiplier();
     wAtkFlat = (int) std::round(lM * wInfo.maxAtkFlat);
     wAtkMultiplier = lM * wInfo.maxAtkMultiplier;
     wCritRate = lM * wInfo.maxCritRate;
     wCritDamage = lM * wInfo.maxCritDamage;
-
-    return true;
 }

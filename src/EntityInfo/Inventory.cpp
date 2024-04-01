@@ -98,7 +98,7 @@ void Inventory::equipArtifact(int artfType) {
     artfButtons[artfType]->changeColor(&Colors::dColorOrange);
     artfButtons[artfType]->setTexture(gWindow->loadTexture(artfImgPath.c_str()));
     artfButtons[artfType]->setOnClick([](Button *, int, int, void *fParams) {
-        Artifact *artf = (Artifact *) fParams;
+        auto *artf = (Artifact *) fParams;
         FrameText *frameText = Keqing::getInstance()->getInventory()->getEqStats();
         char cName[32], cLvl[32], cMain[32], cSub1[32], cSub2[32], cSub3[32], cSub4[32];
 
@@ -106,7 +106,7 @@ void Inventory::equipArtifact(int artfType) {
         Artifact::getArtifactInfo(artf->getArtfType(), nullptr, &artfName);
         sprintf(cName, "Name : %s", artfName.c_str());
 
-        sprintf(cLvl, "Level : %d", artf->getArtfLevel());
+        sprintf(cLvl, "Level : %d", artf->getLevel());
 
         StatInfo *mainStat = artf->getStatInfo(0);
         sprintf(cMain, "Main - %s : %.2f%c", Artifact::getStatName(mainStat->statType),
