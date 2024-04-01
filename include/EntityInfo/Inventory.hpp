@@ -37,6 +37,8 @@ public:
 
     void replaceWeapon(Weapon *w);
 
+    Artifact *rerollArtifact(int which);
+
     inline void setLastSelectedEq(Equipment *lastSelectedEq_) { lastSelectedEq = lastSelectedEq_; }
 
     inline void setLastClickedButton(Button *lastClickedButton_) { lastClickedButton = lastClickedButton_; }
