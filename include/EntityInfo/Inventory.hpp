@@ -41,6 +41,8 @@ public:
 
     double getArtifactsStatValue(int statType);
 
+    void updateKqStatsDisplay();
+
     inline void setLastSelectedEq(Equipment *lastSelectedEq_) { lastSelectedEq = lastSelectedEq_; }
 
     inline void setLastClickedButton(Button *lastClickedButton_) { lastClickedButton = lastClickedButton_; }
@@ -78,6 +80,8 @@ private:
     FrameText *eqStats;
     Button *levelUpButton;
     Button *otherButton;
+
+    FrameText *kqStats;
 
     bool isShown;
 };
