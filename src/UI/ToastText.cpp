@@ -17,12 +17,23 @@ ToastText::ToastText(int renderW, const char *cStr, int showDuration_)
                          cStr, &Colors::dColorRed, 22);
     toastText->setTranslateBackground(false);
     showDuration = showDuration_;
-
-    Global::gWorld->showToast(this);
 }
 
 ToastText::~ToastText() {
     delete toastText;
+}
+
+void ToastText::makeToast(int renderW, const char *cStr, int showDuration_) {
+    auto *toastText = new ToastText(renderW, cStr, showDuration_);
+    Global::gWorld->showToast(toastText);
+}
+
+void ToastText::makeToast(int renderW, const char *cStr) {
+    ToastText::makeToast(renderW, cStr, 3000);
+}
+
+void ToastText::makeToast(const char *cStr) {
+    ToastText::makeToast(600, cStr, 3000);
 }
 
 bool ToastText::shouldTranslate() {

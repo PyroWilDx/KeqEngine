@@ -164,6 +164,13 @@ void Artifact::onLevelUp() {
     mainStat.statValue = getLevelMultiplier() * mainStatMaxValueMap[mainStat.statType];
 }
 
+void Artifact::sprintfStat(char *st, const char *fmt, int which) {
+    StatInfo *artfStat = getStatInfo(which);
+    sprintf(st, fmt, Artifact::getStatName(artfStat->statType),
+            Artifact::isStatFlatName(artfStat->statType) ? artfStat->statValue : artfStat->statValue * 100.,
+            Artifact::isStatFlatName(artfStat->statType) ? '\0' : '%');
+}
+
 void Artifact::rollSubStat(StatInfo *subStat) {
     double minRoll = statLvlUpMinValueMap[subStat->statType];
     double maxRoll = minRoll * ROLL_MAX_VALUE_PERCENT;

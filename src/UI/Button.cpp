@@ -40,7 +40,7 @@ Button::Button(double x, double y, int renderW, int renderH, int outlineThicknes
 }
 
 Button::Button(double x, double y, int renderW, int renderH, int outlineThickness,
-               int outlineDarkerCoeff,  bool rmOutline)
+               int outlineDarkerCoeff, bool rmOutline)
         : Button(x, y, renderW, renderH, outlineThickness, rmOutline) {
     this->outlineDarkerCoeff = outlineDarkerCoeff;
 }
@@ -136,4 +136,10 @@ void Button::onClickRelease(int mouseX, int mouseY, bool isMouseOnButton) {
     if (isMouseOnButton && fOnClickRelease != nullptr) {
         fOnClickRelease(this, mouseX, mouseY, onClickReleaseParams);
     }
+}
+
+void Button::simClickRelease() {
+    onClickRelease(WorldEntity::getX() + getRenderW() / 2,
+                   WorldEntity::getY() + getRenderH() / 2,
+                   true);
 }
