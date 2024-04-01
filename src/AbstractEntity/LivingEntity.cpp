@@ -81,7 +81,7 @@ void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
     int hpBarX = (int) (getX() + hitBox.x);
     int hpBarY = (int) (getY() + hitBox.y - HP_BAR_HEIGHT - HP_BAR_GAP);
     int hpBarMaxW = hitBox.w;
-    int hpBarW = (int) (hpBarMaxW * ((double) currHp / maxHp));
+    int hpBarW = (int) (hpBarMaxW * ((double) currHp / getMaxHp()));
     if (hpBarW < 0) hpBarW = 0;
     int borderLength = 2;
     SDL_Rect hpRectBorder = {hpBarX - borderLength,
@@ -98,8 +98,13 @@ void LivingEntity::renderSelf(SDL_Renderer *gRenderer) {
 }
 
 void LivingEntity::healFull() {
-    currHp = maxHp;
+    currHp = getMaxHp();
     isDead = false;
+}
+
+void LivingEntity::addHp(int value) {
+    currHp += value;
+    if (currHp > getMaxHp()) currHp = getMaxHp();
 }
 
 int LivingEntity::isInvincible() {
@@ -114,7 +119,7 @@ bool LivingEntity::damageSelf(int damage, double kbXV, double kbYV) {
     if (isDead) return false;
     if (isInvincible() == INVINCIBLE_ALL) return false;
 
-    if (isInvincible() != INVINCIBLE_DAMAGE) currHp -= damage;
+    if (isInvincible() != INVINCIBLE_DAMAGE) addHp(-damage);
     if (currHp <= 0) {
         bool deletedEntity = onDeath();
         if (deletedEntity) return false;
@@ -179,6 +184,11 @@ bool LivingEntity::isHurt() {
     return isSpriteAnimated(hurtSpriteCode) || isDead;
 }
 
+int LivingEntity::getMaxHp() {
+    return maxHp;
+}
+
 double LivingEntity::getBonusDamageMultiplier() {
     return 1.;
 }
+
