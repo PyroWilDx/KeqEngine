@@ -21,6 +21,9 @@ public:
          int fontSize, SDL_Color *outlColor, int outlSize,
          bool translateBackground_ = true);
 
+    Text(double x, double y, const char *textStr, const SDL_Color *textColor,
+         int fontSize, bool translateBackground_ = true);
+
     Text(double x, double y, const char *textStr, int fontSize,
          bool translateBackground_ = true);
 
@@ -41,6 +44,8 @@ public:
     void changeText(const char *textStr);
 
     inline bool shouldTranslate() override { return translateBackground; }
+
+    inline void setTranslateBackground(bool translateBackground_) { translateBackground = translateBackground_; }
 
     [[nodiscard]] inline std::string getCurrentText() const { return currText; }
 

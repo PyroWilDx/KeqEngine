@@ -12,6 +12,7 @@ typedef enum {
     WORLD_BLOCK,
     WORLD_BUTTON,
     WORLD_FRAME_TEXT,
+    WORLD_TOAST_TEXT,
     WORLD_ENUM_N
 } WorldEntityType;
 

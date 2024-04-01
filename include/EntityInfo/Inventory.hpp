@@ -14,6 +14,8 @@ class Weapon;
 
 class Artifact;
 
+class Equipment;
+
 class Button;
 
 class Text;
@@ -33,9 +35,13 @@ public:
 
     void hideSelf();
 
+    inline void setLastSelectedEq(Equipment *lastSelectedEq_) { lastSelectedEq = lastSelectedEq_; }
+
     [[nodiscard]] inline Weapon *getWeapon() const { return pWeapon; };
 
     [[nodiscard]] inline Artifact **getArtfArray() const { return (Artifact **) artfArray; }
+
+    [[nodiscard]] inline Equipment *getLastSelectedEq() const { return lastSelectedEq; }
 
     [[nodiscard]] inline FrameText *getEqStats() const { return eqStats; }
 
@@ -50,7 +56,11 @@ private:
     Button *artfButtons[ARTIFACT_COUNT];
     Text *artfTexts[ARTIFACT_COUNT];
 
+    Equipment *lastSelectedEq;
+
     FrameText *eqStats;
+    Button *levelUpButton;
+    Button *otherButton;
 
     bool isShown;
 };

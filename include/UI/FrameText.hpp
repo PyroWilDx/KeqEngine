@@ -26,6 +26,8 @@ public:
 
     void changeTexts(std::initializer_list<Text *> texts);
 
+    bool shouldTranslate() override;
+
     void renderSelf(SDL_Renderer *gRenderer) override;
 
 private:

@@ -18,6 +18,7 @@
 #include "Text/DamageText.hpp"
 #include "Utils/Random.hpp"
 #include "Utils/Draw.hpp"
+#include "UI/ToastText.hpp"
 
 World::World(int screenW, int screenH,
              int backgroundTotalW, int backgroundTotalH,
@@ -39,6 +40,8 @@ World::World(int screenW, int screenH,
     this->colorFilterSpeed = 0.16;
 
     this->displayMenu = false;
+
+    this->currToastText = nullptr;
 
     this->pixels = new Pixel *[backgroundTotalW];
     for (int i = 0; i < background->getTotalW(); i++) {
@@ -346,6 +349,16 @@ void World::removeOtherEntity(Entity *otherEntity) {
     delete otherEntity;
 }
 
+void World::showToast(ToastText *toastText) {
+    removeToast();
+    currToastText = toastText;
+}
+
+void World::removeToast() {
+    delete currToastText;
+    currToastText = nullptr;
+}
+
 void World::addKQAtk(Attack *atk, double atkPercent) {
     Keqing *kq = Keqing::getInstance();
     double atkDamage = atkPercent * kq->getTotalAtk();
@@ -520,6 +533,8 @@ void World::onGameFrame() {
         }
     }
 
+    if (currToastText != nullptr) currToastText->onGameFrame();
+
     if (translateBackgroundEntity != nullptr) {
         background->lerpTranslate(translateBackgroundEntity);
     }
@@ -531,6 +546,8 @@ void World::onGameFrameMenu() {
     for (Entity *menuEntity: menuEntityVector) {
         menuEntity->onGameFrame();
     }
+
+    if (currToastText != nullptr) currToastText->onGameFrame();
 }
 
 void World::renderFilter() {
@@ -605,6 +622,8 @@ void World::renderSelf() {
             gWindow->renderEntity(menuEntity);
         }
     }
+
+    if (currToastText != nullptr) gWindow->renderEntity(currToastText);
 }
 
 void World::renderDebugMode() {

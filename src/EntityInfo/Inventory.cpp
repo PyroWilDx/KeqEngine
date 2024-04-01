@@ -13,6 +13,7 @@
 #include "Utils/Colors.hpp"
 #include "UI/FrameText.hpp"
 #include "Keqing.hpp"
+#include "UI/ToastText.hpp"
 
 Inventory::Inventory()
         : artfArray(), artfButtons(), artfTexts() {
@@ -22,9 +23,12 @@ Inventory::Inventory()
     wpButton = new Button(16, 16, 96, 96, 6);
     wpButton->changeColor(&Colors::dColorCyan);
     wpButton->setTexture(gWindow->loadTexture("res/gfx/inventory/WDullBlade.png"));
-    wpButton->setOnClick([](Button *, int, int, void *) {
+    wpButton->setOnClickRelease([](Button *, int, int, void *) {
         Inventory *kqInventory = Keqing::getInstance()->getInventory();
         Weapon *sword = kqInventory->getWeapon();
+
+        kqInventory->setLastSelectedEq(sword);
+
         FrameText *frameText = kqInventory->getEqStats();
         char cName[32], cLvl[32], cFlatAtk[32], cAtk[32], cCritRate[32], cCritDmg[32], cElDmg[32];
         sprintf(cName, "Name : %s", sword->getName().c_str());
@@ -57,8 +61,21 @@ Inventory::Inventory()
         equipArtifact(i);
     }
 
+    lastSelectedEq = nullptr;
+
     eqStats = new FrameText(860, 16, 360, 256);
     eqStats->addTexts({new Text("Click on an equipment to display info.")});
+
+    levelUpButton = new Button(100, 200, 300, 100);
+    levelUpButton->changeColor(&Colors::dColorKq);
+    levelUpButton->addText("Level Up", &Colors::dColorWhite, 22);
+    levelUpButton->setOnClickRelease([](Button *, int, int, void *) {
+        new ToastText(600, "Hello", 2000);
+    });
+
+    otherButton = new Button(460, 200, 300, 100);
+    otherButton->changeColor(&Colors::dColorKq);
+    otherButton->addText("Upgrade", &Colors::dColorWhite, 22);
 
     isShown = false;
 }
@@ -97,9 +114,13 @@ void Inventory::equipArtifact(int artfType) {
                                        96, 96, 6);
     artfButtons[artfType]->changeColor(&Colors::dColorOrange);
     artfButtons[artfType]->setTexture(gWindow->loadTexture(artfImgPath.c_str()));
-    artfButtons[artfType]->setOnClick([](Button *, int, int, void *fParams) {
+    artfButtons[artfType]->setOnClickRelease([](Button *, int, int, void *fParams) {
         auto *artf = (Artifact *) fParams;
-        FrameText *frameText = Keqing::getInstance()->getInventory()->getEqStats();
+        Inventory *kqInventory = Keqing::getInstance()->getInventory();
+
+        kqInventory->setLastSelectedEq(artf);
+
+        FrameText *frameText = kqInventory->getEqStats();
         char cName[32], cLvl[32], cMain[32], cSub1[32], cSub2[32], cSub3[32], cSub4[32];
 
         std::string artfName;
@@ -164,6 +185,8 @@ void Inventory::showSelf() {
     }
 
     gWorld->addMenuEntity(eqStats);
+    gWorld->addButton(levelUpButton);
+    gWorld->addButton(otherButton);
 
     isShown = true;
 }
@@ -183,6 +206,8 @@ void Inventory::hideSelf() {
     }
 
     gWorld->removeMenuEntityNoFree(eqStats);
+    gWorld->removeButtonNoFree(levelUpButton);
+    gWorld->removeButtonNoFree(otherButton);
 
     isShown = false;
 }
