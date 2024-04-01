@@ -21,6 +21,7 @@
 #include "Utils/Colors.hpp"
 #include "EntityInfo/Weapon.hpp"
 #include "EntityInfo/Inventory.hpp"
+#include "EntityInfo/Artifact.hpp"
 
 Keqing *Keqing::kqInstance = nullptr;
 
@@ -28,7 +29,7 @@ const int NAtkMax = 4;
 const int NAtkEndFrame[NAtkMax] = {3, 9, 17, 28};
 
 Keqing::Keqing()
-        : LivingEntity(0.0024, 2000, KQ_ENUM_N,
+        : LivingEntity(0.0024, KQ_BASE_HP, KQ_ENUM_N,
                        KQ_HURT, KQ_JUMP) {
     setHitBox({0, 18, 60, 78});
     setRenderWHMultiplier(KQ_WIDTH_MULTIPLIER, KQ_HEIGHT_MULTIPLIER);
@@ -3145,15 +3146,21 @@ int Keqing::getTotalAtk() {
 }
 
 int Keqing::getTotalFlatAtk() {
-    return KQ_BASE_ATK + kqInventory->getWeapon()->getWAtkFlat();
+    return KQ_BASE_ATK +
+           kqInventory->getWeapon()->getWAtkFlat() +
+           kqInventory->getArtifactsStatValue(STAT_ATK_FLAT);
 }
 
 double Keqing::getTotalAtkMultiplier() {
-    return 1. + kqInventory->getWeapon()->getWAtkMultiplier();
+    return 1. +
+           kqInventory->getWeapon()->getWAtkMultiplier() +
+           kqInventory->getArtifactsStatValue(STAT_ATK_PERCENT);
 }
 
 double Keqing::getBonusDamageMultiplier() {
-    return 1. + kqInventory->getWeapon()->getWElMultiplier();
+    return 1. +
+           kqInventory->getWeapon()->getWElMultiplier() +
+           kqInventory->getArtifactsStatValue(STAT_ELEMENTAL_DAMAGE);
 }
 
 double Keqing::getCritRate() {
@@ -3161,9 +3168,14 @@ double Keqing::getCritRate() {
     if (Global::currTime - RBurstLastUseTime < KQ_BURST_CRIT_DURATION) {
         critRate += KQ_BURST_CRIT_BUFF;
     }
-    return critRate + kqInventory->getWeapon()->getWCritRate();
+    return critRate +
+           kqInventory->getWeapon()->getWCritRate() +
+           kqInventory->getArtifactsStatValue(STAT_CRIT_RATE);
 }
 
 double Keqing::getCritDamage() {
-    return 1. + KQ_BASE_CRIT_DAMAGE + kqInventory->getWeapon()->getWCritDamage();
+    return 1. +
+           KQ_BASE_CRIT_DAMAGE +
+           kqInventory->getWeapon()->getWCritDamage() +
+           kqInventory->getArtifactsStatValue(STAT_CRIT_DAMAGE);
 }
