@@ -151,6 +151,7 @@ public:
     inline void setHitBox(SDL_Rect hitBox_) { hitBox = hitBox_; }
 
     inline void setTexture(SDL_Texture *imgTexture_, int frameW = 0, int frameH = 0) {
+        clearTexture();
         imgTexture = imgTexture_;
         if (frameW != 0 && frameH != 0) {
             imgFrame.w = frameW;

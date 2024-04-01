@@ -7,6 +7,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <SDL2/SDL.h>
 #include "Equipment.hpp"
 
 #define WEAPON_MAX_LEVEL 100
@@ -29,6 +30,10 @@ public:
     explicit Weapon(const char *wNameCStr);
 
     void onLevelUp() override;
+
+    SDL_Texture *getTextureFromName();
+
+    Weapon *getUpgradedWeapon();
 
     [[nodiscard]] inline std::string getName() const { return wName; }
 

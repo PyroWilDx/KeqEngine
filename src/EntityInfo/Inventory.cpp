@@ -17,12 +17,11 @@
 
 Inventory::Inventory()
         : artfArray(), artfButtons(), artfTexts() {
-    WindowRenderer *gWindow = WindowRenderer::getInstance();
 
     pWeapon = new Weapon(DULL_BLADE);
     wpButton = new Button(16, 16, 96, 96, 6);
     wpButton->changeColor(&Colors::dColorCyan);
-    wpButton->setTexture(gWindow->loadTexture("res/gfx/inventory/WDullBlade.png"));
+    wpButton->setTexture(pWeapon->getTextureFromName());
     wpButton->setOnClickRelease([](Button *self, int, int, void *) {
         Inventory *kqInventory = Keqing::getInstance()->getInventory();
         Weapon *sword = kqInventory->getWeapon();
@@ -48,6 +47,8 @@ Inventory::Inventory()
                                                        new Text(cCritDmg),
                                                        new Text(cElDmg)
                                                });
+
+        kqInventory->getOtherButton()->changeText("Upgrade");
     });
     wpText = new Text(16, 120, "Dull Blade",
                       16, false);
@@ -84,6 +85,30 @@ Inventory::Inventory()
     otherButton = new Button(460, 200, 300, 100);
     otherButton->changeColor(&Colors::dColorKq);
     otherButton->addText("Upgrade", &Colors::dColorWhite, 22);
+    otherButton->setOnClickRelease([](Button *, int, int, void *) {
+        Inventory *kqInventory = Keqing::getInstance()->getInventory();
+        Equipment *e = kqInventory->getLastSelectedEq();
+
+        if (e == nullptr) {
+            ToastText::makeToast("No Equipment Selected...");
+            return;
+        }
+
+        if (e == kqInventory->getWeapon()) {
+            auto *w = (Weapon *) e;
+            Weapon *uW = w->getUpgradedWeapon();
+            if (uW != nullptr) {
+                kqInventory->replaceWeapon(uW);
+                kqInventory->getWpButton()->setTexture(uW->getTextureFromName());
+                kqInventory->getWpText()->changeText(uW->getName().c_str());
+                kqInventory->setLastSelectedEq(uW);
+                kqInventory->getLastClickedButton()->simClickRelease();
+                ToastText::makeToast("Successfuly Upgraded !");
+            } else ToastText::makeToast("Can't be Upgraded.");
+        } else {
+
+        }
+    });
 
     isShown = false;
 }
@@ -149,6 +174,8 @@ void Inventory::equipArtifact(int artfType) {
                                                        new Text(cSub3),
                                                        new Text(cSub4)
                                                });
+
+        kqInventory->getOtherButton()->changeText("Reroll");
     }, (void *) artfArray[artfType]);
 
     if (artfTexts[artfType] != nullptr) delete artfTexts[artfType];
@@ -174,6 +201,8 @@ void Inventory::showSelf() {
     gWorld->addButton(levelUpButton);
     gWorld->addButton(otherButton);
 
+    wpButton->simClickRelease();
+
     isShown = true;
 }
 
@@ -196,4 +225,9 @@ void Inventory::hideSelf() {
     gWorld->removeButtonNoFree(otherButton);
 
     isShown = false;
+}
+
+void Inventory::replaceWeapon(Weapon *w) {
+    delete pWeapon;
+    pWeapon = w;
 }
