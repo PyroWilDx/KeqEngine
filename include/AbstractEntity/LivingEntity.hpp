@@ -59,7 +59,7 @@ public:
 
     [[nodiscard]] virtual double getBonusDamageMultiplier();
 
-    [[nodiscard]] int getHp() const { return currHp; }
+    [[nodiscard]] inline int getHp() const { return currHp; }
 
 protected:
     int maxHp;

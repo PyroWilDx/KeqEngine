@@ -9,6 +9,7 @@
 #include "Utils/Utils.hpp"
 #include "Utils/Random.hpp"
 #include "Monster/Slime.hpp"
+#include "Inventory/Money.hpp"
 
 MobDropper::MobDropper()
         : Monster(0, 1,
@@ -44,6 +45,7 @@ void MobDropper::spitMob() {
 
     if (isNewestFrame(2, MOB_DROPPER_SPIT)) {
         auto *slime = new Slime("Red");
+        slime->setKillReward(new Money(10));
         slime->moveToEntityCenterFront(this, false);
         slime->setFacingEast(!isFacingEast());
         Global::gWorld->addMonster(slime);

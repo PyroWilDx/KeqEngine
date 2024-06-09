@@ -6,6 +6,7 @@
 #define MONSTER_HPP
 
 #include "LivingEntity.hpp"
+#include "Inventory/RewardInterface.hpp"
 
 class Monster : public LivingEntity {
 
@@ -13,6 +14,8 @@ public:
     Monster(double gravityWeight, int baseHp,
             int spriteArrayLength, int hurtSpriteCode,
             int stateChangerEndSpriteCode, int frameW);
+
+    ~Monster();
 
     void moveToEntityCenterFront(Entity *centerEntity, bool takeFaceEast = true);
 
@@ -28,9 +31,13 @@ public:
 
     void setDoAI(bool doAI_) { doAI = doAI_; }
 
+    void setKillReward(RewardInterface *killReward_) { killReward = killReward_; }
+
 protected:
     int frameW;
     bool doAI;
+
+    RewardInterface *killReward;
 
 };
 

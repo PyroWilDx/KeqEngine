@@ -3,7 +3,7 @@
 //
 
 #include <cmath>
-#include "EntityInfo/Weapon.hpp"
+#include "Inventory/Weapon.hpp"
 #include "WindowRenderer.hpp"
 
 std::unordered_map<std::string, WeaponInfo> Weapon::gWeapons = {

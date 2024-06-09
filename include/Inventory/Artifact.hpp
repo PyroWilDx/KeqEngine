@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "EntityInfo/Equipment.hpp"
+#include "Equipment.hpp"
 
 #define ARTIFACT_MAX_LEVEL 20
 
