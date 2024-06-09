@@ -3,7 +3,7 @@
 //
 
 #include <algorithm>
-#include "EntityInfo/Artifact.hpp"
+#include "Inventory/Artifact.hpp"
 #include "Utils/Random.hpp"
 
 const std::vector<int> Artifact::sandsMainStats = {

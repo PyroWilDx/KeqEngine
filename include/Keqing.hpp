@@ -262,6 +262,8 @@ public:
 
     inline void addAirPlungeHitEntity(LivingEntity *hitEntity) { airPlungeHitEntityVector.push_back(hitEntity); }
 
+    inline void addMoneyCount(int value) { moneyCount += value; }
+
     [[nodiscard]] inline double getESkillX() const { return ESkillX; }
 
     [[nodiscard]] inline double getESkillY() const { return ESkillY; }
@@ -275,6 +277,8 @@ public:
     [[nodiscard]] inline int getIsLocked() const { return isLocked; }
 
     [[nodiscard]] inline Inventory *getInventory() const { return kqInventory; }
+
+    [[nodiscard]] inline int getMoneyCount() const { return moneyCount; }
 
 private:
     Keqing();
@@ -303,6 +307,7 @@ private:
     bool fallWhenLocked;
 
     Inventory *kqInventory;
+    int moneyCount;
 
     void (*fOnDeathRetryButton)(Button *, int, int, void *);
 

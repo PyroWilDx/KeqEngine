@@ -12,6 +12,12 @@ Monster::Monster(double gravityWeight, int baseHp,
                        stateChangerEndSpriteCode) {
     this->frameW = frameW;
     this->doAI = true;
+
+    this->killReward = nullptr;
+}
+
+Monster::~Monster() {
+    delete killReward;
 }
 
 void Monster::moveToEntityCenterFront(Entity *centerEntity, bool takeFaceEast) {
@@ -45,6 +51,9 @@ bool Monster::onGameFrame() {
 
 bool Monster::onDeath() {
     doAI = false;
+
+    if (killReward != nullptr) killReward->addToKq();
+
     return false;
 }
 

@@ -14,7 +14,7 @@
 #include "Monster/MobDropper.hpp"
 #include "Text/FPSText.hpp"
 #include "Utils/Draw.hpp"
-#include "EntityInfo/Inventory.hpp"
+#include "Inventory/Inventory.hpp"
 
 void SlashEm::RunImpl() {
     SDL_Event event;
