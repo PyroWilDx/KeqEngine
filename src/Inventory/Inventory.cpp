@@ -2,9 +2,9 @@
 // Created by pyrow on 11/02/2024.
 //
 
-#include "EntityInfo/Inventory.hpp"
-#include "EntityInfo/Weapon.hpp"
-#include "EntityInfo/Artifact.hpp"
+#include "Inventory/Inventory.hpp"
+#include "Inventory/Weapon.hpp"
+#include "Inventory/Artifact.hpp"
 #include "UI/Button.hpp"
 #include "Text/Text.hpp"
 #include "WindowRenderer.hpp"
@@ -269,19 +269,22 @@ void Inventory::updateKqStatsDisplay() {
     Keqing *kq = Keqing::getInstance();
 
     const int N = 96;
-    char cName[N], cHp[N], cAtk[N], cCritRate[N], cCritDmg[N], cElDmg[N];
+    char cName[N], cHp[N], cAtk[N], cCritRate[N], cCritDmg[N], cElDmg[N], cMoney[N];
     sprintf(cName, "Keqing Stats");
     sprintf(cHp, "Hp : %d/%d", kq->getHp(), kq->getMaxHp());
     sprintf(cAtk, "Attack : %d", kq->getTotalAtk());
     sprintf(cCritRate, "Crit Rate : %.2f%%", kq->getCritRate() * 100.);
     sprintf(cCritDmg, "Crit Damage : %.2f%%", (kq->getCritDamage() - 1.) * 100.);
     sprintf(cElDmg, "Elemental Damage : %.2f%%", (kq->getBonusDamageMultiplier() - 1.) * 100.);
+    sprintf(cMoney, "Money Amount : %d", kq->getMoneyCount());
     kqStats->changeTexts({
                                  new Text(cName),
                                  new Text(cHp),
                                  new Text(cAtk),
                                  new Text(cCritRate),
                                  new Text(cCritDmg),
-                                 new Text(cElDmg)
+                                 new Text(cElDmg),
+                                 new Text(" "),
+                                 new Text(cMoney)
                          });
 }

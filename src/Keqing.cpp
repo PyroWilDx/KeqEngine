@@ -19,9 +19,9 @@
 #include "Utils/Draw.hpp"
 #include "UI/Button.hpp"
 #include "Utils/Colors.hpp"
-#include "EntityInfo/Weapon.hpp"
-#include "EntityInfo/Inventory.hpp"
-#include "EntityInfo/Artifact.hpp"
+#include "Inventory/Weapon.hpp"
+#include "Inventory/Inventory.hpp"
+#include "Inventory/Artifact.hpp"
 
 Keqing *Keqing::kqInstance = nullptr;
 
@@ -57,6 +57,7 @@ Keqing::Keqing()
     this->fallWhenLocked = false;
 
     this->kqInventory = new Inventory();
+    this->moneyCount = 0;
 
     this->fOnDeathRetryButton = nullptr;
     this->fParamsRetryButton = nullptr;
@@ -440,6 +441,7 @@ void Keqing::reset() {
 
     delete kqInventory;
     kqInventory = new Inventory();
+    moneyCount = 0;
 
     fOnDeathRetryButton = nullptr;
     fParamsRetryButton = nullptr;

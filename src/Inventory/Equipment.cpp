@@ -2,7 +2,7 @@
 // Created by pyrow on 01/04/2024.
 //
 
-#include "EntityInfo/Equipment.hpp"
+#include "Inventory/Equipment.hpp"
 
 Equipment::Equipment(int maxLevel_) {
     maxLevel = maxLevel_;
