@@ -1,4 +1,7 @@
+# CLion
 .idea/
+
+# Profiling
 gmon.out
 Profiler.*
 !Profiler.py
