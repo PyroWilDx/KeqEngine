@@ -33,6 +33,8 @@ https://github.com/user-attachments/assets/b05b047d-c2dc-42b4-a2f9-c0d1f239cdd1
 
 Check [```src/Main/```](src/Main/) for examples of how to use KeqEngine to create a game.
 
+- **ExploSlime Game**
+
 https://github.com/user-attachments/assets/87ab9ec2-87d0-4333-b0a9-7aa8abcfe14c
 
 ## How To Use
