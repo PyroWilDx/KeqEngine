@@ -26,6 +26,7 @@
 #include "Main/ShowTest.hpp"
 
 int main(int argc, char *argv[]) {
+    (void) argv;
 
 #ifdef __unix__
     ProfilerStart("Profiler.prof");
@@ -54,6 +55,10 @@ int main(int argc, char *argv[]) {
     Random::initRandom();
     Keqing::initKeqing();
     Particle::initParticle();
+
+    SDL_Surface* cursorSurface = IMG_Load("res/gfx/cursor/Normal.png");
+    SDL_Cursor* cursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
+    SDL_SetCursor(cursor);
 
     if (argc == 1) HomeMenu::Run();
     else ShowTest::Run();
