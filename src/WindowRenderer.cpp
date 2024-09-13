@@ -26,6 +26,8 @@ WindowRenderer::WindowRenderer(const char *title, int w, int h) {
 
     gWindow = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+    SDL_Surface* gIcon = IMG_Load("res/Icon.png");
+    SDL_SetWindowIcon(gWindow, gIcon);
     SDL_SetWindowMinimumSize(gWindow, w / 4, h / 4);
     SDL_SetWindowResizable(gWindow, SDL_TRUE);
     myAssert(gWindow != nullptr, "Error Creating Window.", SDL_GetError());
