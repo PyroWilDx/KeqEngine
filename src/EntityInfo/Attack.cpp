@@ -329,8 +329,10 @@ void Attack::onGameFrame() {
 void Attack::renderSelf(SDL_Renderer *gRenderer) {
     double xCoeff, yCoeff;
     getScreenXYCoeff(&xCoeff, &yCoeff);
-    const size_t length = bst_geo::num_points(atkPolygon);
-    Sint16 xArray[length], yArray[length];
+    size_t length = bst_geo::num_points(atkPolygon);
+    auto *xArray = new Sint16[length];
+    auto *yArray = new Sint16[length];
+
     int i = 0;
     for (const BoostPoint &point: atkPolygon.outer()) {
         double xDouble = point.x() - (double) Global::gWorld->getBackground()->getFrame().x;
@@ -349,6 +351,9 @@ void Attack::renderSelf(SDL_Renderer *gRenderer) {
                       (int) length,
                       0, COLOR_MAX, 0, 180);
     SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, COLOR_MAX);
+
+    delete[] xArray;
+    delete[] yArray;
 }
 
 bool Attack::shouldSelfRemove() {

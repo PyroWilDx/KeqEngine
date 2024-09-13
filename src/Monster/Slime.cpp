@@ -65,7 +65,7 @@ void Slime::jump() {
 
 void Slime::attack() {
     if (isNewestFrame(3, SLIME_ATK)) {
-        int N = 40;
+        const int N = 40;
         const int HalfPolyN = N / 2 + 1;
         double xShift = 24;
         if (!isFacingEast()) xShift = -xShift;
