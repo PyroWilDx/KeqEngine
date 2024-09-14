@@ -6,7 +6,10 @@ get_filename_component(ROOT_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
 set(HEADER_DIRS "${ROOT_DIR}/include")
 set(SRC_DIR "${ROOT_DIR}/src")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 
@@ -14,7 +17,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg") # gprof
 #set(CMAKE_EXE_LINKER_FLAGS "-pg") # gprof
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter")
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unknown-pragmas -Wno-unused-parameter")
+endif ()
 
 if (WIN32)
     set(LIB_FLAGS
@@ -76,7 +81,8 @@ if (WIN32)
     target_link_libraries(main winmm)
 endif ()
 
-#To Create a Static Library
+# ==================== Create Static Library ====================
+
 #set(LIB_SRC
 #        ${SRC_DIR}/SDL2_gfx/SDL2_framerate.c
 #        ${SRC_DIR}/SDL2_gfx/SDL2_gfxPrimitives.c

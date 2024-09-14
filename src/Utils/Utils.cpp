@@ -26,7 +26,7 @@ double getAddAbs(double a, double b) {
     return std::abs(a) + std::abs(b);
 }
 
-double lerp(double a, double b, double t) {
+double camLerp(double a, double b, double t) {
     return a + t * (b - a);
 }
 
