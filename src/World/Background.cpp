@@ -68,8 +68,8 @@ void Background::lerpTranslate(Entity *entity) {
     double xMid, yMid;
     entity->getSelfCenter(&xMid, &yMid);
 
-    preciseFrameX = lerp(preciseFrameX, xMid, LERP_T);
-    preciseFrameY = lerp(preciseFrameY, yMid, LERP_T);
+    preciseFrameX = camLerp(preciseFrameX, xMid, LERP_T);
+    preciseFrameY = camLerp(preciseFrameY, yMid, LERP_T);
 
     translateTo((int) std::round(preciseFrameX - SCREEN_BASE_WIDTH / 2. + 30.),
                 (int) std::round(preciseFrameY - SCREEN_BASE_HEIGHT / 2.));
