@@ -1,6 +1,6 @@
 # KeqEngine
 
-**KeqEngine** is a custom-built 2d game engine designed specifically for creating fighting games (e.g. [Hack'N Slash](https://fr.wikipedia.org/wiki/Hack_%27n%27_slash)). The engine is centered around the character [Keqing](#keqing-video), who comes with dozens of unique skills.
+[**KeqEngine**](https://github.com/PyroWilDx/KeqEngine/) is a 2d game engine designed specifically for creating fighting games (e.g. [Hack'N Slash](https://fr.wikipedia.org/wiki/Hack_%27n%27_slash)). The engine is centered around the character [Keqing](#keqing-preview), who comes with dozens of unique skills.
 
 https://github.com/user-attachments/assets/58355315-8059-47bc-87ad-17586ba1448f
 
