@@ -1,4 +1,4 @@
--- sqlite3\sqlite3.exe Keqing.db < init.sql
+-- sqlite3/sqlite3.exe Keqing.db < Init.sql
 
 DROP TABLE IF EXISTS ExploSlime;
 

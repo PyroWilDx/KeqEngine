@@ -1,6 +1,6 @@
 # KeqEngine
 
-[**KeqEngine**](https://github.com/PyroWilDx/KeqEngine/) is a 2d game engine designed specifically for creating fighting games (e.g. [Hack'N Slash](https://fr.wikipedia.org/wiki/Hack_%27n%27_slash)). The engine is centered around the character [Keqing](#keqing-preview), who comes with dozens of unique skills.
+[**KeqEngine**](https://github.com/PyroWilDx/KeqEngine/) is a 2d game engine designed specifically for creating fighting games (e.g. [Hack'N Slash](https://en.wikipedia.org/wiki/Hack_and_slash)). The engine is centered around the character [Keqing](#keqing-preview), who comes with dozens of unique skills.
 
 https://github.com/user-attachments/assets/58355315-8059-47bc-87ad-17586ba1448f
 
@@ -43,7 +43,15 @@ https://github.com/user-attachments/assets/87ab9ec2-87d0-4333-b0a9-7aa8abcfe14c
 
 - **Slash'Em**
 
-https://github.com/user-attachments/assets/ecbe7493-cf2d-48a1-83cd-f5151a721809
+https://github.com/user-attachments/assets/5e337072-0dd2-48a6-99e1-d0b63bff6f66
+
+## Download
+
+<div align="center">
+
+[<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/windows8/windows8-original.svg" width="60"/>](https://www.mediafire.com/file/k2q9uv5jgs8djgq/KeqEngine.zip/)
+
+</div>
 
 ## Development Set-Up
 
@@ -62,6 +70,12 @@ https://github.com/user-attachments/assets/ecbe7493-cf2d-48a1-83cd-f5151a721809
 </div>
 
 ### How To Use
+
+- Initialize SQLite3.
+
+```
+cd data && sqlite3/sqlite3.exe Keqing.db < Init.sql
+```
 
 - Run w/ CLion.
 
