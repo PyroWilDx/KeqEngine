@@ -1,8 +1,8 @@
 # KeqEngine
 
-[**KeqEngine**](https://github.com/PyroWilDx/KeqEngine/) is a 2d game engine designed specifically for creating fighting games (e.g. [Hack'N Slash](https://fr.wikipedia.org/wiki/Hack_%27n%27_slash)). The engine is centered around the character [Keqing](#keqing-preview), who comes with dozens of unique skills.
+[**KeqEngine**](https://github.com/PyroWilDx/KeqEngine/) is a 2d game engine designed specifically for creating fighting games (e.g. Hack'N Slash). The engine is centered around the character [Keqing](#keqing-preview), who comes with dozens of unique skills.
 
-https://github.com/user-attachments/assets/58355315-8059-47bc-87ad-17586ba1448f
+https://github.com/user-attachments/assets/bd7f26c2-d13c-4cb9-9794-4ffa8184f4fb
 
 ## Game Engine
 
@@ -27,7 +27,7 @@ https://github.com/user-attachments/assets/58355315-8059-47bc-87ad-17586ba1448f
 
 ### Keqing Preview
 
-https://github.com/user-attachments/assets/b05b047d-c2dc-42b4-a2f9-c0d1f239cdd1
+https://github.com/user-attachments/assets/b932ac67-0bdc-4fef-8639-2faf0e8bcc26
 
 ### Game Example
 
@@ -35,33 +35,41 @@ Check out [```src/Main/```](src/Main/) for a complete example of how to use KeqE
 
 - **Menu**
 
-https://github.com/user-attachments/assets/94580992-f30a-4320-92f9-43ec17304051
+https://github.com/user-attachments/assets/0f9da7c3-d1ed-4272-9916-8173f9e185cd
 
 - **ExploSlime**
 
-https://github.com/user-attachments/assets/87ab9ec2-87d0-4333-b0a9-7aa8abcfe14c
+https://github.com/user-attachments/assets/3b03924f-9803-4aaf-be6f-a7fd5d793cb5
 
 - **Slash'Em**
 
-https://github.com/user-attachments/assets/ecbe7493-cf2d-48a1-83cd-f5151a721809
+https://github.com/user-attachments/assets/5691be1a-e7ed-4214-bebc-e7782f12cc47
+
+## Download
+
+<div align="center">
+
+| [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/windows8/windows8-original.svg" width="60"/>](https://www.mediafire.com/file/k2q9uv5jgs8djgq/KeqEngine.zip/) |
+|---|
+
+</div>
 
 ## Development Set-Up
 
 <div align="center">
 
-[<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" width="60"/>](https://isocpp.org/)
-&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/clion/clion-original.svg" width="60"/>](https://www.jetbrains.com/clion/)
-&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/windows8/windows8-original.svg" width="60"/>](https://www.microsoft.com/windows/)
-
-[SDL2](https://www.libsdl.org/) \
-[Boost](https://www.boost.org/) \
-[SQLite3](https://www.sqlite.org/)
+| [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" width="60"/>](https://isocpp.org/) | [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sdl/sdl-plain.svg" width="60"/>](https://www.libsdl.org/) | [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sqlite/sqlite-original.svg" width="60"/>](https://www.sqlite.org/) | [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/clion/clion-original.svg" width="60"/>](https://www.jetbrains.com/clion/) | [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/windows8/windows8-original.svg" width="60"/>](https://www.microsoft.com/windows/) |
+|---|---|---|---|---|
 
 </div>
 
 ### How To Use
+
+- Initialize SQLite3.
+
+```
+cd data && sqlite3/sqlite3.exe Keqing.db < Init.sql
+```
 
 - Run w/ CLion.
 
