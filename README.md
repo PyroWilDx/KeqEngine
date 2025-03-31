@@ -49,6 +49,9 @@ https://github.com/user-attachments/assets/5691be1a-e7ed-4214-bebc-e7782f12cc47
 
 <div align="center">
 
+| [<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/windows8/windows8-original.svg" width="60"/>](https://github.com/PyroWilDx/KeqEngine/releases/) |
+|---|
+
 </div>
 
 ## Development Set-Up
